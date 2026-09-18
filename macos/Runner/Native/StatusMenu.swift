@@ -44,6 +44,12 @@ final class StatusMenu: NSObject {
     if popover.isShown {
       popover.performClose(nil)
     } else {
+      // The hosting view's size is only known after SwiftUI lays it out;
+      // without this the popover keeps a stale height and clips the top.
+      if let view = popover.contentViewController?.view {
+        view.layoutSubtreeIfNeeded()
+        popover.contentSize = view.fittingSize
+      }
       popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
       popover.contentViewController?.view.window?.makeKey()
     }
