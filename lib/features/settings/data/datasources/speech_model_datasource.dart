@@ -190,35 +190,54 @@ final class _ModelDownload {
       return const .ok(null);
     }
     final part = File(_partPath(f));
-    final existing = part.existsSync() ? part.lengthSync() : 0;
-    if (existing > f.bytes) part.deleteSync();
-    final have = existing > f.bytes ? 0 : existing;
+    final have = _resumableBytes(part, f);
     if (have < f.bytes) {
-      final request = http.Request('GET', .parse('$baseUrl/${f.name}'));
-      if (have > 0) request.headers[HttpHeaders.rangeHeader] = 'bytes=$have-';
-      final response = await client.send(request);
-      final status = response.statusCode;
-      if (status != HttpStatus.partialContent && status != HttpStatus.ok) {
-        return const .err(.network);
-      }
-      // A plain 200 means the server ignored Range: start over.
-      final resume = status == HttpStatus.partialContent && have > 0;
-      final sink = part.openWrite(mode: resume ? .append : .write);
-      int received = resume ? have : 0;
-      int lastReport = 0;
-      await for (final chunk in response.stream) {
-        sink.add(chunk);
-        received += chunk.length;
-        if (received - lastReport > _progressStep) {
-          lastReport = received;
-          progress(received);
-        }
-      }
-      await sink.close();
+      final streamed = await _stream(client, f, have, progress);
+      if (streamed case Err()) return streamed;
     }
     if (part.lengthSync() != f.bytes) return const .err(.network);
     part.renameSync(done.path);
     progress(f.bytes);
+    return const .ok(null);
+  }
+
+  /// Bytes already saved in [part]; a part larger than [f] is discarded.
+  int _resumableBytes(File part, ModelFile f) {
+    final existing = part.existsSync() ? part.lengthSync() : 0;
+    if (existing <= f.bytes) return existing;
+    part.deleteSync();
+    return 0;
+  }
+
+  /// Downloads [f] into its `.part` file, continuing after [have] bytes
+  /// when the server honours Range.
+  Future<Result<void, SpeechModelFailure>> _stream(
+    http.Client client,
+    ModelFile f,
+    int have,
+    void Function(int) progress,
+  ) async {
+    final request = http.Request('GET', .parse('$baseUrl/${f.name}'));
+    if (have > 0) request.headers[HttpHeaders.rangeHeader] = 'bytes=$have-';
+    final response = await client.send(request);
+    final status = response.statusCode;
+    if (status != HttpStatus.partialContent && status != HttpStatus.ok) {
+      return const .err(.network);
+    }
+    // A plain 200 means the server ignored Range: start over.
+    final resume = status == HttpStatus.partialContent && have > 0;
+    final sink = File(_partPath(f)).openWrite(mode: resume ? .append : .write);
+    int received = resume ? have : 0;
+    int lastReport = 0;
+    await for (final chunk in response.stream) {
+      sink.add(chunk);
+      received += chunk.length;
+      if (received - lastReport > _progressStep) {
+        lastReport = received;
+        progress(received);
+      }
+    }
+    await sink.close();
     return const .ok(null);
   }
 
