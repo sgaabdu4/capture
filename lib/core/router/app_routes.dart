@@ -3,8 +3,7 @@ import 'package:capture/features/capture/presentation/screens/editor_screen.dart
 import 'package:capture/features/capture/presentation/screens/home_screen.dart';
 import 'package:capture/features/capture/presentation/screens/recordings_screen.dart';
 import 'package:capture/features/groups/presentation/screens/groups_screen.dart';
-import 'package:capture/features/library/presentation/screens/todo_screen.dart';
-import 'package:capture/features/library/presentation/screens/upcoming_screen.dart';
+import 'package:capture/features/library/presentation/screens/task_list_screen.dart';
 import 'package:capture/features/settings/presentation/screens/settings_screen.dart';
 import 'package:capture/features/shell/presentation/screens/app_shell_screen.dart';
 import 'package:flutter/widgets.dart';
@@ -68,14 +67,14 @@ class TodoRoute extends GoRouteData with $TodoRoute {
   const TodoRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const TodoScreen();
+  Widget build(BuildContext context, GoRouterState state) => const TaskListScreen.todo();
 }
 
 class UpcomingRoute extends GoRouteData with $UpcomingRoute {
   const UpcomingRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const UpcomingScreen();
+  Widget build(BuildContext context, GoRouterState state) => const TaskListScreen.upcoming();
 }
 
 class SettingsRoute extends GoRouteData with $SettingsRoute {
