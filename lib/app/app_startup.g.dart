@@ -9,18 +9,18 @@ part of 'app_startup.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 /// Once per launch: menu-bar item, saved settings and hotkey, crash
-/// recovery of unfinished recordings, then a library sync when connected.
+/// recovery of unfinished recordings and owed reminders, then a library sync when connected.
 
 @ProviderFor(appStartup)
 final appStartupProvider = AppStartupProvider._();
 
 /// Once per launch: menu-bar item, saved settings and hotkey, crash
-/// recovery of unfinished recordings, then a library sync when connected.
+/// recovery of unfinished recordings and owed reminders, then a library sync when connected.
 
 final class AppStartupProvider extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
   /// Once per launch: menu-bar item, saved settings and hotkey, crash
-  /// recovery of unfinished recordings, then a library sync when connected.
+  /// recovery of unfinished recordings and owed reminders, then a library sync when connected.
   AppStartupProvider._()
     : super(
         from: null,
@@ -46,4 +46,4 @@ final class AppStartupProvider extends $FunctionalProvider<AsyncValue<void>, voi
   }
 }
 
-String _$appStartupHash() => r'22d83458d1ac6c12544e6eb28e6570374ee61c41';
+String _$appStartupHash() => r'30318f487220203199b438edb9ffda74ae713e89';
