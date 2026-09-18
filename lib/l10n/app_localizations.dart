@@ -1052,16 +1052,22 @@ abstract class AppLocalizations {
   /// **'{shortcut} is taken by another app. Choose another.'**
   String shortcutInactive(String shortcut);
 
-  /// No description provided for @shortcutChange.
+  /// No description provided for @shortcutRecord.
   ///
   /// In en, this message translates to:
-  /// **'Change shortcut'**
-  String get shortcutChange;
+  /// **'Record shortcut'**
+  String get shortcutRecord;
+
+  /// No description provided for @shortcutSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save shortcut'**
+  String get shortcutSave;
 
   /// No description provided for @shortcutListening.
   ///
   /// In en, this message translates to:
-  /// **'Press the new shortcut…'**
+  /// **'Press the keys, or modifiers like ⌃⌥ on their own…'**
   String get shortcutListening;
 
   /// No description provided for @shortcutUnsupportedKey.

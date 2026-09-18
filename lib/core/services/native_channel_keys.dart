@@ -5,6 +5,7 @@ abstract final class NativeChannelKeys {
   static const keyCode = 'keyCode';
   static const modifiers = 'modifiers';
   static const label = 'label';
+  static const paused = 'paused';
   static const path = 'path';
   static const maxSeconds = 'maxSeconds';
   static const seconds = 'seconds';

@@ -322,8 +322,9 @@
       }
     }
   },
-  "shortcutChange": "Change shortcut",
-  "shortcutListening": "Press the new shortcut…",
+  "shortcutRecord": "Record shortcut",
+  "shortcutSave": "Save shortcut",
+  "shortcutListening": "Press the keys, or modifiers like ⌃⌥ on their own…",
   "shortcutUnsupportedKey": "Use a letter or a digit.",
   "shortcutTooFewModifiers": "Use at least two modifiers, including ⌃ or ⌘.",
   "shortcutTaken": "That shortcut is already used by another app.",

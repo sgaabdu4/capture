@@ -581,10 +581,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get shortcutChange => 'Change shortcut';
+  String get shortcutRecord => 'Record shortcut';
 
   @override
-  String get shortcutListening => 'Press the new shortcut…';
+  String get shortcutSave => 'Save shortcut';
+
+  @override
+  String get shortcutListening => 'Press the keys, or modifiers like ⌃⌥ on their own…';
 
   @override
   String get shortcutUnsupportedKey => 'Use a letter or a digit.';

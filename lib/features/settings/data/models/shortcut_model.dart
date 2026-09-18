@@ -9,7 +9,7 @@ part 'shortcut_model.g.dart';
 sealed class ShortcutModel with _$ShortcutModel {
   const ShortcutModel._();
 
-  const factory ShortcutModel({required String key, required Set<Modifier> modifiers}) =
+  const factory ShortcutModel({required String? key, required Set<Modifier> modifiers}) =
       _ShortcutModel;
 
   factory ShortcutModel.fromJson(Map<String, dynamic> json) => _$ShortcutModelFromJson(json);

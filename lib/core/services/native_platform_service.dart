@@ -17,8 +17,12 @@ abstract interface class INativePlatformService {
   Stream<NativeEvent> get events;
   Future<void> installMenu();
 
-  /// False when another app already owns the combination.
-  Future<bool> setHotKey({required int keyCode, required int modifiers, required String label});
+  /// False when another app already owns the combination. A null [keyCode]
+  /// fires when [modifiers] alone are pressed together and released.
+  Future<bool> setHotKey({required int? keyCode, required int modifiers, required String label});
+
+  /// Ignores the global shortcut while a new one is being recorded.
+  Future<void> pauseHotKey({required bool paused});
   Future<MicPermission> micPermission();
   Future<bool> requestMic();
   Future<void> startRecording(String path, {required Duration limit});
@@ -82,7 +86,7 @@ class NativePlatformService implements INativePlatformService {
 
   @override
   Future<bool> setHotKey({
-    required int keyCode,
+    required int? keyCode,
     required int modifiers,
     required String label,
   }) async {
@@ -93,6 +97,10 @@ class NativePlatformService implements INativePlatformService {
     });
     return registered == true;
   }
+
+  @override
+  Future<void> pauseHotKey({required bool paused}) =>
+      _channel.invokeMethod<void>('pauseHotKey', {NativeChannelKeys.paused: paused});
 
   @override
   Future<MicPermission> micPermission() async {

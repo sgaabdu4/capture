@@ -7,7 +7,7 @@ part of 'shortcut_model.dart';
 // **************************************************************************
 
 _ShortcutModel _$ShortcutModelFromJson(Map<String, dynamic> json) => _ShortcutModel(
-  key: json['key'] as String,
+  key: json['key'] as String?,
   modifiers: (json['modifiers'] as List<dynamic>)
       .map((e) => $enumDecode(_$ModifierEnumMap, e))
       .toSet(),

@@ -58,12 +58,15 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin {
       result(nil)
     case "setHotKey":
       let ok = hotKey.register(
-        keyCode: UInt32(args["keyCode"] as? Int ?? 15),
+        keyCode: (args["keyCode"] as? Int).map(UInt32.init),
         modifiers: UInt32(args["modifiers"] as? Int ?? 0))
       let label = args["label"] as? String ?? ""
       overlay.model.shortcut = label
       menu.model.shortcut = label
       result(ok)
+    case "pauseHotKey":
+      hotKey.paused = args["paused"] as? Bool ?? false
+      result(nil)
     case "micPermission":
       result(Self.micStatus())
     case "requestMic":

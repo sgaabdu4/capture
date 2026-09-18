@@ -53,14 +53,8 @@ class SettingsNotifier extends _$SettingsNotifier {
 
   INativePlatformService _ensureNative() => ref.read(nativePlatformServiceProvider);
 
-  Future<bool> _register(Shortcut s) async => switch (s.keyCode) {
-    final int code => await _ensureNative().setHotKey(
-      keyCode: code,
-      modifiers: s.carbonModifiers,
-      label: s.label,
-    ),
-    null => false,
-  };
+  Future<bool> _register(Shortcut s) =>
+      _ensureNative().setHotKey(keyCode: s.keyCode, modifiers: s.carbonModifiers, label: s.label);
 
   /// Validates with a harmless model listing, then stores in Keychain.
   Future<void> saveTypesafeKey(String key) async {
@@ -149,6 +143,9 @@ class SettingsNotifier extends _$SettingsNotifier {
     if (!ref.mounted) return;
     state = state.copyWith(shortcutRegistered: restored, shortcutProblem: .taken);
   }
+
+  /// While a new shortcut is recorded the current one must not start a capture.
+  Future<void> pauseShortcut({required bool paused}) => _ensureNative().pauseHotKey(paused: paused);
 
   void _rejectShortcut(ShortcutProblem problem) => state = state.copyWith(shortcutProblem: problem);
 

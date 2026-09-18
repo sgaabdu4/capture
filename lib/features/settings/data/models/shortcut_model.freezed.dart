@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ShortcutModel {
 
- String get key; Set<Modifier> get modifiers;
+ String? get key; Set<Modifier> get modifiers;
 /// Create a copy of ShortcutModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -54,7 +54,7 @@ abstract mixin class $ShortcutModelCopyWith<$Res>  {
   factory $ShortcutModelCopyWith(ShortcutModel value, $Res Function(ShortcutModel) _then) = _$ShortcutModelCopyWithImpl;
 @useResult
 $Res call({
- String key, Set<Modifier> modifiers
+ String? key, Set<Modifier> modifiers
 });
 
 
@@ -71,10 +71,10 @@ class _$ShortcutModelCopyWithImpl<$Res>
 
 /// Create a copy of ShortcutModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? key = null,Object? modifiers = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? key = freezed,Object? modifiers = null,}) {
   return _then(ShortcutModel(
-key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
-as String,modifiers: null == modifiers ? _self.modifiers : modifiers // ignore: cast_nullable_to_non_nullable
+key: freezed == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
+as String?,modifiers: null == modifiers ? _self.modifiers : modifiers // ignore: cast_nullable_to_non_nullable
 as Set<Modifier>,
   ));
 }
@@ -157,7 +157,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String key,  Set<Modifier> modifiers)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? key,  Set<Modifier> modifiers)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ShortcutModel() when $default != null:
 return $default(_that.key,_that.modifiers);case _:
@@ -178,7 +178,7 @@ return $default(_that.key,_that.modifiers);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String key,  Set<Modifier> modifiers)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? key,  Set<Modifier> modifiers)  $default,) {final _that = this;
 switch (_that) {
 case _ShortcutModel():
 return $default(_that.key,_that.modifiers);}
@@ -195,7 +195,7 @@ return $default(_that.key,_that.modifiers);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String key,  Set<Modifier> modifiers)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? key,  Set<Modifier> modifiers)?  $default,) {final _that = this;
 switch (_that) {
 case _ShortcutModel() when $default != null:
 return $default(_that.key,_that.modifiers);case _:
@@ -213,7 +213,7 @@ class _ShortcutModel extends ShortcutModel {
   const _ShortcutModel({required this.key, required  Set<Modifier> modifiers}): _modifiers = modifiers,super._();
   factory _ShortcutModel.fromJson(Map<String, dynamic> json) => _$ShortcutModelFromJson(json);
 
-@override final  String key;
+@override final  String? key;
  final  Set<Modifier> _modifiers;
 @override Set<Modifier> get modifiers {
   if (_modifiers is EqualUnmodifiableSetView) return _modifiers;
@@ -257,7 +257,7 @@ abstract mixin class _$ShortcutModelCopyWith<$Res> implements $ShortcutModelCopy
   factory _$ShortcutModelCopyWith(_ShortcutModel value, $Res Function(_ShortcutModel) _then) = __$ShortcutModelCopyWithImpl;
 @override @useResult
 $Res call({
- String key, Set<Modifier> modifiers
+ String? key, Set<Modifier> modifiers
 });
 
 
@@ -274,10 +274,10 @@ class __$ShortcutModelCopyWithImpl<$Res>
 
 /// Create a copy of ShortcutModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? key = null,Object? modifiers = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? key = freezed,Object? modifiers = null,}) {
   return _then(_ShortcutModel(
-key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
-as String,modifiers: null == modifiers ? _self._modifiers : modifiers // ignore: cast_nullable_to_non_nullable
+key: freezed == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
+as String?,modifiers: null == modifiers ? _self._modifiers : modifiers // ignore: cast_nullable_to_non_nullable
 as Set<Modifier>,
   ));
 }

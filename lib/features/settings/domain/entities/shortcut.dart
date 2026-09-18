@@ -4,15 +4,16 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'shortcut.freezed.dart';
 
-/// A global shortcut: a letter or digit (upper case) plus modifiers.
+/// A global shortcut: a letter or digit (upper case) plus modifiers, or
+/// modifiers alone (pressed together and released) when [key] is null.
 @freezed
 sealed class Shortcut with _$Shortcut {
   const Shortcut._();
 
-  const factory Shortcut(String key, {required Set<Modifier> modifiers}) = _Shortcut;
+  const factory Shortcut(String? key, {required Set<Modifier> modifiers}) = _Shortcut;
 
-  /// ⌃⌥R: free in common apps, unlike ⌘R.
-  static const standard = Shortcut('R', modifiers: {.control, .option});
+  /// ⌃⌥ on its own: one quick press, and no letter clashes with app shortcuts.
+  static const standard = Shortcut(null, modifiers: {.control, .option});
 
   /// Fewest modifiers that keep ordinary typing and app shortcuts safe.
   static const _minModifiers = 2;
@@ -34,13 +35,13 @@ sealed class Shortcut with _$Shortcut {
   String get label => [
     for (final m in Modifier.values)
       if (modifiers.contains(m)) m.symbol,
-    key,
+    ?key,
   ].join();
 
   /// At least two modifiers, one of them ⌃ or ⌘, so ordinary typing and
   /// common app shortcuts (⌘R, ⌥R) are never captured.
   ShortcutProblem? get problem {
-    if (keyCode == null) return .unsupportedKey;
+    if (key != null && keyCode == null) return .unsupportedKey;
     final anchored = modifiers.contains(Modifier.control) || modifiers.contains(Modifier.command);
     if (modifiers.length < _minModifiers || !anchored) return .tooFewModifiers;
     return null;

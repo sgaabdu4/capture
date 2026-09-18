@@ -38,6 +38,7 @@ INativePlatformService stubNative() {
       label: any(named: 'label'),
     ),
   ).thenAnswer((_) async => true);
+  when(() => native.pauseHotKey(paused: any(named: 'paused'))).thenAnswer((_) async {});
   when(native.hideOverlay).thenAnswer((_) async {});
   when(
     () => native.setMenuState(

@@ -38,6 +38,8 @@ class SettingsScreen extends ConsumerWidget {
             problem: problem,
             onShortcut: (shortcut) =>
                 unawaited(ref.read(settingsProvider.notifier).setShortcut(shortcut)),
+            onRecording: (recording) =>
+                unawaited(ref.read(settingsProvider.notifier).pauseShortcut(paused: recording)),
           ),
         ),
         const SizedBox(height: Spacing.lg),

@@ -4,6 +4,7 @@ import 'package:capture/app/capture_app.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,6 +43,26 @@ Future<void> _launch(
 
 Future<void> _open(WidgetTester tester, String key) async {
   await tester.tap(find.byKey(ValueKey(key)));
+  await _settle(tester);
+}
+
+/// Carbon flags for ⌃⌘ and the Carbon code of K.
+const _controlCommand = 0x1100;
+const _carbonK = 40;
+
+/// Opens Settings, records the keys [press] sends, and leaves them unsaved.
+Future<void> _recordShortcut(
+  WidgetTester tester,
+  AsyncCallback press, {
+  required Directory support,
+  required INativePlatformService native,
+}) async {
+  await _launch(tester, support: support, native: native);
+  await _open(tester, AppWidgetKeys.settingsButton);
+  await tester.ensureVisible(find.byKey(const ValueKey(AppWidgetKeys.shortcutChangeButton)));
+  await _settle(tester);
+  await _open(tester, AppWidgetKeys.shortcutChangeButton);
+  await press();
   await _settle(tester);
 }
 
@@ -95,5 +116,38 @@ void main() {
     await tester.tap(find.text(_l10n.close));
     await _settle(tester);
     expect(find.text(_l10n.notionGuideTitle), findsNothing);
+  });
+
+  group('recording a new shortcut', () {
+    testWidgets('modifiers pressed alone become the shortcut only once saved', (tester) async {
+      await _recordShortcut(tester, support: support, native: native, () async {
+        await tester.sendKeyDownEvent(.controlLeft);
+        await tester.sendKeyDownEvent(.metaLeft);
+        await tester.sendKeyUpEvent(.metaLeft);
+        await tester.sendKeyUpEvent(.controlLeft);
+      });
+
+      expect(find.text('⌃⌘'), findsOneWidget);
+      verify(() => native.pauseHotKey(paused: true)).called(1);
+      verifyNever(() => native.setHotKey(keyCode: null, modifiers: _controlCommand, label: '⌃⌘'));
+      await _open(tester, AppWidgetKeys.shortcutSaveButton);
+      verify(() => native.setHotKey(keyCode: null, modifiers: _controlCommand, label: '⌃⌘'))
+          .called(1);
+    });
+
+    testWidgets('a letter with modifiers becomes the shortcut once saved', (tester) async {
+      await _recordShortcut(tester, support: support, native: native, () async {
+        await tester.sendKeyDownEvent(.controlLeft);
+        await tester.sendKeyDownEvent(.metaLeft);
+        await tester.sendKeyEvent(.keyK);
+      });
+      await tester.sendKeyUpEvent(.metaLeft);
+      await tester.sendKeyUpEvent(.controlLeft);
+
+      expect(find.text('⌃⌘K'), findsOneWidget);
+      await _open(tester, AppWidgetKeys.shortcutSaveButton);
+      verify(() => native.setHotKey(keyCode: _carbonK, modifiers: _controlCommand, label: '⌃⌘K'))
+          .called(1);
+    });
   });
 }

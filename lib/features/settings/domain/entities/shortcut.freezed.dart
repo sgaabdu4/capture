@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Shortcut {
 
- String get key; Set<Modifier> get modifiers;
+ String? get key; Set<Modifier> get modifiers;
 /// Create a copy of Shortcut
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,7 +51,7 @@ abstract mixin class $ShortcutCopyWith<$Res>  {
   factory $ShortcutCopyWith(Shortcut value, $Res Function(Shortcut) _then) = _$ShortcutCopyWithImpl;
 @useResult
 $Res call({
- String key, Set<Modifier> modifiers
+ String? key, Set<Modifier> modifiers
 });
 
 
@@ -68,10 +68,10 @@ class _$ShortcutCopyWithImpl<$Res>
 
 /// Create a copy of Shortcut
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? key = null,Object? modifiers = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? key = freezed,Object? modifiers = null,}) {
   return _then(Shortcut(
-null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
-as String,modifiers: null == modifiers ? _self.modifiers : modifiers // ignore: cast_nullable_to_non_nullable
+freezed == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
+as String?,modifiers: null == modifiers ? _self.modifiers : modifiers // ignore: cast_nullable_to_non_nullable
 as Set<Modifier>,
   ));
 }
@@ -154,7 +154,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String key,  Set<Modifier> modifiers)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? key,  Set<Modifier> modifiers)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Shortcut() when $default != null:
 return $default(_that.key,_that.modifiers);case _:
@@ -175,7 +175,7 @@ return $default(_that.key,_that.modifiers);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String key,  Set<Modifier> modifiers)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? key,  Set<Modifier> modifiers)  $default,) {final _that = this;
 switch (_that) {
 case _Shortcut():
 return $default(_that.key,_that.modifiers);}
@@ -192,7 +192,7 @@ return $default(_that.key,_that.modifiers);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String key,  Set<Modifier> modifiers)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? key,  Set<Modifier> modifiers)?  $default,) {final _that = this;
 switch (_that) {
 case _Shortcut() when $default != null:
 return $default(_that.key,_that.modifiers);case _:
@@ -210,7 +210,7 @@ class _Shortcut extends Shortcut {
   const _Shortcut(this.key, {required  Set<Modifier> modifiers}): _modifiers = modifiers,super._();
   
 
-@override final  String key;
+@override final  String? key;
  final  Set<Modifier> _modifiers;
 @override Set<Modifier> get modifiers {
   if (_modifiers is EqualUnmodifiableSetView) return _modifiers;
@@ -251,7 +251,7 @@ abstract mixin class _$ShortcutCopyWith<$Res> implements $ShortcutCopyWith<$Res>
   factory _$ShortcutCopyWith(_Shortcut value, $Res Function(_Shortcut) _then) = __$ShortcutCopyWithImpl;
 @override @useResult
 $Res call({
- String key, Set<Modifier> modifiers
+ String? key, Set<Modifier> modifiers
 });
 
 
@@ -268,10 +268,10 @@ class __$ShortcutCopyWithImpl<$Res>
 
 /// Create a copy of Shortcut
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? key = null,Object? modifiers = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? key = freezed,Object? modifiers = null,}) {
   return _then(_Shortcut(
-null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
-as String,modifiers: null == modifiers ? _self._modifiers : modifiers // ignore: cast_nullable_to_non_nullable
+freezed == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
+as String?,modifiers: null == modifiers ? _self._modifiers : modifiers // ignore: cast_nullable_to_non_nullable
 as Set<Modifier>,
   ));
 }
