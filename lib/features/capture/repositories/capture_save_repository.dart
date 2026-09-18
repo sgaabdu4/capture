@@ -157,7 +157,7 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
 
   @override
   Future<ReminderOutcome> scheduleReminders(CaptureRecord record) async {
-    final CaptureRecord(:timeZone, :includedItems, :progress, :copyWith) = record;
+    final CaptureRecord(:id, :timeZone, :includedItems, :progress, :copyWith) = record;
     final offsets = zoneOffsets(timeZone);
     final location = tz.getLocation(timeZone);
     final now = _system.nowUtc();
@@ -174,7 +174,7 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
       final accepted = await _reminders.schedule(itemId: item.id, title: item.title, at: at);
       refused = refused || !accepted;
       // A capture deleted while the prompt was open stays deleted.
-      if (accepted && _local.get(record.id) != null) {
+      if (accepted && _local.get(id) != null) {
         scheduled.add(item.id);
         _persist(record, progress.copyWith(remindersScheduled: {...scheduled}));
       }
