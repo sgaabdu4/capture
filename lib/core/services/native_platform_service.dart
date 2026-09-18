@@ -12,7 +12,7 @@ part 'native_platform_service.g.dart';
 typedef RecordingResult = ({String path, Duration duration});
 
 /// What the app needs from the native side (`macos/Runner/Native`): global hotkey,
-/// recorder, overlay panel, menu-bar popover and M4A encoding.
+/// recorder, overlay panel, menu-bar popover, M4A encoding and Sparkle updates.
 abstract interface class INativePlatformService {
   Stream<NativeEvent> get events;
   Future<void> installMenu();
@@ -41,6 +41,10 @@ abstract interface class INativePlatformService {
   /// Returns the encoded file size in bytes.
   Future<int> encodeM4a({required String input, required String output});
   Future<void> showMainWindow();
+
+  /// Opens Sparkle's check, which offers to download and install a newer
+  /// release.
+  Future<void> checkForUpdates();
 }
 
 class NativePlatformService implements INativePlatformService {
@@ -62,6 +66,7 @@ class NativePlatformService implements INativePlatformService {
       'recordingFailed' => const RecordingFailed(),
       'review' => _reviewEvent(call.arguments),
       'menu' => _menuEvent(call.arguments),
+      'updateAvailable' => const UpdateAvailable(),
       _ => null,
     };
     if (event != null) _events.add(event);
@@ -182,6 +187,9 @@ class NativePlatformService implements INativePlatformService {
 
   @override
   Future<void> showMainWindow() => _channel.invokeMethod<void>('showMainWindow');
+
+  @override
+  Future<void> checkForUpdates() => _channel.invokeMethod<void>('checkForUpdates');
 
   Future<void> dispose() => _events.close();
 }

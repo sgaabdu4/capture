@@ -70,6 +70,8 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
         unawaited(_open(.upcoming));
       case MenuCommand(action: .recordings):
         unawaited(_open(.recordings));
+      // The shell's update link shows it.
+      case UpdateAvailable():
     }
   }
 

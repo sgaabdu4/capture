@@ -4,7 +4,8 @@ name: Release
 # main builds Capture.app in the protected release environment and, once
 # the Hard Eng check on the same commit has passed, signs it with the
 # Developer ID certificate, notarises it and publishes it as the latest
-# GitHub release. Without the signing secrets the release stays ad-hoc signed.
+# GitHub release with the Sparkle feed the app checks for updates. Without
+# the signing secrets the release stays ad-hoc signed and has no feed.
 on:
   push:
     branches:
@@ -66,9 +67,12 @@ jobs:
           runtime: node@latest
           install: false
       - name: Build Capture.app
+        env:
+          RUN: ${{ github.run_number }}
+        # The run number is the build number Sparkle compares.
         run: |
           pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config install flutter@latest &&
-          pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config exec flutter@latest -- flutter build macos --release
+          pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config exec flutter@latest -- flutter build macos --release --build-number="$RUN"
       - name: Wait for the hard-eng check
         env:
           GH_TOKEN: ${{ github.token }}
@@ -109,11 +113,19 @@ jobs:
             exit 1
           fi
           app=build/macos/Build/Products/Release/Capture.app
-          # Nested code first, then the app with its entitlements.
+          # Nested code first: Sparkle's helpers, then every framework, then
+          # the app with its entitlements, which name its bundle identifier.
+          sparkle="$app/Contents/Frameworks/Sparkle.framework/Versions/B"
+          for helper in XPCServices/Installer.xpc XPCServices/Downloader.xpc Autoupdate Updater.app; do
+            codesign --force --timestamp --options runtime --preserve-metadata=entitlements \
+              --sign "$identity" "$sparkle/$helper"
+          done
           find "$app/Contents/Frameworks" -depth \( -name '*.framework' -o -name '*.dylib' \) -print0 |
             xargs -0 -I {} codesign --force --timestamp --options runtime --sign "$identity" {}
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app/Contents/Info.plist")"
+          sed "s/\$(PRODUCT_BUNDLE_IDENTIFIER)/$bundle_id/g" macos/Runner/Release.entitlements > "$RUNNER_TEMP/app.entitlements"
           codesign --force --timestamp --options runtime \
-            --entitlements macos/Runner/Release.entitlements --sign "$identity" "$app"
+            --entitlements "$RUNNER_TEMP/app.entitlements" --sign "$identity" "$app"
           codesign --verify --deep --strict "$app"
           echo "SIGN_IDENTITY=$identity" >> "$GITHUB_ENV"
       - name: Pack the DMG
@@ -144,14 +156,34 @@ jobs:
           rm "$key"
           xcrun stapler staple "$RUNNER_TEMP/Capture.dmg"
           echo "NOTARISED=true" >> "$GITHUB_ENV"
-      - name: Publish the release
+      - name: Name the DMG
         env:
-          GH_TOKEN: ${{ github.token }}
-          SHA: ${{ github.sha }}
           RUN: ${{ github.run_number }}
         run: |
           version="$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)"
           name="${version}-alpha.${RUN}"
+          mkdir "$RUNNER_TEMP/release"
+          mv "$RUNNER_TEMP/Capture.dmg" "$RUNNER_TEMP/release/Capture-${name}.dmg"
+          echo "RELEASE_NAME=$name" >> "$GITHUB_ENV"
+      - name: Write the update feed
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        # Only notarised builds go in the feed the app installs from.
+        run: |
+          if [ "${NOTARISED:-}" != true ] || [ -z "$SPARKLE_PRIVATE_KEY" ]; then
+            echo "Not notarised or no SPARKLE_PRIVATE_KEY secret: no update feed."
+            exit 0
+          fi
+          printf '%s' "$SPARKLE_PRIVATE_KEY" |
+            build/macos/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_appcast --ed-key-file - \
+              --download-url-prefix "https://github.com/$GITHUB_REPOSITORY/releases/download/v${RELEASE_NAME}/" \
+              -o "$RUNNER_TEMP/release/appcast.xml" "$RUNNER_TEMP/release"
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.sha }}
+        run: |
+          name="$RELEASE_NAME"
           {
             echo "Built from main by the Release workflow; the Hard Eng checks passed on this commit."
             echo
@@ -163,8 +195,7 @@ jobs:
               echo "This build is not notarised. The first time you open it, macOS says it cannot check the app. Open System Settings, then Privacy & Security, and choose Open Anyway for Capture."
             fi
           } > "$RUNNER_TEMP/notes.md"
-          mv "$RUNNER_TEMP/Capture.dmg" "$RUNNER_TEMP/Capture-${name}.dmg"
-          gh release create "v${name}" "$RUNNER_TEMP/Capture-${name}.dmg" \
+          gh release create "v${name}" "$RUNNER_TEMP/release/"* \
             --repo "$GITHUB_REPOSITORY" \
             --target "$SHA" \
             --latest \

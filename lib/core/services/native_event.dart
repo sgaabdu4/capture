@@ -22,6 +22,11 @@ final class RecordingFailed extends NativeEvent {
   const RecordingFailed();
 }
 
+/// Sparkle found a release newer than this build.
+final class UpdateAvailable extends NativeEvent {
+  const UpdateAvailable();
+}
+
 final class ReviewCardAction extends NativeEvent {
   const ReviewCardAction(this.action);
   final ReviewAction action;

@@ -1,14 +1,17 @@
 import AVFoundation
 import Cocoa
 import FlutterMacOS
+import Sparkle
 
 /// Bridge between the Dart app (which owns all capture state) and the
 /// native pieces Flutter can't provide: the global shortcut, microphone
-/// capture, the floating overlay, the menu-bar popover and AAC encoding.
+/// capture, the floating overlay, the menu-bar popover, AAC encoding and
+/// Sparkle updates.
 ///
 /// Dart → native: methods below. Native → Dart: `hotkey`, `stopRequested`,
-/// `limitReached`, `recordingFailed`, `review` and `menu` calls.
-public class CaptureNativePlugin: NSObject, FlutterPlugin {
+/// `limitReached`, `recordingFailed`, `review`, `menu` and `updateAvailable`
+/// calls.
+public class CaptureNativePlugin: NSObject, FlutterPlugin, SPUUpdaterDelegate {
   private let channel: FlutterMethodChannel
   private let hotKey = HotKey()
   private let recorder = Recorder()
@@ -17,6 +20,8 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin {
   private var ticker: Timer?
   private var maxSeconds = 300.0
   private var limitSent = false
+  private lazy var updater = SPUStandardUpdaterController(
+    startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
 
   init(channel: FlutterMethodChannel) {
     self.channel = channel
@@ -42,6 +47,7 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin {
     recorder.onFailure = { [weak self] message in
       self?.channel.invokeMethod("recordingFailed", arguments: message)
     }
+    _ = updater
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -97,6 +103,9 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin {
       encode(args, result)
     case "showMainWindow":
       showMainWindow()
+      result(nil)
+    case "checkForUpdates":
+      updater.checkForUpdates(nil)
       result(nil)
     default:
       result(FlutterMethodNotImplemented)
@@ -174,5 +183,19 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin {
     case .notDetermined: return "undetermined"
     default: return "denied"
     }
+  }
+
+  // `flutter run` builds are build 1, so every release would look newer and
+  // offer to replace the development app.
+  public func updater(_ updater: SPUUpdater, mayPerform updateCheck: SPUUpdateCheck) throws {
+    #if DEBUG
+    throw NSError(
+      domain: SUSparkleErrorDomain, code: Int(SUError.noUpdateError.rawValue),
+      userInfo: [NSLocalizedDescriptionKey: "Debug builds do not update."])
+    #endif
+  }
+
+  public func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
+    channel.invokeMethod("updateAvailable", arguments: nil)
   }
 }

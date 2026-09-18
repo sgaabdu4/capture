@@ -30,5 +30,13 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUEnableInstallerLauncherService</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://github.com/sgaabdu4/capture/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>C1O1wd2He/1y/KsRO2SEHkNta0AqWv/tTM+4o/3HkV4=</string>
 </dict>
 </plist>

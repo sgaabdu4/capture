@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:capture/app/capture_app.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/domain/entities/notion_workspace.dart';
+import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
@@ -127,6 +129,25 @@ void main() {
     await _open(tester, AppWidgetKeys.recordButton);
     verifyNever(() => native.startRecording(any(), limit: any(named: 'limit')));
     verify(native.installMenu).called(1);
+  });
+
+  testWidgets('the update link checks for updates and offers the download once one is found', (
+    tester,
+  ) async {
+    final events = StreamController<NativeEvent>.broadcast();
+    addTearDown(events.close);
+    when(() => native.events).thenAnswer((_) => events.stream);
+    when(native.checkForUpdates).thenAnswer((_) async {});
+    await _launch(tester, support: support, native: native);
+
+    await tester.tap(find.text(_l10n.checkForUpdates));
+    verify(native.checkForUpdates).called(1);
+
+    events.add(const UpdateAvailable());
+    await _settle(tester);
+    expect(find.text(_l10n.checkForUpdates), findsNothing);
+    await tester.tap(find.text(_l10n.updateDownloadNow));
+    verify(native.checkForUpdates).called(1);
   });
 
   testWidgets('each page shows its truthful empty state', (tester) async {

@@ -34,6 +34,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navSettings => 'Settings';
 
   @override
+  String get checkForUpdates => 'Check for updates';
+
+  @override
+  String get updateDownloadNow => 'New version · Download now';
+
+  @override
   String get notionConnected => 'Notion connected';
 
   @override
