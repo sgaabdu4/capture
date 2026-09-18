@@ -44,18 +44,21 @@ const _model = NotionWorkspaceModel(
   maxUploadBytes: 1,
 );
 
+/// Groups that seed without complaint.
+_MockGroups _seededGroups() {
+  final groups = _MockGroups();
+  when(() => groups.seedIfEmpty(any())).thenAnswer((_) async => const .ok([]));
+  return groups;
+}
+
 /// The repository over [secrets] and [cache], with Jev and Notion answering
 /// through the returned mocks.
 final class _Fixture {
-  _Fixture() {
-    when(() => groups.seedIfEmpty(any())).thenAnswer((_) async => const .ok([]));
-  }
-
   final secrets = FakeSecrets();
   final cache = _Cache();
   final jev = _MockJev();
   final notion = _MockNotion();
-  final groups = _MockGroups();
+  final groups = _seededGroups();
 
   late final repository = SettingsRepository(
     secrets: secrets,

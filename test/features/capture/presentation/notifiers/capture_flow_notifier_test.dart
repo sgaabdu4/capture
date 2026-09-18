@@ -130,20 +130,20 @@ void main() {
   });
 
   test('a recording crashed mid-way keeps its length from the audio on disk; a tap is dropped', () {
-    final container = _container(_Saver());
+    final container = _container(.new());
     final audio = Directory.systemTemp.createTempSync('capture_flow_audio');
     addTearDown(() => audio.deleteSync(recursive: true));
     // PCM16 mono at 16 kHz: 32000 bytes a second.
-    final long = File('${audio.path}/long.pcm')..writeAsBytesSync(List.filled(64000, 0));
-    final tap = File('${audio.path}/tap.pcm')..writeAsBytesSync(List.filled(3200, 0));
+    final twoSeconds = File('${audio.path}/c1.pcm')..writeAsBytesSync(.filled(64000, 0));
+    final accidental = File('${audio.path}/c2.pcm')..writeAsBytesSync(.filled(3200, 0));
     final captures = container.read(captureRepositoryProvider)
-      ..put(_record('long', .recorded).copyWith(audioPath: long.path))
-      ..put(_record('tap', .recorded).copyWith(audioPath: tap.path));
+      ..put(_record('c1', .recorded).copyWith(audioPath: twoSeconds.path))
+      ..put(_record('c2', .recorded).copyWith(audioPath: accidental.path));
 
     container.read(captureFlowProvider.notifier).recoverInterrupted();
 
-    expect(captures.get('long')?.duration, equals(const Duration(seconds: 2)));
-    expect(captures.get('tap'), isNull);
+    expect(captures.get('c1')?.duration, equals(const Duration(seconds: 2)));
+    expect(captures.get('c2'), isNull);
   });
 
   test('a recording is capped at five minutes and stops when the recorder hits it', () async {
@@ -154,7 +154,7 @@ void main() {
     when(native.micPermission).thenAnswer((_) async => MicPermission.granted);
     when(() => native.startRecording(any(), limit: any(named: 'limit'))).thenAnswer((_) async {});
     when(native.stopRecording).thenAnswer((_) async => null);
-    final container = _container(_Saver(), native: native);
+    final container = _container(.new(), native: native);
     final flow = container.read(captureFlowProvider.notifier);
 
     await flow.start();

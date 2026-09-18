@@ -1,4 +1,3 @@
-import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/domain/values/result.dart';
@@ -35,24 +34,35 @@ class _AllowedReminders implements IReminderDatasource {
   Future<void> cancel(String itemId) async {}
 }
 
-/// A saved capture with one task whose reminder is after [FakeSystem.now].
+/// A task whose reminder is after [FakeSystem.now].
+const _dentist = ProposalItem(
+  id: 'item-1',
+  sources: [],
+  kind: .task,
+  groupId: 'g',
+  title: 'Call the dentist',
+  body: '',
+  reminder: .new(2026, 9, 19, hour: 9, minute: 0),
+);
+
+/// A task with no reminder.
+const _tomatoes = ProposalItem(
+  id: 'item-2',
+  sources: [],
+  kind: .task,
+  groupId: 'g',
+  title: 'Plant tomatoes',
+  body: '',
+);
+
+/// A saved capture with [_dentist].
 final _record = CaptureRecord(
   id: 'c1',
   capturedAtUtc: FakeSystem.now,
   timeZone: FakeSystem.zone,
   audioPath: 'c1.m4a',
   stage: .saved,
-  items: const [
-    .new(
-      id: 'item-1',
-      sources: [],
-      kind: .task,
-      groupId: 'g',
-      title: 'Call the dentist',
-      body: '',
-      reminder: .new(2026, 9, 19, hour: 9, minute: 0),
-    ),
-  ],
+  items: const [_dentist],
 );
 
 /// Schedules [_record]'s reminder; [stored] is whether the local store
@@ -84,41 +94,35 @@ const _workspace = NotionWorkspace(
 );
 
 /// [_record] approved with a second item and no audio to upload.
-final _approved = _record.copyWith(
-  stage: .approved,
-  items: [
-    ..._record.items,
-    _record.items.first.copyWith(id: 'item-2', title: 'Plant tomatoes', reminder: null),
-  ],
-);
+final _approved = _record.copyWith(stage: .approved, items: const [_dentist, _tomatoes]);
 
 /// Notion with nothing saved yet, where creating [failingItem]'s page fails
-/// once and then works. [created] lists every page Notion was asked to make.
-final class _Notion {
-  _Notion({required String failingItem}) {
-    var failed = false;
-    when(() => remote.findCapturePage(any(), any())).thenAnswer((_) async => const .ok(null));
-    when(() => remote.findItemPage(any(), any())).thenAnswer((_) async => const .ok(null));
-    when(() => remote.createCapturePage(any(), any())).thenAnswer((_) async {
-      created.add('capture');
-      return const .ok('capture-page');
-    });
-    when(
-      () => remote.createItemPage(any(), any(), any(), capturePageId: any(named: 'capturePageId')),
-    ).thenAnswer((call) async {
-      final id = call.positionalArguments.whereType<ProposalItem>().single.id;
-      created.add(id);
-      if (id == failingItem && !failed) {
-        failed = true;
-        return const .err(NotionFailure.unavailable);
-      }
-      return .ok('page-$id');
-    });
-    when(() => remote.markSaved(any())).thenAnswer((_) async => const .ok(null));
-  }
-
+/// once and then works. Every page Notion is asked to make goes into
+/// [created].
+_MockRemote _notion({required String failingItem, required List<String> created}) {
   final remote = _MockRemote();
-  final created = <String>[];
+  bool failed = false;
+  when(() => remote.findCapturePage(any(), any())).thenAnswer((_) async => const .ok(null));
+  when(() => remote.findItemPage(any(), any())).thenAnswer((_) async => const .ok(null));
+  when(() => remote.createCapturePage(any(), any())).thenAnswer((_) async {
+    created.add('capture');
+    return const .ok('capture-page');
+  });
+  when(() => remote.createItemPage(any(), any(), any(), capturePageId: any(named: 'capturePageId')))
+      .thenAnswer((call) async {
+        final id = switch (call.positionalArguments) {
+          [_, _, ProposalItem(:final id)] => id,
+          _ => fail('createItemPage without an item'),
+        };
+        created.add(id);
+        if (id == failingItem && !failed) {
+          failed = true;
+          return const .err(.unavailable);
+        }
+        return .ok('page-$id');
+      });
+  when(() => remote.markSaved(any())).thenAnswer((_) async => const .ok(null));
+  return remote;
 }
 
 void main() {
@@ -127,18 +131,18 @@ void main() {
     registerFallbackValue(CaptureRecordModel.fromEntity(_record));
     registerFallbackValue(_workspace);
     registerFallbackValue(_record);
-    registerFallbackValue(_record.items.first);
+    registerFallbackValue(_dentist);
   });
 
   test('a save that fails at an item page resumes on retry and creates nothing twice', () async {
-    final notion = _Notion(failingItem: 'item-2');
+    final created = <String>[];
     final local = _MockLocal();
     final writes = <CaptureRecordModel>[];
     when(
       () => local.put(any()),
     ).thenAnswer((call) => writes.addAll(call.positionalArguments.whereType<CaptureRecordModel>()));
     final repository = CaptureSaveRepository(
-      remote: notion.remote,
+      remote: _notion(failingItem: 'item-2', created: created),
       storage: (records: local, audio: _MockAudio()),
       reminders: _AllowedReminders(),
       system: FakeSystem(),
@@ -152,7 +156,7 @@ void main() {
       Ok(:final value) => value.progress,
       Err(:final failure) => fail('Retry failed: $failure'),
     };
-    expect(notion.created, equals(['capture', 'item-1', 'item-2', 'item-2']));
+    expect(created, equals(['capture', 'item-1', 'item-2', 'item-2']));
     expect(progress.itemPages, equals({'item-1': 'page-item-1', 'item-2': 'page-item-2'}));
     expect(progress.markedSaved, isTrue);
   });
