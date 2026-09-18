@@ -60,11 +60,10 @@ Future<void> main(List<String> args) async {
       report.pending.add(c.id);
     }
   }
-  if (args.contains('--prune') && pending.isEmpty) {
+  if (args.contains('--prune') && !live && pending.isEmpty) {
     _store.writeAsStringSync(
-      const JsonEncoder.withIndent(' ').convert({
-        for (final h in client.used) h: recorded[h],
-      }),
+      const JsonEncoder.withIndent(' ')
+          .convert({for (final h in client.used) h: recorded[h]}),
     );
     stdout.writeln('kept ${client.used.length} of ${recorded.length}');
   }
@@ -154,10 +153,14 @@ class _Report {
     if (coverageProblems(c.transcript, spans).isNotEmpty) sourceLoss++;
     final gold = c.goldBoundaries.toSet();
     final predicted = a.items.skip(1).map((i) => i.sources.first.start).toSet();
+    final unexpected = predicted.difference(gold);
     goldBoundaries += gold.length;
     predictedBoundaries += predicted.length;
     correctBoundaries += gold.intersection(predicted).length;
-    final problems = <String>[];
+    final problems = <String>[
+      for (final o in unexpected)
+        'unexpected item at "${c.transcript.substring(o, (o + 24).clamp(0, c.transcript.length))}"',
+    ];
     for (final e in c.expected) {
       final start = c.transcript.indexOf(e.startsWith);
       final item = a.items
