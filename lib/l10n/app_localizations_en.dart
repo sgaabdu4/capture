@@ -263,7 +263,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notionNotShared =>
-      'Capture can’t see that page. In Notion open it, then ••• → Connections → Add connection.';
+      'Capture can’t see that page. In Notion open it, then ••• → Connections → Add connection → Capture.';
 
   @override
   String get notionMissingCapability =>
@@ -510,7 +510,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notionNeeded =>
-      'Create an internal connection in Notion (Settings → Connections → Develop or manage connections), share one page with it (••• → Connections → Add connection), then paste its token and the page link.';
+      'Create a Notion connection with an access token, add it to one page, then paste the token and the page link here.';
 
   @override
   String get notionTokenHintNew => 'Internal connection token (ntn_…)';
@@ -520,6 +520,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notionPageHint => 'Link to the Notion page Capture may use';
+
+  @override
+  String get notionShowMe => 'Show me how';
+
+  @override
+  String get notionGuideTitle => 'Connect Notion';
+
+  @override
+  String get notionGuideStep1 =>
+      'In Notion, open Settings → Developer and choose Open developer tools.';
+
+  @override
+  String get notionGuideStep2 => 'Under Connections, choose New connection.';
+
+  @override
+  String get notionGuideStep3 =>
+      'Name it Capture, keep Access token selected, then choose Create connection.';
+
+  @override
+  String get notionGuideStep4 =>
+      'Check that Read, Update and Insert content are ticked. Copy the access token and paste it into Capture.';
+
+  @override
+  String get notionGuideStep5 =>
+      'Open the page Capture may use, then choose ••• → Connections → Add connection → Capture.';
+
+  @override
+  String get notionGuideStep6 =>
+      'Choose Add to page. Copy the page link (••• → Copy link) and paste it into Capture.';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String numberedStep(int number, String step) {
+    return '$number. $step';
+  }
 
   @override
   String get connect => 'Connect';

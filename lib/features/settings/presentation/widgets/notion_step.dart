@@ -4,6 +4,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
+import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +22,7 @@ class NotionStep extends StatefulWidget {
     required this.connecting,
     required this.error,
     required this.onConnect,
+    required this.onShowGuide,
     super.key,
   });
 
@@ -34,6 +36,9 @@ class NotionStep extends StatefulWidget {
   /// Why the last attempt failed, if it did.
   final String? error;
   final NotionConnect onConnect;
+
+  /// Opens the pictured guide to creating the connection.
+  final VoidCallback onShowGuide;
 
   @override
   State<NotionStep> createState() => _NotionStepState();
@@ -80,8 +85,15 @@ class _NotionStepState extends State<NotionStep> {
         Padding(
           padding: StepHeader.bodyInset,
           child: Column(
+            crossAxisAlignment: .start,
             spacing: Spacing.xs,
             children: [
+              LinkButton(
+                l10n.notionShowMe,
+                key: const ValueKey(AppWidgetKeys.notionGuideButton),
+                icon: Icons.help_outline,
+                onPressed: widget.onShowGuide,
+              ),
               TextField(
                 key: const ValueKey(AppWidgetKeys.notionTokenField),
                 controller: _token,

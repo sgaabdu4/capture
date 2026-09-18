@@ -22,6 +22,10 @@ abstract final class Sizes {
   static const double spinnerStroke = 2;
   static const double groupMenuWidth = 170;
   static const double dialogWidth = 460;
+
+  /// The Notion guide's pictures at half their 2x pixel width.
+  static const double guideWidth = 520;
+  static const double guideHeight = 560;
   static const double setupMaxWidth = 760;
   static const double cardsMaxWidth = 1080;
   static const double hairline = 1;

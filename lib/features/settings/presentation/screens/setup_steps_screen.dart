@@ -10,6 +10,7 @@ import 'package:capture/features/settings/presentation/extensions/settings_label
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_state.dart';
 import 'package:capture/features/settings/presentation/widgets/model_step.dart';
+import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
 import 'package:capture/features/settings/presentation/widgets/notion_step.dart';
 import 'package:capture/features/settings/presentation/widgets/typesafe_step.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,13 @@ class SetupStepsScreen extends ConsumerWidget {
   const SetupStepsScreen({super.key});
 
   static const _dividerHeight = Spacing.xl + Spacing.xs;
+  static const _notionGuideRoute = 'notion-guide-dialog';
+
+  Future<void> _showNotionGuide(BuildContext context) => showDialog<void>(
+    context: context,
+    routeSettings: const .new(name: _notionGuideRoute),
+    builder: (dialogContext) => NotionGuideDialog(onClose: () => Navigator.of(dialogContext).pop()),
+  );
 
   Future<bool> _saveKey(BuildContext context, WidgetRef ref, String key) async {
     await ref.read(settingsProvider.notifier).saveTypesafeKey(key);
@@ -102,6 +110,7 @@ class SetupStepsScreen extends ConsumerWidget {
           error: linkInvalid ? l10n.notionPageMissing : failure?.label(l10n),
           onConnect: ({required token, required pageLink}) =>
               _connect(context, ref, token: token, pageLink: pageLink),
+          onShowGuide: () => unawaited(_showNotionGuide(context)),
         ),
       ],
     );

@@ -521,7 +521,7 @@ abstract class AppLocalizations {
   /// No description provided for @notionNotShared.
   ///
   /// In en, this message translates to:
-  /// **'Capture can’t see that page. In Notion open it, then ••• → Connections → Add connection.'**
+  /// **'Capture can’t see that page. In Notion open it, then ••• → Connections → Add connection → Capture.'**
   String get notionNotShared;
 
   /// No description provided for @notionMissingCapability.
@@ -935,7 +935,7 @@ abstract class AppLocalizations {
   /// No description provided for @notionNeeded.
   ///
   /// In en, this message translates to:
-  /// **'Create an internal connection in Notion (Settings → Connections → Develop or manage connections), share one page with it (••• → Connections → Add connection), then paste its token and the page link.'**
+  /// **'Create a Notion connection with an access token, add it to one page, then paste the token and the page link here.'**
   String get notionNeeded;
 
   /// No description provided for @notionTokenHintNew.
@@ -955,6 +955,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Link to the Notion page Capture may use'**
   String get notionPageHint;
+
+  /// No description provided for @notionShowMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Show me how'**
+  String get notionShowMe;
+
+  /// No description provided for @notionGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Notion'**
+  String get notionGuideTitle;
+
+  /// No description provided for @notionGuideStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'In Notion, open Settings → Developer and choose Open developer tools.'**
+  String get notionGuideStep1;
+
+  /// No description provided for @notionGuideStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Under Connections, choose New connection.'**
+  String get notionGuideStep2;
+
+  /// No description provided for @notionGuideStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Name it Capture, keep Access token selected, then choose Create connection.'**
+  String get notionGuideStep3;
+
+  /// No description provided for @notionGuideStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Check that Read, Update and Insert content are ticked. Copy the access token and paste it into Capture.'**
+  String get notionGuideStep4;
+
+  /// No description provided for @notionGuideStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the page Capture may use, then choose ••• → Connections → Add connection → Capture.'**
+  String get notionGuideStep5;
+
+  /// No description provided for @notionGuideStep6.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Add to page. Copy the page link (••• → Copy link) and paste it into Capture.'**
+  String get notionGuideStep6;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @numberedStep.
+  ///
+  /// In en, this message translates to:
+  /// **'{number}. {step}'**
+  String numberedStep(int number, String step);
 
   /// No description provided for @connect.
   ///

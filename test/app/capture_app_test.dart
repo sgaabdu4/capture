@@ -82,4 +82,18 @@ void main() {
     await _open(tester, AppWidgetKeys.settingsButton);
     expect(find.byKey(const ValueKey(AppWidgetKeys.typesafeKeyField)), findsOneWidget);
   });
+
+  testWidgets('the Notion step shows a picture for every setup step', (tester) async {
+    await _launch(tester, support: support, native: native);
+
+    await tester.ensureVisible(find.byKey(const ValueKey(AppWidgetKeys.notionGuideButton)));
+    await _open(tester, AppWidgetKeys.notionGuideButton);
+
+    expect(find.text(_l10n.notionGuideTitle), findsOneWidget);
+    expect(find.textContaining(_l10n.notionGuideStep6), findsOneWidget);
+    expect(find.byType(Image), findsNWidgets(6));
+    await tester.tap(find.text(_l10n.close));
+    await _settle(tester);
+    expect(find.text(_l10n.notionGuideTitle), findsNothing);
+  });
 }

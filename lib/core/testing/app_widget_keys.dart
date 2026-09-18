@@ -19,6 +19,7 @@ abstract final class AppWidgetKeys {
   static const notionTokenField = 'setup.notion.token';
   static const notionPageField = 'setup.notion.page';
   static const notionConnectButton = 'setup.notion.connect';
+  static const notionGuideButton = 'setup.notion.guide';
   static const notionDisconnectButton = 'setup.notion.disconnect';
   static const shortcutChangeButton = 'settings.shortcut.change';
   static const micAllowButton = 'settings.mic.allow';

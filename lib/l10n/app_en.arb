@@ -150,7 +150,7 @@
   "jevNetwork": "Couldn’t reach TypeSafe. Check your connection.",
   "jevInvalidResponse": "TypeSafe returned an unexpected response.",
   "notionInvalidToken": "Notion rejected the token.",
-  "notionNotShared": "Capture can’t see that page. In Notion open it, then ••• → Connections → Add connection.",
+  "notionNotShared": "Capture can’t see that page. In Notion open it, then ••• → Connections → Add connection → Capture.",
   "notionMissingCapability": "The Notion connection needs read, update and insert content capabilities.",
   "notionBlockLimit": "This Notion workspace has reached its free-plan block limit.",
   "notionRateLimited": "Notion is busy. Try again in a minute.",
@@ -282,10 +282,26 @@
     }
   },
   "notionYourWorkspace": "your workspace",
-  "notionNeeded": "Create an internal connection in Notion (Settings → Connections → Develop or manage connections), share one page with it (••• → Connections → Add connection), then paste its token and the page link.",
+  "notionNeeded": "Create a Notion connection with an access token, add it to one page, then paste the token and the page link here.",
   "notionTokenHintNew": "Internal connection token (ntn_…)",
   "notionTokenHintReplace": "Paste a new token to replace it",
   "notionPageHint": "Link to the Notion page Capture may use",
+  "notionShowMe": "Show me how",
+  "notionGuideTitle": "Connect Notion",
+  "notionGuideStep1": "In Notion, open Settings → Developer and choose Open developer tools.",
+  "notionGuideStep2": "Under Connections, choose New connection.",
+  "notionGuideStep3": "Name it Capture, keep Access token selected, then choose Create connection.",
+  "notionGuideStep4": "Check that Read, Update and Insert content are ticked. Copy the access token and paste it into Capture.",
+  "notionGuideStep5": "Open the page Capture may use, then choose ••• → Connections → Add connection → Capture.",
+  "notionGuideStep6": "Choose Add to page. Copy the page link (••• → Copy link) and paste it into Capture.",
+  "close": "Close",
+  "numberedStep": "{number}. {step}",
+  "@numberedStep": {
+    "placeholders": {
+      "number": {"type": "int"},
+      "step": {"type": "String"}
+    }
+  },
   "connect": "Connect",
   "reconnect": "Reconnect",
   "disconnect": "Disconnect",
