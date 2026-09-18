@@ -1,6 +1,6 @@
 # Capture macOS alpha
 
-Status: Ready
+Status: Complete
 
 ## Outcome + scope
 
@@ -32,13 +32,13 @@ Each item names its proof. "Live" means an opt-in run with the owner's own keys 
 - [x] A10 Settings/onboarding: TypeSafe key and Notion token stored only in Keychain (legacy keychain), validated with `GET /v1/models` and `GET /v1/users/me`; Notion parent page chosen by URL/ID and access checked. Proof: `test/features/settings/repositories/settings_repository_test.dart` (a refused key or token is never stored) + live validation in `test/live/capture_e2e_test.dart`, run by the owner 2026-09-18.
 - [x] A11 Notion schema setup under the parent (Capture area page, Groups/Captures/Library data sources, marker) is idempotent; Groups editor edits the Groups data source. Proof: `test/features/settings/data/datasources/notion_workspace_remote_datasource_test.dart` (a second setup finds the area and databases, creating nothing) + live setup and fresh-Mac rediscovery in `test/live/capture_e2e_test.dart`, run by the owner 2026-09-18.
 - [x] A12 Approved save: capture page → items → audio upload (M4A, within the workspace upload limit) → mark Saved; per-step progress persisted in SQLite; retry resumes after the last confirmed step and never duplicates (lookup by stable IDs before re-creating). Proof: `test/features/capture/repositories/capture_save_repository_test.dart` (a failed item page resumes on retry, nothing created twice) + live save and re-save without duplicates in `test/live/capture_e2e_test.dart`, run by the owner 2026-09-18.
-- [ ] A13 Reminders are scheduled only for approved, persisted tasks with a reminder (UNUserNotificationCenter); none before approval. Proof: `test/features/capture/presentation/notifiers/capture_flow_notifier_test.dart`, `test/features/capture/repositories/capture_save_repository_test.dart` + a notification seen firing (pending: notifications not yet allowed).
+- [x] A13 Reminders are scheduled only for approved, persisted tasks with a reminder (UNUserNotificationCenter); none before approval. Proof: `test/features/capture/presentation/notifiers/capture_flow_notifier_test.dart`, `test/features/capture/repositories/capture_save_repository_test.dart` + owner allowed notifications and saw a saved task's reminder fire 2026-09-18.
 - [x] A14 Main window (Home, Groups, Recordings, To-do, Upcoming) and menu-bar popover (Record, Open app, Settings, Quit) match the approved references with the documented deviations, with truthful empty/error states. Proof: rendered screenshots in `docs/screenshots/`, `test/app/responsive_layout_test.dart` + owner review against the references 2026-09-18.
 - [x] A15 README documents setup, keys, model licence, privacy and limits. Proof: `README.md`. Screenshots in `docs/screenshots/` are test-rendered from `test/helpers/sample_workspace.dart`; the ⌃⌥ glyphs were painted in afterwards because `flutter test` has no font fallback.
 - [x] A17 A saved note or task can be edited from the app (title, body, group, due, reminder): Notion is updated first, then the local mirror, and the task's reminder is cancelled and rescheduled in the Mac's current time zone. Only the leading body paragraphs are replaced; source quotes and anything else on the page stay. Owner request 2026-09-18. Proof: `test/features/library/` repository + remote tests + owner edited a saved item in the app and saw it in Notion 2026-09-18.
 - [x] A18 A saved note or task can be deleted from the app after confirmation: the Notion page moves to Notion's trash (recoverable there), it leaves the local mirror and its reminder is cancelled. Owner request 2026-09-18. Proof: `test/features/library/` tests + owner deleted a saved item in the app and found it in Notion's trash 2026-09-18.
 - [x] A19 To-do has a plain text search over saved note and task titles (case-insensitive, local, no AI); bodies are not searched because they are not mirrored locally. Owner request 2026-09-18. Proof: `test/features/library/presentation/notifiers/library_state_test.dart` + `test/app/capture_app_test.dart` (search finds and edits a note).
-- [ ] A16 Full E2E: shortcut in another app → speak → review → approve → Notion rows + audio + reminder. Proof: owner's live runs recorded under Verification; open until the reminder notification is seen (A13).
+- [x] A16 Full E2E: shortcut in another app → speak → review → approve → Notion rows + audio + reminder. Proof: owner's live runs recorded under Verification.
 
 Documented deviations from the mockups: shortcut shown as the configured keys (default ⌃⌥, not ⌘R, which apps already use); no Weekly summary; no nav item selected on Home; no active mic/waveform while reviewing; count line on the review card; truthful empty states instead of sample data; below 840 px wide a bottom navigation bar replaces the sidebar, content is capped at 1280 px and centred, and the window's minimum size is 320×480 (owner request 2026-09-18, proof `test/app/responsive_layout_test.dart`).
 
@@ -67,6 +67,8 @@ Review: Covers Home, Groups, Recordings, To-do, Upcoming, Settings, the editor, 
 
 ## Verification
 
-Result: Pending
-Evidence: 2026-09-18, owner-reported: `E2E_LIVE=1 … flutter test test/live/capture_e2e_test.dart` passed both live tests (spoken capture → review → Yes → Notion capture, items and audio → reminder requested → re-save duplicates nothing; fresh Mac finds the same setup). In the real app the owner ran ⌃⌥ from another app with their own voice through to Notion, and edited and deleted a saved item. Not yet seen: a reminder notification firing (A13).
-E2E: Required — shortcut from another app → speak → review → approve → Notion + reminder.
+Result: Passed
+Evidence: 2026-09-18, owner-reported: `E2E_LIVE=1 … flutter test test/live/capture_e2e_test.dart` passed both live tests (spoken capture → review → Yes → Notion capture, items and audio → reminder requested → re-save duplicates nothing; fresh Mac finds the same setup). In the real app the owner ran ⌃⌥ from another app with their own voice through to Notion, edited and deleted a saved item, and saw a saved task's reminder notification fire. `flutter test`: 108 passed, 2 live skipped; `flutter analyze`: no issues.
+E2E: Passed — owner ran ⌃⌥ from another app → own voice → review → Yes, save → Notion capture, items and audio → reminder notification fired, 2026-09-18.
+Delivery target: PR
+Delivery: Pending — branch not yet pushed to the owner's private GitHub repo; no PR opened.
