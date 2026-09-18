@@ -1,5 +1,13 @@
 {
   "ignore_patterns": [
     ".agents/**"
+  ],
+  "boundaries": [
+    { "from": "lib/domain", "disallow": "lib/services" },
+    { "from": "lib/domain", "disallow": "lib/app" },
+    { "from": "lib/domain", "disallow": "lib/ui" },
+    { "from": "lib/services", "disallow": "lib/app" },
+    { "from": "lib/services", "disallow": "lib/ui" },
+    { "from": "lib/app", "disallow": "lib/ui" }
   ]
 }
