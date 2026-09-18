@@ -11,7 +11,7 @@ import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/domain/group_rules.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/groups/presentation/widgets/group_dialog.dart';
-import 'package:capture/features/groups/presentation/widgets/group_section.dart';
+import 'package:capture/features/groups/presentation/widgets/group_list.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:flutter/material.dart';
@@ -80,27 +80,15 @@ class GroupsScreen extends ConsumerWidget {
         ),
       ],
       children: [
-        GroupSection(
-          groups: active,
+        GroupList(
+          active: active,
+          archived: archived,
           entries: entries,
           busy: busy,
           onEdit: (group) => unawaited(_edit(context, ref, group)),
           onArchive: (group) => unawaited(_setArchived(ref, group, archived: true)),
           onRestore: (group) => unawaited(_setArchived(ref, group, archived: false)),
         ),
-        if (archived.isNotEmpty) ...[
-          const SizedBox(height: Spacing.lg),
-          Text(l10n.archivedHeader, style: context.textTheme.labelMedium),
-          const SizedBox(height: Spacing.xs),
-          GroupSection(
-            groups: archived,
-            entries: entries,
-            busy: busy,
-            onEdit: (group) => unawaited(_edit(context, ref, group)),
-            onArchive: (group) => unawaited(_setArchived(ref, group, archived: true)),
-            onRestore: (group) => unawaited(_setArchived(ref, group, archived: false)),
-          ),
-        ],
       ],
     );
   }
