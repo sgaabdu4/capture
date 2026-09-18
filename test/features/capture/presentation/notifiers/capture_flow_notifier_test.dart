@@ -60,7 +60,7 @@ ProviderContainer _container(_Saver saver) {
   final library = _MockLibrary();
   when(library.cached).thenReturn([]);
   when(() => library.refresh(any())).thenAnswer((_) async => const .ok([]));
-  return ProviderContainer.test(
+  return .test(
     overrides: [
       ...appOverrides(support: support, native: stubNative()),
       settingsProvider.overrideWith(_Connected.new),
