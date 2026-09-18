@@ -27,7 +27,7 @@ class EntryDialogActions extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return SizedBox(
-      width: double.infinity,
+      width: .infinity,
       child: Wrap(
         alignment: .spaceBetween,
         crossAxisAlignment: .center,
