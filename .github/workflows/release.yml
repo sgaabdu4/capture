@@ -2,11 +2,12 @@ name: Release
 
 # Every merge to main: build Capture.app, pack it into a DMG and, once the
 # Hard Eng check on the same commit has passed, publish it as a GitHub
-# pre-release.
+# pre-release. Pull requests build and pack the DMG without publishing.
 on:
   push:
     branches:
       - main
+  pull_request:
 
 permissions: {}
 
@@ -44,6 +45,7 @@ jobs:
           hdiutil create -volname Capture -srcfolder "$stage" -ov -format UDZO "$RUNNER_TEMP/Capture.dmg"
           hdiutil verify "$RUNNER_TEMP/Capture.dmg"
       - name: Wait for the hard-eng check
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ github.sha }}
@@ -59,6 +61,7 @@ jobs:
           echo "hard-eng did not finish within 20 minutes; not publishing."
           exit 1
       - name: Publish the pre-release
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ github.sha }}
