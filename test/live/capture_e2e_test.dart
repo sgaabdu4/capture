@@ -7,7 +7,8 @@
 //     flutter test test/live/capture_e2e_test.dart
 //
 // Uses your own keys and only the dedicated test page in NOTION_PAGE; each
-// run adds one "E2E" capture with its items and audio there. The speech is
+// run adds one capture (a dentist task and a garden idea) with its items and
+// audio there. The speech is
 // synthetic (macOS `say`), and the microphone, overlay and notification
 // centre are stand-ins: the recorder writes that speech and reminders are
 // recorded instead of shown. PARAKEET_DIR defaults to the app's downloaded
