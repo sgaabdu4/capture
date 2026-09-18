@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png" alt="Capture app icon" width="128">
+
 # Capture
 
 **Say anything. We'll sort it.**
