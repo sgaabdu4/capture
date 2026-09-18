@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:capture/core/data/notion/notion_keys.dart';
 import 'package:capture/core/data/secrets/secrets_local_datasource.dart';
 import 'package:capture/core/domain/values/result.dart';
+import 'package:capture/core/extensions/retry_after.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -67,7 +68,6 @@ class NotionHttpService implements INotionHttpService {
   static const baseUrl = 'https://api.notion.com';
   static const maxRetries = 3;
   static const timeout = Duration(seconds: 60);
-  static const _maxRetryAfter = Duration(seconds: 60);
   static const _backoffBase = Duration(seconds: 1);
   static const _backoffCap = Duration(seconds: 8);
   static const _jitterMs = 250;
@@ -187,12 +187,7 @@ class NotionHttpService implements INotionHttpService {
   };
 
   Duration _delay(int attempt, http.Response? response) {
-    final header = response?.headers[HttpHeaders.retryAfterHeader];
-    final seconds = header == null ? null : int.tryParse(header);
-    if (seconds != null) {
-      final wait = Duration(seconds: seconds);
-      return wait > _maxRetryAfter ? _maxRetryAfter : wait;
-    }
+    if (response?.retryAfter case final Duration wait) return wait;
     final base = _backoffBase * pow(2, attempt).toInt();
     return (base > _backoffCap ? _backoffCap : base) +
         Duration(milliseconds: _random.nextInt(_jitterMs));

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:capture/core/extensions/retry_after.dart';
 import 'package:capture/features/capture/domain/jev/jev_failure.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -38,7 +39,6 @@ class JevHttpService implements IJevHttpService {
   static const timeout = Duration(seconds: 30);
   static const _requestIdHeader = 'x-typesafe-request-id';
   static const _jsonContentType = 'application/json';
-  static const _maxRetryAfter = Duration(seconds: 60);
   static const _backoffBase = Duration(milliseconds: 500);
   static const _backoffCap = Duration(seconds: 5);
   static const _maxJitter = 0.25;
@@ -107,12 +107,7 @@ class JevHttpService implements IJevHttpService {
       status >= HttpStatus.internalServerError;
 
   Duration _delay(int attempt, http.Response? response) {
-    final header = response?.headers[HttpHeaders.retryAfterHeader];
-    final seconds = header == null ? null : int.tryParse(header);
-    if (seconds != null) {
-      final wait = Duration(seconds: seconds);
-      return wait > _maxRetryAfter ? _maxRetryAfter : wait;
-    }
+    if (response?.retryAfter case final Duration wait) return wait;
     final doubled = _backoffBase * pow(2, attempt).toInt();
     final base = doubled > _backoffCap ? _backoffCap : doubled;
     return base * (1 - _maxJitter * _random.nextDouble());
