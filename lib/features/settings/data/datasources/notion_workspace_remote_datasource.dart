@@ -132,6 +132,8 @@ class NotionWorkspaceRemoteDatasource implements INotionWorkspaceRemoteDatasourc
       case Err(:final failure):
         return .err(failure);
     }
+    // The link may be the Capture page itself rather than the page holding it.
+    if (children.any(_isMarker)) return .ok(parentPageId);
     for (final child in children) {
       if (child case {
         'type': 'child_page',
@@ -154,18 +156,17 @@ class NotionWorkspaceRemoteDatasource implements INotionWorkspaceRemoteDatasourc
 
   Future<NotionResult<bool>> _isMarked(String pageId, String token) async =>
       switch (await childrenOf(_http, pageId, token: token)) {
-        Ok(:final value) => .ok(
-          value.any(
-            (b) => switch (b) {
-              {'type': 'paragraph', 'paragraph': {'rich_text': final Object? text}} => plainText(
-                text,
-              ).startsWith(areaMarkerPrefix),
-              _ => false,
-            },
-          ),
-        ),
+        Ok(:final value) => .ok(value.any(_isMarker)),
         Err(:final failure) => .err(failure),
       };
+
+  /// The paragraph Capture writes at the top of its area page.
+  static bool _isMarker(Json block) => switch (block) {
+    {'type': 'paragraph', 'paragraph': {'rich_text': final Object? text}} => plainText(
+      text,
+    ).startsWith(areaMarkerPrefix),
+    _ => false,
+  };
 
   Future<NotionResult<Map<String, String>>> _findDataSources(String areaId, String token) async {
     final List<Json> children;
