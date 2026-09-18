@@ -63,12 +63,12 @@ Then, once, in the app:
 | Groups | Name and describe your groups. Jev uses the descriptions to file things. |
 | Shortcut | **Settings → Record shortcut**, press the keys, then **Save shortcut**. |
 
-Works at any window size, from phone width up to a 4K screen:
+Narrow the window and the sidebar becomes a bottom bar. On large screens the content stays centred.
 
 <p align="center">
-  <img src="docs/screenshots/phone-home.png" alt="Home at phone width" width="240">
+  <img src="docs/screenshots/phone-home.png" alt="Capture in a narrow window, with the bottom bar" width="240">
   &nbsp;
-  <img src="docs/screenshots/phone-upcoming.png" alt="Upcoming at phone width" width="240">
+  <img src="docs/screenshots/phone-upcoming.png" alt="Upcoming in a narrow window" width="240">
 </p>
 
 ## Privacy
