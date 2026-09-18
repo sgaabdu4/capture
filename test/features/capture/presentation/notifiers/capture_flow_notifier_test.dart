@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:capture/core/domain/entities/notion_workspace.dart';
+import 'package:capture/core/services/native_event.dart';
+import 'package:capture/core/services/native_platform_service.dart';
+import 'package:capture/features/capture/domain/capture_limits.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
@@ -33,6 +36,17 @@ class _Connected extends SettingsNotifier {
   SettingsState build() => super.build().copyWith(workspace: _workspace, hasNotionToken: true);
 }
 
+/// Key, Notion and speech model all in place, so a capture can start.
+class _Ready extends SettingsNotifier {
+  @override
+  SettingsState build() => super.build().copyWith(
+    workspace: _workspace,
+    hasNotionToken: true,
+    hasTypesafeKey: true,
+    modelReady: true,
+  );
+}
+
 /// Notion confirms every step at once; reminders wait on [prompt], like an
 /// unanswered macOS notification prompt.
 class _Saver implements ICaptureSaveRepository {
@@ -53,8 +67,9 @@ class _Saver implements ICaptureSaveRepository {
 
 class _MockLibrary extends Mock implements ILibraryRepository {}
 
-/// The real flow and on-disk store, connected to Notion, with [saver].
-ProviderContainer _container(_Saver saver) {
+/// The real flow and on-disk store, connected to Notion, with [saver]; with
+/// [native] as the Mac side and every setup step done when it is given.
+ProviderContainer _container(_Saver saver, {INativePlatformService? native}) {
   final support = Directory.systemTemp.createTempSync('capture_flow_test');
   addTearDown(() => support.deleteSync(recursive: true));
   final library = _MockLibrary();
@@ -62,8 +77,8 @@ ProviderContainer _container(_Saver saver) {
   when(() => library.refresh(any())).thenAnswer((_) async => const .ok([]));
   return .test(
     overrides: [
-      ...appOverrides(support: support, native: stubNative()),
-      settingsProvider.overrideWith(_Connected.new),
+      ...appOverrides(support: support, native: native ?? stubNative()),
+      settingsProvider.overrideWith(native == null ? _Connected.new : _Ready.new),
       captureSaveRepositoryProvider.overrideWithValue(saver),
       libraryRepositoryProvider.overrideWithValue(library),
     ],
@@ -79,7 +94,10 @@ CaptureRecord _record(String id, CaptureStage stage) => .new(
 );
 
 void main() {
-  setUpAll(() => registerFallbackValue(_workspace));
+  setUpAll(() {
+    registerFallbackValue(_workspace);
+    registerFallbackValue(Duration.zero);
+  });
 
   test('a save ends as Saved while the reminder permission prompt is unanswered', () async {
     final saver = _Saver();
@@ -109,5 +127,44 @@ void main() {
     await container.read(captureFlowProvider.notifier).resumeReminders();
 
     expect(saver.reminded, equals(['saved']));
+  });
+
+  test('a recording crashed mid-way keeps its length from the audio on disk; a tap is dropped', () {
+    final container = _container(_Saver());
+    final audio = Directory.systemTemp.createTempSync('capture_flow_audio');
+    addTearDown(() => audio.deleteSync(recursive: true));
+    // PCM16 mono at 16 kHz: 32000 bytes a second.
+    final long = File('${audio.path}/long.pcm')..writeAsBytesSync(List.filled(64000, 0));
+    final tap = File('${audio.path}/tap.pcm')..writeAsBytesSync(List.filled(3200, 0));
+    final captures = container.read(captureRepositoryProvider)
+      ..put(_record('long', .recorded).copyWith(audioPath: long.path))
+      ..put(_record('tap', .recorded).copyWith(audioPath: tap.path));
+
+    container.read(captureFlowProvider.notifier).recoverInterrupted();
+
+    expect(captures.get('long')?.duration, equals(const Duration(seconds: 2)));
+    expect(captures.get('tap'), isNull);
+  });
+
+  test('a recording is capped at five minutes and stops when the recorder hits it', () async {
+    final events = StreamController<NativeEvent>();
+    addTearDown(events.close);
+    final native = stubNative();
+    when(() => native.events).thenAnswer((_) => events.stream);
+    when(native.micPermission).thenAnswer((_) async => MicPermission.granted);
+    when(() => native.startRecording(any(), limit: any(named: 'limit'))).thenAnswer((_) async {});
+    when(native.stopRecording).thenAnswer((_) async => null);
+    final container = _container(_Saver(), native: native);
+    final flow = container.read(captureFlowProvider.notifier);
+
+    await flow.start();
+    expect(container.read(captureFlowProvider).phase, equals(CapturePhase.recording));
+    events.add(const LimitReached());
+    await pumpEventQueue();
+
+    verify(() => native.startRecording(any(), limit: maxCaptureDuration)).called(1);
+    verify(native.stopRecording).called(1);
+    expect(container.read(captureFlowProvider).phase, equals(CapturePhase.idle));
+    expect(container.read(captureFlowProvider).notice, equals(CaptureNotice.limitReached));
   });
 }
