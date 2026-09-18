@@ -35,35 +35,57 @@ class WhenRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Row(
+      crossAxisAlignment: .start,
       spacing: Spacing.xs,
       children: [
-        const Icon(Icons.calendar_today_outlined, size: IconSizes.s20),
-        LineButton(switch (due) {
-          final DueDate d => d.dateOnly.label(l10n, today),
-          null => l10n.addDate,
-        }, onPressed: enabled ? onPickDate : null),
-        if (due case final DueDate d) ...[
-          LineButton(switch (d.timeLabel(l10n)) {
-            final String time => time,
-            null => l10n.addTime,
-          }, onPressed: enabled ? onPickTime : null),
-          Switch(
-            padding: const EdgeInsetsDirectional.only(start: Spacing.sm, end: Spacing.xxs),
-            value: hasReminder,
-            onChanged: enabled && d.hasTime ? onReminder : null,
+        const Padding(
+          padding: EdgeInsets.only(top: Spacing.xs),
+          child: Icon(Icons.calendar_today_outlined, size: IconSizes.s20),
+        ),
+        Expanded(
+          child: Wrap(
+            spacing: Spacing.xs,
+            runSpacing: Spacing.xs,
+            crossAxisAlignment: .center,
+            children: [
+              LineButton(switch (due) {
+                final DueDate d => d.dateOnly.label(l10n, today),
+                null => l10n.addDate,
+              }, onPressed: enabled ? onPickDate : null),
+              if (due case final DueDate d) ...[
+                LineButton(switch (d.timeLabel(l10n)) {
+                  final String time => time,
+                  null => l10n.addTime,
+                }, onPressed: enabled ? onPickTime : null),
+                Row(
+                  mainAxisSize: .min,
+                  children: [
+                    Switch(
+                      padding: const EdgeInsetsDirectional.only(
+                        start: Spacing.sm,
+                        end: Spacing.xxs,
+                      ),
+                      value: hasReminder,
+                      onChanged: enabled && d.hasTime ? onReminder : null,
+                    ),
+                    Flexible(
+                      child: Text(
+                        d.hasTime ? l10n.remindMe : l10n.addTimeForReminder,
+                        style: context.textTheme.labelMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
           ),
-          Text(
-            d.hasTime ? l10n.remindMe : l10n.addTimeForReminder,
-            style: context.textTheme.labelMedium,
+        ),
+        if (due != null && enabled)
+          IconButton(
+            tooltip: l10n.removeDate,
+            icon: const Icon(Icons.close, size: IconSizes.s18),
+            onPressed: onClear,
           ),
-          const Spacer(),
-          if (enabled)
-            IconButton(
-              tooltip: l10n.removeDate,
-              icon: const Icon(Icons.close, size: IconSizes.s18),
-              onPressed: onClear,
-            ),
-        ],
       ],
     );
   }

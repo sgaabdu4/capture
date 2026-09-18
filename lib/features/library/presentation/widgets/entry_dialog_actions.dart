@@ -26,8 +26,10 @@ class EntryDialogActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Row(
-      spacing: Spacing.xs,
+    return Wrap(
+      alignment: .spaceBetween,
+      crossAxisAlignment: .center,
+      runSpacing: Spacing.xs,
       children: [
         if (confirmingDelete)
           InkButton(
@@ -41,9 +43,22 @@ class EntryDialogActions extends StatelessWidget {
             key: const ValueKey(AppWidgetKeys.entryDeleteButton),
             onPressed: onAskDelete,
           ),
-        const Spacer(),
-        LinkButton(l10n.cancel, onPressed: onCancel),
-        InkButton(l10n.save, key: const ValueKey(AppWidgetKeys.entrySaveButton), onPressed: onSave),
+        Row(
+          mainAxisSize: .min,
+          spacing: Spacing.xs,
+          children: [
+            LinkButton(
+              l10n.cancel,
+              key: const ValueKey(AppWidgetKeys.entryCancelButton),
+              onPressed: onCancel,
+            ),
+            InkButton(
+              l10n.save,
+              key: const ValueKey(AppWidgetKeys.entrySaveButton),
+              onPressed: onSave,
+            ),
+          ],
+        ),
       ],
     );
   }

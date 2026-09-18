@@ -64,8 +64,9 @@ class CaptureCard extends StatelessWidget {
       CaptureRecord() => null,
     };
     return ExpandableCard(
-      title: Row(
+      title: Wrap(
         spacing: Spacing.sm,
+        crossAxisAlignment: .center,
         children: [
           StatusDot(_dotColor(context)),
           Text(record.status.label(l10n), style: textTheme.bodyMedium),

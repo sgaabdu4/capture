@@ -23,11 +23,15 @@ class ProposalItemHeader extends StatelessWidget {
   final bool editable;
   final ValueChanged<ProposalItem> onChanged;
 
+  /// Narrower cards put kind and group on a second line.
+  static const _oneLineWidth = 640.0;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final ProposalItem(:included, :kind, :groupId) = item;
-    return Row(
+    final title = Row(
+      spacing: Spacing.xs,
       children: [
         Checkbox(
           value: included,
@@ -37,7 +41,6 @@ class ProposalItemHeader extends StatelessWidget {
                 }
               : null,
         ),
-        const SizedBox(width: Spacing.xs),
         Expanded(
           child: TextField(
             controller: titleController,
@@ -47,18 +50,36 @@ class ProposalItemHeader extends StatelessWidget {
             onChanged: (value) => onChanged(item.withTitle(value)),
           ),
         ),
-        const SizedBox(width: Spacing.sm),
-        KindToggle(
-          kind: kind,
-          onChanged: editable ? (value) => onChanged(item.withKind(value)) : null,
-        ),
-        const SizedBox(width: Spacing.sm),
-        GroupMenu(
-          groups: groups,
-          value: groupId,
-          onChanged: editable ? (value) => onChanged(item.withGroup(value)) : null,
-        ),
       ],
+    );
+    final filing = [
+      KindToggle(
+        kind: kind,
+        onChanged: editable ? (value) => onChanged(item.withKind(value)) : null,
+      ),
+      GroupMenu(
+        groups: groups,
+        value: groupId,
+        onChanged: editable ? (value) => onChanged(item.withGroup(value)) : null,
+      ),
+    ];
+    return LayoutBuilder(
+      builder: (context, constraints) => constraints.maxWidth < _oneLineWidth
+          ? Column(
+              crossAxisAlignment: .start,
+              spacing: Spacing.xs,
+              children: [
+                title,
+                Wrap(spacing: Spacing.sm, runSpacing: Spacing.xs, children: filing),
+              ],
+            )
+          : Row(
+              spacing: Spacing.sm,
+              children: [
+                Expanded(child: title),
+                ...filing,
+              ],
+            ),
     );
   }
 }

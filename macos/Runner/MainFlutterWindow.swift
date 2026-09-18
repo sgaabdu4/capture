@@ -16,7 +16,8 @@ class MainFlutterWindow: NSWindow {
     self.titlebarAppearsTransparent = true
     self.titleVisibility = .hidden
     self.styleMask.insert(.fullSizeContentView)
-    self.minSize = NSSize(width: 980, height: 700)
+    // Down to a phone-sized window; the layout switches to a bottom bar.
+    self.minSize = NSSize(width: 320, height: 480)
     self.setContentSize(NSSize(width: 1240, height: 860))
     self.center()
 

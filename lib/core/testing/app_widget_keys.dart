@@ -2,6 +2,7 @@
 /// `ValueKey(AppWidgetKeys.x)`.
 abstract final class AppWidgetKeys {
   // Shell
+  static const navHome = 'shell.nav.home';
   static const navGroups = 'shell.nav.groups';
   static const navRecordings = 'shell.nav.recordings';
   static const navTodo = 'shell.nav.todo';
@@ -42,6 +43,7 @@ abstract final class AppWidgetKeys {
   static const entryTitleField = 'library.entry.title';
   static const entryBodyField = 'library.entry.body';
   static const entrySaveButton = 'library.entry.save';
+  static const entryCancelButton = 'library.entry.cancel';
   static const entryDeleteButton = 'library.entry.delete';
   static const entryDeleteConfirmButton = 'library.entry.deleteConfirm';
 }

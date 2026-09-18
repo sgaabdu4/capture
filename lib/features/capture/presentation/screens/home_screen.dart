@@ -31,6 +31,12 @@ class HomeScreen extends ConsumerWidget {
   static const _recentLimit = 2;
   static const _groupsLimit = 3;
   static const _padding = EdgeInsets.fromLTRB(Spacing.xl, Spacing.xxxl, Spacing.xl, Spacing.xl);
+  static const _compactPadding = EdgeInsets.fromLTRB(
+    Spacing.md,
+    Spacing.xxxl,
+    Spacing.md,
+    Spacing.lg,
+  );
 
   static String _phaseLabel(AppLocalizations l10n, CapturePhase phase) => switch (phase) {
     .idle => l10n.recordTap,
@@ -53,8 +59,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final textTheme = context.textTheme;
+    final BuildContext(:l10n, :textTheme, :compact) = context;
     final ready = ref.watch(settingsProvider.select((s) => s.ready));
     final shortcut = ref.watch(settingsProvider.select((s) => s.shortcut.label));
     final (:phase, :notice, :failure) = ref.watch(
@@ -65,11 +70,12 @@ class HomeScreen extends ConsumerWidget {
     final recent = ref.watch(captureFlowProvider.select((s) => s.captures)).take(_recentLimit);
     final groups = ref.watch(groupsProvider.select((s) => s.active)).take(_groupsLimit);
     final canToggle = ready && (phase == .idle || phase == .recording);
+    final padding = compact ? _compactPadding : _padding;
     return LayoutBuilder(
       builder: (context, constraints) => SingleChildScrollView(
-        padding: _padding,
+        padding: padding,
         child: ConstrainedBox(
-          constraints: .new(minHeight: constraints.maxHeight - _padding.vertical),
+          constraints: .new(minHeight: constraints.maxHeight - padding.vertical),
           child: Column(
             children: [
               Underlined(l10n.appTitle, style: textTheme.displayLarge),

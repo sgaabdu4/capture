@@ -32,7 +32,7 @@ class EditorBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final BuildContext(:l10n, :colors, :paper, :textTheme) = context;
+    final BuildContext(:l10n, :colors, :paper, :textTheme, :compact) = context;
     final message = switch (failure) {
       _ when problems.isNotEmpty => [
         for (final p in problems) p.label(l10n),
@@ -42,37 +42,55 @@ class EditorBottomBar extends StatelessWidget {
       null => l10n.editorNothingSent,
     };
     final warning = problems.isNotEmpty || failure != null;
+    final text = Text(
+      message,
+      style: textTheme.labelMedium?.copyWith(
+        color: warning ? colors.error : colors.onSurfaceVariant,
+      ),
+    );
+    final buttons = [
+      if (stage == .proposed)
+        LineButton(
+          l10n.dontSave,
+          key: const ValueKey(AppWidgetKeys.editorDontSaveButton),
+          onPressed: onDontSave,
+        ),
+      InkButton(
+        stage == .approved ? l10n.retrySave : l10n.saveToNotion,
+        key: const ValueKey(AppWidgetKeys.editorSaveButton),
+        busy: saving,
+        onPressed: onSave,
+      ),
+    ];
     return Container(
-      padding: const EdgeInsets.fromLTRB(Spacing.xxl, Spacing.md, Spacing.xxl, Spacing.lg),
+      padding: compact
+          ? const EdgeInsets.symmetric(horizontal: Spacing.md, vertical: Spacing.sm)
+          : const EdgeInsets.fromLTRB(Spacing.xxl, Spacing.md, Spacing.xxl, Spacing.lg),
       decoration: BoxDecoration(
         color: paper.sidebar,
         border: Border(top: .new(color: paper.line)),
       ),
-      child: Row(
-        spacing: Spacing.sm,
-        children: [
-          Expanded(
-            child: Text(
-              message,
-              style: textTheme.labelMedium?.copyWith(
-                color: warning ? colors.error : colors.onSurfaceVariant,
-              ),
+      child: compact
+          ? Column(
+              crossAxisAlignment: .stretch,
+              spacing: Spacing.xs,
+              children: [
+                text,
+                Wrap(
+                  alignment: .end,
+                  spacing: Spacing.sm,
+                  runSpacing: Spacing.xs,
+                  children: buttons,
+                ),
+              ],
+            )
+          : Row(
+              spacing: Spacing.sm,
+              children: [
+                Expanded(child: text),
+                ...buttons,
+              ],
             ),
-          ),
-          if (stage == .proposed)
-            LineButton(
-              l10n.dontSave,
-              key: const ValueKey(AppWidgetKeys.editorDontSaveButton),
-              onPressed: onDontSave,
-            ),
-          InkButton(
-            stage == .approved ? l10n.retrySave : l10n.saveToNotion,
-            key: const ValueKey(AppWidgetKeys.editorSaveButton),
-            busy: saving,
-            onPressed: onSave,
-          ),
-        ],
-      ),
     );
   }
 }

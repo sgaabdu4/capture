@@ -127,6 +127,8 @@ class _EntryDialogState extends State<EntryDialog> {
     final l10n = context.l10n;
     final LibraryEntry(:kind, :groupId, :due, :reminder) = _entry;
     return AlertDialog(
+      scrollable: true,
+      insetPadding: context.compact ? const .all(Spacing.md) : null,
       title: Text(
         kind == .task ? l10n.editTask : l10n.editNote,
         style: context.textTheme.titleMedium,
