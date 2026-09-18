@@ -707,6 +707,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyGroupItems => 'Nothing saved here yet.';
 
   @override
+  String get editNote => 'Edit note';
+
+  @override
+  String get editTask => 'Edit task';
+
+  @override
+  String get entryBodyLoading => 'Loading details from Notion…';
+
+  @override
+  String get entryBodyUnavailable => 'Couldn’t load the details from Notion. Edit them there.';
+
+  @override
+  String get entryDeleteConfirm => 'Move to Notion trash';
+
+  @override
+  String get searchHint => 'Search saved notes and tasks';
+
+  @override
+  String get clearSearch => 'Clear search';
+
+  @override
+  String searchNoMatches(String query) {
+    return 'Nothing saved matches “$query”.';
+  }
+
+  @override
   String get newGroup => 'New group';
 
   @override

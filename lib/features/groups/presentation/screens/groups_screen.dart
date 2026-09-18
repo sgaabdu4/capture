@@ -12,6 +12,7 @@ import 'package:capture/features/groups/domain/group_rules.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/groups/presentation/widgets/group_dialog.dart';
 import 'package:capture/features/groups/presentation/widgets/group_list.dart';
+import 'package:capture/features/library/presentation/extensions/entry_editing.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:flutter/material.dart';
@@ -86,6 +87,7 @@ class GroupsScreen extends ConsumerWidget {
           entries: entries,
           busy: busy,
           onEdit: (group) => unawaited(_edit(context, ref, group)),
+          onOpenEntry: (entry) => unawaited(ref.editEntry(context, entry)),
           onArchive: (group) => unawaited(_setArchived(ref, group, archived: true)),
           onRestore: (group) => unawaited(_setArchived(ref, group, archived: false)),
         ),

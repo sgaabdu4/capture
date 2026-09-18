@@ -15,7 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LibraryState {
 
- List<LibraryEntry> get entries; bool get refreshing; NotionFailure? get failure; int get failureSerial; DateTime? get refreshedAtUtc;
+ List<LibraryEntry> get entries; bool get refreshing; NotionFailure? get failure; int get failureSerial; DateTime? get refreshedAtUtc;/// Text typed into search; empty when not searching.
+ String get query;
 /// Create a copy of LibraryState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +28,20 @@ $LibraryStateCopyWith<LibraryState> get copyWith => _$LibraryStateCopyWithImpl<L
 @override
 bool operator ==(Object other) {
   final _this = this as LibraryState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibraryState&&const DeepCollectionEquality().equals(other.entries, _this.entries)&&(identical(other.refreshing, _this.refreshing) || other.refreshing == _this.refreshing)&&(identical(other.failure, _this.failure) || other.failure == _this.failure)&&(identical(other.failureSerial, _this.failureSerial) || other.failureSerial == _this.failureSerial)&&(identical(other.refreshedAtUtc, _this.refreshedAtUtc) || other.refreshedAtUtc == _this.refreshedAtUtc));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LibraryState&&const DeepCollectionEquality().equals(other.entries, _this.entries)&&(identical(other.refreshing, _this.refreshing) || other.refreshing == _this.refreshing)&&(identical(other.failure, _this.failure) || other.failure == _this.failure)&&(identical(other.failureSerial, _this.failureSerial) || other.failureSerial == _this.failureSerial)&&(identical(other.refreshedAtUtc, _this.refreshedAtUtc) || other.refreshedAtUtc == _this.refreshedAtUtc)&&(identical(other.query, _this.query) || other.query == _this.query));
 }
 
 
 @override
 int get hashCode {
   final _this = this as LibraryState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.entries),_this.refreshing,_this.failure,_this.failureSerial,_this.refreshedAtUtc);
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.entries),_this.refreshing,_this.failure,_this.failureSerial,_this.refreshedAtUtc,_this.query);
 }
 
 @override
 String toString() {
   final _this = this as LibraryState;
-  return 'LibraryState(entries: ${_this.entries}, refreshing: ${_this.refreshing}, failure: ${_this.failure}, failureSerial: ${_this.failureSerial}, refreshedAtUtc: ${_this.refreshedAtUtc})';
+  return 'LibraryState(entries: ${_this.entries}, refreshing: ${_this.refreshing}, failure: ${_this.failure}, failureSerial: ${_this.failureSerial}, refreshedAtUtc: ${_this.refreshedAtUtc}, query: ${_this.query})';
 }
 
 
@@ -51,7 +52,7 @@ abstract mixin class $LibraryStateCopyWith<$Res>  {
   factory $LibraryStateCopyWith(LibraryState value, $Res Function(LibraryState) _then) = _$LibraryStateCopyWithImpl;
 @useResult
 $Res call({
- List<LibraryEntry> entries, bool refreshing, NotionFailure? failure, int failureSerial, DateTime? refreshedAtUtc
+ List<LibraryEntry> entries, bool refreshing, NotionFailure? failure, int failureSerial, DateTime? refreshedAtUtc, String query
 });
 
 
@@ -68,14 +69,15 @@ class _$LibraryStateCopyWithImpl<$Res>
 
 /// Create a copy of LibraryState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? entries = null,Object? refreshing = null,Object? failure = freezed,Object? failureSerial = null,Object? refreshedAtUtc = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? entries = null,Object? refreshing = null,Object? failure = freezed,Object? failureSerial = null,Object? refreshedAtUtc = freezed,Object? query = null,}) {
   return _then(LibraryState(
 entries: null == entries ? _self.entries : entries // ignore: cast_nullable_to_non_nullable
 as List<LibraryEntry>,refreshing: null == refreshing ? _self.refreshing : refreshing // ignore: cast_nullable_to_non_nullable
 as bool,failure: freezed == failure ? _self.failure : failure // ignore: cast_nullable_to_non_nullable
 as NotionFailure?,failureSerial: null == failureSerial ? _self.failureSerial : failureSerial // ignore: cast_nullable_to_non_nullable
 as int,refreshedAtUtc: freezed == refreshedAtUtc ? _self.refreshedAtUtc : refreshedAtUtc // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -157,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<LibraryEntry> entries,  bool refreshing,  NotionFailure? failure,  int failureSerial,  DateTime? refreshedAtUtc)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<LibraryEntry> entries,  bool refreshing,  NotionFailure? failure,  int failureSerial,  DateTime? refreshedAtUtc,  String query)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LibraryState() when $default != null:
-return $default(_that.entries,_that.refreshing,_that.failure,_that.failureSerial,_that.refreshedAtUtc);case _:
+return $default(_that.entries,_that.refreshing,_that.failure,_that.failureSerial,_that.refreshedAtUtc,_that.query);case _:
   return orElse();
 
 }
@@ -178,10 +180,10 @@ return $default(_that.entries,_that.refreshing,_that.failure,_that.failureSerial
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<LibraryEntry> entries,  bool refreshing,  NotionFailure? failure,  int failureSerial,  DateTime? refreshedAtUtc)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<LibraryEntry> entries,  bool refreshing,  NotionFailure? failure,  int failureSerial,  DateTime? refreshedAtUtc,  String query)  $default,) {final _that = this;
 switch (_that) {
 case _LibraryState():
-return $default(_that.entries,_that.refreshing,_that.failure,_that.failureSerial,_that.refreshedAtUtc);}
+return $default(_that.entries,_that.refreshing,_that.failure,_that.failureSerial,_that.refreshedAtUtc,_that.query);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -195,10 +197,10 @@ return $default(_that.entries,_that.refreshing,_that.failure,_that.failureSerial
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<LibraryEntry> entries,  bool refreshing,  NotionFailure? failure,  int failureSerial,  DateTime? refreshedAtUtc)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<LibraryEntry> entries,  bool refreshing,  NotionFailure? failure,  int failureSerial,  DateTime? refreshedAtUtc,  String query)?  $default,) {final _that = this;
 switch (_that) {
 case _LibraryState() when $default != null:
-return $default(_that.entries,_that.refreshing,_that.failure,_that.failureSerial,_that.refreshedAtUtc);case _:
+return $default(_that.entries,_that.refreshing,_that.failure,_that.failureSerial,_that.refreshedAtUtc,_that.query);case _:
   return null;
 
 }
@@ -210,7 +212,7 @@ return $default(_that.entries,_that.refreshing,_that.failure,_that.failureSerial
 
 
 class _LibraryState extends LibraryState {
-  const _LibraryState({required  List<LibraryEntry> entries, this.refreshing = false, this.failure, this.failureSerial = 0, this.refreshedAtUtc}): _entries = entries,super._();
+  const _LibraryState({required  List<LibraryEntry> entries, this.refreshing = false, this.failure, this.failureSerial = 0, this.refreshedAtUtc, this.query = ''}): _entries = entries,super._();
   
 
  final  List<LibraryEntry> _entries;
@@ -224,6 +226,8 @@ class _LibraryState extends LibraryState {
 @override final  NotionFailure? failure;
 @override@JsonKey() final  int failureSerial;
 @override final  DateTime? refreshedAtUtc;
+/// Text typed into search; empty when not searching.
+@override@JsonKey() final  String query;
 
 /// Create a copy of LibraryState
 /// with the given fields replaced by the non-null parameter values.
@@ -235,18 +239,18 @@ _$LibraryStateCopyWith<_LibraryState> get copyWith => __$LibraryStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibraryState&&const DeepCollectionEquality().equals(other.entries, _entries)&&(identical(other.refreshing, refreshing) || other.refreshing == refreshing)&&(identical(other.failure, failure) || other.failure == failure)&&(identical(other.failureSerial, failureSerial) || other.failureSerial == failureSerial)&&(identical(other.refreshedAtUtc, refreshedAtUtc) || other.refreshedAtUtc == refreshedAtUtc));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LibraryState&&const DeepCollectionEquality().equals(other.entries, _entries)&&(identical(other.refreshing, refreshing) || other.refreshing == refreshing)&&(identical(other.failure, failure) || other.failure == failure)&&(identical(other.failureSerial, failureSerial) || other.failureSerial == failureSerial)&&(identical(other.refreshedAtUtc, refreshedAtUtc) || other.refreshedAtUtc == refreshedAtUtc)&&(identical(other.query, query) || other.query == query));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_entries),refreshing,failure,failureSerial,refreshedAtUtc);
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_entries),refreshing,failure,failureSerial,refreshedAtUtc,query);
 }
 
 @override
 String toString() {
-    return 'LibraryState(entries: $entries, refreshing: $refreshing, failure: $failure, failureSerial: $failureSerial, refreshedAtUtc: $refreshedAtUtc)';
+    return 'LibraryState(entries: $entries, refreshing: $refreshing, failure: $failure, failureSerial: $failureSerial, refreshedAtUtc: $refreshedAtUtc, query: $query)';
 }
 
 
@@ -257,7 +261,7 @@ abstract mixin class _$LibraryStateCopyWith<$Res> implements $LibraryStateCopyWi
   factory _$LibraryStateCopyWith(_LibraryState value, $Res Function(_LibraryState) _then) = __$LibraryStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<LibraryEntry> entries, bool refreshing, NotionFailure? failure, int failureSerial, DateTime? refreshedAtUtc
+ List<LibraryEntry> entries, bool refreshing, NotionFailure? failure, int failureSerial, DateTime? refreshedAtUtc, String query
 });
 
 
@@ -274,14 +278,15 @@ class __$LibraryStateCopyWithImpl<$Res>
 
 /// Create a copy of LibraryState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? entries = null,Object? refreshing = null,Object? failure = freezed,Object? failureSerial = null,Object? refreshedAtUtc = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? entries = null,Object? refreshing = null,Object? failure = freezed,Object? failureSerial = null,Object? refreshedAtUtc = freezed,Object? query = null,}) {
   return _then(_LibraryState(
 entries: null == entries ? _self._entries : entries // ignore: cast_nullable_to_non_nullable
 as List<LibraryEntry>,refreshing: null == refreshing ? _self.refreshing : refreshing // ignore: cast_nullable_to_non_nullable
 as bool,failure: freezed == failure ? _self.failure : failure // ignore: cast_nullable_to_non_nullable
 as NotionFailure?,failureSerial: null == failureSerial ? _self.failureSerial : failureSerial // ignore: cast_nullable_to_non_nullable
 as int,refreshedAtUtc: freezed == refreshedAtUtc ? _self.refreshedAtUtc : refreshedAtUtc // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

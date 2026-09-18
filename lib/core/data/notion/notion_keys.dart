@@ -14,6 +14,7 @@ abstract final class NotionKeys {
   static const files = 'files';
   static const filter = 'filter';
   static const id = 'id';
+  static const inTrash = 'in_trash';
   static const initialDataSource = 'initial_data_source';
   static const isInline = 'is_inline';
   static const mode = 'mode';
@@ -22,6 +23,7 @@ abstract final class NotionKeys {
   static const object = 'object';
   static const pageId = 'page_id';
   static const pageSize = 'page_size';
+  static const position = 'position';
   static const parent = 'parent';
   static const properties = 'properties';
   static const property = 'property';

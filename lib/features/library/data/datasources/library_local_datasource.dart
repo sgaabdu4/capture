@@ -11,6 +11,7 @@ part 'library_local_datasource.g.dart';
 abstract interface class ILibraryLocalDatasource {
   List<LibraryEntryModel> all();
   void put(LibraryEntryModel entry);
+  void remove(String itemId);
   void replaceAll(List<LibraryEntryModel> entries);
 }
 
@@ -35,6 +36,9 @@ class LibraryLocalDatasource implements ILibraryLocalDatasource {
     'INSERT OR REPLACE INTO library (item_id, json) VALUES (?, ?)',
     [entry.itemId, jsonEncode(entry.toJson())],
   );
+
+  @override
+  void remove(String itemId) => _db.execute('DELETE FROM library WHERE item_id = ?', [itemId]);
 
   @override
   void replaceAll(List<LibraryEntryModel> entries) => _db.transaction(() {

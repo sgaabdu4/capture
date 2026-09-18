@@ -1,4 +1,5 @@
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/theme/radii.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
@@ -16,6 +17,7 @@ class GroupCard extends StatelessWidget {
     required this.items,
     required this.busy,
     required this.onEdit,
+    required this.onOpenEntry,
     super.key,
     this.onArchive,
     this.onRestore,
@@ -30,6 +32,9 @@ class GroupCard extends StatelessWidget {
   final List<LibraryEntry> items;
   final bool busy;
   final VoidCallback onEdit;
+
+  /// Opens a filed note or task for editing.
+  final ValueChanged<LibraryEntry> onOpenEntry;
   final VoidCallback? onArchive;
   final VoidCallback? onRestore;
 
@@ -71,14 +76,17 @@ class GroupCard extends StatelessWidget {
       ),
       children: [
         if (items.isEmpty) EmptyNote(l10n.emptyGroupItems),
-        for (final LibraryEntry(:title, :kind) in items.take(_maxItems))
+        for (final entry in items.take(_maxItems))
           ListTile(
             dense: true,
-            leading: Icon(
-              kind == .task ? Icons.check_box_outlined : Icons.description_outlined,
-              color: context.colors.onSurface,
-            ),
-            title: Text(title, style: bodyMedium),
+            shape: const RoundedRectangleBorder(borderRadius: Radii.rounded10),
+            onTap: () => onOpenEntry(entry),
+            leading: Icon(switch (entry) {
+              LibraryEntry(kind: .note) => Icons.description_outlined,
+              LibraryEntry(done: true) => Icons.check_box_outlined,
+              LibraryEntry() => Icons.check_box_outline_blank,
+            }, color: context.colors.onSurface),
+            title: Text(entry.title, style: bodyMedium),
           ),
       ],
     );

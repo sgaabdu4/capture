@@ -38,4 +38,10 @@ abstract final class AppWidgetKeys {
 
   // Library
   static const refreshButton = 'library.refresh';
+  static const searchField = 'library.search';
+  static const entryTitleField = 'library.entry.title';
+  static const entryBodyField = 'library.entry.body';
+  static const entrySaveButton = 'library.entry.save';
+  static const entryDeleteButton = 'library.entry.delete';
+  static const entryDeleteConfirmButton = 'library.entry.deleteConfirm';
 }

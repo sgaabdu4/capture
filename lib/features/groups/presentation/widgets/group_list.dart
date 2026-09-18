@@ -16,6 +16,7 @@ class GroupList extends StatelessWidget {
     required this.entries,
     required this.busy,
     required this.onEdit,
+    required this.onOpenEntry,
     required this.onArchive,
     required this.onRestore,
     super.key,
@@ -28,6 +29,9 @@ class GroupList extends StatelessWidget {
   final List<LibraryEntry> entries;
   final bool busy;
   final ValueChanged<Group> onEdit;
+
+  /// Opens a saved note or task for editing.
+  final ValueChanged<LibraryEntry> onOpenEntry;
 
   final ValueChanged<Group> onArchive;
   final ValueChanged<Group> onRestore;
@@ -53,6 +57,7 @@ class GroupList extends StatelessWidget {
             items: entries.filedIn(id),
             busy: busy,
             onEdit: () => onEdit(group),
+            onOpenEntry: onOpenEntry,
             onArchive: isArchived || isUnsorted ? null : () => onArchive(group),
             onRestore: isArchived && !isUnsorted ? () => onRestore(group) : null,
           ),

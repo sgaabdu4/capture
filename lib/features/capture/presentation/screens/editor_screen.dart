@@ -10,6 +10,7 @@ import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
+import 'package:capture/features/capture/presentation/extensions/when_pickers.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/capture/presentation/widgets/editor_bottom_bar.dart';
 import 'package:capture/features/capture/presentation/widgets/proposal_item_editor.dart';
@@ -26,54 +27,17 @@ class EditorScreen extends ConsumerWidget {
 
   final String captureId;
 
-  static const _datePickerRoute = 'editor-date-picker';
-  static const _timePickerRoute = 'editor-time-picker';
-  static const _pickerPastYears = 1;
-  static const _pickerFutureYears = 5;
-  static const _defaultHour = 9;
-  static const _defaultMinute = 0;
-
-  Future<void> _pickDate(
-    BuildContext context,
-    WidgetRef ref,
-    ProposalItem item,
-    DateTime today,
-  ) async {
-    final base = item.due ?? item.reminder;
-    final picked = await showDatePicker(
-      context: context,
-      routeSettings: const .new(name: _datePickerRoute),
-      initialDate: switch (base) {
-        DueDate(:final year, :final month, :final day) => .new(year, month, day),
-        null => today,
-      },
-      firstDate: .new(today.year - _pickerPastYears),
-      lastDate: .new(today.year + _pickerFutureYears),
-    );
-    if (picked == null || !context.mounted) return;
-    final DateTime(:year, :month, :day) = picked;
-    ref
-        .read(captureFlowProvider.notifier)
-        .setWhen(captureId, item, .new(year, month, day, hour: base?.hour, minute: base?.minute));
-  }
+  Future<void> _pickDate(BuildContext context, WidgetRef ref, ProposalItem item, DateTime today) =>
+      context.pickDay(item.due ?? item.reminder, today, (picked) => _setWhen(ref, item, picked));
 
   Future<void> _pickTime(BuildContext context, WidgetRef ref, ProposalItem item) async {
-    final base = item.due ?? item.reminder;
-    if (base == null) return;
-    final picked = await showTimePicker(
-      context: context,
-      routeSettings: const .new(name: _timePickerRoute),
-      initialTime: switch (base) {
-        DueDate(hour: final int hour, minute: final int minute) => .new(hour: hour, minute: minute),
-        DueDate(hour: final int hour) => .new(hour: hour, minute: _defaultMinute),
-        DueDate() => const .new(hour: _defaultHour, minute: _defaultMinute),
-      },
-    );
-    if (picked == null || !context.mounted) return;
-    ref
-        .read(captureFlowProvider.notifier)
-        .setWhen(captureId, item, base.withTime(picked.hour, picked.minute));
+    if (item.due ?? item.reminder case final DueDate base) {
+      await context.pickTime(base, (picked) => _setWhen(ref, item, picked));
+    }
   }
+
+  void _setWhen(WidgetRef ref, ProposalItem item, DueDate date) =>
+      ref.read(captureFlowProvider.notifier).setWhen(captureId, item, date);
 
   void _dontSave(BuildContext context, WidgetRef ref) {
     ref.read(captureFlowProvider.notifier).dismiss(captureId);

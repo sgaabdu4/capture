@@ -45,6 +45,47 @@ class LibraryNotifier extends _$LibraryNotifier {
     };
   }
 
+  /// The body on the entry's Notion page, or null when it cannot be read.
+  Future<String?> body(LibraryEntry entry) async {
+    final result = await _ensureRepository().body(entry);
+    if (!ref.mounted) return null;
+    switch (result) {
+      case Ok(:final value):
+        return value;
+      case Err(:final failure):
+        state = _failed(state, failure);
+        return null;
+    }
+  }
+
+  /// Saves an edited entry; [body] only when it should be rewritten.
+  Future<void> update(LibraryEntry entry, {String? body}) async {
+    final result = await _ensureRepository().update(entry, body: body);
+    if (!ref.mounted) return;
+    state = switch (result) {
+      Ok(:final value) => state.copyWith(
+        entries: [for (final e in state.entries) e.itemId == value.itemId ? value : e],
+      ),
+      Err(:final failure) => _failed(state, failure),
+    };
+  }
+
+  Future<void> delete(LibraryEntry entry) async {
+    final result = await _ensureRepository().delete(entry);
+    if (!ref.mounted) return;
+    state = switch (result) {
+      Ok() => state.copyWith(
+        entries: [
+          for (final e in state.entries)
+            if (e.itemId != entry.itemId) e,
+        ],
+      ),
+      Err(:final failure) => _failed(state, failure),
+    };
+  }
+
+  void search(String query) => state = state.copyWith(query: query);
+
   static LibraryState _failed(LibraryState s, NotionFailure failure) =>
       s.copyWith(failure: failure, failureSerial: s.failureSerial + 1);
 }

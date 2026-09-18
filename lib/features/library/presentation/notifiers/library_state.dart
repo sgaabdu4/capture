@@ -16,7 +16,22 @@ sealed class LibraryState with _$LibraryState {
     NotionFailure? failure,
     @Default(0) int failureSerial,
     DateTime? refreshedAtUtc,
+
+    /// Text typed into search; empty when not searching.
+    @Default('') String query,
   }) = _LibraryState;
+
+  bool get searching => query.trim().isNotEmpty;
+
+  /// Saved notes and tasks whose title contains [query], ignoring case,
+  /// newest first as Notion returns them.
+  List<LibraryEntry> matches() {
+    final needle = query.trim().toLowerCase();
+    return [
+      for (final e in entries)
+        if (needle.isNotEmpty && e.title.toLowerCase().contains(needle)) e,
+    ];
+  }
 
   /// Open tasks, dated ones soonest first.
   List<LibraryEntry> get openTasks => [

@@ -1,12 +1,17 @@
 import 'dart:io';
 
 import 'package:capture/app/capture_app.dart';
+import 'package:capture/core/data/notion/notion_http_service.dart';
+import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
+import 'package:capture/features/library/domain/entities/library_entry.dart';
+import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -21,18 +26,22 @@ const _settleLimit = Duration(seconds: 5);
 Future<void> _settle(WidgetTester tester) =>
     tester.pumpAndSettle(_frame, .sendSemanticsUpdate, _settleLimit);
 
-/// Launches the real app on the fakes in [appOverrides].
+/// Launches the real app on the fakes in [appOverrides], plus [overrides].
 Future<void> _launch(
   WidgetTester tester, {
   required Directory support,
   required INativePlatformService native,
+  List<Override> overrides = const [],
 }) async {
   tester.view
     ..physicalSize = referenceWindow
     ..devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final container = ProviderContainer.test(
-    overrides: appOverrides(support: support, native: native),
+    overrides: [
+      ...appOverrides(support: support, native: native),
+      ...overrides,
+    ],
   );
   addTearDown(container.dispose);
   await tester.pumpWidget(
@@ -64,6 +73,37 @@ Future<void> _recordShortcut(
   await _open(tester, AppWidgetKeys.shortcutChangeButton);
   await press();
   await _settle(tester);
+}
+
+/// Saved entries as last synced; edits are recorded instead of sent.
+class _Library implements ILibraryRepository {
+  final updates = <LibraryEntry>[];
+
+  @override
+  List<LibraryEntry> cached() => const [
+    .new(pageId: 'p1', itemId: 'i1', title: 'Buy oat milk', kind: .task),
+    .new(pageId: 'p2', itemId: 'i2', title: 'Milk frother idea', kind: .note),
+    .new(pageId: 'p3', itemId: 'i3', title: 'Call the dentist', kind: .task),
+  ];
+
+  @override
+  Future<NotionResult<List<LibraryEntry>>> refresh(NotionWorkspace ws) async => .ok(cached());
+
+  @override
+  Future<NotionResult<LibraryEntry>> setDone(LibraryEntry entry, {required bool done}) async =>
+      .ok(entry.copyWith(done: done));
+
+  @override
+  Future<NotionResult<String>> body(LibraryEntry entry) async => const .ok('');
+
+  @override
+  Future<NotionResult<LibraryEntry>> update(LibraryEntry entry, {String? body}) async {
+    updates.add(entry);
+    return .ok(entry);
+  }
+
+  @override
+  Future<NotionResult<void>> delete(LibraryEntry entry) async => const .ok(null);
 }
 
 void main() {
@@ -116,6 +156,34 @@ void main() {
     await tester.tap(find.text(_l10n.close));
     await _settle(tester);
     expect(find.text(_l10n.notionGuideTitle), findsNothing);
+  });
+
+  testWidgets('To-do search finds a saved note by title and saves an edit to it', (tester) async {
+    final library = _Library();
+    await _launch(
+      tester,
+      support: support,
+      native: native,
+      overrides: [libraryRepositoryProvider.overrideWithValue(library)],
+    );
+    await _open(tester, AppWidgetKeys.navTodo);
+
+    await tester.enterText(find.byKey(const ValueKey(AppWidgetKeys.searchField)), 'MILK');
+    await _settle(tester);
+    expect(find.text('Buy oat milk'), findsOneWidget);
+    expect(find.text('Milk frother idea'), findsOneWidget);
+    expect(find.text('Call the dentist'), findsNothing);
+
+    await tester.tap(find.text('Milk frother idea'));
+    await _settle(tester);
+    await tester.enterText(
+      find.byKey(const ValueKey(AppWidgetKeys.entryTitleField)),
+      'Milk frother for the café',
+    );
+    await _open(tester, AppWidgetKeys.entrySaveButton);
+
+    expect([for (final e in library.updates) e.title], equals(['Milk frother for the café']));
+    expect(find.text('Milk frother for the café'), findsOneWidget);
   });
 
   group('recording a new shortcut', () {

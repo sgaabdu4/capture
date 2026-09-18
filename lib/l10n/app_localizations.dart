@@ -1286,6 +1286,54 @@ abstract class AppLocalizations {
   /// **'Nothing saved here yet.'**
   String get emptyGroupItems;
 
+  /// No description provided for @editNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit note'**
+  String get editNote;
+
+  /// No description provided for @editTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit task'**
+  String get editTask;
+
+  /// No description provided for @entryBodyLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading details from Notion…'**
+  String get entryBodyLoading;
+
+  /// No description provided for @entryBodyUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t load the details from Notion. Edit them there.'**
+  String get entryBodyUnavailable;
+
+  /// No description provided for @entryDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to Notion trash'**
+  String get entryDeleteConfirm;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search saved notes and tasks'**
+  String get searchHint;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// No description provided for @searchNoMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing saved matches “{query}”.'**
+  String searchNoMatches(String query);
+
   /// No description provided for @newGroup.
   ///
   /// In en, this message translates to:
