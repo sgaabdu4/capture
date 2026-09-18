@@ -202,5 +202,21 @@
         "path": "coverage/gitleaks-history.sarif"
       }
     }
-  ]
+  ],
+  "shipping": {
+    "base": "main",
+    "checks": [
+      "hard-eng"
+    ],
+    "ui_paths": [
+      "lib/features/*/presentation/*",
+      "lib/core/theme/*",
+      "lib/core/widgets/*",
+      "macos/Runner/*",
+      "assets/*"
+    ],
+    "ci_seconds": 600,
+    "pre_push_seconds": 120,
+    "delivery": []
+  }
 }
