@@ -101,6 +101,15 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     _reloadCaptures();
   }
 
+  /// Schedules reminders a saved capture still owes, e.g. when the app quit
+  /// before the notification prompt was answered.
+  Future<void> resumeReminders() async {
+    for (final record in _ensureCaptures().all().where((r) => r.stage == .saved)) {
+      await _ensureSaver().scheduleReminders(record);
+    }
+    if (ref.mounted) _reloadCaptures();
+  }
+
   /// Hotkey, menu and the Home mic button all land here.
   Future<void> toggle() async {
     if (state.phase == .recording) return stop();

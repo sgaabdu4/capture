@@ -38,45 +38,53 @@ class _Connected extends SettingsNotifier {
 class _Saver implements ICaptureSaveRepository {
   final prompt = Completer<bool>();
 
+  /// Ids of captures whose reminders were scheduled.
+  final reminded = <String>[];
+
   @override
   Future<CaptureOutcome> save(CaptureRecord record, NotionWorkspace ws) async => .ok(record);
 
   @override
-  Future<ReminderOutcome> scheduleReminders(CaptureRecord record) async =>
-      (record: record, notificationsOff: !await prompt.future);
+  Future<ReminderOutcome> scheduleReminders(CaptureRecord record) async {
+    reminded.add(record.id);
+    return (record: record, notificationsOff: !await prompt.future);
+  }
 }
 
 class _MockLibrary extends Mock implements ILibraryRepository {}
+
+/// The real flow and on-disk store, connected to Notion, with [saver].
+ProviderContainer _container(_Saver saver) {
+  final support = Directory.systemTemp.createTempSync('capture_flow_test');
+  addTearDown(() => support.deleteSync(recursive: true));
+  final library = _MockLibrary();
+  when(library.cached).thenReturn([]);
+  when(() => library.refresh(any())).thenAnswer((_) async => const .ok([]));
+  return ProviderContainer.test(
+    overrides: [
+      ...appOverrides(support: support, native: stubNative()),
+      settingsProvider.overrideWith(_Connected.new),
+      captureSaveRepositoryProvider.overrideWithValue(saver),
+      libraryRepositoryProvider.overrideWithValue(library),
+    ],
+  );
+}
+
+CaptureRecord _record(String id, CaptureStage stage) => .new(
+  id: id,
+  capturedAtUtc: FakeSystem.now,
+  timeZone: FakeSystem.zone,
+  audioPath: '$id.m4a',
+  stage: stage,
+);
 
 void main() {
   setUpAll(() => registerFallbackValue(_workspace));
 
   test('a save ends as Saved while the reminder permission prompt is unanswered', () async {
-    final support = Directory.systemTemp.createTempSync('capture_flow_test');
-    addTearDown(() => support.deleteSync(recursive: true));
     final saver = _Saver();
-    final library = _MockLibrary();
-    when(library.cached).thenReturn([]);
-    when(() => library.refresh(any())).thenAnswer((_) async => const .ok([]));
-    final container = ProviderContainer.test(
-      overrides: [
-        ...appOverrides(support: support, native: stubNative()),
-        settingsProvider.overrideWith(_Connected.new),
-        captureSaveRepositoryProvider.overrideWithValue(saver),
-        libraryRepositoryProvider.overrideWithValue(library),
-      ],
-    );
-    container
-        .read(captureRepositoryProvider)
-        .put(
-          .new(
-            id: 'c1',
-            capturedAtUtc: FakeSystem.now,
-            timeZone: FakeSystem.zone,
-            audioPath: '${support.path}/c1.m4a',
-            stage: .approved,
-          ),
-        );
+    final container = _container(saver);
+    container.read(captureRepositoryProvider).put(_record('c1', .approved));
 
     final approval = container.read(captureFlowProvider.notifier).approve('c1');
     await pumpEventQueue();
@@ -89,5 +97,17 @@ void main() {
     saver.prompt.complete(false);
     await approval;
     expect(container.read(captureFlowProvider).notice, equals(CaptureNotice.savedNotificationsOff));
+  });
+
+  test('a reminder a saved capture still owes is scheduled on the next launch', () async {
+    final saver = _Saver()..prompt.complete(true);
+    final container = _container(saver);
+    container.read(captureRepositoryProvider)
+      ..put(_record('saved', .saved))
+      ..put(_record('proposed', .proposed));
+
+    await container.read(captureFlowProvider.notifier).resumeReminders();
+
+    expect(saver.reminded, equals(['saved']));
   });
 }
