@@ -1,6 +1,6 @@
 # Capture macOS alpha
 
-Status: Draft
+Status: Ready
 
 ## Outcome + scope
 
@@ -20,11 +20,11 @@ Authority: Autonomous — user brief §2 "proceed to implementation instead of s
 
 Each item names its proof. "Live" means an opt-in run with the owner's own keys and a dedicated test Notion page; mocks never count as live proof.
 
-- [x] A1 Candidate boundaries cover every transcript character exactly once (UTF-16 half-open spans + exact excerpt). Proof: `test/domain/candidate_splitter_test.dart`, `test/eval/candidate_coverage_test.dart` (100% gold boundaries are candidates).
-- [x] A2 Jev boundary pass (one Noul per unit) + late-correction Noul; code assembles thoughts; no text is rewritten or lost. Proof: `test/domain/pipeline_test.dart`; eval source-loss 0.
-- [x] A3 Jev classification pass (group Choice, task/alert/recall Nouls, day/time Choices over code-found candidates) → code-built proposal with review flags; dates resolved in the capture's IANA zone incl. DST gap/overlap. Proof: `test/domain/dates_test.dart`, `pipeline_test.dart`.
-- [x] A4 Jev client: pinned `jev-1.13.0`, bounded retries honouring Retry-After, typed failures, no content logged. Proof: `test/services/jev_client_test.dart`.
-- [x] A5 Labelled eval (19 synthetic cases) replays 29 recorded live `jev-1.13.0` responses. Proof: `dart run test/eval/jev_eval.dart`. 4 labels were widened after review (pronoun-continuations, bike→Ideas, poorly-punctuated→Ideas, call-mum→chooseTime); known miss: over-split of "He suggested I try Zig" (boundary 0.79).
+- [x] A1 Candidate boundaries cover every transcript character exactly once (UTF-16 half-open spans + exact excerpt). Proof: `test/features/capture/domain/text/candidate_splitter_test.dart`, `test/eval/candidate_coverage_test.dart` (100% gold boundaries are candidates).
+- [x] A2 Jev boundary pass (one Noul per unit) + late-correction Noul; code assembles thoughts; no text is rewritten or lost. Proof: `test/features/capture/repositories/capture_analysis_repository_test.dart`; eval source-loss 0.
+- [x] A3 Jev classification pass (group Choice, task/alert/recall Nouls, day/time Choices over code-found candidates) → code-built proposal with review flags; dates resolved in the capture's IANA zone incl. DST gap/overlap. Proof: `test/features/capture/domain/dates/date_resolver_test.dart`, `test/features/capture/domain/proposal/proposal_builder_test.dart`.
+- [x] A4 Jev client: pinned `jev-1.13.0`, bounded retries honouring Retry-After, typed failures, no content logged. Proof: `test/features/capture/data/services/jev_http_service_test.dart`, `test/features/capture/data/datasources/jev_remote_datasource_test.dart`.
+- [x] A5 Labelled eval (19 synthetic cases) replays 29 recorded live `jev-1.13.0` responses. Proof: `flutter test test/eval/jev_eval_test.dart` (replay; fails on unrecorded requests or source loss). 4 labels were widened after review (pronoun-continuations, bike→Ideas, poorly-punctuated→Ideas, call-mum→chooseTime); known miss: over-split of "He suggested I try Zig" (boundary 0.79).
 - [ ] A6 Global shortcut (default Ctrl+Option+R, configurable) starts/stops recording from any app without Accessibility permission; a key held down does not toggle repeatedly. Proof: native hotkey unit + manual run from another app.
 - [ ] A7 Recording writes PCM16 16 kHz mono to disk while recording (durable before stop), shows the charcoal pill with live waveform and timer, hard-stops at 5:00, and discards nothing on crash (draft recovered at launch). Proof: recorder tests + manual run.
 - [ ] A8 Local Parakeet-TDT-0.6B-v3 int8 via sherpa_onnx in a background isolate; model downloaded on first run with progress, resume and SHA-256 check into Application Support; CC-BY-4.0 attribution shown. Proof: model-store tests (hash/resume) + manual transcription of a real recording.
@@ -54,13 +54,13 @@ Execution: Single builder; slices per brief §18.
 
 ## ux_reference
 
-Result: Pending
-Evidence: Pending
-Surface: New — no prior UI
-Before: N/A — empty scaffold with no prior UI
-Proposed: Pending
-Capture: Pending
-Review: Pending
+Result: Passed
+Evidence: The owner supplied four approved Capture reference images in the build conversation. They are stored in `docs/design/reference/` (`main-window.png`, `menu-popover.png`, `recording-pill.png`, `review-card.png`) and were inspected as the visual target. The direction is settled; the only changes are the documented deviations under Acceptance. Rendered-vs-reference proof of the built UI remains acceptance item A14.
+Surface: New — macOS main window (`lib/features/*/presentation`, shell `lib/features/shell`), native overlay and menu (`macos/Runner/Native`), tokens in `lib/core/theme`
+Before: N/A — new app; the starting point was an empty `flutter create` scaffold with no prior UI
+Proposed: ![Approved main window](docs/design/reference/main-window.png)
+Capture: Owner-provided reference images (PNG), checked into `docs/design/reference/`; opened and compared during theme and widget work.
+Review: Covers Home, Groups, Recordings, To-do, Upcoming, Settings, the editor, the review card, the pill and the menu. Deviations: the ⌃⌥R shortcut label, no Weekly summary, no selected nav item on Home, no active waveform while reviewing, a count line on the review card, and truthful empty states.
 
 ## Verification
 
