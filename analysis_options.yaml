@@ -46,6 +46,8 @@ linter:
     - avoid_dynamic_calls
     - no_dynamic_casts
     - no_raw_types
+    - avoid_annotating_with_dynamic
+    - strict_top_level_inference
     - avoid_print
     - avoid_void_async
     - cancel_subscriptions
