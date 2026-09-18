@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
+import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
+import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/data/datasources/speech_model_datasource.dart';
 import 'package:capture/features/settings/presentation/extensions/settings_labels.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
@@ -38,7 +40,13 @@ class SetupStepsScreen extends ConsumerWidget {
     final SettingsState(:notionConnected, :notionFailure, :pageLinkInvalid) = ref.read(
       settingsProvider,
     );
-    return notionConnected && notionFailure == null && !pageLinkInvalid;
+    final ok = notionConnected && notionFailure == null && !pageLinkInvalid;
+    if (ok) {
+      // Setup seeded the Groups cache and the Library now has a source.
+      ref.read(groupsProvider.notifier).reload();
+      unawaited(ref.read(libraryProvider.notifier).refresh());
+    }
+    return ok;
   }
 
   @override
