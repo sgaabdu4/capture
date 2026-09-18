@@ -1,17 +1,16 @@
 import 'dart:async';
 
+import 'package:capture/app/app_model.dart';
+import 'package:capture/app/capture_flow.dart';
+import 'package:capture/features/capture/domain/entities/capture.dart';
+import 'package:capture/features/capture/domain/dates/date_resolver.dart';
+import 'package:capture/core/extensions/date_format.dart';
+import 'package:capture/features/capture/domain/entities/models.dart';
+import 'package:capture/features/capture/domain/proposal/edits.dart';
+import 'package:capture/ui/theme.dart';
+import 'package:capture/ui/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
-
-import '../app/app_model.dart';
-import '../app/capture_flow.dart';
-import '../domain/capture.dart';
-import '../domain/dates/date_resolver.dart';
-import '../domain/dates/format.dart';
-import '../domain/models.dart';
-import '../domain/proposal/edits.dart';
-import 'theme.dart';
-import 'widgets.dart';
 
 /// Focused editor for one proposal. Edits are stored locally as you go;
 /// nothing reaches Notion until "Save to Notion".
@@ -27,10 +26,7 @@ class EditorPage extends StatelessWidget {
       builder: (context, _) {
         final r = id == null ? null : model.env.store.capture(id);
         if (r == null) {
-          return const PageFrame(
-            title: 'Review',
-            children: [EmptyNote('Nothing to review.')],
-          );
+          return const PageFrame(title: 'Review', children: [EmptyNote('Nothing to review.')]);
         }
         return _Editor(model: model, record: r);
       },
@@ -45,8 +41,7 @@ class _Editor extends StatelessWidget {
 
   bool get _editable => record.stage == CaptureStage.proposed;
 
-  void _update(List<ProposalItem> items) =>
-      model.flow.updateItems(record.id, items);
+  void _update(List<ProposalItem> items) => model.flow.updateItems(record.id, items);
 
   void _replace(ProposalItem item) =>
       _update([for (final i in record.items) i.id == item.id ? item : i]);
@@ -61,8 +56,7 @@ class _Editor extends StatelessWidget {
           child: PageFrame(
             title: 'Ready to save?',
             subtitle: [
-              if (record.includedItems.isNotEmpty)
-                proposalSummary(record.includedItems),
+              if (record.includedItems.isNotEmpty) proposalSummary(record.includedItems),
               ?record.error,
             ].join(' · '),
             children: [
@@ -75,9 +69,7 @@ class _Editor extends StatelessWidget {
                   editable: _editable,
                   onChanged: _replace,
                   onSplit: (at) => _split(item, at),
-                  onMergeNext: index + 1 < items.length
-                      ? () => _merge(index)
-                      : null,
+                  onMergeNext: index + 1 < items.length ? () => _merge(index) : null,
                 ),
               const SizedBox(height: 12),
               _Transcript(text: record.transcript ?? ''),
@@ -90,12 +82,7 @@ class _Editor extends StatelessWidget {
   }
 
   void _split(ProposalItem item, int at) {
-    final pieces = splitItem(
-      item,
-      record.transcript ?? '',
-      at,
-      model.env.newId(),
-    );
+    final pieces = splitItem(item, record.transcript ?? '', at, model.env.newId());
     if (pieces == null) return;
     _update([
       for (final i in record.items)
@@ -166,9 +153,7 @@ class _ItemEditorState extends State<_ItemEditor> {
     final now = tz.TZDateTime.now(_location);
     final picked = await showDatePicker(
       context: context,
-      initialDate: base == null
-          ? now
-          : DateTime(base.year, base.month, base.day),
+      initialDate: base == null ? now : DateTime(base.year, base.month, base.day),
       firstDate: DateTime(now.year - 1),
       lastDate: DateTime(now.year + 5),
     );
@@ -205,9 +190,7 @@ class _ItemEditorState extends State<_ItemEditor> {
   void _toggleReminder(bool on) {
     final due = item.due;
     if (on && (due == null || !due.hasTime)) return;
-    widget.onChanged(
-      setReminder(item, on ? due : null, flags: on ? _checks(due!) : const {}),
-    );
+    widget.onChanged(setReminder(item, on ? due : null, flags: on ? _checks(due!) : const {}));
   }
 
   @override
@@ -243,17 +226,13 @@ class _ItemEditorState extends State<_ItemEditor> {
                   const SizedBox(width: 12),
                   _KindToggle(
                     kind: item.kind,
-                    onChanged: enabled
-                        ? (k) => widget.onChanged(setKind(item, k))
-                        : null,
+                    onChanged: enabled ? (k) => widget.onChanged(setKind(item, k)) : null,
                   ),
                   const SizedBox(width: 12),
                   _GroupMenu(
                     groups: groups,
                     value: item.groupId,
-                    onChanged: enabled
-                        ? (g) => widget.onChanged(setGroup(item, g))
-                        : null,
+                    onChanged: enabled ? (g) => widget.onChanged(setGroup(item, g)) : null,
                   ),
                 ],
               ),
@@ -275,8 +254,7 @@ class _ItemEditorState extends State<_ItemEditor> {
                   enabled: enabled,
                   onPickDate: _pickDate,
                   onPickTime: _pickTime,
-                  onClear: () =>
-                      widget.onChanged(setReminder(setDue(item, null), null)),
+                  onClear: () => widget.onChanged(setReminder(setDue(item, null), null)),
                   onReminder: _toggleReminder,
                 ),
               ],
@@ -288,10 +266,7 @@ class _ItemEditorState extends State<_ItemEditor> {
                   children: [
                     for (final f in item.flags)
                       Chip(
-                        label: Text(
-                          f.label,
-                          style: Styles.small.copyWith(color: Palette.ink),
-                        ),
+                        label: Text(f.label, style: Styles.small.copyWith(color: Palette.ink)),
                         backgroundColor: const Color(0xFFF6EBD7),
                         side: BorderSide.none,
                       ),
@@ -346,11 +321,7 @@ class _KindToggle extends StatelessWidget {
 }
 
 class _GroupMenu extends StatelessWidget {
-  const _GroupMenu({
-    required this.groups,
-    required this.value,
-    required this.onChanged,
-  });
+  const _GroupMenu({required this.groups, required this.value, required this.onChanged});
   final List<Group> groups;
   final String? value;
   final ValueChanged<String>? onChanged;
@@ -370,9 +341,7 @@ class _GroupMenu extends StatelessWidget {
             child: Text(g.name, overflow: TextOverflow.ellipsis),
           ),
       ],
-      onChanged: onChanged == null
-          ? null
-          : (v) => v == null ? null : onChanged!(v),
+      onChanged: onChanged == null ? null : (v) => v == null ? null : onChanged!(v),
     ),
   );
 }
@@ -422,10 +391,7 @@ class _WhenRow extends StatelessWidget {
             onChanged: enabled && due.hasTime ? onReminder : null,
           ),
           const SizedBox(width: 6),
-          Text(
-            due.hasTime ? 'Remind me' : 'Add a time to set a reminder',
-            style: Styles.label,
-          ),
+          Text(due.hasTime ? 'Remind me' : 'Add a time to set a reminder', style: Styles.label),
           const Spacer(),
           if (enabled)
             IconButton(
@@ -442,11 +408,7 @@ class _WhenRow extends StatelessWidget {
 /// The exact words this item came from. Tapping a word (when editable)
 /// splits the item before it.
 class _Sources extends StatelessWidget {
-  const _Sources({
-    required this.item,
-    required this.transcript,
-    required this.onSplit,
-  });
+  const _Sources({required this.item, required this.transcript, required this.onSplit});
   final ProposalItem item;
   final String transcript;
   final ValueChanged<int>? onSplit;
@@ -464,10 +426,7 @@ class _Sources extends StatelessWidget {
         if (onSplit != null)
           const Padding(
             padding: EdgeInsets.only(bottom: 4),
-            child: Text(
-              'What you said · tap a word to split before it',
-              style: Styles.small,
-            ),
+            child: Text('What you said · tap a word to split before it', style: Styles.small),
           ),
         Wrap(
           children: [
@@ -475,9 +434,7 @@ class _Sources extends StatelessWidget {
               for (final m in RegExp(r'\S+').allMatches(s.excerpt))
                 _Word(
                   text: m[0]!,
-                  onTap: onSplit == null || m.start == 0
-                      ? null
-                      : () => onSplit!(s.start + m.start),
+                  onTap: onSplit == null || m.start == 0 ? null : () => onSplit!(s.start + m.start),
                 ),
           ],
         ),
@@ -495,10 +452,7 @@ class _Word extends StatelessWidget {
   Widget build(BuildContext context) {
     final word = Padding(
       padding: const EdgeInsets.only(right: 5),
-      child: Text(
-        text,
-        style: Styles.label.copyWith(fontStyle: FontStyle.italic),
-      ),
+      child: Text(text, style: Styles.label.copyWith(fontStyle: FontStyle.italic)),
     );
     if (onTap == null) return word;
     return MouseRegion(
@@ -519,19 +473,13 @@ class _Transcript extends StatelessWidget {
       tilePadding: EdgeInsets.zero,
       title: const Text('Full transcript', style: Styles.label),
       expandedAlignment: Alignment.centerLeft,
-      children: [
-        Text(text.isEmpty ? 'No words were heard.' : text, style: Styles.body),
-      ],
+      children: [Text(text.isEmpty ? 'No words were heard.' : text, style: Styles.body)],
     ),
   );
 }
 
 class _BottomBar extends StatelessWidget {
-  const _BottomBar({
-    required this.model,
-    required this.record,
-    required this.problems,
-  });
+  const _BottomBar({required this.model, required this.record, required this.problems});
   final AppModel model;
   final CaptureRecord record;
   final List<String> problems;
@@ -541,8 +489,7 @@ class _BottomBar extends StatelessWidget {
     final flow = model.flow;
     final saving = flow.phase == Phase.saving && flow.activeId == record.id;
     final canSave =
-        (record.stage == CaptureStage.proposed ||
-            record.stage == CaptureStage.approved) &&
+        (record.stage == CaptureStage.proposed || record.stage == CaptureStage.approved) &&
         record.includedItems.isNotEmpty &&
         problems.isEmpty &&
         (flow.phase == Phase.idle || flow.phase == Phase.review);
@@ -561,9 +508,7 @@ class _BottomBar extends StatelessWidget {
                   : record.stage == CaptureStage.saved
                   ? 'Saved to Notion.'
                   : 'Nothing is sent to Notion until you save.',
-              style: Styles.label.copyWith(
-                color: problems.isEmpty ? Palette.muted : Palette.error,
-              ),
+              style: Styles.label.copyWith(color: problems.isEmpty ? Palette.muted : Palette.error),
             ),
           ),
           if (record.stage == CaptureStage.proposed)
@@ -576,9 +521,7 @@ class _BottomBar extends StatelessWidget {
             ),
           const SizedBox(width: 12),
           InkButton(
-            record.stage == CaptureStage.approved
-                ? 'Retry save'
-                : 'Save to Notion',
+            record.stage == CaptureStage.approved ? 'Retry save' : 'Save to Notion',
             busy: saving,
             onPressed: canSave ? () => _save(context) : null,
           ),

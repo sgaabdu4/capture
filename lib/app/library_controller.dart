@@ -1,12 +1,11 @@
+import 'package:capture/app/env.dart';
+import 'package:capture/app/settings_controller.dart';
+import 'package:capture/features/capture/domain/entities/capture.dart';
+import 'package:capture/features/capture/domain/entities/models.dart';
+import 'package:capture/core/data/notion/notion_http_service.dart';
+import 'package:capture/core/data/notion/notion_shapes.dart';
+import 'package:capture/features/settings/data/datasources/notion_workspace_remote_datasource.dart';
 import 'package:flutter/foundation.dart';
-
-import '../domain/capture.dart';
-import '../domain/models.dart';
-import '../services/notion_client.dart';
-import '../services/notion_shapes.dart';
-import '../services/notion_workspace.dart';
-import 'env.dart';
-import 'settings_controller.dart';
 
 /// Local mirror of the Notion Library for To-do and Upcoming. Notion is the
 /// source of truth; the cache keeps the views useful offline.

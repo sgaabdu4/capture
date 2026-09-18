@@ -1,16 +1,15 @@
 import 'dart:async';
 
+import 'package:capture/app/env.dart';
+import 'package:capture/features/capture/domain/entities/models.dart';
+import 'package:capture/features/settings/domain/entities/shortcut.dart';
+import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
+import 'package:capture/features/settings/data/datasources/speech_model_datasource.dart';
+import 'package:capture/core/data/notion/notion_http_service.dart';
+import 'package:capture/core/data/notion/notion_shapes.dart';
+import 'package:capture/features/settings/data/datasources/notion_workspace_remote_datasource.dart';
+import 'package:capture/features/settings/data/datasources/secrets_local_datasource.dart';
 import 'package:flutter/foundation.dart';
-
-import '../domain/models.dart';
-import '../domain/shortcut.dart';
-import '../services/jev_client.dart';
-import '../services/model_store.dart';
-import '../services/notion_client.dart';
-import '../services/notion_shapes.dart';
-import '../services/notion_workspace.dart';
-import '../services/secrets.dart';
-import 'env.dart';
 
 /// Credentials, Notion connection, groups, speech model and shortcut.
 class SettingsController extends ChangeNotifier {
@@ -86,17 +85,13 @@ class SettingsController extends ChangeNotifier {
     final t = token.trim().isEmpty
         ? await _env.secrets.read(Secret.notionToken) ?? ''
         : token.trim();
-    final pageId = pageInput.trim().isEmpty
-        ? workspace?.parentPageId
-        : parseNotionId(pageInput);
+    final pageId = pageInput.trim().isEmpty ? workspace?.parentPageId : parseNotionId(pageInput);
     if (t.isEmpty) return 'Paste your Notion connection token.';
     if (pageId == null) return 'Paste the link to the Notion page to use.';
     final client = _env.notion(t);
     try {
-      final ws = await NotionSetup(client).connect(
-        pageId,
-        known: workspace?.parentPageId == pageId ? workspace : null,
-      );
+      final ws = await NotionSetup(client)
+          .connect(pageId, known: workspace?.parentPageId == pageId ? workspace : null);
       await _env.secrets.write(Secret.notionToken, t);
       hasNotionToken = true;
       workspace = ws;
@@ -141,22 +136,13 @@ class SettingsController extends ChangeNotifier {
     final problem = validateGroup(name, description, groups);
     if (problem != null) return problem;
     return _groupsCall((setup, ws) async {
-      final g = await setup.createGroup(
-        ws.groups,
-        name.trim(),
-        description.trim(),
-      );
+      final g = await setup.createGroup(ws.groups, name.trim(), description.trim());
       groups = [...groups, g];
     });
   }
 
   Future<String?> updateGroup(Group group) async {
-    final problem = validateGroup(
-      group.name,
-      group.description,
-      groups,
-      editingId: group.id,
-    );
+    final problem = validateGroup(group.name, group.description, groups, editingId: group.id);
     if (problem != null) return problem;
     return _groupsCall((setup, ws) async {
       await setup.updateGroup(group);
@@ -164,9 +150,7 @@ class SettingsController extends ChangeNotifier {
     });
   }
 
-  Future<String?> _groupsCall(
-    Future<void> Function(NotionSetup, NotionWorkspace) run,
-  ) async {
+  Future<String?> _groupsCall(Future<void> Function(NotionSetup, NotionWorkspace) run) async {
     try {
       await withNotion((client) => run(NotionSetup(client), workspace!));
     } on NotionException catch (e) {
@@ -189,8 +173,7 @@ class SettingsController extends ChangeNotifier {
       switch (event) {
         case ModelProgress(:final fraction, :final received, :final total):
           modelProgress = fraction;
-          modelStatus =
-              'Downloading ${received ~/ 1000000} of ${total ~/ 1000000} MB';
+          modelStatus = 'Downloading ${received ~/ 1000000} of ${total ~/ 1000000} MB';
         case ModelVerifying(:final file):
           modelStatus = 'Checking $file…';
         case ModelReady():
@@ -211,17 +194,9 @@ class SettingsController extends ChangeNotifier {
   Future<String?> setShortcut(Shortcut s) async {
     final problem = shortcutProblem(s);
     if (problem != null) return problem;
-    final ok = await _env.native.setHotKey(
-      s.keyCode,
-      s.carbonModifiers,
-      s.label,
-    );
+    final ok = await _env.native.setHotKey(s.keyCode, s.carbonModifiers, s.label);
     if (!ok) {
-      await _env.native.setHotKey(
-        shortcut.keyCode,
-        shortcut.carbonModifiers,
-        shortcut.label,
-      );
+      await _env.native.setHotKey(shortcut.keyCode, shortcut.carbonModifiers, shortcut.label);
       return '${s.label} is already used by another app.';
     }
     shortcut = s;

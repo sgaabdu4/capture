@@ -1,21 +1,20 @@
 import 'dart:async';
 
+import 'package:capture/app/app_model.dart';
+import 'package:capture/app/env.dart';
+import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
+import 'package:capture/core/data/database/local_store.dart';
+import 'package:capture/features/settings/data/datasources/speech_model_datasource.dart';
+import 'package:capture/core/data/native/native_bridge.dart';
+import 'package:capture/core/data/notion/notion_http_service.dart';
+import 'package:capture/core/data/reminders/reminder_datasource.dart';
+import 'package:capture/features/settings/data/datasources/secrets_local_datasource.dart';
+import 'package:capture/features/capture/data/datasources/transcription_datasource.dart';
+import 'package:capture/ui/shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
-
-import 'app/app_model.dart';
-import 'app/env.dart';
-import 'services/jev_client.dart';
-import 'services/local_store.dart';
-import 'services/model_store.dart';
-import 'services/native_bridge.dart';
-import 'services/notion_client.dart';
-import 'services/reminders.dart';
-import 'services/secrets.dart';
-import 'services/transcriber.dart';
-import 'ui/shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,22 +1,21 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:capture/app/env.dart';
+import 'package:capture/app/settings_controller.dart';
+import 'package:capture/features/capture/domain/entities/capture.dart';
+import 'package:capture/features/capture/domain/dates/date_resolver.dart';
+import 'package:capture/core/extensions/date_format.dart';
+import 'package:capture/features/capture/domain/entities/models.dart';
+import 'package:capture/features/capture/domain/proposal/edits.dart';
+import 'package:capture/features/capture/domain/proposal/proposal_builder.dart';
+import 'package:capture/features/capture/repositories/capture_analysis_repository.dart';
+import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
+import 'package:capture/core/data/native/native_bridge.dart';
+import 'package:capture/features/capture/data/datasources/notion_capture_remote_datasource.dart';
+import 'package:capture/features/settings/data/datasources/secrets_local_datasource.dart';
 import 'package:flutter/foundation.dart';
 import 'package:timezone/timezone.dart' as tz;
-
-import '../domain/capture.dart';
-import '../domain/dates/date_resolver.dart';
-import '../domain/dates/format.dart';
-import '../domain/models.dart';
-import '../domain/proposal/edits.dart';
-import '../domain/proposal/proposal_builder.dart';
-import '../services/capture_analyzer.dart';
-import '../services/jev_client.dart';
-import '../services/native_bridge.dart';
-import '../services/notion_saver.dart';
-import '../services/secrets.dart';
-import 'env.dart';
-import 'settings_controller.dart';
 
 enum Phase { idle, recording, transcribing, analysing, review, saving }
 
@@ -41,8 +40,7 @@ class CaptureFlow extends ChangeNotifier {
   final editRequests = StreamController<String>.broadcast();
 
   List<CaptureRecord> get captures => _env.store.captures();
-  CaptureRecord? get active =>
-      activeId == null ? null : _env.store.capture(activeId!);
+  CaptureRecord? get active => activeId == null ? null : _env.store.capture(activeId!);
 
   void _set(Phase p, {String? notice}) {
     phase = p;
@@ -96,10 +94,7 @@ class CaptureFlow extends ChangeNotifier {
     _put(record);
     activeId = id;
     try {
-      await _env.native.startRecording(
-        record.audioPath,
-        maxSeconds: maxCaptureSeconds,
-      );
+      await _env.native.startRecording(record.audioPath, maxSeconds: maxCaptureSeconds);
       _set(Phase.recording);
     } on Exception {
       _env.store.deleteCapture(id);
@@ -200,17 +195,11 @@ class CaptureFlow extends ChangeNotifier {
       items = analysis.items;
     } on JevException catch (e) {
       error = '${e.userMessage} Your capture is kept as one note to edit.';
-      items = [
-        manualProposal(wholeTranscript(transcript), groups, _env.newId()),
-      ];
+      items = [manualProposal(wholeTranscript(transcript), groups, _env.newId())];
     } finally {
       jev.close();
     }
-    final next = r.copyWith(
-      stage: CaptureStage.proposed,
-      items: items,
-      error: () => error,
-    );
+    final next = r.copyWith(stage: CaptureStage.proposed, items: items, error: () => error);
     _put(next);
     return next;
   }
@@ -223,25 +212,16 @@ class CaptureFlow extends ChangeNotifier {
     final problems = approvalProblems(r.items);
     final included = r.includedItems;
     await _env.native.showReview(
-      countLine: included.isEmpty
-          ? "I didn't catch anything to save."
-          : proposalSummary(included),
+      countLine: included.isEmpty ? "I didn't catch anything to save." : proposalSummary(included),
       rows: [for (final i in included) _row(r, i)],
       canApprove: included.isNotEmpty && problems.isEmpty,
-      blockedReason:
-          r.error ??
-          (problems.isEmpty ? null : 'Needs a look: ${problems.first}'),
+      blockedReason: r.error ?? (problems.isEmpty ? null : 'Needs a look: ${problems.first}'),
     );
   }
 
   ReviewCardRow _row(CaptureRecord r, ProposalItem item) {
-    final today = tz.TZDateTime.from(
-      r.capturedAtUtc,
-      tz.getLocation(r.timeZone),
-    );
-    final group = _settings.groups
-        .where((g) => g.id == item.groupId)
-        .firstOrNull;
+    final today = tz.TZDateTime.from(r.capturedAtUtc, tz.getLocation(r.timeZone));
+    final group = _settings.groups.where((g) => g.id == item.groupId).firstOrNull;
     final when = item.reminder ?? item.due;
     final detail = [
       if (item.kind == ItemKind.note) 'Note' else 'Task',
@@ -297,10 +277,7 @@ class CaptureFlow extends ChangeNotifier {
     _put(r.copyWith(stage: CaptureStage.dismissed, error: () => null));
     await _env.native.hideOverlay();
     activeId = null;
-    _set(
-      Phase.idle,
-      notice: 'Not saved. It stays in Recordings until you delete it.',
-    );
+    _set(Phase.idle, notice: 'Not saved. It stays in Recordings until you delete it.');
   }
 
   /// The execution boundary: only an explicit approval reaches Notion.
@@ -361,9 +338,7 @@ class CaptureFlow extends ChangeNotifier {
         at: tz.TZDateTime.from(at, location),
       );
       if (ok) {
-        progress = progress.copyWith(
-          remindersScheduled: {...progress.remindersScheduled, item.id},
-        );
+        progress = progress.copyWith(remindersScheduled: {...progress.remindersScheduled, item.id});
         _put(r.copyWith(progress: progress));
       } else {
         notice = 'Saved, but macOS notifications are off for Capture.';

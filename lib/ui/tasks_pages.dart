@@ -1,10 +1,9 @@
+import 'package:capture/app/app_model.dart';
+import 'package:capture/features/capture/domain/entities/capture.dart';
+import 'package:capture/core/extensions/date_format.dart';
+import 'package:capture/ui/theme.dart';
+import 'package:capture/ui/widgets.dart';
 import 'package:flutter/material.dart';
-
-import '../app/app_model.dart';
-import '../domain/capture.dart';
-import '../domain/dates/format.dart';
-import 'theme.dart';
-import 'widgets.dart';
 
 class TodoPage extends StatelessWidget {
   const TodoPage({required this.model, super.key});
@@ -19,8 +18,7 @@ class TodoPage extends StatelessWidget {
       actions: [_RefreshButton(model: model)],
       children: [
         if (model.library.openTasks.isEmpty) const EmptyNote('No open tasks.'),
-        for (final e in model.library.openTasks)
-          _TaskRow(model: model, entry: e),
+        for (final e in model.library.openTasks) _TaskRow(model: model, entry: e),
       ],
     ),
   );
@@ -88,9 +86,7 @@ class _TaskRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final group = model.settings.groups
-        .where((g) => g.id == entry.groupId)
-        .firstOrNull;
+    final group = model.settings.groups.where((g) => g.id == entry.groupId).firstOrNull;
     final when = entry.reminder ?? entry.due;
     final detail = [
       if (when != null) formatDue(when, model.env.now()),

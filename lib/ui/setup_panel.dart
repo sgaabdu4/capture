@@ -1,9 +1,8 @@
+import 'package:capture/app/app_model.dart';
+import 'package:capture/features/settings/data/datasources/speech_model_datasource.dart';
+import 'package:capture/ui/theme.dart';
+import 'package:capture/ui/widgets.dart';
 import 'package:flutter/material.dart';
-
-import '../app/app_model.dart';
-import '../services/model_store.dart';
-import 'theme.dart';
-import 'widgets.dart';
 
 /// Combined first-run setup on Home until everything a capture needs is in
 /// place. Each step is also available in Settings.
@@ -21,10 +20,7 @@ class SetupPanel extends StatelessWidget {
         children: [
           const Underlined('Before your first capture'),
           const SizedBox(height: 6),
-          const Text(
-            'Three things, once. Keys stay in your Mac’s Keychain.',
-            style: Styles.label,
-          ),
+          const Text('Three things, once. Keys stay in your Mac’s Keychain.', style: Styles.label),
           const SizedBox(height: 20),
           ModelStep(model: model),
           const Divider(height: 40),
@@ -38,12 +34,7 @@ class SetupPanel extends StatelessWidget {
 }
 
 class StepHeader extends StatelessWidget {
-  const StepHeader({
-    required this.done,
-    required this.title,
-    super.key,
-    this.detail,
-  });
+  const StepHeader({required this.done, required this.title, super.key, this.detail});
   final bool done;
   final String title;
   final String? detail;
@@ -113,10 +104,7 @@ class ModelStep extends StatelessWidget {
                   ),
                 if (s.modelError != null) ...[
                   const SizedBox(height: 8),
-                  Text(
-                    s.modelError!,
-                    style: Styles.label.copyWith(color: Palette.error),
-                  ),
+                  Text(s.modelError!, style: Styles.label.copyWith(color: Palette.error)),
                 ],
                 const SizedBox(height: 10),
                 const Text(modelAttribution, style: Styles.small),
@@ -186,20 +174,14 @@ class _TypesafeStepState extends State<TypesafeStep> {
                     autocorrect: false,
                     enableSuggestions: false,
                     decoration: InputDecoration(
-                      hintText: has
-                          ? 'Paste a new key to replace it'
-                          : 'Paste your key',
+                      hintText: has ? 'Paste a new key to replace it' : 'Paste your key',
                       errorText: _error,
                     ),
                     onSubmitted: (_) => _save(),
                   ),
                 ),
                 const SizedBox(width: 12),
-                InkButton(
-                  has ? 'Replace' : 'Save',
-                  onPressed: _save,
-                  busy: _busy,
-                ),
+                InkButton(has ? 'Replace' : 'Save', onPressed: _save, busy: _busy),
               ],
             ),
           ),
@@ -232,10 +214,7 @@ class _NotionStepState extends State<NotionStep> {
 
   Future<void> _connect() async {
     setState(() => _busy = true);
-    final error = await widget.model.settings.connectNotion(
-      _token.text,
-      _page.text,
-    );
+    final error = await widget.model.settings.connectNotion(_token.text, _page.text);
     if (!mounted) return;
     setState(() {
       _busy = false;

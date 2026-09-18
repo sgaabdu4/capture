@@ -1,15 +1,14 @@
 import 'dart:async';
 
+import 'package:capture/app/capture_flow.dart';
+import 'package:capture/app/env.dart';
+import 'package:capture/app/library_controller.dart';
+import 'package:capture/app/settings_controller.dart';
+import 'package:capture/features/capture/domain/entities/capture.dart';
+import 'package:capture/core/extensions/date_format.dart';
+import 'package:capture/features/capture/domain/entities/models.dart';
+import 'package:capture/core/data/native/native_bridge.dart';
 import 'package:flutter/foundation.dart';
-
-import '../domain/capture.dart';
-import '../domain/dates/format.dart';
-import '../domain/models.dart';
-import '../services/native_bridge.dart';
-import 'capture_flow.dart';
-import 'env.dart';
-import 'library_controller.dart';
-import 'settings_controller.dart';
 
 enum Section { home, groups, recordings, todo, upcoming, settings, editor }
 
@@ -113,6 +112,6 @@ String latestLine(CaptureRecord r) => switch (r.stage) {
   CaptureStage.proposed => 'Waiting for review',
   CaptureStage.approved => 'Save incomplete',
   CaptureStage.dismissed => 'Not saved',
-  CaptureStage.recorded || CaptureStage.transcribed =>
-    r.error == null ? 'Processing' : 'Needs attention',
+  CaptureStage.recorded ||
+  CaptureStage.transcribed => r.error == null ? 'Processing' : 'Needs attention',
 };

@@ -1,16 +1,11 @@
 import 'dart:math' as math;
 
+import 'package:capture/ui/theme.dart';
 import 'package:flutter/material.dart';
-
-import 'theme.dart';
 
 /// Soft, paper-like card from the references.
 class PaperCard extends StatelessWidget {
-  const PaperCard({
-    required this.child,
-    super.key,
-    this.padding = const EdgeInsets.all(24),
-  });
+  const PaperCard({required this.child, super.key, this.padding = const EdgeInsets.all(24)});
 
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -22,13 +17,7 @@ class PaperCard extends StatelessWidget {
       color: Palette.card,
       borderRadius: BorderRadius.circular(18),
       border: Border.all(color: Palette.line.withValues(alpha: 0.7)),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x0F000000),
-          blurRadius: 18,
-          offset: Offset(0, 6),
-        ),
-      ],
+      boxShadow: const [BoxShadow(color: Color(0x0F000000), blurRadius: 18, offset: Offset(0, 6))],
     ),
     child: child,
   );
@@ -71,12 +60,7 @@ class _UnderlinePainter extends CustomPainter {
 
 /// The large black microphone with the six pencil rays.
 class MicButton extends StatelessWidget {
-  const MicButton({
-    required this.recording,
-    required this.onPressed,
-    super.key,
-    this.size = 200,
-  });
+  const MicButton({required this.recording, required this.onPressed, super.key, this.size = 200});
 
   final bool recording;
   final VoidCallback? onPressed;
@@ -93,9 +77,7 @@ class MicButton extends StatelessWidget {
         painter: _RaysPainter(radius: size / 2),
         child: Center(
           child: MouseRegion(
-            cursor: onPressed == null
-                ? SystemMouseCursors.basic
-                : SystemMouseCursors.click,
+            cursor: onPressed == null ? SystemMouseCursors.basic : SystemMouseCursors.click,
             child: GestureDetector(
               onTap: onPressed,
               child: Container(
@@ -103,15 +85,9 @@ class MicButton extends StatelessWidget {
                 height: size,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: onPressed == null
-                      ? Palette.mic.withValues(alpha: 0.45)
-                      : Palette.mic,
+                  color: onPressed == null ? Palette.mic.withValues(alpha: 0.45) : Palette.mic,
                   boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x33000000),
-                      blurRadius: 24,
-                      offset: Offset(0, 10),
-                    ),
+                    BoxShadow(color: Color(0x33000000), blurRadius: 24, offset: Offset(0, 10)),
                   ],
                 ),
                 child: Center(
@@ -124,11 +100,7 @@ class MicButton extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                         )
-                      : Icon(
-                          Icons.mic_none_rounded,
-                          size: size * 0.42,
-                          color: Palette.cream,
-                        ),
+                      : Icon(Icons.mic_none_rounded, size: size * 0.42, color: Palette.cream),
                 ),
               ),
             ),
@@ -190,12 +162,7 @@ class LinkButton extends StatelessWidget {
 
 /// Filled ink button for primary actions.
 class InkButton extends StatelessWidget {
-  const InkButton(
-    this.label, {
-    required this.onPressed,
-    super.key,
-    this.busy = false,
-  });
+  const InkButton(this.label, {required this.onPressed, super.key, this.busy = false});
   final String label;
   final VoidCallback? onPressed;
   final bool busy;
@@ -216,10 +183,7 @@ class InkButton extends StatelessWidget {
         ? const SizedBox(
             width: 18,
             height: 18,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: Palette.cream,
-            ),
+            child: CircularProgressIndicator(strokeWidth: 2, color: Palette.cream),
           )
         : Text(label),
   );
@@ -266,10 +230,7 @@ class IconBadge extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     width: 44,
     height: 44,
-    decoration: const BoxDecoration(
-      color: Palette.selected,
-      shape: BoxShape.circle,
-    ),
+    decoration: const BoxDecoration(color: Palette.selected, shape: BoxShape.circle),
     child: Icon(icon, size: 22, color: Palette.ink),
   );
 }
@@ -312,10 +273,7 @@ class PageFrame extends StatelessWidget {
           ...actions,
         ],
       ),
-      if (subtitle != null) ...[
-        const SizedBox(height: 8),
-        Text(subtitle!, style: Styles.label),
-      ],
+      if (subtitle != null) ...[const SizedBox(height: 8), Text(subtitle!, style: Styles.label)],
       const SizedBox(height: 28),
       ...children,
     ],

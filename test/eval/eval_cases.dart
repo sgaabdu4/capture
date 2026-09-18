@@ -1,4 +1,4 @@
-import 'package:capture/domain/models.dart';
+import 'package:capture/features/capture/domain/entities/models.dart';
 
 /// Labelled, synthetic evaluation set (no real diary content). Each expected
 /// item is identified by the start of its source text; the item boundaries
@@ -28,13 +28,7 @@ class Expected {
 }
 
 class EvalCase {
-  const EvalCase(
-    this.id,
-    this.transcript,
-    this.expected, {
-    this.customGroups,
-    this.capturedAtUtc,
-  });
+  const EvalCase(this.id, this.transcript, this.expected, {this.customGroups, this.capturedAtUtc});
 
   final String id;
   final String transcript;
@@ -62,11 +56,7 @@ const task = ItemKind.task;
 
 final defaultEvalGroups = [
   for (final g in defaultGroups)
-    Group(
-      id: 'g-${g.name.toLowerCase()}',
-      name: g.name,
-      description: g.description,
-    ),
+    Group(id: 'g-${g.name.toLowerCase()}', name: g.name, description: g.description),
 ];
 
 final evalCases = <EvalCase>[
@@ -151,19 +141,9 @@ final evalCases = <EvalCase>[
       // The later "6pm instead" makes the time genuinely uncertain: the item
       // must not silently keep a reminder; it asks for a time instead. The
       // correction stays a separate, flagged item.
-      Expected(
-        'Remind me to call mum',
-        _personal,
-        task,
-        flags: {ReviewFlag.chooseTime},
-      ),
+      Expected('Remind me to call mum', _personal, task, flags: {ReviewFlag.chooseTime}),
       Expected('Buy stamps', _personal, task),
-      Expected(
-        'Oh, and make the call',
-        _personal,
-        task,
-        flags: {ReviewFlag.correctionElsewhere},
-      ),
+      Expected('Oh, and make the call', _personal, task, flags: {ReviewFlag.correctionElsewhere}),
     ],
   ),
   const EvalCase(
@@ -178,35 +158,15 @@ final evalCases = <EvalCase>[
       Expected('Sarah said', _personal, note),
     ],
   ),
-  const EvalCase(
-    'task-without-alert',
-    "I need to call James but don't remind me.",
-    [Expected('I need to call James', _personal, task)],
-  ),
-  const EvalCase(
-    'date-only-deadline',
-    'Finish the quarterly report by Friday.',
-    [
-      Expected(
-        'Finish the quarterly report',
-        _work,
-        task,
-        due: DueDate(2026, 9, 18),
-      ),
-    ],
-  ),
-  const EvalCase(
-    'ambiguous-am-pm',
-    'Remind me to water the plants tomorrow at two.',
-    [
-      Expected(
-        'Remind me to water the plants',
-        _personal,
-        task,
-        flags: {ReviewFlag.chooseAmPm},
-      ),
-    ],
-  ),
+  const EvalCase('task-without-alert', "I need to call James but don't remind me.", [
+    Expected('I need to call James', _personal, task),
+  ]),
+  const EvalCase('date-only-deadline', 'Finish the quarterly report by Friday.', [
+    Expected('Finish the quarterly report', _work, task, due: DueDate(2026, 9, 18)),
+  ]),
+  const EvalCase('ambiguous-am-pm', 'Remind me to water the plants tomorrow at two.', [
+    Expected('Remind me to water the plants', _personal, task, flags: {ReviewFlag.chooseAmPm}),
+  ]),
   EvalCase(
     'daylight-saving-overlap',
     'Remind me tomorrow at 1:30am to check the boiler timer.',
@@ -246,25 +206,16 @@ final evalCases = <EvalCase>[
     [
       // A design idea: Ideas is also acceptable (relabelled after review).
       Expected('so i was thinking', {'Tech', 'Ideas'}, note),
-      Expected(
-        'also remind me',
-        _work,
-        task,
-        reminder: DueDate(2026, 9, 18, hour: 10, minute: 0),
-      ),
+      Expected('also remind me', _work, task, reminder: DueDate(2026, 9, 18, hour: 10, minute: 0)),
     ],
   ),
-  const EvalCase(
-    'retrieval-question',
-    'What did I say about the budget yesterday?',
-    [
-      Expected(
-        'What did I say',
-        {'Unsorted', 'Work', 'Personal'},
-        note,
-        included: false,
-        flags: {ReviewFlag.recallUnsupported},
-      ),
-    ],
-  ),
+  const EvalCase('retrieval-question', 'What did I say about the budget yesterday?', [
+    Expected(
+      'What did I say',
+      {'Unsorted', 'Work', 'Personal'},
+      note,
+      included: false,
+      flags: {ReviewFlag.recallUnsupported},
+    ),
+  ]),
 ];

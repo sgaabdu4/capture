@@ -1,4 +1,4 @@
-/// The method channel is wrapped by the app (`lib/services/native_bridge.dart`);
+/// The method channel is wrapped by the app (`lib/core/data/native/native_bridge.dart`);
 /// this package only ships the macOS implementation.
 library;
 

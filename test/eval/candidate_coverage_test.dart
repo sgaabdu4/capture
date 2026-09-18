@@ -1,4 +1,4 @@
-import 'package:capture/domain/text/candidate_splitter.dart';
+import 'package:capture/features/capture/domain/text/candidate_splitter.dart';
 import 'package:test/test.dart';
 
 import 'eval_cases.dart';
@@ -12,9 +12,7 @@ void main() {
     var candidates = 0;
     final missing = <String>[];
     for (final c in evalCases) {
-      final starts = splitCandidates(c.transcript)
-          .map((u) => u.span.start)
-          .toSet();
+      final starts = splitCandidates(c.transcript).map((u) => u.span.start).toSet();
       candidates += starts.length - (starts.isEmpty ? 0 : 1);
       for (final b in c.goldBoundaries) {
         expect(b, greaterThanOrEqualTo(0), reason: '${c.id}: label not found');
@@ -26,9 +24,7 @@ void main() {
         }
       }
     }
-    printOnFailure(
-      'candidate coverage $covered/$gold, candidates $candidates, missing $missing',
-    );
+    printOnFailure('candidate coverage $covered/$gold, candidates $candidates, missing $missing');
     expect(missing, isEmpty);
   });
 }

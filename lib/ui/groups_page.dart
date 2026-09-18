@@ -1,9 +1,8 @@
+import 'package:capture/app/app_model.dart';
+import 'package:capture/features/capture/domain/entities/models.dart';
+import 'package:capture/ui/theme.dart';
+import 'package:capture/ui/widgets.dart';
 import 'package:flutter/material.dart';
-
-import '../app/app_model.dart';
-import '../domain/models.dart';
-import 'theme.dart';
-import 'widgets.dart';
 
 /// Groups editor. Names and descriptions steer Jev's filing, so each group
 /// explains what belongs in it. Groups are archived, never deleted, so
@@ -34,10 +33,7 @@ class GroupsPage extends StatelessWidget {
             'Jev files each thought into one group using these descriptions. '
             'Describe what belongs, and what does not.',
         actions: [
-          LinkButton(
-            'Refresh',
-            onPressed: () => _run(context, s.refreshGroups()),
-          ),
+          LinkButton('Refresh', onPressed: () => _run(context, s.refreshGroups())),
           const SizedBox(width: 8),
           InkButton('Add group', onPressed: () => _edit(context, null)),
         ],
@@ -49,11 +45,7 @@ class GroupsPage extends StatelessWidget {
             const Text('Archived', style: Styles.label),
             const SizedBox(height: 8),
             for (final g in archived)
-              _GroupCard(
-                model: model,
-                group: g,
-                onEdit: () => _edit(context, g),
-              ),
+              _GroupCard(model: model, group: g, onEdit: () => _edit(context, g)),
           ],
         ],
       );
@@ -72,11 +64,7 @@ class GroupsPage extends StatelessWidget {
 }
 
 class _GroupCard extends StatelessWidget {
-  const _GroupCard({
-    required this.model,
-    required this.group,
-    required this.onEdit,
-  });
+  const _GroupCard({required this.model, required this.group, required this.onEdit});
   final AppModel model;
   final Group group;
   final VoidCallback onEdit;
@@ -98,9 +86,7 @@ class _GroupCard extends StatelessWidget {
             shape: const Border(),
             title: Text(
               group.name,
-              style: Styles.cardTitle.copyWith(
-                color: group.archived ? Palette.muted : Palette.ink,
-              ),
+              style: Styles.cardTitle.copyWith(color: group.archived ? Palette.muted : Palette.ink),
             ),
             subtitle: Text(group.description, style: Styles.label),
             trailing: Row(
@@ -121,9 +107,7 @@ class _GroupCard extends StatelessWidget {
                 ListTile(
                   dense: true,
                   leading: Icon(
-                    e.kind == ItemKind.task
-                        ? Icons.check_box_outlined
-                        : Icons.description_outlined,
+                    e.kind == ItemKind.task ? Icons.check_box_outlined : Icons.description_outlined,
                     color: Palette.ink,
                   ),
                   title: Text(e.title, style: Styles.body),
@@ -147,9 +131,7 @@ class _GroupDialog extends StatefulWidget {
 
 class _GroupDialogState extends State<_GroupDialog> {
   late final _name = TextEditingController(text: widget.group?.name);
-  late final _description = TextEditingController(
-    text: widget.group?.description,
-  );
+  late final _description = TextEditingController(text: widget.group?.description);
   String? _error;
   var _busy = false;
 
@@ -188,10 +170,7 @@ class _GroupDialogState extends State<_GroupDialog> {
   Widget build(BuildContext context) {
     final g = widget.group;
     return AlertDialog(
-      title: Text(
-        g == null ? 'New group' : 'Edit group',
-        style: Styles.cardTitle,
-      ),
+      title: Text(g == null ? 'New group' : 'Edit group', style: Styles.cardTitle),
       content: SizedBox(
         width: 460,
         child: Column(

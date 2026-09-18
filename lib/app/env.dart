@@ -1,10 +1,10 @@
-import '../services/jev_client.dart';
-import '../services/local_store.dart';
-import '../services/model_store.dart';
-import '../services/native_bridge.dart';
-import '../services/notion_client.dart';
-import '../services/reminders.dart';
-import '../services/secrets.dart';
+import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
+import 'package:capture/core/data/database/local_store.dart';
+import 'package:capture/features/settings/data/datasources/speech_model_datasource.dart';
+import 'package:capture/core/data/native/native_bridge.dart';
+import 'package:capture/core/data/notion/notion_http_service.dart';
+import 'package:capture/core/data/reminders/reminder_datasource.dart';
+import 'package:capture/features/settings/data/datasources/secrets_local_datasource.dart';
 
 /// Local speech-to-text (Parakeet in production).
 abstract interface class SpeechToText {
@@ -54,8 +54,6 @@ var _counter = 0;
 String _randomId() {
   final t = DateTime.now().toUtc().microsecondsSinceEpoch.toRadixString(36);
   final c = (_counter++ % 1296).toRadixString(36).padLeft(2, '0');
-  final r = (DateTime.now().microsecond * 7919 % 46656)
-      .toRadixString(36)
-      .padLeft(3, '0');
+  final r = (DateTime.now().microsecond * 7919 % 46656).toRadixString(36).padLeft(3, '0');
   return '$t$c$r';
 }

@@ -1,14 +1,13 @@
+import 'package:capture/app/app_model.dart';
+import 'package:capture/ui/editor_page.dart';
+import 'package:capture/ui/groups_page.dart';
+import 'package:capture/ui/home_page.dart';
+import 'package:capture/ui/recordings_page.dart';
+import 'package:capture/ui/settings_page.dart';
+import 'package:capture/ui/tasks_pages.dart';
+import 'package:capture/ui/theme.dart';
+import 'package:capture/ui/widgets.dart';
 import 'package:flutter/material.dart';
-
-import '../app/app_model.dart';
-import 'editor_page.dart';
-import 'groups_page.dart';
-import 'home_page.dart';
-import 'recordings_page.dart';
-import 'settings_page.dart';
-import 'tasks_pages.dart';
-import 'theme.dart';
-import 'widgets.dart';
 
 class CaptureApp extends StatelessWidget {
   const CaptureApp({required this.model, super.key});

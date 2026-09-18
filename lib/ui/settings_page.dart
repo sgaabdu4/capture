@@ -1,11 +1,10 @@
+import 'package:capture/app/app_model.dart';
+import 'package:capture/features/settings/domain/entities/shortcut.dart';
+import 'package:capture/ui/setup_panel.dart';
+import 'package:capture/ui/theme.dart';
+import 'package:capture/ui/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../app/app_model.dart';
-import '../domain/shortcut.dart';
-import 'setup_panel.dart';
-import 'theme.dart';
-import 'widgets.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({required this.model, super.key});
@@ -112,10 +111,7 @@ class _ShortcutSectionState extends State<_ShortcutSection> {
                   const SizedBox(width: 12),
                   if (_error != null)
                     Expanded(
-                      child: Text(
-                        _error!,
-                        style: Styles.label.copyWith(color: Palette.error),
-                      ),
+                      child: Text(_error!, style: Styles.label.copyWith(color: Palette.error)),
                     ),
                 ],
               ),
@@ -143,19 +139,16 @@ class _MicSection extends StatelessWidget {
             done: status == 'granted',
             title: 'Microphone',
             detail: switch (status) {
-              'granted' =>
-                'Allowed. The microphone is on only while the pill shows.',
-              'denied' => 'Blocked. Allow Capture in System Settings → Privacy & Security → Microphone.',
+              'granted' => 'Allowed. The microphone is on only while the pill shows.',
+              'denied' =>
+                'Blocked. Allow Capture in System Settings → Privacy & Security → Microphone.',
               _ => 'macOS will ask the first time you record.',
             },
           ),
           if (status == 'undetermined')
             Padding(
               padding: const EdgeInsets.only(left: 38, top: 12),
-              child: LineButton(
-                'Allow microphone',
-                onPressed: model.settings.ensureMic,
-              ),
+              child: LineButton('Allow microphone', onPressed: model.settings.ensureMic),
             ),
         ],
       );

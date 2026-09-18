@@ -70,11 +70,7 @@ abstract final class Styles {
     color: Palette.muted,
     height: 1.3,
   );
-  static const small = TextStyle(
-    fontFamily: Fonts.hand,
-    fontSize: 14,
-    color: Palette.muted,
-  );
+  static const small = TextStyle(fontFamily: Fonts.hand, fontSize: 14, color: Palette.muted);
 }
 
 ThemeData captureTheme() {
@@ -126,8 +122,7 @@ ThemeData captureTheme() {
       side: const BorderSide(color: Palette.ink, width: 1.6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       fillColor: WidgetStateProperty.resolveWith(
-        (s) =>
-            s.contains(WidgetState.selected) ? Palette.ink : Colors.transparent,
+        (s) => s.contains(WidgetState.selected) ? Palette.ink : Colors.transparent,
       ),
       checkColor: const WidgetStatePropertyAll(Palette.cream),
     ),
@@ -137,19 +132,11 @@ ThemeData captureTheme() {
     ),
     snackBarTheme: const SnackBarThemeData(
       backgroundColor: Palette.ink,
-      contentTextStyle: TextStyle(
-        fontFamily: Fonts.hand,
-        fontSize: 16,
-        color: Palette.cream,
-      ),
+      contentTextStyle: TextStyle(fontFamily: Fonts.hand, fontSize: 16, color: Palette.cream),
       behavior: SnackBarBehavior.floating,
     ),
     tooltipTheme: const TooltipThemeData(
-      textStyle: TextStyle(
-        fontFamily: Fonts.hand,
-        fontSize: 14,
-        color: Palette.cream,
-      ),
+      textStyle: TextStyle(fontFamily: Fonts.hand, fontSize: 14, color: Palette.cream),
     ),
   );
 }

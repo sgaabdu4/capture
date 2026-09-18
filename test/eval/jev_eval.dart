@@ -12,10 +12,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:capture/domain/models.dart';
-import 'package:capture/domain/source_span.dart';
-import 'package:capture/services/capture_analyzer.dart';
-import 'package:capture/services/jev_client.dart';
+import 'package:capture/features/capture/domain/entities/models.dart';
+import 'package:capture/features/capture/domain/entities/source_span.dart';
+import 'package:capture/features/capture/repositories/capture_analysis_repository.dart';
+import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -42,9 +42,7 @@ Future<void> main(List<String> args) async {
     stderr.writeln('Set TYPESAFE_API_KEY for --live.');
     exit(2);
   }
-  final jev = live
-      ? JevClient(key!)
-      : JevClient('replay', client: client, maxRetries: 0);
+  final jev = live ? JevClient(key!) : JevClient('replay', client: client, maxRetries: 0);
   final report = _Report();
   for (final c in evalCases) {
     try {
@@ -62,16 +60,13 @@ Future<void> main(List<String> args) async {
   }
   if (args.contains('--prune') && !live && pending.isEmpty) {
     _store.writeAsStringSync(
-      const JsonEncoder.withIndent(' ')
-          .convert({for (final h in client.used) h: recorded[h]}),
+      const JsonEncoder.withIndent(' ').convert({for (final h in client.used) h: recorded[h]}),
     );
     stdout.writeln('kept ${client.used.length} of ${recorded.length}');
   }
   if (pending.isNotEmpty) {
     _dir.createSync(recursive: true);
-    _pending.writeAsStringSync(
-      base64.encode(gzip.encode(utf8.encode(jsonEncode(pending)))),
-    );
+    _pending.writeAsStringSync(base64.encode(gzip.encode(utf8.encode(jsonEncode(pending)))));
     stdout.writeln('${pending.length} request(s) pending → ${_pending.path}');
   }
   stdout.writeln(report.render());
@@ -90,9 +85,7 @@ Map<String, Object?> _load() => _store.existsSync()
 /// Merges playground results: a JSON object `{hash: responseBody}`.
 void _merge(File results) {
   final text = results.readAsStringSync().trim();
-  final decoded = text.startsWith('{')
-      ? text
-      : utf8.decode(gzip.decode(base64.decode(text)));
+  final decoded = text.startsWith('{') ? text : utf8.decode(gzip.decode(base64.decode(text)));
   final incoming = jsonDecode(decoded) as Map<String, Object?>;
   final all = {..._load(), ...incoming};
   _dir.createSync(recursive: true);
@@ -128,22 +121,22 @@ class _ReplayClient extends http.BaseClient {
 class _Report {
   final pending = <String>[];
   final rows = <String>[];
-  var goldBoundaries = 0;
-  var predictedBoundaries = 0;
-  var correctBoundaries = 0;
-  var alignedItems = 0;
-  var groupCorrect = 0;
-  var kindCorrect = 0;
-  var falseTasks = 0;
-  var missedTasks = 0;
-  var reminderChecks = 0;
-  var reminderCorrect = 0;
-  var flagChecks = 0;
-  var flagsPresent = 0;
-  var sourceLoss = 0;
-  var requests = 0;
-  var tokens = 0;
-  var latencyMs = 0;
+  int goldBoundaries = 0;
+  int predictedBoundaries = 0;
+  int correctBoundaries = 0;
+  int alignedItems = 0;
+  int groupCorrect = 0;
+  int kindCorrect = 0;
+  int falseTasks = 0;
+  int missedTasks = 0;
+  int reminderChecks = 0;
+  int reminderCorrect = 0;
+  int flagChecks = 0;
+  int flagsPresent = 0;
+  int sourceLoss = 0;
+  int requests = 0;
+  int tokens = 0;
+  int latencyMs = 0;
 
   void add(EvalCase c, Analysis a) {
     requests += a.requestCount;
@@ -163,9 +156,7 @@ class _Report {
     ];
     for (final e in c.expected) {
       final start = c.transcript.indexOf(e.startsWith);
-      final item = a.items
-          .where((i) => i.sources.first.start == start)
-          .firstOrNull;
+      final item = a.items.where((i) => i.sources.first.start == start).firstOrNull;
       if (item == null) {
         problems.add('no item at "${e.startsWith}"');
         continue;
@@ -202,9 +193,7 @@ class _Report {
       if (item.reminder == e.reminder) {
         reminderCorrect++;
       } else {
-        problems.add(
-          '"${e.startsWith}": reminder ${item.reminder}, expected ${e.reminder}',
-        );
+        problems.add('"${e.startsWith}": reminder ${item.reminder}, expected ${e.reminder}');
       }
     }
     if (e.due != null && item.due != e.due) {
@@ -225,8 +214,7 @@ class _Report {
   }
 
   String render() {
-    String pct(int a, int b) =>
-        b == 0 ? 'n/a' : '$a/$b (${(100 * a / b).round()}%)';
+    String pct(int a, int b) => b == 0 ? 'n/a' : '$a/$b (${(100 * a / b).round()}%)';
     return [
       ...rows,
       if (pending.isNotEmpty) 'PENDING: ${pending.join(', ')}',

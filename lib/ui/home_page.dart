@@ -1,12 +1,11 @@
+import 'package:capture/app/app_model.dart';
+import 'package:capture/app/capture_flow.dart';
+import 'package:capture/features/capture/domain/entities/capture.dart';
+import 'package:capture/core/extensions/date_format.dart';
+import 'package:capture/ui/setup_panel.dart';
+import 'package:capture/ui/theme.dart';
+import 'package:capture/ui/widgets.dart';
 import 'package:flutter/material.dart';
-
-import '../app/app_model.dart';
-import '../app/capture_flow.dart';
-import '../domain/capture.dart';
-import '../domain/dates/format.dart';
-import 'setup_panel.dart';
-import 'theme.dart';
-import 'widgets.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({required this.model, super.key});
@@ -26,19 +25,12 @@ class HomePage extends StatelessWidget {
               children: [
                 const Underlined('Capture', style: Styles.hero),
                 const SizedBox(height: 18),
-                const Text(
-                  "Say anything. We'll sort it.",
-                  style: Styles.tagline,
-                ),
+                const Text("Say anything. We'll sort it.", style: Styles.tagline),
                 const SizedBox(height: 44),
                 _Recorder(model: model, ready: ready),
                 if (model.flow.notice != null) ...[
                   const SizedBox(height: 14),
-                  Text(
-                    model.flow.notice!,
-                    style: Styles.label,
-                    textAlign: TextAlign.center,
-                  ),
+                  Text(model.flow.notice!, style: Styles.label, textAlign: TextAlign.center),
                 ],
                 const SizedBox(height: 44),
                 if (ready) _Cards(model: model) else SetupPanel(model: model),
@@ -71,10 +63,7 @@ class _Recorder extends StatelessWidget {
     };
     return Column(
       children: [
-        MicButton(
-          recording: recording,
-          onPressed: ready && !busy ? model.flow.toggle : null,
-        ),
+        MicButton(recording: recording, onPressed: ready && !busy ? model.flow.toggle : null),
         const SizedBox(height: 22),
         Text(label, style: Styles.body.copyWith(fontSize: 24)),
         const SizedBox(height: 4),
@@ -124,12 +113,7 @@ class _CardHeader extends StatelessWidget {
 }
 
 class _Row extends StatelessWidget {
-  const _Row({
-    required this.leading,
-    required this.title,
-    required this.subtitle,
-    this.onTap,
-  });
+  const _Row({required this.leading, required this.title, required this.subtitle, this.onTap});
   final Widget leading;
   final String title;
   final String subtitle;
@@ -150,12 +134,7 @@ class _Row extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: Styles.body,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                Text(title, style: Styles.body, maxLines: 2, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 2),
                 Text(subtitle, style: Styles.label),
               ],
@@ -182,10 +161,7 @@ class _TodayCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CardHeader(
-            'Today',
-            onViewAll: () => model.section.value = Section.todo,
-          ),
+          _CardHeader('Today', onViewAll: () => model.section.value = Section.todo),
           const SizedBox(height: 10),
           if (today.isEmpty) const EmptyNote('Nothing due today.'),
           for (final e in today)
@@ -219,10 +195,7 @@ class _RecentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CardHeader(
-            'Recent capture',
-            onViewAll: () => model.section.value = Section.recordings,
-          ),
+          _CardHeader('Recent capture', onViewAll: () => model.section.value = Section.recordings),
           const SizedBox(height: 10),
           if (recent.isEmpty) const EmptyNote('No captures yet.'),
           for (final r in recent)
@@ -232,9 +205,7 @@ class _RecentCard extends StatelessWidget {
                     ? Icons.check_box_outlined
                     : Icons.description_outlined,
               ),
-              title: r.stage == CaptureStage.saved
-                  ? '${latestLine(r)} saved'
-                  : latestLine(r),
+              title: r.stage == CaptureStage.saved ? '${latestLine(r)} saved' : latestLine(r),
               subtitle: formatAgo(r.capturedAtUtc.toLocal(), now),
               onTap: () => model.section.value = Section.recordings,
             ),

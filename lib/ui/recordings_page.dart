@@ -1,11 +1,10 @@
+import 'package:capture/app/app_model.dart';
+import 'package:capture/app/capture_flow.dart';
+import 'package:capture/features/capture/domain/entities/capture.dart';
+import 'package:capture/core/extensions/date_format.dart';
+import 'package:capture/ui/theme.dart';
+import 'package:capture/ui/widgets.dart';
 import 'package:flutter/material.dart';
-
-import '../app/app_model.dart';
-import '../app/capture_flow.dart';
-import '../domain/capture.dart';
-import '../domain/dates/format.dart';
-import 'theme.dart';
-import 'widgets.dart';
 
 /// Every capture with its true state and the one action that moves it on.
 class RecordingsPage extends StatelessWidget {
@@ -44,13 +43,10 @@ class _CaptureCard extends StatelessWidget {
           ? ('Not transcribed yet', Palette.warn)
           : ('Transcription failed', Palette.error),
     CaptureStage.transcribed =>
-      record.error == null
-          ? ('Not sorted yet', Palette.warn)
-          : ('Sorting failed', Palette.error),
+      record.error == null ? ('Not sorted yet', Palette.warn) : ('Sorting failed', Palette.error),
   };
 
-  bool get _busy =>
-      model.flow.activeId == record.id && model.flow.phase != Phase.idle;
+  bool get _busy => model.flow.activeId == record.id && model.flow.phase != Phase.idle;
 
   @override
   Widget build(BuildContext context) {
@@ -79,24 +75,16 @@ class _CaptureCard extends StatelessWidget {
               ],
             ),
             subtitle: Text(
-              record.error ??
-                  (record.stage == CaptureStage.saved
-                      ? latestLine(record)
-                      : ''),
+              record.error ?? (record.stage == CaptureStage.saved ? latestLine(record) : ''),
               style: Styles.label.copyWith(
                 color: record.error == null ? Palette.muted : Palette.error,
               ),
             ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: _actions(context),
-            ),
+            trailing: Row(mainAxisSize: MainAxisSize.min, children: _actions(context)),
             expandedCrossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                record.transcript?.isNotEmpty ?? false
-                    ? record.transcript!
-                    : 'No transcript yet.',
+                record.transcript?.isNotEmpty ?? false ? record.transcript! : 'No transcript yet.',
                 style: Styles.body.copyWith(color: Palette.muted),
               ),
               const SizedBox(height: 8),
@@ -110,11 +98,7 @@ class _CaptureCard extends StatelessWidget {
   List<Widget> _actions(BuildContext context) {
     if (_busy) {
       return const [
-        SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        ),
+        SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
       ];
     }
     final flow = model.flow;
@@ -125,18 +109,12 @@ class _CaptureCard extends StatelessWidget {
           'Retry',
           onPressed: idle ? () => flow.process(record.id) : null,
         ),
-        CaptureStage.proposed => LinkButton(
-          'Review',
-          onPressed: () => model.openEditor(record.id),
-        ),
+        CaptureStage.proposed => LinkButton('Review', onPressed: () => model.openEditor(record.id)),
         CaptureStage.approved => LinkButton(
           'Retry save',
           onPressed: idle ? () => flow.approve(record.id) : null,
         ),
-        CaptureStage.dismissed => LinkButton(
-          'Review again',
-          onPressed: () => _reopen(),
-        ),
+        CaptureStage.dismissed => LinkButton('Review again', onPressed: () => _reopen()),
         CaptureStage.saved => const SizedBox.shrink(),
       },
       if (record.stage != CaptureStage.approved)
@@ -165,10 +143,7 @@ class _CaptureCard extends StatelessWidget {
           style: Styles.body,
         ),
         actions: [
-          LinkButton(
-            'Cancel',
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
+          LinkButton('Cancel', onPressed: () => Navigator.of(context).pop(false)),
           InkButton('Delete', onPressed: () => Navigator.of(context).pop(true)),
         ],
       ),

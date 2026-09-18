@@ -1,5 +1,5 @@
-import 'package:capture/domain/source_span.dart';
-import 'package:capture/domain/text/candidate_splitter.dart';
+import 'package:capture/features/capture/domain/entities/source_span.dart';
+import 'package:capture/features/capture/domain/text/candidate_splitter.dart';
 import 'package:test/test.dart';
 
 /// Five-minute alpha limit ≈ 150 wpm × 5 = 750 words; use ~1,200 words of
