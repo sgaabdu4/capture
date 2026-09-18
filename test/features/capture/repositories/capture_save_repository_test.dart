@@ -1,9 +1,13 @@
+import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/reminders/reminder_datasource.dart';
+import 'package:capture/core/domain/entities/notion_workspace.dart';
+import 'package:capture/core/domain/values/result.dart';
 import 'package:capture/features/capture/data/datasources/audio_files_local_datasource.dart';
 import 'package:capture/features/capture/data/datasources/capture_local_datasource.dart';
 import 'package:capture/features/capture/data/datasources/notion_capture_remote_datasource.dart';
 import 'package:capture/features/capture/data/models/capture_record_model.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
+import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/repositories/capture_save_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -70,10 +74,87 @@ Future<List<CaptureRecordModel>> _schedule({required bool stored}) async {
   return writes;
 }
 
+const _workspace = NotionWorkspace(
+  parentPageId: 'parent',
+  areaPageId: 'area',
+  groups: 'groups',
+  captures: 'captures',
+  library: 'library',
+  maxUploadBytes: 1,
+);
+
+/// [_record] approved with a second item and no audio to upload.
+final _approved = _record.copyWith(
+  stage: .approved,
+  items: [
+    ..._record.items,
+    _record.items.first.copyWith(id: 'item-2', title: 'Plant tomatoes', reminder: null),
+  ],
+);
+
+/// Notion with nothing saved yet, where creating [failingItem]'s page fails
+/// once and then works. [created] lists every page Notion was asked to make.
+final class _Notion {
+  _Notion({required String failingItem}) {
+    var failed = false;
+    when(() => remote.findCapturePage(any(), any())).thenAnswer((_) async => const .ok(null));
+    when(() => remote.findItemPage(any(), any())).thenAnswer((_) async => const .ok(null));
+    when(() => remote.createCapturePage(any(), any())).thenAnswer((_) async {
+      created.add('capture');
+      return const .ok('capture-page');
+    });
+    when(
+      () => remote.createItemPage(any(), any(), any(), capturePageId: any(named: 'capturePageId')),
+    ).thenAnswer((call) async {
+      final id = call.positionalArguments.whereType<ProposalItem>().single.id;
+      created.add(id);
+      if (id == failingItem && !failed) {
+        failed = true;
+        return const .err(NotionFailure.unavailable);
+      }
+      return .ok('page-$id');
+    });
+    when(() => remote.markSaved(any())).thenAnswer((_) async => const .ok(null));
+  }
+
+  final remote = _MockRemote();
+  final created = <String>[];
+}
+
 void main() {
   setUpAll(() {
     tzdata.initializeTimeZones();
     registerFallbackValue(CaptureRecordModel.fromEntity(_record));
+    registerFallbackValue(_workspace);
+    registerFallbackValue(_record);
+    registerFallbackValue(_record.items.first);
+  });
+
+  test('a save that fails at an item page resumes on retry and creates nothing twice', () async {
+    final notion = _Notion(failingItem: 'item-2');
+    final local = _MockLocal();
+    final writes = <CaptureRecordModel>[];
+    when(
+      () => local.put(any()),
+    ).thenAnswer((call) => writes.addAll(call.positionalArguments.whereType<CaptureRecordModel>()));
+    final repository = CaptureSaveRepository(
+      remote: notion.remote,
+      storage: (records: local, audio: _MockAudio()),
+      reminders: _AllowedReminders(),
+      system: FakeSystem(),
+    );
+
+    final first = await repository.save(_approved, _workspace);
+    expect(first, isA<Err<CaptureRecord, Object>>());
+    final kept = writes.last.toEntity();
+
+    final progress = switch (await repository.save(kept, _workspace)) {
+      Ok(:final value) => value.progress,
+      Err(:final failure) => fail('Retry failed: $failure'),
+    };
+    expect(notion.created, equals(['capture', 'item-1', 'item-2', 'item-2']));
+    expect(progress.itemPages, equals({'item-1': 'page-item-1', 'item-2': 'page-item-2'}));
+    expect(progress.markedSaved, isTrue);
   });
 
   test('a scheduled reminder is recorded on the stored capture', () async {
