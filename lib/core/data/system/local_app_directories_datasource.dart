@@ -13,7 +13,7 @@ const _homeVariable = 'HOME';
 /// container's Data folder), matching `NSApplicationSupportDirectory`.
 @Riverpod(keepAlive: true)
 AppDirectories appDirectories(Ref ref) {
-  const bundleId = 'com.abid.capture';
+  const bundleId = 'com.afenso.capture';
   final home = Platform.environment[_homeVariable] ?? Directory.systemTemp.path;
   final support = '$home/Library/Application Support/$bundleId';
   return (

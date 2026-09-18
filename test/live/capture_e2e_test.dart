@@ -50,7 +50,7 @@ const _speech = '$_task $_idea';
 
 /// Where the app keeps the downloaded model, under the home folder.
 const _appModel =
-    'Library/Containers/com.abid.capture/Data/Library/Application Support/com.abid.capture/models/parakeet-tdt-0.6b-v3-int8';
+    'Library/Containers/com.afenso.capture/Data/Library/Application Support/com.afenso.capture/models/parakeet-tdt-0.6b-v3-int8';
 
 /// The sherpa-onnx C library inside the sherpa_onnx_macos package.
 const _sherpaLibrary =
