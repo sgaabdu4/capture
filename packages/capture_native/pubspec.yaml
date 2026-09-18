@@ -1,0 +1,18 @@
+name: capture_native
+description: "Native macOS pieces for Capture: global shortcut, microphone capture, overlay panel, menu-bar popover and AAC encoding."
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  sdk: ^3.13.3
+  flutter: '>=3.3.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      macos:
+        pluginClass: CaptureNativePlugin
