@@ -19,7 +19,6 @@
   "@navSettings": {
     "description": "Settings button tooltip and page title"
   },
-  "checkForUpdates": "Check for updates",
   "updateDownloadNow": "New version · Download now",
   "notionConnected": "Notion connected",
   "notionNotConnected": "Notion not connected",

@@ -140,12 +140,6 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get navSettings;
 
-  /// No description provided for @checkForUpdates.
-  ///
-  /// In en, this message translates to:
-  /// **'Check for updates'**
-  String get checkForUpdates;
-
   /// No description provided for @updateDownloadNow.
   ///
   /// In en, this message translates to:

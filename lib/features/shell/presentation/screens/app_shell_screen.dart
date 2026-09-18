@@ -16,7 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Sidebar, settings gear, the update link and the current page.
+/// Sidebar, settings gear, the current page and, once Sparkle finds a newer
+/// release, the update link.
 class AppShellScreen extends ConsumerWidget {
   const AppShellScreen({required this.location, required this.child, super.key});
 
@@ -82,14 +83,14 @@ class AppShellScreen extends ConsumerWidget {
             onPressed: () => const SettingsRoute().go(context),
           ),
         ),
-        PositionedDirectional(
-          bottom: Spacing.xs,
-          end: Spacing.xs,
-          child: UpdateLink(
-            updateAvailable: updateAvailable,
-            onTap: () => ref.read(nativePlatformServiceProvider).checkForUpdates(),
+        if (updateAvailable)
+          PositionedDirectional(
+            bottom: Spacing.xs,
+            end: Spacing.xs,
+            child: UpdateLink(
+              onTap: () => ref.read(nativePlatformServiceProvider).checkForUpdates(),
+            ),
           ),
-        ),
       ],
     );
     if (compact) {
