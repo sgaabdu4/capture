@@ -290,6 +290,13 @@ void main() {
       ),
       equals('Buy groceries'),
     );
+    expect(
+      proposedTitle(
+        'Call the dentist at 9 tomorrow to book a checkup',
+        remove: const [(start: 20, end: 30)],
+      ),
+      equals('Call the dentist to book a checkup'),
+    );
     expect(proposedTitle('and also I thought of an app'), equals('I thought of an app'));
     expect(proposedTitle('x ' * 80).length, lessThanOrEqualTo(61));
     expect(proposedBody('and book a haircut'), equals('Book a haircut'));

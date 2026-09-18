@@ -41,11 +41,23 @@ String proposedTitle(String excerpt, {List<ExcerptRange> remove = const []}) {
 }
 
 String _removeRanges(String text, List<ExcerptRange> ranges) {
-  final sorted = [...ranges]..sort((a, b) => b.start.compareTo(a.start));
+  final sorted = [for (final r in ranges) _withPreposition(text, r)]
+    ..sort((a, b) => b.start.compareTo(a.start));
   return sorted
       .fold(text, _blank)
       .replaceAll(RegExp(r'[ \t]{2,}'), ' ')
       .replaceAll(RegExp(r' (?=[,.;!?])'), '');
+}
+
+/// A preposition directly before a date phrase goes with it
+/// ("the dentist at [9 tomorrow] to book" → "the dentist to book").
+final _prepositionBefore = RegExp('\\b(?:${_dangling.join('|')})\\s+\$', caseSensitive: false);
+
+ExcerptRange _withPreposition(String text, ExcerptRange range) {
+  final (:start, :end) = range;
+  if (start < 0 || start > text.length) return range;
+  final m = _prepositionBefore.firstMatch(text.substring(0, start));
+  return m == null ? range : (start: m.start, end: end);
 }
 
 /// [text] with [range] replaced by one space; out-of-bounds or empty ranges
