@@ -163,7 +163,8 @@ jobs:
               echo "This build is not notarised. The first time you open it, macOS says it cannot check the app. Open System Settings, then Privacy & Security, and choose Open Anyway for Capture."
             fi
           } > "$RUNNER_TEMP/notes.md"
-          gh release create "v${name}" "$RUNNER_TEMP/Capture.dmg#Capture-${name}.dmg" \
+          mv "$RUNNER_TEMP/Capture.dmg" "$RUNNER_TEMP/Capture-${name}.dmg"
+          gh release create "v${name}" "$RUNNER_TEMP/Capture-${name}.dmg" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$SHA" \
             --prerelease \
