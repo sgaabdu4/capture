@@ -133,10 +133,11 @@
           "name": "performance",
           "role": "performance",
           "command": [
-            "dart",
+            "flutter",
             "test",
-            "test/performance",
-            "--reporter=json"
+            "--no-pub",
+            "--machine",
+            "test/performance"
           ],
           "report": {
             "type": "performance-dart",
