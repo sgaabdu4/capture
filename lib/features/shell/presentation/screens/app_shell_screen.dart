@@ -1,19 +1,22 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
+import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/shell/presentation/models/nav_destination.dart';
+import 'package:capture/features/shell/presentation/notifiers/update_available_provider.dart';
 import 'package:capture/features/shell/presentation/widgets/app_sidebar.dart';
 import 'package:capture/features/shell/presentation/widgets/bottom_nav_bar.dart';
 import 'package:capture/features/shell/presentation/widgets/nav_item.dart';
+import 'package:capture/features/shell/presentation/widgets/update_link.dart';
 import 'package:capture/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Sidebar, settings gear and the current page.
+/// Sidebar, settings gear, the update link and the current page.
 class AppShellScreen extends ConsumerWidget {
   const AppShellScreen({required this.location, required this.child, super.key});
 
@@ -64,6 +67,7 @@ class AppShellScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final connected = ref.watch(settingsProvider.select((s) => s.notionConnected));
+    final updateAvailable = ref.watch(updateAvailableProvider.select((found) => found.hasValue));
     final compact = context.compact;
     final page = Stack(
       children: [
@@ -76,6 +80,14 @@ class AppShellScreen extends ConsumerWidget {
             tooltip: l10n.navSettings,
             icon: const Icon(Icons.settings_outlined, size: IconSizes.s28),
             onPressed: () => const SettingsRoute().go(context),
+          ),
+        ),
+        PositionedDirectional(
+          bottom: Spacing.xs,
+          end: Spacing.xs,
+          child: UpdateLink(
+            updateAvailable: updateAvailable,
+            onTap: () => ref.read(nativePlatformServiceProvider).checkForUpdates(),
           ),
         ),
       ],
