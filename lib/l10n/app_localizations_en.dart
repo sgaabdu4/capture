@@ -619,7 +619,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it. Keys live in the macOS Keychain. No analytics, no logs of your words.';
+      'Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. A capture Jev sorts cleanly is saved to Notion straight away; anything that needs a decision waits for your review. Keys live in the macOS Keychain. No analytics, no logs of your words.';
 
   @override
   String get recordingsSubtitle => 'Kept on this Mac. Saved captures are also in Notion.';
