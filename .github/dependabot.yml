@@ -1,0 +1,22 @@
+# Version updates for Dart packages and GitHub Actions arrive together once a
+# week in one pull request. Security updates are enabled in the repository
+# settings and open their own pull requests as soon as an advisory lands; the
+# week's cooldown, which lets a bad release be pulled first, skips them.
+version: 2
+multi-ecosystem-groups:
+  weekly:
+    schedule:
+      interval: weekly
+updates:
+  - package-ecosystem: pub
+    directory: /
+    patterns: ["*"]
+    multi-ecosystem-group: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: github-actions
+    directory: /
+    patterns: ["*"]
+    multi-ecosystem-group: weekly
+    cooldown:
+      default-days: 7

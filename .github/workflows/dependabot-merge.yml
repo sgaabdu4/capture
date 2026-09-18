@@ -1,0 +1,55 @@
+name: Dependabot merge
+
+# Dependabot's pull requests merge themselves once the required hard-eng and
+# dmg checks pass, and that merge publishes a release. Hard Eng needs every
+# change to touch PLAN.md, so each update is recorded there first. The push
+# and the merge use the owner's DEPENDABOT_TOKEN: GitHub starts no workflows
+# for GITHUB_TOKEN pushes, so neither the checks nor the release would run.
+# Runs that Dependabot triggers cannot read environment secrets, so this looks
+# for its pull requests every hour instead.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: dependabot-merge
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    name: merge
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: dependabot
+    permissions:
+      contents: read # Check out the repository.
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Record each Dependabot update and merge it once the checks pass
+        env:
+          GH_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "The dependabot environment has no DEPENDABOT_TOKEN secret."
+            exit 1
+          fi
+          gh auth setup-git
+          for pr in $(gh pr list --author app/dependabot --state open --json number --jq '.[].number'); do
+            if ! gh pr diff "$pr" --name-only | grep -qx PLAN.md; then
+              branch="$(gh pr view "$pr" --json headRefName --jq .headRefName)"
+              title="$(gh pr view "$pr" --json title --jq .title)"
+              git fetch -q origin "$branch"
+              git checkout -q -B "$branch" FETCH_HEAD
+              printf '\nDependabot update https://github.com/%s/pull/%s (%s), recorded %s; it merges itself once hard-eng and dmg pass.\n' \
+                "$GITHUB_REPOSITORY" "$pr" "$title" "$(date -u +%F)" >> PLAN.md
+              git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+                commit -qam "Record Dependabot update #$pr in the plan"
+              git push -q origin "HEAD:$branch"
+            fi
+            gh pr merge "$pr" --auto --merge
+          done
