@@ -177,18 +177,16 @@ class _EntryDialogState extends State<EntryDialog> {
                 onClear: () => _edit(_entry.copyWith(due: null, reminder: null)),
                 onReminder: _setReminder,
               ),
+            EntryDialogActions(
+              confirmingDelete: _confirmDelete,
+              onAskDelete: () => setState(() => _confirmDelete = true),
+              onDelete: widget.onDelete,
+              onCancel: widget.onCancel,
+              onSave: _titleEmpty || _loading ? null : _save,
+            ),
           ],
         ),
       ),
-      actions: [
-        EntryDialogActions(
-          confirmingDelete: _confirmDelete,
-          onAskDelete: () => setState(() => _confirmDelete = true),
-          onDelete: widget.onDelete,
-          onCancel: widget.onCancel,
-          onSave: _titleEmpty || _loading ? null : _save,
-        ),
-      ],
     );
   }
 }

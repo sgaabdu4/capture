@@ -26,40 +26,43 @@ class EntryDialogActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Wrap(
-      alignment: .spaceBetween,
-      crossAxisAlignment: .center,
-      runSpacing: Spacing.xs,
-      children: [
-        if (confirmingDelete)
-          InkButton(
-            l10n.entryDeleteConfirm,
-            key: const ValueKey(AppWidgetKeys.entryDeleteConfirmButton),
-            onPressed: onDelete,
-          ),
-        if (!confirmingDelete)
-          LinkButton(
-            l10n.delete,
-            key: const ValueKey(AppWidgetKeys.entryDeleteButton),
-            onPressed: onAskDelete,
-          ),
-        Row(
-          mainAxisSize: .min,
-          spacing: Spacing.xs,
-          children: [
-            LinkButton(
-              l10n.cancel,
-              key: const ValueKey(AppWidgetKeys.entryCancelButton),
-              onPressed: onCancel,
-            ),
+    return SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        alignment: .spaceBetween,
+        crossAxisAlignment: .center,
+        runSpacing: Spacing.xs,
+        children: [
+          if (confirmingDelete)
             InkButton(
-              l10n.save,
-              key: const ValueKey(AppWidgetKeys.entrySaveButton),
-              onPressed: onSave,
+              l10n.entryDeleteConfirm,
+              key: const ValueKey(AppWidgetKeys.entryDeleteConfirmButton),
+              onPressed: onDelete,
             ),
-          ],
-        ),
-      ],
+          if (!confirmingDelete)
+            LinkButton(
+              l10n.delete,
+              key: const ValueKey(AppWidgetKeys.entryDeleteButton),
+              onPressed: onAskDelete,
+            ),
+          Row(
+            mainAxisSize: .min,
+            spacing: Spacing.xs,
+            children: [
+              LinkButton(
+                l10n.cancel,
+                key: const ValueKey(AppWidgetKeys.entryCancelButton),
+                onPressed: onCancel,
+              ),
+              InkButton(
+                l10n.save,
+                key: const ValueKey(AppWidgetKeys.entrySaveButton),
+                onPressed: onSave,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
