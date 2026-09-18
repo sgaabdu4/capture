@@ -9,6 +9,7 @@ import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
+import 'package:capture/features/shell/presentation/widgets/update_link.dart';
 import 'package:capture/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -131,7 +132,7 @@ void main() {
     verify(native.installMenu).called(1);
   });
 
-  testWidgets('the update link checks for updates and offers the download once one is found', (
+  testWidgets('the update link appears only once Sparkle finds a newer release, and opens it', (
     tester,
   ) async {
     final events = StreamController<NativeEvent>.broadcast();
@@ -139,13 +140,10 @@ void main() {
     when(() => native.events).thenAnswer((_) => events.stream);
     when(native.checkForUpdates).thenAnswer((_) async {});
     await _launch(tester, support: support, native: native);
-
-    await tester.tap(find.text(_l10n.checkForUpdates));
-    verify(native.checkForUpdates).called(1);
+    expect(find.byType(UpdateLink), findsNothing);
 
     events.add(const UpdateAvailable());
     await _settle(tester);
-    expect(find.text(_l10n.checkForUpdates), findsNothing);
     await tester.tap(find.text(_l10n.updateDownloadNow));
     verify(native.checkForUpdates).called(1);
   });
