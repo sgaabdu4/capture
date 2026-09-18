@@ -14,19 +14,26 @@ enum ReviewFlag {
   correctionElsewhere,
   recallUnsupported,
   newPiece,
-  classificationFailed;
-
-  /// Flags a date/time/reminder decision raises.
-  static const dateFlags = {
-    chooseTime,
-    chooseAmPm,
-    chooseDate,
-    checkDate,
-    timePassed,
-    clockChange,
-    checkReminder,
-  };
-
-  /// Flags a new due date replaces.
-  static const dueFlags = {chooseDate, checkDate, chooseAmPm, chooseTime, timePassed, clockChange};
+  classificationFailed,
 }
+
+/// Flags a date/time/reminder decision raises.
+const dateReviewFlags = {
+  ReviewFlag.chooseTime,
+  ReviewFlag.chooseAmPm,
+  ReviewFlag.chooseDate,
+  ReviewFlag.checkDate,
+  ReviewFlag.timePassed,
+  ReviewFlag.clockChange,
+  ReviewFlag.checkReminder,
+};
+
+/// Flags a new due date replaces.
+const dueReviewFlags = {
+  ReviewFlag.chooseDate,
+  ReviewFlag.checkDate,
+  ReviewFlag.chooseAmPm,
+  ReviewFlag.chooseTime,
+  ReviewFlag.timePassed,
+  ReviewFlag.clockChange,
+};

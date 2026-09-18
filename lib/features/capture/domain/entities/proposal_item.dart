@@ -61,7 +61,7 @@ sealed class ProposalItem with _$ProposalItem {
     flags: flags.difference({
       ReviewFlag.checkTask,
       ReviewFlag.newPiece,
-      if (value == .note) ...ReviewFlag.dateFlags,
+      if (value == .note) ...dateReviewFlags,
     }),
   );
 
@@ -70,7 +70,7 @@ sealed class ProposalItem with _$ProposalItem {
   ProposalItem withDue(DueDate? value, {Set<ReviewFlag> checks = const {}}) => copyWith(
     due: value,
     edited: {...edited, .due},
-    flags: flags.difference(ReviewFlag.dueFlags).union(checks),
+    flags: flags.difference(dueReviewFlags).union(checks),
   );
 
   /// Sets or removes the reminder; a reminder implies a task.
@@ -79,7 +79,7 @@ sealed class ProposalItem with _$ProposalItem {
     reminder: value,
     due: value == null ? due : due ?? value,
     edited: {...edited, .reminder},
-    flags: flags.difference(ReviewFlag.dateFlags).union(checks),
+    flags: flags.difference(dateReviewFlags).union(checks),
   );
 
   ProposalItem withIncluded({required bool value}) {
