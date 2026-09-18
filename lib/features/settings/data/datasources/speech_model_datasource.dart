@@ -19,9 +19,9 @@ typedef ModelFile = ({String name, int bytes, String sha256});
 
 /// Parakeet-TDT-0.6B-v3 int8 (sherpa-onnx export), pinned to one Hugging
 /// Face revision and verified by SHA-256. Licence: CC-BY-4.0 (NVIDIA).
-const parakeetRevision = '2bda32ec70b097a55adaa07d9a7173915b43cc78';
+const parakeetRevisionDigest = '2bda32ec70b097a55adaa07d9a7173915b43cc78';
 const parakeetBaseUrl =
-    'https://huggingface.co/csukuangfj/sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8/resolve/$parakeetRevision';
+    'https://huggingface.co/csukuangfj/sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8/resolve/$parakeetRevisionDigest';
 const List<ModelFile> parakeetFiles = [
   (
     name: 'encoder.int8.onnx',
@@ -171,7 +171,10 @@ final class _ModelDownload {
       if (verified case Err()) return verified;
     }
     marker.writeAsStringSync(
-      jsonEncode({_markerRevisionKey: parakeetRevision, for (final f in files) f.name: f.sha256}),
+      jsonEncode({
+        _markerRevisionKey: parakeetRevisionDigest,
+        for (final f in files) f.name: f.sha256,
+      }),
     );
     return const .ok(null);
   }
