@@ -116,13 +116,7 @@ void main() {
     final linked = await freshMac.connect(token: 'token', parentPageId: area);
 
     expect(workspace.created, hasLength(4), reason: 'nothing created inside the Capture page');
-    expect(
-      linked,
-      isA<Ok<NotionWorkspaceModel, NotionFailure>>().having(
-        (ok) => (ok.value.areaPageId, ok.value.library),
-        'area and library',
-        equals((area, first.valueOrNull?.library)),
-      ),
-    );
+    expect(linked.valueOrNull?.areaPageId, equals(area));
+    expect(linked.valueOrNull?.library, equals(first.valueOrNull?.library));
   });
 }
