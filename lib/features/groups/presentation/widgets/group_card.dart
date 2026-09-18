@@ -37,7 +37,6 @@ class GroupCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final TextTheme(:titleMedium, :labelMedium, :bodySmall, :bodyMedium) = context.textTheme;
-    final Group(:name, :description, :archived) = group;
     return Padding(
       padding: const EdgeInsets.only(bottom: Spacing.sm),
       child: PaperCard(
@@ -47,12 +46,12 @@ class GroupCard extends StatelessWidget {
           shape: const Border(),
           collapsedShape: const Border(),
           title: Text(
-            name,
+            group.name,
             style: titleMedium?.copyWith(
-              color: archived ? context.colors.onSurfaceVariant : context.colors.onSurface,
+              color: group.archived ? context.colors.onSurfaceVariant : context.colors.onSurface,
             ),
           ),
-          subtitle: Text(description, style: labelMedium),
+          subtitle: Text(group.description, style: labelMedium),
           trailing: Row(
             mainAxisSize: .min,
             spacing: Spacing.xs,
