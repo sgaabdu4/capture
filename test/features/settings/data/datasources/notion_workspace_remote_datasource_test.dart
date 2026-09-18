@@ -1,3 +1,4 @@
+import 'package:capture/core/data/notion/models/notion_workspace_model.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/notion/notion_shapes.dart';
 import 'package:capture/core/domain/values/result.dart';
@@ -99,5 +100,23 @@ void main() {
     expect(workspace.created, hasLength(4), reason: 'one area page and three databases');
     expect(again, isA<Ok<Object, NotionFailure>>());
     expect(again, equals(first));
+  });
+
+  test('a link to the Capture page itself reuses it instead of nesting a new one', () async {
+    final workspace = _Workspace();
+    final http = _notion(workspace);
+    final first = await NotionWorkspaceRemoteDatasource(http)
+        .connect(token: 'token', parentPageId: 'parent');
+    final area = switch (first) {
+      Ok(value: NotionWorkspaceModel(:final areaPageId)) => areaPageId,
+      Err() => fail('The first setup failed'),
+    };
+
+    final freshMac = NotionWorkspaceRemoteDatasource(http);
+    final linked = await freshMac.connect(token: 'token', parentPageId: area);
+
+    expect(workspace.created, hasLength(4), reason: 'nothing created inside the Capture page');
+    expect(linked.valueOrNull?.areaPageId, equals(area));
+    expect(linked.valueOrNull?.library, equals(first.valueOrNull?.library));
   });
 }
