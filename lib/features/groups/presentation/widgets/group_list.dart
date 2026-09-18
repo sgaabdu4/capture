@@ -11,8 +11,8 @@ import 'package:flutter/material.dart';
 /// offer Restore.
 class GroupList extends StatelessWidget {
   const GroupList({
-    required this.active,
-    required this.archived,
+    required this.activeGroups,
+    required this.archivedGroups,
     required this.entries,
     required this.busy,
     required this.onEdit,
@@ -21,8 +21,8 @@ class GroupList extends StatelessWidget {
     super.key,
   });
 
-  final List<Group> active;
-  final List<Group> archived;
+  final List<Group> activeGroups;
+  final List<Group> archivedGroups;
 
   /// Every library entry; each card lists the ones filed in its group.
   final List<LibraryEntry> entries;
@@ -39,10 +39,10 @@ class GroupList extends StatelessWidget {
       crossAxisAlignment: .stretch,
       children: [
         for (final (Group(:id, :isUnsorted, archived: isArchived) && group) in [
-          ...active,
-          ...archived,
+          ...activeGroups,
+          ...archivedGroups,
         ]) ...[
-          if (group == archived.firstOrNull) ...[
+          if (group == archivedGroups.firstOrNull) ...[
             const SizedBox(height: Spacing.lg),
             Text(l10n.archivedHeader, style: context.textTheme.labelMedium),
             const SizedBox(height: Spacing.xs),

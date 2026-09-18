@@ -81,8 +81,8 @@ class GroupsScreen extends ConsumerWidget {
       ],
       children: [
         GroupList(
-          active: active,
-          archived: archived,
+          activeGroups: active,
+          archivedGroups: archived,
           entries: entries,
           busy: busy,
           onEdit: (group) => unawaited(_edit(context, ref, group)),
