@@ -39,7 +39,7 @@ class RecordingsScreen extends ConsumerWidget {
 
   void _reviewAgain(BuildContext context, WidgetRef ref, String id) {
     ref.read(captureFlowProvider.notifier).reopen(id);
-    EditorRoute(id: id).go(context);
+    EditorRoute(recordId: id).go(context);
   }
 
   @override
@@ -62,7 +62,7 @@ class RecordingsScreen extends ConsumerWidget {
             busy: activeId == record.id && phase != .idle,
             idle: phase == .idle,
             onRetry: () => unawaited(ref.read(captureFlowProvider.notifier).process(record.id)),
-            onReview: () => EditorRoute(id: record.id).go(context),
+            onReview: () => EditorRoute(recordId: record.id).go(context),
             onRetrySave: () => unawaited(ref.read(captureFlowProvider.notifier).approve(record.id)),
             onReviewAgain: () => _reviewAgain(context, ref, record.id),
             onDelete: () => unawaited(_confirmDelete(context, ref, record)),

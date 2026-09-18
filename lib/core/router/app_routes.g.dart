@@ -23,7 +23,7 @@ RouteBase get $appShellRoute => ShellRouteData.$route(
       factory: $RecordingsRoute._fromState,
       routes: [
         GoRouteData.$route(
-          path: ':id',
+          path: ':recordId',
           hasOverriddenOnExit: false,
           factory: $EditorRoute._fromState,
         ),
@@ -106,12 +106,13 @@ mixin $RecordingsRoute on GoRouteData {
 
 mixin $EditorRoute on GoRouteData {
   static EditorRoute _fromState(GoRouterState state) =>
-      EditorRoute(id: state.pathParameters['id']!);
+      EditorRoute(recordId: state.pathParameters['recordId']!);
 
   EditorRoute get _self => this as EditorRoute;
 
   @override
-  String get location => GoRouteData.$location('/recordings/${Uri.encodeComponent(_self.id)}');
+  String get location =>
+      GoRouteData.$location('/recordings/${Uri.encodeComponent(_self.recordId)}');
 
   @override
   void go(BuildContext context) => context.go(location);

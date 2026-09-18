@@ -1,3 +1,4 @@
+import 'package:capture/app/capture_bootstrap.dart';
 import 'package:capture/core/router/app_router.dart';
 import 'package:capture/core/theme/app_theme.dart';
 import 'package:capture/l10n/app_localizations.dart';
@@ -15,5 +16,6 @@ class CaptureApp extends ConsumerWidget {
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     routerConfig: ref.watch(appRouterProvider),
+    builder: (context, child) => CaptureBootstrap(child: child ?? const SizedBox.shrink()),
   );
 }

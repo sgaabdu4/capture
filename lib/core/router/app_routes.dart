@@ -1,4 +1,3 @@
-import 'package:capture/app/capture_bootstrap.dart';
 import 'package:capture/features/capture/presentation/screens/editor_screen.dart';
 import 'package:capture/features/capture/presentation/screens/home_screen.dart';
 import 'package:capture/features/capture/presentation/screens/recordings_screen.dart';
@@ -17,7 +16,7 @@ part 'app_routes.g.dart';
     TypedGoRoute<GroupsRoute>(path: '/groups'),
     TypedGoRoute<RecordingsRoute>(
       path: '/recordings',
-      routes: [TypedGoRoute<EditorRoute>(path: ':id')],
+      routes: [TypedGoRoute<EditorRoute>(path: ':recordId')],
     ),
     TypedGoRoute<TodoRoute>(path: '/todo'),
     TypedGoRoute<UpcomingRoute>(path: '/upcoming'),
@@ -28,9 +27,8 @@ class AppShellRoute extends ShellRouteData {
   const AppShellRoute();
 
   @override
-  Widget builder(BuildContext context, GoRouterState state, Widget navigator) => CaptureBootstrap(
-    child: AppShellScreen(location: state.uri.path, child: navigator),
-  );
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) =>
+      AppShellScreen(location: state.uri.path, child: navigator);
 }
 
 class HomeRoute extends GoRouteData with $HomeRoute {
@@ -56,11 +54,11 @@ class RecordingsRoute extends GoRouteData with $RecordingsRoute {
 
 /// The proposal editor for one capture.
 class EditorRoute extends GoRouteData with $EditorRoute {
-  const EditorRoute({required this.id});
-  final String id;
+  const EditorRoute({required this.recordId});
+  final String recordId;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => EditorScreen(captureId: id);
+  Widget build(BuildContext context, GoRouterState state) => EditorScreen(captureId: recordId);
 }
 
 class TodoRoute extends GoRouteData with $TodoRoute {

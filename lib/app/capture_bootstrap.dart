@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:capture/app/app_startup.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/router/app_router.dart';
 import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
@@ -17,9 +18,8 @@ import 'package:capture/features/settings/presentation/extensions/settings_label
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-/// Root side effects that need localizations and the router: the native
+/// Root side effects that need localizations, above the router: the native
 /// overlay, review card and menu, navigation requested by the capture flow,
 /// and snackbars for background Notion failures.
 class CaptureBootstrap extends ConsumerWidget {
@@ -40,7 +40,9 @@ class CaptureBootstrap extends ConsumerWidget {
         if (record != null) unawaited(_review(context, ref, record));
       })
       ..listen(captureFlowProvider.select((s) => s.destinationSerial), (_, _) {
-        _destination(ref.read(captureFlowProvider))?.go(context);
+        if (_destination(ref.read(captureFlowProvider)) case final String location) {
+          ref.read(appRouterProvider).go(location);
+        }
       })
       ..listen(groupsProvider.select((s) => s.failureSerial), (_, _) {
         if (ref.read(groupsProvider).failure case final failure?) {
@@ -77,11 +79,14 @@ class CaptureBootstrap extends ConsumerWidget {
       .read(nativePlatformServiceProvider)
       .showReview(record.reviewCard(context.l10n, ref.read(groupsProvider)));
 
-  GoRouteData? _destination(CaptureFlowState state) => switch (state) {
-    CaptureFlowState(destination: .settings) => const SettingsRoute(),
-    CaptureFlowState(destination: .upcoming) => const UpcomingRoute(),
-    CaptureFlowState(destination: .recordings) => const RecordingsRoute(),
-    CaptureFlowState(destination: .editor, editId: final String id) => EditorRoute(id: id),
+  /// Where the capture flow asked to go, if anywhere.
+  String? _destination(CaptureFlowState state) => switch (state) {
+    CaptureFlowState(destination: .settings) => const SettingsRoute().location,
+    CaptureFlowState(destination: .upcoming) => const UpcomingRoute().location,
+    CaptureFlowState(destination: .recordings) => const RecordingsRoute().location,
+    CaptureFlowState(destination: .editor, editId: final String id) => EditorRoute(
+      recordId: id,
+    ).location,
     CaptureFlowState() => null,
   };
 
