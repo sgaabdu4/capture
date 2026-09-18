@@ -37,7 +37,7 @@ A private Mac voice diary. Press a shortcut, speak, and your thoughts land in No
 
 ## Download
 
-Every merge to `main` publishes a DMG under [Releases](https://github.com/sgaabdu4/capture/releases). Open it and drag Capture into Applications.
+**[Download the latest Capture DMG](https://github.com/sgaabdu4/capture/releases/latest)**, open it and drag Capture into Applications. Every merge to `main` publishes a new release.
 
 Releases are signed with a Developer ID and notarised by Apple once the signing secrets are set. An unsigned build says so in its release notes: open **System Settings → Privacy & Security** and choose **Open Anyway** for Capture.
 

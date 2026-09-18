@@ -3,8 +3,8 @@ name: Release
 # Pull requests build and pack the DMG without publishing. Every merge to
 # main builds Capture.app in the protected release environment and, once
 # the Hard Eng check on the same commit has passed, signs it with the
-# Developer ID certificate, notarises it and publishes it as a GitHub
-# pre-release. Without the signing secrets the release stays ad-hoc signed.
+# Developer ID certificate, notarises it and publishes it as the latest
+# GitHub release. Without the signing secrets the release stays ad-hoc signed.
 on:
   push:
     branches:
@@ -144,7 +144,7 @@ jobs:
           rm "$key"
           xcrun stapler staple "$RUNNER_TEMP/Capture.dmg"
           echo "NOTARISED=true" >> "$GITHUB_ENV"
-      - name: Publish the pre-release
+      - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ github.sha }}
@@ -167,7 +167,7 @@ jobs:
           gh release create "v${name}" "$RUNNER_TEMP/Capture-${name}.dmg" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$SHA" \
-            --prerelease \
+            --latest \
             --title "Capture ${name}" \
             --notes-file "$RUNNER_TEMP/notes.md"
       - name: Remove the signing keychain
