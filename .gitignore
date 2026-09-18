@@ -46,3 +46,11 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+.git/
+__pycache__/
+.hard-eng/
+.codebase-memory/
+.context-mode/
+coverage/
+.coverage
+.coverage.*

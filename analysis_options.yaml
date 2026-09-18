@@ -1,6 +1,15 @@
 include: package:flutter_lints/flutter.yaml
-
 analyzer:
   exclude:
-    - build/**
-    - macos/**
+  - build/**
+  - macos/**
+  language:
+    strict-inference: true
+linter:
+  rules:
+    no_dynamic_casts: true
+    no_raw_types: true
+    avoid_annotating_with_dynamic: true
+    avoid_dynamic_calls: true
+    strict_top_level_inference: true
+    unawaited_futures: true
