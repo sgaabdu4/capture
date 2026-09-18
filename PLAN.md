@@ -14,7 +14,7 @@ Owners: `lib/` (Dart app + logic), `macos/Runner/` (Swift overlay panel, hotkey,
 
 Blockers: None
 Handoff: Approval
-Authority: Autonomous — user brief §2 "proceed to implementation instead of stopping after the plan"; commits on `feature/capture-alpha`; push to the owner's private GitHub repo authorized 2026-09-18; no publish or unrelated Notion changes.
+Authority: Autonomous — user brief §2 "proceed to implementation instead of stopping after the plan"; commits on `feature/capture-alpha`; push to the owner's GitHub repo authorized 2026-09-18, made public under MIT at the owner's request the same day; no unrelated Notion changes.
 
 ## Acceptance + steps
 
@@ -71,4 +71,4 @@ Result: Passed
 Evidence: 2026-09-18, owner-reported: `E2E_LIVE=1 … flutter test test/live/capture_e2e_test.dart` passed both live tests (spoken capture → review → Yes → Notion capture, items and audio → reminder requested → re-save duplicates nothing; fresh Mac finds the same setup). In the real app the owner ran ⌃⌥ from another app with their own voice through to Notion, edited and deleted a saved item, and saw a saved task's reminder notification fire. `flutter test`: 108 passed, 2 live skipped; `flutter analyze`: no issues.
 E2E: Passed — owner ran ⌃⌥ from another app → own voice → review → Yes, save → Notion capture, items and audio → reminder notification fired, 2026-09-18.
 Delivery target: PR
-Delivery: Pending — `feature/capture-alpha` pushed to the owner's private repo `sgaabdu4/capture` through the pre-push check (14/14 passed); no PR opened, so CI has not run yet.
+Delivery: Pending — `feature/capture-alpha` pushed to the owner's public repo `sgaabdu4/capture` through the pre-push check (14/14 passed); no PR opened, so CI has not run yet.

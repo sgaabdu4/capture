@@ -103,3 +103,7 @@ E2E_LIVE=1 TYPESAFE_API_KEY=… NOTION_TOKEN=… NOTION_PAGE=<test page link> fl
 - Speech recognition: [Parakeet-TDT-0.6B-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) by NVIDIA, licensed CC BY 4.0. The ONNX int8 conversion is from the k2-fsa [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) project.
 - Fonts: Caveat and Patrick Hand, both under the SIL Open Font License (see `assets/fonts`).
 - Screenshots use sample data.
+
+## License
+
+Code: [MIT](LICENSE). The model and fonts keep their own licences, listed above.
