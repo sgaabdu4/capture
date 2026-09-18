@@ -9,7 +9,6 @@ analyzer:
     - ".dart_tool/**"
     - "build/**"
     - "macos/**"
-    - ".agents/**"
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "**/*.gr.dart"
