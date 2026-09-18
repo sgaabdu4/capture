@@ -33,9 +33,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'capture_flow_notifier.g.dart';
 
 /// The capture state machine. Every milestone is persisted before the next
-/// step (see [CaptureStage]); approval — yours, or automatic for a cleanly
-/// sorted proposal — is the only path to Notion and to reminders. Native
-/// events (hotkey, pill, review card, menu) land here.
+/// step (see [CaptureStage]); approval is the only path to Notion and to
+/// reminders. Native events (hotkey, pill, review card, menu) land here.
 @Riverpod(keepAlive: true)
 class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   @override
@@ -183,17 +182,9 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     if (!ref.mounted || transcribed == null) return;
     final proposed = transcribed.stage == .transcribed ? await _analyse(transcribed) : transcribed;
     if (!ref.mounted) return;
-    if (proposed.stage == .proposed && !_savesUnreviewed(proposed)) showReview(id);
-    if (proposed.stage == .approved || _savesUnreviewed(proposed)) await approve(id);
+    if (proposed.stage == .proposed) showReview(id);
+    if (proposed.stage == .approved) await approve(id);
   }
-
-  /// A proposal Jev sorted cleanly goes straight to Notion; one that needs a
-  /// decision, or fell back to a single note, waits for review.
-  bool _savesUnreviewed(CaptureRecord r) =>
-      r.stage == .proposed &&
-      r.failure == null &&
-      _approvable(r) &&
-      ref.read(settingsProvider).notionConnected;
 
   /// Null when transcription failed (the failure is recorded).
   Future<CaptureRecord?> _transcribe(CaptureRecord record) async {
@@ -306,14 +297,12 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   /// returns an already-approved capture; null when approval is blocked.
   CaptureRecord? _approved(CaptureRecord r) {
     if (r.stage == .approved) return r;
-    if (r.stage != .proposed || !_approvable(r)) return null;
+    final blocked = r.items.any((i) => i.approvalProblems.isNotEmpty);
+    if (r.stage != .proposed || r.includedItems.isEmpty || blocked) return null;
     final next = r.copyWith(stage: .approved, failure: null);
     _put(next);
     return next;
   }
-
-  static bool _approvable(CaptureRecord r) =>
-      r.includedItems.isNotEmpty && r.items.every((i) => i.approvalProblems.isEmpty);
 
   Future<void> _save(CaptureRecord record, NotionWorkspace ws, {required bool fromCard}) async {
     final id = record.id;

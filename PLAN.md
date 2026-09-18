@@ -4,7 +4,7 @@ Status: Ready
 
 ## Outcome + scope
 
-Working private Mac alpha: shortcut → record → local Parakeet transcript → code candidate boundaries + Jev decisions → proposal → saved to Notion (captures, audio, library, groups) automatically when Jev sorted it cleanly, otherwise after review and approval → macOS reminders for saved tasks. Owner decision 2026-09-18: auto-save, review afterwards. Non-goals: brief §1 exclusions (accounts, backend, OAuth, other platforms, calendars, chat, search, summaries, recurring tasks, live captions, other models).
+Working private Mac alpha: shortcut → record → local Parakeet transcript → code candidate boundaries + Jev decisions → editable proposal → approve → Notion (captures, audio, library, groups) → approved macOS reminders. Non-goals: brief §1 exclusions (accounts, backend, OAuth, other platforms, calendars, chat, search, summaries, recurring tasks, live captions, other models).
 
 ## Repository context
 
@@ -28,14 +28,14 @@ Each item names its proof. "Live" means an opt-in run with the owner's own keys 
 - [ ] A6 Global shortcut (default ⌃⌥ pressed alone, owner decision 2026-09-18; configurable by recording keys then Save) starts/stops recording from any app without Accessibility or Input Monitoring permission; a key held down does not toggle repeatedly. Known limit: a quick ⌃⌥+key combination from another app can also fire it, because key presses in other apps are not visible without that permission. Proof: `test/app/capture_app_test.dart` (recording) + manual run from another app.
 - [ ] A7 Recording writes PCM16 16 kHz mono to disk while recording (durable before stop), shows the charcoal pill with live waveform and timer, hard-stops at 5:00, and discards nothing on crash (draft recovered at launch). Proof: recorder tests + manual run.
 - [ ] A8 Local Parakeet-TDT-0.6B-v3 int8 via sherpa_onnx in a background isolate; model downloaded on first run with progress, resume and SHA-256 check into Application Support; CC-BY-4.0 attribution shown. Proof: model-store tests (hash/resume) + manual transcription of a real recording.
-- [ ] A9 Review card ("Ready to save?", count line, items, No / Yes, save / Edit) near the pill, shown only when a proposal needs a decision (approval problems or Jev fallback) or when reopened from Recordings; Edit opens the focused editor (title/body/group/type/due/reminder, split/merge, include/exclude); approval blocked while `approvalProblems` is non-empty. Proof: widget tests + screenshots vs references.
+- [ ] A9 Review card ("Ready to save?", count line, items, No / Yes, save / Edit) near the pill; Edit opens the focused editor (title/body/group/type/due/reminder, split/merge, include/exclude); approval blocked while `approvalProblems` is non-empty. Proof: widget tests + screenshots vs references.
 - [ ] A10 Settings/onboarding: TypeSafe key and Notion token stored only in Keychain (legacy keychain), validated with `GET /v1/models` and `GET /v1/users/me`; Notion parent page chosen by URL/ID and access checked. Proof: settings tests with fake store + live validation.
 - [ ] A11 Notion schema setup under the parent (Capture area page, Groups/Captures/Library data sources, marker) is idempotent; Groups editor edits the Groups data source. Proof: schema tests against recorded shapes + live setup on the test page.
 - [ ] A12 Approved save: capture page → items → audio upload (M4A, within the workspace upload limit) → mark Saved; per-step progress persisted in SQLite; retry resumes after the last confirmed step and never duplicates (lookup by stable IDs before re-creating). Proof: save-sequence tests with injected failures + live save.
-- [ ] A13 Reminders are scheduled only for saved tasks with a reminder (UNUserNotificationCenter); none before the save. Proof: scheduler tests + manual notification.
+- [ ] A13 Reminders are scheduled only for approved, persisted tasks with a reminder (UNUserNotificationCenter); none before approval. Proof: scheduler tests + manual notification.
 - [ ] A14 Main window (Home, Groups, Recordings, To-do, Upcoming) and menu-bar popover (Record, Open app, Settings, Quit) match the approved references with the documented deviations, with truthful empty/error states. Proof: rendered screenshots in `docs/design/` + review.
 - [ ] A15 README documents setup, keys, model licence, privacy and limits. Proof: file.
-- [ ] A16 Full E2E: shortcut in another app → speak → saved to Notion (review when asked) → Notion rows + audio + reminder. Proof: manual live run recorded under Verification.
+- [ ] A16 Full E2E: shortcut in another app → speak → review → approve → Notion rows + audio + reminder. Proof: manual live run recorded under Verification.
 
 Documented deviations from the mockups: shortcut shown as the configured keys (default ⌃⌥, not ⌘R, which apps already use); no Weekly summary; no nav item selected on Home; no active mic/waveform while reviewing; count line on the review card; truthful empty states instead of sample data.
 
@@ -66,4 +66,4 @@ Review: Covers Home, Groups, Recordings, To-do, Upcoming, Settings, the editor, 
 
 Result: Pending
 Evidence: Pending
-E2E: Required — shortcut from another app → speak → saved to Notion (review when asked) → Notion + reminder.
+E2E: Required — shortcut from another app → speak → review → approve → Notion + reminder.

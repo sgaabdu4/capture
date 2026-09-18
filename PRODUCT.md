@@ -1,6 +1,6 @@
 # Capture
 
-A private macOS voice diary: press a shortcut, speak, and the separated notes and tasks are saved to your own Notion library; you review them only when something needs a decision, or afterwards if you want.
+A private macOS voice diary: press a shortcut, speak, review the separated notes and tasks, approve, and save them to your own Notion library.
 
 ## Register
 
@@ -18,9 +18,9 @@ Spoken diary entries mix unrelated thoughts (learning, personal life, ideas, err
 
 Intended flow (planned; the repository currently contains only the empty Flutter macOS scaffold):
 
-Shortcut → record → stop → transcribe locally with Parakeet-TDT-0.6B-v3 → code proposes candidate boundaries → Jev (TypeSafe API) judges boundaries and classifies each thought into user-configured groups → code builds an editable proposal (titles from source text, deterministic dates) → saved automatically when cleanly sorted, otherwise after the user approves → save capture, audio, transcript, notes and tasks to Notion → schedule macOS reminders for saved tasks.
+Shortcut → record → stop → transcribe locally with Parakeet-TDT-0.6B-v3 → code proposes candidate boundaries → Jev (TypeSafe API) judges boundaries and classifies each thought into user-configured groups → code builds an editable proposal (titles from source text, deterministic dates) → user approves → save capture, audio, transcript, notes and tasks to Notion → schedule approved macOS reminders.
 
-Notion is the source of truth for saved content and group definitions; a local SQLite database holds drafts, pending operations and a rebuildable cache. Nothing capture-related is written or scheduled before a proposal is cleanly sorted or approved.
+Notion is the source of truth for saved content and group definitions; a local SQLite database holds drafts, pending operations and a rebuildable cache. Nothing capture-related is written or scheduled before approval.
 
 ## Brand Personality / Tone
 
@@ -33,7 +33,7 @@ Quiet, personal, notebook-like. Plain, truthful status wording ("Draft on this M
 - No accounts, backend, public OAuth, billing, other platforms, calendar or Apple Reminders integration, chat, semantic search, weekly summaries, recurring tasks, live captions, always-on listening or agent frameworks.
 - No Gemini, ChatGPT or other generative model; no automatic fallback provider. Jev makes narrow typed decisions only.
 - Captures up to five minutes in this alpha; English date phrases only.
-- Audio never goes to TypeSafe. The transcript and group descriptions go to TypeSafe; saved content and recordings go to Notion; drafts/cache stay local. The app is not offline-only.
+- Audio never goes to TypeSafe. The transcript and group descriptions go to TypeSafe; approved content and recordings go to Notion; drafts/cache stay local. The app is not offline-only.
 - No destructive Notion changes, publishing or pushing without permission.
 
 ## Stack
