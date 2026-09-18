@@ -45,6 +45,8 @@ flutter run -d macos
 
 Then, once, in the app:
 
+<img src="docs/screenshots/setup.png" alt="First-run setup: speech model, TypeSafe key and Notion" width="620">
+
 1. **Speech model.** Press **Download** (≈670 MB, checked and resumable).
 2. **TypeSafe key.** Paste it. It's stored in the macOS Keychain.
 3. **Notion.** Create an internal connection, add it to one page, then paste the token and the page link. **Show me how** walks through it with pictures. Capture creates its Groups, Captures and Library databases under that page.
