@@ -133,10 +133,11 @@
           "name": "performance",
           "role": "performance",
           "command": [
-            "dart",
+            "flutter",
             "test",
-            "test/performance",
-            "--reporter=json"
+            "--no-pub",
+            "--machine",
+            "test/performance"
           ],
           "report": {
             "type": "performance-dart",
@@ -200,6 +201,43 @@
         "type": "gitleaks",
         "path": "coverage/gitleaks-history.sarif"
       }
+    },
+    {
+      "name": "actionlint",
+      "role": "workflows",
+      "parallel": true,
+      "command": [
+        "actionlint",
+        "-no-color"
+      ]
+    },
+    {
+      "name": "zizmor",
+      "role": "ci-security",
+      "parallel": true,
+      "command": [
+        "zizmor",
+        "--strict-collection",
+        "--persona=auditor",
+        "--format=plain",
+        "."
+      ]
     }
-  ]
+  ],
+  "shipping": {
+    "base": "main",
+    "checks": [
+      "hard-eng"
+    ],
+    "ui_paths": [
+      "lib/features/*/presentation/*",
+      "lib/core/theme/*",
+      "lib/core/widgets/*",
+      "macos/Runner/*",
+      "assets/*"
+    ],
+    "ci_seconds": 600,
+    "pre_push_seconds": 120,
+    "delivery": []
+  }
 }

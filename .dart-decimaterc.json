@@ -3,11 +3,141 @@
     ".agents/**"
   ],
   "boundaries": [
-    { "from": "lib/domain", "disallow": "lib/services" },
-    { "from": "lib/domain", "disallow": "lib/app" },
-    { "from": "lib/domain", "disallow": "lib/ui" },
-    { "from": "lib/services", "disallow": "lib/app" },
-    { "from": "lib/services", "disallow": "lib/ui" },
-    { "from": "lib/app", "disallow": "lib/ui" }
+    {
+      "from": "lib/features/capture/domain",
+      "disallow": "lib/features/capture/data"
+    },
+    {
+      "from": "lib/features/capture/domain",
+      "disallow": "lib/features/capture/repositories"
+    },
+    {
+      "from": "lib/features/capture/domain",
+      "disallow": "lib/features/capture/presentation"
+    },
+    {
+      "from": "lib/features/capture/data",
+      "disallow": "lib/features/capture/repositories"
+    },
+    {
+      "from": "lib/features/capture/data",
+      "disallow": "lib/features/capture/presentation"
+    },
+    {
+      "from": "lib/features/capture/repositories",
+      "disallow": "lib/features/capture/presentation"
+    },
+    {
+      "from": "lib/features/groups/domain",
+      "disallow": "lib/features/groups/data"
+    },
+    {
+      "from": "lib/features/groups/domain",
+      "disallow": "lib/features/groups/repositories"
+    },
+    {
+      "from": "lib/features/groups/domain",
+      "disallow": "lib/features/groups/presentation"
+    },
+    {
+      "from": "lib/features/groups/data",
+      "disallow": "lib/features/groups/repositories"
+    },
+    {
+      "from": "lib/features/groups/data",
+      "disallow": "lib/features/groups/presentation"
+    },
+    {
+      "from": "lib/features/groups/repositories",
+      "disallow": "lib/features/groups/presentation"
+    },
+    {
+      "from": "lib/features/library/domain",
+      "disallow": "lib/features/library/data"
+    },
+    {
+      "from": "lib/features/library/domain",
+      "disallow": "lib/features/library/repositories"
+    },
+    {
+      "from": "lib/features/library/domain",
+      "disallow": "lib/features/library/presentation"
+    },
+    {
+      "from": "lib/features/library/data",
+      "disallow": "lib/features/library/repositories"
+    },
+    {
+      "from": "lib/features/library/data",
+      "disallow": "lib/features/library/presentation"
+    },
+    {
+      "from": "lib/features/library/repositories",
+      "disallow": "lib/features/library/presentation"
+    },
+    {
+      "from": "lib/features/settings/domain",
+      "disallow": "lib/features/settings/data"
+    },
+    {
+      "from": "lib/features/settings/domain",
+      "disallow": "lib/features/settings/repositories"
+    },
+    {
+      "from": "lib/features/settings/domain",
+      "disallow": "lib/features/settings/presentation"
+    },
+    {
+      "from": "lib/features/settings/data",
+      "disallow": "lib/features/settings/repositories"
+    },
+    {
+      "from": "lib/features/settings/data",
+      "disallow": "lib/features/settings/presentation"
+    },
+    {
+      "from": "lib/features/settings/repositories",
+      "disallow": "lib/features/settings/presentation"
+    },
+    {
+      "from": "lib/core/domain",
+      "disallow": "lib/app"
+    },
+    {
+      "from": "lib/core/theme",
+      "disallow": "lib/app"
+    },
+    {
+      "from": "lib/core/widgets",
+      "disallow": "lib/app"
+    },
+    {
+      "from": "lib/core/extensions",
+      "disallow": "lib/app"
+    },
+    {
+      "from": "lib/core/data",
+      "disallow": "lib/app"
+    },
+    {
+      "from": "lib/core/services",
+      "disallow": "lib/app"
+    },
+    {
+      "from": "lib/features",
+      "disallow": "lib/app"
+    },
+    {
+      "from": "lib/core/domain",
+      "disallow": "lib/features"
+    },
+    {
+      "from": "lib/core/theme",
+      "disallow": "lib/features"
+    },
+    {
+      "from": "lib/core/widgets",
+      "disallow": "lib/features"
+    }
   ]
 }

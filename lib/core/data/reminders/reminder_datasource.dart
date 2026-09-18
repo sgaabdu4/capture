@@ -1,0 +1,75 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:timezone/timezone.dart' as tz;
+
+part 'reminder_datasource.g.dart';
+
+/// macOS notifications for approved, saved tasks only.
+abstract interface class IReminderDatasource {
+  /// False when notifications are not permitted.
+  Future<bool> schedule({required String itemId, required String title, required tz.TZDateTime at});
+  Future<void> cancel(String itemId);
+}
+
+/// Stable 31-bit notification id for an item id (FNV-1a).
+int notificationId(String itemId) {
+  const offsetBasis = 0x811c9dc5;
+  const prime = 0x01000193;
+  const mask32 = 0xffffffff;
+  const mask31 = 0x7fffffff;
+  final hash = itemId.codeUnits.fold(offsetBasis, (h, unit) => ((h ^ unit) * prime) & mask32);
+  return hash & mask31;
+}
+
+class LocalNotificationsReminderDatasource implements IReminderDatasource {
+  LocalNotificationsReminderDatasource(this._plugin);
+  final FlutterLocalNotificationsPlugin _plugin;
+  bool _initialised = false;
+
+  /// Permission is requested on the first reminder, never at launch.
+  Future<bool> _ensure() async {
+    if (!_initialised) {
+      await _plugin.initialize(
+        settings: const .new(
+          macOS: .new(
+            requestAlertPermission: false,
+            requestSoundPermission: false,
+            requestBadgePermission: false,
+          ),
+        ),
+      );
+      _initialised = true;
+    }
+    final mac = _plugin
+        .resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>();
+    if (mac == null) return false;
+    return await mac.requestPermissions(alert: true, sound: true) == true;
+  }
+
+  @override
+  Future<bool> schedule({
+    required String itemId,
+    required String title,
+    required tz.TZDateTime at,
+  }) async {
+    if (!await _ensure()) return false;
+    await _plugin.zonedSchedule(
+      id: notificationId(itemId),
+      title: title,
+      scheduledDate: at,
+      notificationDetails: const .new(macOS: .new(presentSound: true)),
+      androidScheduleMode: .inexactAllowWhileIdle,
+      payload: itemId,
+    );
+    return true;
+  }
+
+  @override
+  Future<void> cancel(String itemId) async {
+    if (!_initialised) await _ensure();
+    await _plugin.cancel(id: notificationId(itemId));
+  }
+}
+
+@Riverpod(keepAlive: true)
+IReminderDatasource reminderDatasource(Ref ref) => LocalNotificationsReminderDatasource(.new());

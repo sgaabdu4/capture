@@ -1,0 +1,1262 @@
+{
+ "fc88f998b2f52da0d0610e0784c8c976347d84f0": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.1
+   },
+   "boundary_U003": {
+    "type": "noul",
+    "noul": 0.95
+   },
+   "boundary_U004": {
+    "type": "noul",
+    "noul": 0.74
+   },
+   "boundary_U005": {
+    "type": "noul",
+    "noul": 0.83
+   },
+   "boundary_U006": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "late_U003": {
+    "type": "noul",
+    "noul": 0.07
+   },
+   "late_U004": {
+    "type": "noul",
+    "noul": 0.07
+   },
+   "late_U005": {
+    "type": "noul",
+    "noul": 0.07
+   },
+   "late_U006": {
+    "type": "noul",
+    "noul": 0.05
+   }
+  },
+  "usage": {
+   "input_tokens": 1909,
+   "output_tokens": 184
+  }
+ },
+ "9ad74d68933305827900f1808546d643883451f7": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Tech",
+    "confidence": 0.95,
+    "probabilities": {
+     "Unsorted": 0,
+     "Personal": 0,
+     "Work": 0,
+     "Ideas": 0.04,
+     "Tech": 0.96
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T1_day": {
+    "type": "choice",
+    "choice": "none",
+    "confidence": 0.82,
+    "probabilities": {
+     "T1D1": 0.09,
+     "none": 0.91
+    }
+   },
+   "T2_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Unsorted": 0,
+     "Personal": 1,
+     "Work": 0,
+     "Ideas": 0,
+     "Tech": 0
+    }
+   },
+   "T2_task": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T2_alert": {
+    "type": "noul",
+    "noul": 0.06
+   },
+   "T2_recall": {
+    "type": "noul",
+    "noul": 0.02
+   },
+   "T3_group": {
+    "type": "choice",
+    "choice": "Ideas",
+    "confidence": 1,
+    "probabilities": {
+     "Unsorted": 0,
+     "Personal": 0,
+     "Work": 0,
+     "Ideas": 1,
+     "Tech": 0
+    }
+   },
+   "T3_task": {
+    "type": "noul",
+    "noul": 0.07
+   },
+   "T3_alert": {
+    "type": "noul",
+    "noul": 0.07
+   },
+   "T3_recall": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T4_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Unsorted": 0,
+     "Personal": 1,
+     "Work": 0,
+     "Ideas": 0,
+     "Tech": 0
+    }
+   },
+   "T4_task": {
+    "type": "noul",
+    "noul": 0.97
+   },
+   "T4_alert": {
+    "type": "noul",
+    "noul": 0.98
+   },
+   "T4_recall": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T4_day": {
+    "type": "choice",
+    "choice": "T4D1",
+    "confidence": 0.42,
+    "probabilities": {
+     "T4D1": 0.71,
+     "none": 0.29
+    }
+   },
+   "T4_time": {
+    "type": "choice",
+    "choice": "T4H2",
+    "confidence": 1,
+    "probabilities": {
+     "T4H2": 1,
+     "none": 0,
+     "T4H1": 0
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 2594,
+   "output_tokens": 555
+  }
+ },
+ "a1bb05d07a8e5bb9047647dc299843ca30e19e8e": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.09
+   }
+  },
+  "usage": {
+   "input_tokens": 518,
+   "output_tokens": 24
+  }
+ },
+ "4a48316306f6abb6a4637f210568296f16f7fce1": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Tech",
+    "confidence": 1,
+    "probabilities": {
+     "Unsorted": 0,
+     "Tech": 1,
+     "Work": 0,
+     "Ideas": 0,
+     "Personal": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.02
+   },
+   "T1_day": {
+    "type": "choice",
+    "choice": "none",
+    "confidence": 0.97,
+    "probabilities": {
+     "none": 0.99,
+     "T1D1": 0.01
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 895,
+   "output_tokens": 145
+  }
+ },
+ "833ee269416a3c49087f1bbd9c19a5df5dcbd1dd": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.69
+   }
+  },
+  "usage": {
+   "input_tokens": 517,
+   "output_tokens": 24
+  }
+ },
+ "0babf8a3c2d8c177fdc1e981a6038e523eeddf5c": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Personal": 1,
+     "Ideas": 0,
+     "Tech": 0,
+     "Unsorted": 0,
+     "Work": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.01
+   },
+   "T2_group": {
+    "type": "choice",
+    "choice": "Ideas",
+    "confidence": 1,
+    "probabilities": {
+     "Personal": 0,
+     "Ideas": 1,
+     "Tech": 0,
+     "Unsorted": 0,
+     "Work": 0
+    }
+   },
+   "T2_task": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "T2_alert": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T2_recall": {
+    "type": "noul",
+    "noul": 0.02
+   }
+  },
+  "usage": {
+   "input_tokens": 1247,
+   "output_tokens": 223
+  }
+ },
+ "b26a1183ca0cd90db26e92fdd7a9dafbfe250ac0": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.98
+   }
+  },
+  "usage": {
+   "input_tokens": 517,
+   "output_tokens": 24
+  }
+ },
+ "f5dd1b30d838eb3caa1e799447d9e183de70a44c": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Personal": 1,
+     "Unsorted": 0,
+     "Ideas": 0,
+     "Tech": 0,
+     "Work": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.98
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T2_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Personal": 1,
+     "Unsorted": 0,
+     "Ideas": 0,
+     "Tech": 0,
+     "Work": 0
+    }
+   },
+   "T2_task": {
+    "type": "noul",
+    "noul": 0.98
+   },
+   "T2_alert": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "T2_recall": {
+    "type": "noul",
+    "noul": 0.02
+   }
+  },
+  "usage": {
+   "input_tokens": 1247,
+   "output_tokens": 222
+  }
+ },
+ "a605fdf009014e8d643937e7bffe1c26aac94d62": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Unsorted": 0,
+     "Personal": 1,
+     "Work": 0,
+     "Tech": 0,
+     "Ideas": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.93
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.03
+   }
+  },
+  "usage": {
+   "input_tokens": 769,
+   "output_tokens": 113
+  }
+ },
+ "a4fb26eff45c2a8c8565a603ec907a7899246be0": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.82
+   }
+  },
+  "usage": {
+   "input_tokens": 508,
+   "output_tokens": 24
+  }
+ },
+ "73499c7d9ae32be1f795c6c9a4ff0994e121f2a3": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Ideas": 0,
+     "Personal": 1,
+     "Unsorted": 0,
+     "Tech": 0,
+     "Work": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.94
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.02
+   },
+   "T2_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Personal": 1,
+     "Ideas": 0,
+     "Unsorted": 0,
+     "Tech": 0,
+     "Work": 0
+    }
+   },
+   "T2_task": {
+    "type": "noul",
+    "noul": 0.91
+   },
+   "T2_alert": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T2_recall": {
+    "type": "noul",
+    "noul": 0.03
+   }
+  },
+  "usage": {
+   "input_tokens": 1238,
+   "output_tokens": 222
+  }
+ },
+ "fb95ebf7bfca0bd031ce57c1c735ccf98fc192ef": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.03
+   }
+  },
+  "usage": {
+   "input_tokens": 519,
+   "output_tokens": 24
+  }
+ },
+ "cc5b8894a9b5c64431f56efcd557bf8a83aa8e84": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Personal": 1,
+     "Ideas": 0,
+     "Unsorted": 0,
+     "Tech": 0,
+     "Work": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.97
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.92
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T1_day": {
+    "type": "choice",
+    "choice": "T1D1",
+    "confidence": 0.94,
+    "probabilities": {
+     "T1D1": 0.97,
+     "none": 0.03
+    }
+   },
+   "T1_time": {
+    "type": "choice",
+    "choice": "T1H2",
+    "confidence": 1,
+    "probabilities": {
+     "T1H1": 0,
+     "T1H2": 1,
+     "none": 0
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 1049,
+   "output_tokens": 194
+  }
+ },
+ "65e0afe7bc5621b8caeeeb1b7d2674e12630ae59": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.29
+   },
+   "boundary_U003": {
+    "type": "noul",
+    "noul": 0.79
+   },
+   "late_U003": {
+    "type": "noul",
+    "noul": 0.06
+   }
+  },
+  "usage": {
+   "input_tokens": 863,
+   "output_tokens": 64
+  }
+ },
+ "433fa023958e93d85525b603e9f627d14e1031e1": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 0.66,
+    "probabilities": {
+     "Personal": 0.72,
+     "Tech": 0.05,
+     "Unsorted": 0.05,
+     "Work": 0.18,
+     "Ideas": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.02
+   },
+   "T2_group": {
+    "type": "choice",
+    "choice": "Tech",
+    "confidence": 0.71,
+    "probabilities": {
+     "Ideas": 0.23,
+     "Tech": 0.77,
+     "Unsorted": 0,
+     "Personal": 0,
+     "Work": 0
+    }
+   },
+   "T2_task": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "T2_alert": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T2_recall": {
+    "type": "noul",
+    "noul": 0.02
+   }
+  },
+  "usage": {
+   "input_tokens": 1254,
+   "output_tokens": 222
+  }
+ },
+ "ae4f855f0d85e5c9c8874c5e68bf12523f9c0c77": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Work",
+    "confidence": 0.98,
+    "probabilities": {
+     "Unsorted": 0,
+     "Personal": 0,
+     "Work": 0.98,
+     "Ideas": 0,
+     "Tech": 0.02
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.15
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.07
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.01
+   }
+  },
+  "usage": {
+   "input_tokens": 778,
+   "output_tokens": 113
+  }
+ },
+ "b9d6f7aa909298ca9a1f48d303bcb7dc6d7dbe57": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.97
+   },
+   "boundary_U003": {
+    "type": "noul",
+    "noul": 0.2
+   },
+   "late_U003": {
+    "type": "noul",
+    "noul": 0.9
+   }
+  },
+  "usage": {
+   "input_tokens": 865,
+   "output_tokens": 64
+  }
+ },
+ "016a1aafc816bf63dcbdb15254c686f8bd129c0a": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Personal": 1,
+     "Work": 0,
+     "Unsorted": 0,
+     "Ideas": 0,
+     "Tech": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.97
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.96
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T1_time": {
+    "type": "choice",
+    "choice": "none",
+    "confidence": 0.03,
+    "probabilities": {
+     "T1H1": 0.48,
+     "none": 0.52
+    }
+   },
+   "T2_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 0.98,
+    "probabilities": {
+     "Personal": 0.98,
+     "Tech": 0,
+     "Unsorted": 0.02,
+     "Work": 0,
+     "Ideas": 0
+    }
+   },
+   "T2_task": {
+    "type": "noul",
+    "noul": 0.96
+   },
+   "T2_alert": {
+    "type": "noul",
+    "noul": 0.08
+   },
+   "T2_recall": {
+    "type": "noul",
+    "noul": 0.02
+   },
+   "T3_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 0.99,
+    "probabilities": {
+     "Personal": 0.99,
+     "Work": 0,
+     "Unsorted": 0.01,
+     "Ideas": 0,
+     "Tech": 0
+    }
+   },
+   "T3_task": {
+    "type": "noul",
+    "noul": 0.91
+   },
+   "T3_alert": {
+    "type": "noul",
+    "noul": 0.15
+   },
+   "T3_recall": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T3_time": {
+    "type": "choice",
+    "choice": "T3H1",
+    "confidence": 1,
+    "probabilities": {
+     "T3H1": 1,
+     "none": 0
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 1984,
+   "output_tokens": 399
+  }
+ },
+ "f7124ed43348625ccb9afeae784d84d215aa4a85": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.97
+   },
+   "boundary_U003": {
+    "type": "noul",
+    "noul": 0.97
+   },
+   "boundary_U004": {
+    "type": "noul",
+    "noul": 0.96
+   },
+   "late_U003": {
+    "type": "noul",
+    "noul": 0.06
+   },
+   "late_U004": {
+    "type": "noul",
+    "noul": 0.07
+   }
+  },
+  "usage": {
+   "input_tokens": 1206,
+   "output_tokens": 104
+  }
+ },
+ "b5fd6b57ca2493480d74d11630860092c43aa9f7": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Ideas",
+    "confidence": 0.64,
+    "probabilities": {
+     "Tech": 0,
+     "Work": 0,
+     "Ideas": 0.72,
+     "Unsorted": 0,
+     "Personal": 0.28
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.06
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.02
+   },
+   "T2_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Unsorted": 0,
+     "Ideas": 0,
+     "Work": 0,
+     "Tech": 0,
+     "Personal": 1
+    }
+   },
+   "T2_task": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T2_alert": {
+    "type": "noul",
+    "noul": 0.07
+   },
+   "T2_recall": {
+    "type": "noul",
+    "noul": 0.02
+   },
+   "T3_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 0.98,
+    "probabilities": {
+     "Tech": 0,
+     "Work": 0,
+     "Ideas": 0,
+     "Unsorted": 0.02,
+     "Personal": 0.98
+    }
+   },
+   "T3_task": {
+    "type": "noul",
+    "noul": 0.16
+   },
+   "T3_alert": {
+    "type": "noul",
+    "noul": 0.06
+   },
+   "T3_recall": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T4_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 0.96,
+    "probabilities": {
+     "Unsorted": 0.02,
+     "Ideas": 0,
+     "Work": 0.01,
+     "Tech": 0,
+     "Personal": 0.97
+    }
+   },
+   "T4_task": {
+    "type": "noul",
+    "noul": 0.07
+   },
+   "T4_alert": {
+    "type": "noul",
+    "noul": 0.06
+   },
+   "T4_recall": {
+    "type": "noul",
+    "noul": 0.04
+   }
+  },
+  "usage": {
+   "input_tokens": 2190,
+   "output_tokens": 441
+  }
+ },
+ "8d0882a367e465b750b10c774156926530cc7be0": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.18
+   }
+  },
+  "usage": {
+   "input_tokens": 512,
+   "output_tokens": 24
+  }
+ },
+ "cc80207823553b588cb0ee8b1c9e59fc3ab5f90c": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 0.93,
+    "probabilities": {
+     "Ideas": 0,
+     "Tech": 0,
+     "Work": 0,
+     "Unsorted": 0.05,
+     "Personal": 0.95
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.85
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.07
+   }
+  },
+  "usage": {
+   "input_tokens": 775,
+   "output_tokens": 113
+  }
+ },
+ "2744f9d516c9495c8f583e7b1e393a236652ae67": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Work",
+    "confidence": 1,
+    "probabilities": {
+     "Unsorted": 0,
+     "Ideas": 0,
+     "Work": 1,
+     "Tech": 0,
+     "Personal": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.96
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.06
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.02
+   },
+   "T1_day": {
+    "type": "choice",
+    "choice": "T1D1",
+    "confidence": 1,
+    "probabilities": {
+     "none": 0,
+     "T1D1": 1
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 884,
+   "output_tokens": 148
+  }
+ },
+ "a3667330e9676c07ea61e76c0ca4f0b84f91c7eb": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Ideas": 0,
+     "Work": 0,
+     "Tech": 0,
+     "Unsorted": 0,
+     "Personal": 1
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.97
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.97
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T1_day": {
+    "type": "choice",
+    "choice": "T1D1",
+    "confidence": 1,
+    "probabilities": {
+     "none": 0,
+     "T1D1": 1
+    }
+   },
+   "T1_time": {
+    "type": "choice",
+    "choice": "T1H1",
+    "confidence": 1,
+    "probabilities": {
+     "none": 0,
+     "T1H1": 1
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 1020,
+   "output_tokens": 184
+  }
+ },
+ "969670bf9f065a96d0b7bb0addb5d769b2e47d80": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Personal",
+    "confidence": 1,
+    "probabilities": {
+     "Work": 0,
+     "Personal": 1,
+     "Ideas": 0,
+     "Unsorted": 0,
+     "Tech": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.95
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.98
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.06
+   },
+   "T1_day": {
+    "type": "choice",
+    "choice": "T1D1",
+    "confidence": 0.99,
+    "probabilities": {
+     "T1D1": 1,
+     "none": 0
+    }
+   },
+   "T1_time": {
+    "type": "choice",
+    "choice": "T1H1",
+    "confidence": 1,
+    "probabilities": {
+     "T1H1": 1,
+     "none": 0
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 1029,
+   "output_tokens": 184
+  }
+ },
+ "4b2c8f35021baa6583e42df9a848f366c9ead0ca": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Garden",
+    "confidence": 1,
+    "probabilities": {
+     "Garden": 1,
+     "Ideas": 0,
+     "Tech": 0,
+     "Work": 0,
+     "Unsorted": 0,
+     "Personal": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.4
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.04
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T1_day": {
+    "type": "choice",
+    "choice": "T1D1",
+    "confidence": 0.52,
+    "probabilities": {
+     "none": 0.24,
+     "T1D1": 0.76
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 909,
+   "output_tokens": 157
+  }
+ },
+ "a008831941eea4a4e243dbf1b8c6818e92922671": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "boundary_U002": {
+    "type": "noul",
+    "noul": 0.97
+   }
+  },
+  "usage": {
+   "input_tokens": 527,
+   "output_tokens": 24
+  }
+ },
+ "0bcf0dab533726d8662dd489f518c819191c2d15": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Ideas",
+    "confidence": 0.54,
+    "probabilities": {
+     "Personal": 0,
+     "Tech": 0.35,
+     "Work": 0.02,
+     "Ideas": 0.63,
+     "Unsorted": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.13
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T2_group": {
+    "type": "choice",
+    "choice": "Work",
+    "confidence": 0.96,
+    "probabilities": {
+     "Personal": 0.03,
+     "Tech": 0,
+     "Unsorted": 0,
+     "Work": 0.97,
+     "Ideas": 0
+    }
+   },
+   "T2_task": {
+    "type": "noul",
+    "noul": 0.96
+   },
+   "T2_alert": {
+    "type": "noul",
+    "noul": 0.98
+   },
+   "T2_recall": {
+    "type": "noul",
+    "noul": 0.06
+   },
+   "T2_day": {
+    "type": "choice",
+    "choice": "T2D1",
+    "confidence": 1,
+    "probabilities": {
+     "T2D1": 1,
+     "none": 0
+    }
+   },
+   "T2_time": {
+    "type": "choice",
+    "choice": "T2H1",
+    "confidence": 1,
+    "probabilities": {
+     "none": 0,
+     "T2H1": 1
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 1503,
+   "output_tokens": 294
+  }
+ },
+ "3cb3ba7497ebeaa576a76c62b82548708b296839": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "T1_group": {
+    "type": "choice",
+    "choice": "Work",
+    "confidence": 0.83,
+    "probabilities": {
+     "Personal": 0.06,
+     "Ideas": 0,
+     "Unsorted": 0.08,
+     "Work": 0.86,
+     "Tech": 0
+    }
+   },
+   "T1_task": {
+    "type": "noul",
+    "noul": 0.03
+   },
+   "T1_alert": {
+    "type": "noul",
+    "noul": 0.05
+   },
+   "T1_recall": {
+    "type": "noul",
+    "noul": 0.96
+   }
+  },
+  "usage": {
+   "input_tokens": 773,
+   "output_tokens": 113
+  }
+ }
+}
