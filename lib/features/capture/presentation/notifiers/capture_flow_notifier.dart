@@ -316,13 +316,17 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   void _enterSaving(String id) =>
       state = state.copyWith(phase: .saving, activeId: id, failure: null);
 
-  /// Reminders are scheduled only after every Notion step is confirmed.
+  /// Saved once every Notion step is confirmed. Reminders follow without
+  /// holding the save open: the first one waits on the macOS permission prompt.
   Future<void> _finish(CaptureRecord record) async {
-    final reminders = await _ensureSaver().scheduleReminders(record);
-    if (!ref.mounted) return;
-    _put(reminders.record.copyWith(stage: .saved, failure: null));
-    _idle(notice: reminders.notificationsOff ? .savedNotificationsOff : .saved);
+    final saved = record.copyWith(stage: .saved, failure: null);
+    _put(saved);
+    _idle(notice: .saved);
     unawaited(ref.read(libraryProvider.notifier).refresh());
+    final reminders = await _ensureSaver().scheduleReminders(saved);
+    if (!ref.mounted) return;
+    _reloadCaptures();
+    if (reminders.notificationsOff && state.notice == .saved) _keepNotice(.savedNotificationsOff);
   }
 
   /// Removes audio and draft from this Mac. An approved capture mid-save is
