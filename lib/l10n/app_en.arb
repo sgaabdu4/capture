@@ -1,0 +1,399 @@
+{
+  "appTitle": "Capture",
+  "@appTitle": {
+    "description": "Wordmark and window title"
+  },
+  "tagline": "Say anything. We’ll sort it.",
+  "@tagline": {
+    "description": "Hero tagline under the wordmark on Home"
+  },
+  "sidebarMotto": "A calmer mind\ngets more done.",
+  "@sidebarMotto": {
+    "description": "Handwritten note at the bottom of the sidebar"
+  },
+  "navGroups": "Groups",
+  "navRecordings": "Recordings",
+  "navTodo": "To-Do",
+  "navUpcoming": "Upcoming",
+  "navSettings": "Settings",
+  "@navSettings": {
+    "description": "Settings button tooltip and page title"
+  },
+  "notionConnected": "Notion connected",
+  "notionNotConnected": "Notion not connected",
+  "detailSeparator": " · ",
+  "@detailSeparator": {
+    "description": "Separator between parts of a one-line detail"
+  },
+  "recordTap": "Tap to record",
+  "recordStopTap": "Tap to stop",
+  "recordTranscribing": "Transcribing…",
+  "recordSorting": "Sorting…",
+  "recordWaitingReview": "Waiting for your review",
+  "recordSaving": "Saving to Notion…",
+  "recordShortcutHint": "or press {shortcut}",
+  "@recordShortcutHint": {
+    "description": "Hint under the mic button",
+    "placeholders": {
+      "shortcut": {
+        "type": "String"
+      }
+    }
+  },
+  "recordButton": "Record",
+  "@recordButton": {
+    "description": "Mic button semantics"
+  },
+  "stopButton": "Stop recording",
+  "@stopButton": {
+    "description": "Mic button semantics while recording"
+  },
+  "overlayTranscribing": "Transcribing on this Mac…",
+  "overlaySorting": "Sorting your thoughts…",
+  "overlaySaving": "Saving to Notion…",
+  "reviewNothing": "I didn’t catch anything to save.",
+  "@reviewNothing": {
+    "description": "Review card count line when nothing was found"
+  },
+  "countNotes": "{count, plural, =1{1 note} other{{count} notes}}",
+  "@countNotes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "countTasks": "{count, plural, =1{1 task} other{{count} tasks}}",
+  "@countTasks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "countReminders": "{count, plural, =1{1 reminder} other{{count} reminders}}",
+  "@countReminders": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewNeedsLook": "Needs a look: {problem}",
+  "@reviewNeedsLook": {
+    "description": "Why the review card cannot approve yet",
+    "placeholders": {
+      "problem": {
+        "type": "String"
+      }
+    }
+  },
+  "kindNote": "Note",
+  "kindTask": "Task",
+  "menuNothingScheduled": "Nothing scheduled",
+  "menuNoCaptures": "No captures yet",
+  "menuNextUp": "{title} · {when}",
+  "@menuNextUp": {
+    "description": "Menu bar next-up line",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "statusSaved": "Saved to Notion",
+  "statusWaitingReview": "Waiting for your review",
+  "statusSaveIncomplete": "Save incomplete",
+  "statusNotSaved": "Not saved",
+  "statusNotTranscribed": "Not transcribed yet",
+  "statusTranscriptionFailed": "Transcription failed",
+  "statusNotSorted": "Not sorted yet",
+  "statusProcessing": "Processing",
+  "statusNeedsAttention": "Needs attention",
+  "recentSaved": "{summary} saved",
+  "@recentSaved": {
+    "description": "Recent capture row title for a saved capture",
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "noticeSetupIncomplete": "Finish setup before your first capture.",
+  "noticeMicDenied": "Capture needs microphone access. Allow it in System Settings → Privacy & Security → Microphone.",
+  "noticeRecordingNotStarted": "Couldn’t start recording.",
+  "noticeTooShort": "That was too short to keep.",
+  "noticeLimitReached": "Stopped at the 5-minute limit.",
+  "noticeRecordingInterrupted": "Recording stopped unexpectedly. What was recorded is kept.",
+  "noticeDismissed": "Not saved. It stays in Recordings until you delete it.",
+  "noticeReviewLater": "Waiting for your review in Recordings.",
+  "noticeSaved": "Saved to Notion.",
+  "noticeSavedNotificationsOff": "Saved, but macOS notifications are off for Capture.",
+  "noticeNotionNotConnected": "Connect Notion in Settings to save.",
+  "failureTranscription": "Transcription failed. Your recording is kept; try again.",
+  "failureJevKey": "TypeSafe rejected the API key. Your capture is kept as one note to edit.",
+  "failureJevUnavailable": "Couldn’t reach TypeSafe. Your capture is kept as one note to edit.",
+  "failureJevResponse": "TypeSafe returned an unexpected response. Your capture is kept as one note to edit.",
+  "failureAudioTooLarge": "The recording is larger than this Notion workspace’s upload limit.",
+  "failureAudioMissing": "The compressed recording is missing on this Mac.",
+  "failureNotionAuth": "Couldn’t save: Notion rejected the token.",
+  "failureNotionAccess": "Couldn’t save: Capture can’t see the Notion page any more.",
+  "failureNotionBlockLimit": "Couldn’t save: this Notion workspace has reached its block limit.",
+  "failureNotionUnavailable": "Couldn’t save: Notion is unavailable. Try again shortly.",
+  "failureNotionRejected": "Couldn’t save: Notion refused the request.",
+  "jevInvalidKey": "TypeSafe rejected the API key.",
+  "jevRateLimited": "TypeSafe is rate limiting requests. Try again shortly.",
+  "jevUnavailable": "TypeSafe is unavailable right now.",
+  "jevNetwork": "Couldn’t reach TypeSafe. Check your connection.",
+  "jevInvalidResponse": "TypeSafe returned an unexpected response.",
+  "notionInvalidToken": "Notion rejected the token.",
+  "notionNotShared": "Capture can’t see that page. In Notion open it, then ••• → Connections → Add connection.",
+  "notionMissingCapability": "The Notion connection needs read, update and insert content capabilities.",
+  "notionBlockLimit": "This Notion workspace has reached its free-plan block limit.",
+  "notionRateLimited": "Notion is busy. Try again in a minute.",
+  "notionUnavailable": "Notion is unavailable right now.",
+  "notionNetwork": "Couldn’t reach Notion. Check your connection.",
+  "notionInvalidRequest": "Notion refused the request.",
+  "notionTokenMissing": "Paste your Notion connection token.",
+  "notionPageMissing": "Paste the link to the Notion page to use.",
+  "typesafeKeyMissing": "Paste your TypeSafe API key.",
+  "flagCheckSplit": "Check this split",
+  "flagCheckGroup": "Check the group",
+  "flagCheckTask": "Check whether this is a task",
+  "flagCheckReminder": "Check the reminder",
+  "flagChooseTime": "Choose a time",
+  "flagChooseAmPm": "Choose AM or PM",
+  "flagChooseDate": "Choose a date",
+  "flagCheckDate": "Check which date applies",
+  "flagTimePassed": "This time has already passed",
+  "flagClockChange": "Check the time (clock change)",
+  "flagCorrectionElsewhere": "Check which item this correction belongs to",
+  "flagRecallUnsupported": "Recall isn’t available in this version",
+  "flagNewPiece": "Review this new piece",
+  "flagClassificationFailed": "Couldn’t classify automatically",
+  "problemChooseGroup": "Choose a group",
+  "problemAddTitle": "Add a title",
+  "problemChooseAmPm": "Choose AM or PM",
+  "problemCheckClockChange": "Check a reminder time near a clock change",
+  "dayToday": "Today",
+  "dayTomorrow": "Tomorrow",
+  "dayYesterday": "Yesterday",
+  "dayWithTime": "{day} {time}",
+  "@dayWithTime": {
+    "description": "A day label followed by a time",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "agoJustNow": "Just now",
+  "agoMinutes": "{count, plural, =1{1 minute ago} other{{count} minutes ago}}",
+  "@agoMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agoHours": "{count, plural, =1{1 hour ago} other{{count} hours ago}}",
+  "@agoHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agoYesterday": "Yesterday",
+  "agoDays": "{count, plural, =1{1 day ago} other{{count} days ago}}",
+  "@agoDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardToday": "Today",
+  "cardRecent": "Recent capture",
+  "cardGroups": "Quick groups",
+  "viewAll": "View all",
+  "emptyToday": "Nothing due today.",
+  "emptyCaptures": "No captures yet.",
+  "emptyGroups": "No groups yet.",
+  "setupTitle": "Before your first capture",
+  "setupSubtitle": "Three things, once. Keys stay in your Mac’s Keychain.",
+  "modelTitle": "Speech model",
+  "modelReady": "Parakeet is on this Mac. Recordings are transcribed locally.",
+  "modelNeeded": "Download Parakeet ({megabytes} MB) to transcribe on this Mac.",
+  "@modelNeeded": {
+    "placeholders": {
+      "megabytes": {
+        "type": "int"
+      }
+    }
+  },
+  "modelDownload": "Download",
+  "modelRetry": "Retry download",
+  "modelStarting": "Starting download…",
+  "modelProgress": "Downloading {received} of {total} MB",
+  "@modelProgress": {
+    "placeholders": {
+      "received": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "modelVerifying": "Checking {file}…",
+  "@modelVerifying": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      }
+    }
+  },
+  "modelFailedNetwork": "Couldn’t download the speech model. Check your connection and retry; it resumes where it stopped.",
+  "modelFailedDisk": "Not enough disk space for the speech model.",
+  "modelFailedChecksum": "A model file failed its checksum and was deleted. Retry the download.",
+  "modelFailedUnknown": "The speech model download stopped. Retry the download.",
+  "modelAttribution": "Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); ONNX int8 conversion by the k2-fsa sherpa-onnx project. Runs entirely on this Mac.",
+  "typesafeTitle": "TypeSafe API key",
+  "typesafeSaved": "Saved in Keychain. Only transcript text is sent to Jev to sort it.",
+  "typesafeNeeded": "Jev sorts the transcript into notes and tasks. Get a key at console.typesafe.ai.",
+  "typesafeHintNew": "Paste your key",
+  "typesafeHintReplace": "Paste a new key to replace it",
+  "save": "Save",
+  "replace": "Replace",
+  "notionTitle": "Notion",
+  "notionConnectedTo": "Connected to {workspace}. Captures, Library and Groups live in the \"Capture\" page inside the page you chose.",
+  "@notionConnectedTo": {
+    "placeholders": {
+      "workspace": {
+        "type": "String"
+      }
+    }
+  },
+  "notionYourWorkspace": "your workspace",
+  "notionNeeded": "Create an internal connection in Notion (Settings → Connections → Develop or manage connections), share one page with it (••• → Connections → Add connection), then paste its token and the page link.",
+  "notionTokenHintNew": "Internal connection token (ntn_…)",
+  "notionTokenHintReplace": "Paste a new token to replace it",
+  "notionPageHint": "Link to the Notion page Capture may use",
+  "connect": "Connect",
+  "reconnect": "Reconnect",
+  "disconnect": "Disconnect",
+  "shortcutTitle": "Shortcut",
+  "shortcutActive": "Press {shortcut} in any app to start and stop a capture.",
+  "@shortcutActive": {
+    "placeholders": {
+      "shortcut": {
+        "type": "String"
+      }
+    }
+  },
+  "shortcutInactive": "{shortcut} is taken by another app. Choose another.",
+  "@shortcutInactive": {
+    "placeholders": {
+      "shortcut": {
+        "type": "String"
+      }
+    }
+  },
+  "shortcutChange": "Change shortcut",
+  "shortcutListening": "Press the new shortcut…",
+  "shortcutUnsupportedKey": "Use a letter or a digit.",
+  "shortcutTooFewModifiers": "Use at least two modifiers, including ⌃ or ⌘.",
+  "shortcutTaken": "That shortcut is already used by another app.",
+  "micTitle": "Microphone",
+  "micGranted": "Allowed. The microphone is on only while the pill shows.",
+  "micDenied": "Blocked. Allow Capture in System Settings → Privacy & Security → Microphone.",
+  "micUndetermined": "macOS will ask the first time you record.",
+  "micAllow": "Allow microphone",
+  "privacyTitle": "Privacy",
+  "privacyBody": "Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it. Keys live in the macOS Keychain. No analytics, no logs of your words.",
+  "recordingsSubtitle": "Kept on this Mac. Saved captures are also in Notion.",
+  "noTranscript": "No transcript yet.",
+  "retry": "Retry",
+  "review": "Review",
+  "retrySave": "Retry save",
+  "reviewAgain": "Review again",
+  "deleteFromMac": "Delete from this Mac",
+  "deleteTitle": "Delete this recording?",
+  "deleteSavedBody": "The audio and transcript are removed from this Mac. The copy in Notion stays.",
+  "deleteUnsavedBody": "The audio and transcript are removed from this Mac. This can’t be undone.",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "emptyOpenTasks": "No open tasks.",
+  "emptyUpcoming": "Nothing scheduled.",
+  "refresh": "Refresh",
+  "syncRefreshing": "Refreshing from Notion…",
+  "syncNever": "From your last sync with Notion.",
+  "syncedAgo": "Synced with Notion: {ago}.",
+  "@syncedAgo": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderLabel": "Reminder",
+  "groupsSubtitle": "Jev files each thought into one group using these descriptions. Describe what belongs, and what does not.",
+  "groupsNeedNotion": "Connect Notion in Settings to manage groups.",
+  "addGroup": "Add group",
+  "archivedHeader": "Archived",
+  "groupSavedCount": "{count} saved",
+  "@groupSavedCount": {
+    "description": "How many library items use a group",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "edit": "Edit",
+  "emptyGroupItems": "Nothing saved here yet.",
+  "newGroup": "New group",
+  "editGroup": "Edit group",
+  "groupName": "Name",
+  "groupDescription": "What belongs here",
+  "archive": "Archive",
+  "restore": "Restore",
+  "groupNameMissing": "Add a name.",
+  "groupNameTooLong": "Keep the name under {max} characters.",
+  "@groupNameTooLong": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "groupDescriptionMissing": "Add a short description.",
+  "groupDuplicateName": "Another group already uses this name.",
+  "editorTitle": "Ready to save?",
+  "nothingToReview": "Nothing to review.",
+  "reviewTitle": "Review",
+  "titleHint": "Title",
+  "detailsHint": "Details",
+  "groupHint": "Group",
+  "addDate": "Add date",
+  "addTime": "Add time",
+  "remindMe": "Remind me",
+  "addTimeForReminder": "Add a time to set a reminder",
+  "removeDate": "Remove date",
+  "sourcesHint": "What you said · tap a word to split before it",
+  "mergeNext": "Merge with next",
+  "fullTranscript": "Full transcript",
+  "noWordsHeard": "No words were heard.",
+  "editorSaved": "Saved to Notion.",
+  "editorNothingSent": "Nothing is sent to Notion until you save.",
+  "dontSave": "Don’t save",
+  "saveToNotion": "Save to Notion",
+  "includeItem": "Include this item"
+}

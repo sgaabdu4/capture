@@ -28,6 +28,13 @@
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
+		D587E9E33C3D4AB44912FB3A /* CaptureNativePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3238276DFD9925037F7485 /* CaptureNativePlugin.swift */; };
+		C42961E9345BFE46B3804CEC /* HotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6AF414B83803E6CEFC3596 /* HotKey.swift */; };
+		D15C60B988905D82B5969DE7 /* M4AEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A949E02A11EAB16A26225321 /* M4AEncoder.swift */; };
+		A86014CEF8384B15D79B342C /* Overlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E6CBB7C88FF64C88AE639 /* Overlay.swift */; };
+		0D1DEF72FA51F1FE563B743B /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBBC0F1EDD41E1DB8F2191 /* Recorder.swift */; };
+		5FF86DD169C2A9CD3E2C49C2 /* StatusMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E475C56E497E55FEDB99D311 /* StatusMenu.swift */; };
+		F2449AB6E5521A7B5D265745 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E6DB29FC29EC4366227F0E /* Theme.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +87,13 @@
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		FF3238276DFD9925037F7485 /* CaptureNativePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureNativePlugin.swift; sourceTree = "<group>"; };
+		CC6AF414B83803E6CEFC3596 /* HotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKey.swift; sourceTree = "<group>"; };
+		A949E02A11EAB16A26225321 /* M4AEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = M4AEncoder.swift; sourceTree = "<group>"; };
+		8E6E6CBB7C88FF64C88AE639 /* Overlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overlay.swift; sourceTree = "<group>"; };
+		4CBBBC0F1EDD41E1DB8F2191 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
+		E475C56E497E55FEDB99D311 /* StatusMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMenu.swift; sourceTree = "<group>"; };
+		A1E6DB29FC29EC4366227F0E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +182,7 @@
 			children = (
 				33CC10F02044A3C60003C045 /* AppDelegate.swift */,
 				33CC11122044BFA00003C045 /* MainFlutterWindow.swift */,
+				1E74FFDC83785C2289C57A70 /* Native */,
 				33E51913231747F40026EE4D /* DebugProfile.entitlements */,
 				33E51914231749380026EE4D /* Release.entitlements */,
 				33CC11242044D66E0003C045 /* Resources */,
@@ -181,6 +196,20 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1E74FFDC83785C2289C57A70 /* Native */ = {
+			isa = PBXGroup;
+			children = (
+				FF3238276DFD9925037F7485 /* CaptureNativePlugin.swift */,
+				CC6AF414B83803E6CEFC3596 /* HotKey.swift */,
+				A949E02A11EAB16A26225321 /* M4AEncoder.swift */,
+				8E6E6CBB7C88FF64C88AE639 /* Overlay.swift */,
+				4CBBBC0F1EDD41E1DB8F2191 /* Recorder.swift */,
+				E475C56E497E55FEDB99D311 /* StatusMenu.swift */,
+				A1E6DB29FC29EC4366227F0E /* Theme.swift */,
+			);
+			path = Native;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -357,6 +386,13 @@
 				33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */,
 				33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */,
 				335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */,
+				D587E9E33C3D4AB44912FB3A /* CaptureNativePlugin.swift in Sources */,
+				C42961E9345BFE46B3804CEC /* HotKey.swift in Sources */,
+				D15C60B988905D82B5969DE7 /* M4AEncoder.swift in Sources */,
+				A86014CEF8384B15D79B342C /* Overlay.swift in Sources */,
+				0D1DEF72FA51F1FE563B743B /* Recorder.swift in Sources */,
+				5FF86DD169C2A9CD3E2C49C2 /* StatusMenu.swift in Sources */,
+				F2449AB6E5521A7B5D265745 /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

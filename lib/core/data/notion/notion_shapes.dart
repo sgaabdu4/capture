@@ -1,54 +1,65 @@
-import 'package:capture/features/capture/domain/entities/models.dart';
+import 'package:capture/core/data/notion/notion_http_service.dart';
+import 'package:capture/core/data/notion/notion_keys.dart';
+import 'package:capture/features/capture/domain/entities/due_date.dart';
 
 /// Pure builders/readers for Notion JSON shapes (API 2026-03-11).
 
+/// Longest text Notion accepts in one rich-text object.
 const maxRichText = 2000;
+
+/// Most children Notion accepts in one append request.
 const maxChildren = 100;
 
-List<Map<String, Object?>> richText(String text) => [
-  for (var i = 0; i < text.length; i += maxRichText)
+const _untitled = 'Untitled';
+
+List<Json> richText(String value) => [
+  for (int i = 0; i < value.length; i += maxRichText)
     {
-      'type': 'text',
-      'text': {
-        'content': text.substring(i, i + maxRichText > text.length ? text.length : i + maxRichText),
+      NotionKeys.type: 'text',
+      NotionKeys.text: {
+        NotionKeys.content: value.substring(
+          i,
+          i + maxRichText > value.length ? value.length : i + maxRichText,
+        ),
       },
     },
 ];
 
-Map<String, Object?> titleValue(String text) => {
-  'title': richText(text.isEmpty ? 'Untitled' : text),
+Json titleValue(String text) => {NotionKeys.title: richText(text.isEmpty ? _untitled : text)};
+
+Json textValue(String text) => {NotionKeys.richText: richText(text)};
+
+Json selectValue(String name) => {
+  NotionKeys.select: {NotionKeys.name: name},
 };
 
-Map<String, Object?> textValue(String text) => {'rich_text': richText(text)};
-
-Map<String, Object?> selectValue(String name) => {
-  'select': {'name': name},
-};
-
-Map<String, Object?> relationValue(Iterable<String> ids) => {
-  'relation': [
-    for (final id in ids) {'id': id},
+Json relationValue(Iterable<String> ids) => {
+  NotionKeys.relation: [
+    for (final id in ids) {NotionKeys.id: id},
   ],
 };
 
 /// A date property. Timed values carry the capture's IANA zone so Notion
 /// shows the wall time the user meant.
-Map<String, Object?> dateValue(DueDate? date, String timeZone) => {
-  'date': date == null ? null : {'start': date.iso, if (date.hasTime) 'time_zone': timeZone},
+Json dateValue(DueDate? date, String timeZone) => {
+  NotionKeys.date: switch (date) {
+    final DueDate d => {NotionKeys.start: d.iso, if (d.hasTime) NotionKeys.timeZone: timeZone},
+    null => null,
+  },
 };
 
-Map<String, Object?> block(String type, String text) => {
-  'object': 'block',
-  'type': type,
-  type: {'rich_text': richText(text)},
+Json block(String type, String text) => {
+  NotionKeys.object: 'block',
+  NotionKeys.type: type,
+  type: {NotionKeys.richText: richText(text)},
 };
 
 /// Paragraph blocks of at most [maxRichText] characters, split at spaces.
-List<Map<String, Object?>> paragraphs(String text) {
-  final out = <Map<String, Object?>>[];
-  var rest = text.trim();
+List<Json> paragraphs(String text) {
+  final out = <Json>[];
+  String rest = text.trim();
   while (rest.isNotEmpty) {
-    var cut = rest.length <= maxRichText ? rest.length : maxRichText;
+    int cut = rest.length <= maxRichText ? rest.length : maxRichText;
     if (cut < rest.length) {
       final space = rest.lastIndexOf(' ', cut);
       if (space > maxRichText ~/ 2) cut = space;
@@ -59,73 +70,103 @@ List<Map<String, Object?>> paragraphs(String text) {
   return out;
 }
 
-String plainText(Object? richTextList) =>
-    [for (final t in richTextList as List<Object?>? ?? const []) _plain(t! as Map<String, Object?>)]
-        .join();
+String plainText(Object? richTextList) => switch (richTextList) {
+  final List<Object?> parts => parts.map(_plain).join(),
+  _ => '',
+};
 
-String _plain(Map<String, Object?> t) =>
-    t['plain_text'] as String? ?? (t['text'] as Map<String, Object?>?)?['content'] as String? ?? '';
+String _plain(Object? part) => switch (part) {
+  {'plain_text': final String text} => text,
+  {'text': {'content': final String text}} => text,
+  _ => '',
+};
 
-Map<String, Object?> props(Map<String, Object?> page) =>
-    page['properties'] as Map<String, Object?>? ?? const {};
+Object? _prop(Json page, String name) => switch (page) {
+  {'properties': final Json props} => props[name],
+  _ => null,
+};
 
-String propText(Map<String, Object?> page, String name) {
-  final p = props(page)[name] as Map<String, Object?>?;
-  if (p == null) return '';
-  return plainText(p['title'] ?? p['rich_text']);
-}
+String propText(Json page, String name) => switch (_prop(page, name)) {
+  {'title': final Object? text} || {'rich_text': final Object? text} => plainText(text),
+  _ => '',
+};
 
-String? propSelect(Map<String, Object?> page, String name) {
-  final p = props(page)[name] as Map<String, Object?>?;
-  return (p?['select'] as Map<String, Object?>?)?['name'] as String?;
-}
+String? propSelect(Json page, String name) => switch (_prop(page, name)) {
+  {NotionKeys.select: {NotionKeys.name: final String value}} => value,
+  _ => null,
+};
 
-List<String> propRelation(Map<String, Object?> page, String name) => [
-  for (final r
-      in (props(page)[name] as Map<String, Object?>?)?['relation'] as List<Object?>? ?? const [])
-    (r! as Map<String, Object?>)['id']! as String,
-];
+List<String> propRelation(Json page, String name) => switch (_prop(page, name)) {
+  {'relation': final List<Object?> relations} => [
+    for (final r in relations)
+      if (r case {'id': final String id}) id,
+  ],
+  _ => const [],
+};
 
-bool propCheckbox(Map<String, Object?> page, String name) =>
-    (props(page)[name] as Map<String, Object?>?)?['checkbox'] as bool? ?? false;
+bool propCheckbox(Json page, String name) => switch (_prop(page, name)) {
+  {'checkbox': true} => true,
+  _ => false,
+};
 
-List<Object?> propFiles(Map<String, Object?> page, String name) =>
-    (props(page)[name] as Map<String, Object?>?)?['files'] as List<Object?>? ?? const [];
+List<Object?> propFiles(Json page, String name) => switch (_prop(page, name)) {
+  {'files': final List<Object?> files} => files,
+  _ => const [],
+};
+
+final _datePattern = RegExp(r'^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?');
 
 /// Reads a Notion date start (`2026-09-19` or `2026-09-19T14:00:00.000+01:00`)
 /// as the wall-clock date it names.
-DueDate? propDate(Map<String, Object?> page, String name) {
-  final date = (props(page)[name] as Map<String, Object?>?)?['date'];
-  final start = (date as Map<String, Object?>?)?['start'] as String?;
-  if (start == null) return null;
-  final match = RegExp(r'^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?').firstMatch(start);
-  if (match == null) return null;
-  final hour = match[4];
-  return DueDate(
-    int.parse(match[1]!),
-    int.parse(match[2]!),
-    int.parse(match[3]!),
-    hour: hour == null ? null : int.parse(hour),
-    minute: hour == null ? null : int.parse(match[5]!),
-  );
+DueDate? propDate(Json page, String name) => switch (_prop(page, name)) {
+  {'date': {'start': final String start}} => _wallDate(start),
+  _ => null,
+};
+
+DueDate? _wallDate(String start) {
+  final m = _datePattern.firstMatch(start);
+  if (m == null) return null;
+  return switch ([for (int g = 1; g <= m.groupCount; g++) m[g]]) {
+    [final String y, final String mo, final String d, final String h, final String mi] => .new(
+      .parse(y),
+      .parse(mo),
+      .parse(d),
+      hour: .parse(h),
+      minute: .parse(mi),
+    ),
+    [final String y, final String mo, final String d, ...] => .new(
+      .parse(y),
+      .parse(mo),
+      .parse(d),
+    ),
+    _ => null,
+  };
 }
+
+final _dashedId = RegExp(
+  r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+);
+final _hexId = RegExp(r'([0-9a-fA-F]{32})$');
+
+/// Group boundaries of a canonical UUID, as offsets into its 32 hex digits.
+const _uuidBounds = [0, 8, 12, 16, 20, 32];
 
 /// Accepts a Notion page URL or id and returns the dashed id. For URLs the
 /// id is the trailing 32 hex characters of the last path segment (query
 /// strings such as `?v=` view ids are ignored).
 String? parseNotionId(String input) {
-  var segment = input.trim();
-  final uri = Uri.tryParse(segment);
-  if (uri != null && uri.hasScheme) {
-    segment = uri.pathSegments.where((s) => s.isNotEmpty).lastOrNull ?? '';
+  final trimmed = input.trim();
+  final segment = switch (Uri.tryParse(trimmed)) {
+    final Uri uri when uri.hasScheme =>
+      uri.pathSegments.where((s) => s.isNotEmpty).lastOrNull ?? '',
+    _ => trimmed,
+  };
+  final compact = _dashedId.hasMatch(segment) ? segment.replaceAll('-', '') : segment;
+  if (_hexId.firstMatch(compact)?[1] case final String hex) {
+    final id = hex.toLowerCase();
+    return [
+      for (int i = 1; i < _uuidBounds.length; i++) id.substring(_uuidBounds[i - 1], _uuidBounds[i]),
+    ].join('-');
   }
-  final dashed = RegExp(
-    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
-  );
-  if (dashed.hasMatch(segment)) segment = segment.replaceAll('-', '');
-  final match = RegExp(r'([0-9a-fA-F]{32})$').firstMatch(segment);
-  if (match == null) return null;
-  final id = match[1]!.toLowerCase();
-  return '${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-'
-      '${id.substring(16, 20)}-${id.substring(20)}';
+  return null;
 }

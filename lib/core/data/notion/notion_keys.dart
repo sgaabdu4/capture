@@ -1,0 +1,40 @@
+/// Field names and headers of the Notion API wire format (2026-03-11).
+abstract final class NotionKeys {
+  static const audio = 'audio';
+  static const checkbox = 'checkbox';
+  static const children = 'children';
+  static const content = 'content';
+  static const contentType = 'content_type';
+  static const dataSourceId = 'data_source_id';
+  static const date = 'date';
+  static const direction = 'direction';
+  static const equals = 'equals';
+  static const fileUpload = 'file_upload';
+  static const filename = 'filename';
+  static const files = 'files';
+  static const filter = 'filter';
+  static const id = 'id';
+  static const initialDataSource = 'initial_data_source';
+  static const isInline = 'is_inline';
+  static const mode = 'mode';
+  static const name = 'name';
+  static const number = 'number';
+  static const object = 'object';
+  static const pageId = 'page_id';
+  static const pageSize = 'page_size';
+  static const parent = 'parent';
+  static const properties = 'properties';
+  static const property = 'property';
+  static const relation = 'relation';
+  static const richText = 'rich_text';
+  static const select = 'select';
+  static const sorts = 'sorts';
+  static const start = 'start';
+  static const startCursor = 'start_cursor';
+  static const text = 'text';
+  static const timeZone = 'time_zone';
+  static const timestamp = 'timestamp';
+  static const title = 'title';
+  static const type = 'type';
+  static const versionHeader = 'Notion-Version';
+}

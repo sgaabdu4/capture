@@ -2,18 +2,12 @@
 /// on representative recordings (see test/eval). They only shape the
 /// proposal and its review flags; nothing bypasses user approval.
 ///
-/// Noul values are P(yes). A value inside [low, high) is treated as
-/// uncertain and flagged for review; the provisional decision is still
-/// `p >= decide`.
-class Band {
-  const Band(this.decide, this.low, this.high);
-  final double decide;
-  final double low;
-  final double high;
+/// Noul values are P(yes); see [Band].
+library;
 
-  bool yes(double p) => p >= decide;
-  bool uncertain(double p) => p >= low && p < high;
-}
+import 'package:capture/features/capture/domain/jev/band.dart';
+
+export 'package:capture/features/capture/domain/jev/band.dart';
 
 const boundaryBand = Band(0.5, 0.3, 0.7);
 const taskBand = Band(0.5, 0.35, 0.65);

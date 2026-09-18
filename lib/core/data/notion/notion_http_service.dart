@@ -3,10 +3,18 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:capture/core/data/notion/notion_keys.dart';
+import 'package:capture/core/data/secrets/secrets_local_datasource.dart';
+import 'package:capture/core/domain/values/result.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'notion_http_service.g.dart';
 
 const notionVersion = '2026-03-11';
+
+typedef Json = Map<String, Object?>;
 
 enum NotionFailure {
   invalidToken,
@@ -16,188 +24,216 @@ enum NotionFailure {
   rateLimited,
   unavailable,
   network,
-  invalidRequest,
-}
-
-class NotionException implements Exception {
-  const NotionException(this.failure, {this.status, this.code});
-  final NotionFailure failure;
-  final int? status;
-  final String? code;
-
-  String get userMessage => switch (failure) {
-    NotionFailure.invalidToken => 'Notion rejected the token.',
-    NotionFailure.notShared =>
-      "Capture can't see that page. In Notion open it, then ••• → "
-          'Connections → Add connection.',
-    NotionFailure.missingCapability =>
-      'The Notion connection needs read, update and insert content '
-          'capabilities.',
-    NotionFailure.blockLimit => 'This Notion workspace has reached its free-plan block limit.',
-    NotionFailure.rateLimited => 'Notion is busy. Try again in a minute.',
-    NotionFailure.unavailable => 'Notion is unavailable right now.',
-    NotionFailure.network => "Couldn't reach Notion. Check your connection.",
-    NotionFailure.invalidRequest => 'Notion refused the request.',
-  };
+  invalidRequest;
 
   /// Worth retrying later without changing anything.
-  bool get transient =>
-      failure == NotionFailure.rateLimited ||
-      failure == NotionFailure.unavailable ||
-      failure == NotionFailure.network;
-
-  @override
-  String toString() => 'NotionException($failure, $status, $code)';
+  bool get transient => this == rateLimited || this == unavailable || this == network;
 }
 
-/// Thin Notion API client. Retries 429/529 (honouring Retry-After) for
-/// every method and 5xx only for GET; everything else surfaces as a typed
-/// failure. Never logs request or response bodies.
-class NotionClient {
-  NotionClient(
-    this._token, {
-    http.Client? client,
-    this.baseUrl = 'https://api.notion.com',
-    this.maxRetries = 3,
-    this.timeout = const Duration(seconds: 60),
-    Future<void> Function(Duration)? sleep,
-  }) : _client = client ?? http.Client(),
-       _sleep = sleep ?? Future<void>.delayed;
+typedef NotionResult<T> = Result<T, NotionFailure>;
 
-  final String _token;
-  final http.Client _client;
-  final String baseUrl;
-  final int maxRetries;
-  final Duration timeout;
-  final Future<void> Function(Duration) _sleep;
-  final _random = Random();
+final _random = Random();
 
-  Map<String, String> get _headers => {
-    'Authorization': 'Bearer $_token',
-    'Notion-Version': notionVersion,
-  };
+/// Notion API transport. Every call reads the Keychain token unless an
+/// explicit [token] is given (used to validate a new token before storing
+/// it). Status codes are classified once here.
+abstract interface class INotionHttpService {
+  Future<NotionResult<Json>> get(String path, {String? token});
+  Future<NotionResult<Json>> post(String path, Json body, {String? token});
+  Future<NotionResult<Json>> patch(String path, Json body, {String? token});
 
-  Future<Map<String, Object?>> get(String path) => _json('GET', path);
-
-  Future<Map<String, Object?>> post(String path, Map<String, Object?> body) =>
-      _json('POST', path, body);
-
-  Future<Map<String, Object?>> patch(String path, Map<String, Object?> body) =>
-      _json('PATCH', path, body);
-
-  /// Single-part upload (≤ 20 MiB): create, then send the bytes.
-  Future<String> uploadFile(
+  /// Single-part upload (≤ 20 MiB): create, then send the bytes. Returns
+  /// the upload id.
+  Future<NotionResult<String>> uploadFile(
     List<int> bytes, {
     required String filename,
-    required String contentType,
+    required MediaType type,
+  });
+}
+
+/// Retries 429/529 (honouring Retry-After) for every method and 5xx or
+/// transport failures only for GET, because a write may have landed.
+/// Never logs request or response bodies. Owns [_client]; call [close] when
+/// done.
+class NotionHttpService implements INotionHttpService {
+  NotionHttpService(this._secrets, {http.Client? client, Future<void> Function(Duration)? sleep})
+    : _client = client ?? http.Client(),
+      _sleep = sleep ?? Future<void>.delayed;
+
+  final ISecretsLocalDatasource _secrets;
+  final http.Client _client;
+  final Future<void> Function(Duration) _sleep;
+
+  static const baseUrl = 'https://api.notion.com';
+  static const maxRetries = 3;
+  static const timeout = Duration(seconds: 60);
+  static const _maxRetryAfter = Duration(seconds: 60);
+  static const _backoffBase = Duration(seconds: 1);
+  static const _backoffCap = Duration(seconds: 8);
+  static const _jitterMs = 250;
+  static const _rateLimited = {HttpStatus.tooManyRequests, 529};
+  static const _retryableForGet = {
+    HttpStatus.internalServerError,
+    HttpStatus.badGateway,
+    HttpStatus.serviceUnavailable,
+    HttpStatus.gatewayTimeout,
+  };
+
+  void close() => _client.close();
+
+  Future<NotionResult<Map<String, String>>> _headers(String? token) async =>
+      switch (token ?? await _secrets.read(.notionToken)) {
+        final String value => .ok({
+          HttpHeaders.authorizationHeader: 'Bearer $value',
+          NotionKeys.versionHeader: notionVersion,
+        }),
+        null => const .err(.invalidToken),
+      };
+
+  @override
+  Future<NotionResult<Json>> get(String path, {String? token}) => _json('GET', path, token: token);
+
+  @override
+  Future<NotionResult<Json>> post(String path, Json body, {String? token}) =>
+      _json('POST', path, body: body, token: token);
+
+  @override
+  Future<NotionResult<Json>> patch(String path, Json body, {String? token}) =>
+      _json('PATCH', path, body: body, token: token);
+
+  @override
+  Future<NotionResult<String>> uploadFile(
+    List<int> bytes, {
+    required String filename,
+    required MediaType type,
   }) async {
     final created = await post('/v1/file_uploads', {
-      'mode': 'single_part',
-      'filename': filename,
-      'content_type': contentType,
+      NotionKeys.mode: 'single_part',
+      NotionKeys.filename: filename,
+      NotionKeys.contentType: type.mimeType,
     });
-    final id = created['id']! as String;
-    final response = await _send('POST', () {
-      final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/v1/file_uploads/$id/send'))
-        ..headers.addAll(_headers);
-      final type = contentType.split('/');
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'file',
-          bytes,
-          filename: filename,
-          contentType: MediaType(type.first, type.last),
-        ),
-      );
-      return request;
+    final String id;
+    switch (created) {
+      case Ok(value: {NotionKeys.id: final String value}):
+        id = value;
+      case Ok():
+        return const .err(.invalidRequest);
+      case Err(:final failure):
+        return .err(failure);
+    }
+    final Map<String, String> headers;
+    switch (await _headers(null)) {
+      case Ok(:final value):
+        headers = value;
+      case Err(:final failure):
+        return .err(failure);
+    }
+    final sent = await _send('POST', () {
+      return http.MultipartRequest('POST', .parse('$baseUrl/v1/file_uploads/$id/send'))
+        ..headers.addAll(headers)
+        ..files.add(.fromBytes('file', bytes, filename: filename, contentType: type));
     });
-    _decode(response);
-    return id;
+    return switch (sent) {
+      Ok() => .ok(id),
+      Err(:final failure) => .err(failure),
+    };
   }
 
-  Future<Map<String, Object?>> _json(
-    String method,
-    String path, [
-    Map<String, Object?>? body,
-  ]) async {
-    final response = await _send(method, () {
-      final request = http.Request(method, Uri.parse('$baseUrl$path'))..headers.addAll(_headers);
+  Future<NotionResult<Json>> _json(String method, String path, {Json? body, String? token}) async {
+    final Map<String, String> headers;
+    switch (await _headers(token)) {
+      case Ok(:final value):
+        headers = value;
+      case Err(:final failure):
+        return .err(failure);
+    }
+    return _send(method, () {
+      final request = http.Request(method, .parse('$baseUrl$path'))..headers.addAll(headers);
       if (body != null) {
-        request.headers['Content-Type'] = 'application/json';
+        request.headers[HttpHeaders.contentTypeHeader] = 'application/json';
         request.body = jsonEncode(body);
       }
       return request;
     });
-    return _decode(response);
   }
 
-  Future<http.Response> _send(String method, http.BaseRequest Function() build) async {
-    for (var attempt = 0; ; attempt++) {
-      http.Response? response;
-      try {
-        final streamed = await _client.send(build()).timeout(timeout);
-        response = await http.Response.fromStream(streamed).timeout(timeout);
-      } on TimeoutException {
-        response = null;
-      } on SocketException {
-        response = null;
-      } on http.ClientException {
-        response = null;
-      }
-      final retry = _retryable(method, response?.statusCode);
-      if (!retry || attempt >= maxRetries) {
-        if (response == null) {
-          throw const NotionException(NotionFailure.network);
-        }
-        return response;
+  Future<NotionResult<Json>> _send(String method, http.BaseRequest Function() build) async {
+    for (int attempt = 0; ; attempt++) {
+      final response = await _attempt(build);
+      if (!_retryable(method, response?.statusCode) || attempt >= maxRetries) {
+        return switch (response) {
+          final http.Response r => _decode(r),
+          null => const .err(.network),
+        };
       }
       await _sleep(_delay(attempt, response));
     }
   }
 
-  /// Transport failures are retried only for GET: a POST may have landed.
+  Future<http.Response?> _attempt(http.BaseRequest Function() build) async {
+    try {
+      final streamed = await _client.send(build()).timeout(timeout);
+      return await http.Response.fromStream(streamed).timeout(timeout);
+    } on Exception catch (e) {
+      if (e case TimeoutException() || SocketException() || http.ClientException()) return null;
+      rethrow;
+    }
+  }
+
   bool _retryable(String method, int? status) => switch (status) {
     null => method == 'GET',
-    429 || 529 => true,
-    500 || 502 || 503 || 504 => method == 'GET',
-    _ => false,
+    final int s when _rateLimited.contains(s) => true,
+    final int s => _retryableForGet.contains(s) && method == 'GET',
   };
 
   Duration _delay(int attempt, http.Response? response) {
-    final header = response?.headers['retry-after'];
+    final header = response?.headers[HttpHeaders.retryAfterHeader];
     final seconds = header == null ? null : int.tryParse(header);
-    if (seconds != null) return Duration(seconds: min(seconds, 60));
-    final base = min(1000 * pow(2, attempt).toInt(), 8000);
-    return Duration(milliseconds: base + _random.nextInt(250));
-  }
-
-  Map<String, Object?> _decode(http.Response response) {
-    Object? body;
-    try {
-      body = jsonDecode(utf8.decode(response.bodyBytes));
-    } on FormatException {
-      body = null;
+    if (seconds != null) {
+      final wait = Duration(seconds: seconds);
+      return wait > _maxRetryAfter ? _maxRetryAfter : wait;
     }
-    final map = body is Map<String, Object?> ? body : const <String, Object?>{};
-    if (response.statusCode >= 200 && response.statusCode < 300) return map;
-    throw _failure(response.statusCode, map);
+    final base = _backoffBase * pow(2, attempt).toInt();
+    return (base > _backoffCap ? _backoffCap : base) +
+        Duration(milliseconds: _random.nextInt(_jitterMs));
   }
 
-  NotionException _failure(int status, Map<String, Object?> body) {
-    final code = body['code'] as String?;
-    final extra = body['additional_data'];
-    final blockLimit = extra is Map<String, Object?> && extra['block_limit'] != null;
-    final failure = switch ((status, code)) {
-      (401, _) => NotionFailure.invalidToken,
-      (404, _) => NotionFailure.notShared,
-      (403, _) when blockLimit => NotionFailure.blockLimit,
-      (403, _) => NotionFailure.missingCapability,
-      (429, _) || (529, _) => NotionFailure.rateLimited,
-      (409, _) || (>= 500, _) => NotionFailure.unavailable,
-      _ => NotionFailure.invalidRequest,
+  NotionResult<Json> _decode(http.Response response) {
+    final body = _parse(response.bodyBytes);
+    final status = response.statusCode;
+    if (status >= HttpStatus.ok && status < HttpStatus.multipleChoices) return .ok(body);
+    return .err(_classify(status, body));
+  }
+
+  Json _parse(List<int> bytes) {
+    try {
+      final decoded = jsonDecode(utf8.decode(bytes));
+      return decoded is Json ? decoded : const {};
+    } on FormatException {
+      return const {};
+    }
+  }
+
+  NotionFailure _classify(int status, Json body) {
+    final blockLimit = switch (body) {
+      {'additional_data': {'block_limit': Object()}} => true,
+      _ => false,
     };
-    return NotionException(failure, status: status, code: code);
+    return switch (status) {
+      HttpStatus.unauthorized => .invalidToken,
+      HttpStatus.notFound => .notShared,
+      HttpStatus.forbidden when blockLimit => .blockLimit,
+      HttpStatus.forbidden => .missingCapability,
+      final s when _rateLimited.contains(s) => .rateLimited,
+      final s when s == HttpStatus.conflict || s >= HttpStatus.internalServerError => .unavailable,
+      _ => .invalidRequest,
+    };
   }
+}
 
-  void close() => _client.close();
+@Riverpod(keepAlive: true)
+INotionHttpService notionHttpService(Ref ref) {
+  final service = NotionHttpService(ref.read(secretsLocalDatasourceProvider));
+  ref.onDispose(service.close);
+  return service;
 }

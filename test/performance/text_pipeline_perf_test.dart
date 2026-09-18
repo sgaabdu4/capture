@@ -1,10 +1,10 @@
-import 'package:capture/features/capture/domain/entities/source_span.dart';
 import 'package:capture/features/capture/domain/text/candidate_splitter.dart';
+import 'package:capture/features/capture/domain/text/coverage.dart';
 import 'package:test/test.dart';
 
 /// Five-minute alpha limit ≈ 150 wpm × 5 = 750 words; use ~1,200 words of
 /// mixed diary speech as the upper bound workload.
-String longTranscript() {
+String _longTranscript() {
   const sentences = [
     'I learned about Jev today and it could help organise my notes.',
     'I had a lovely evening with Sarah, and I thought of a meal-planning app.',
@@ -14,7 +14,7 @@ String longTranscript() {
     'Café meeting with Zoë 😀 went well, also the build finally passed.',
   ];
   final buffer = StringBuffer();
-  var i = 0;
+  int i = 0;
   while (buffer.length < 7000) {
     buffer
       ..write(sentences[i % sentences.length])
@@ -25,23 +25,23 @@ String longTranscript() {
 }
 
 void main() {
-  test('candidate splitting + coverage of a 5-minute transcript stays under '
-      'budget', () {
-    final text = longTranscript();
+  test('candidate splitting + coverage of a 5-minute transcript stays under budget', () {
+    final text = _longTranscript();
     // Warm up JIT.
-    for (var i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
       splitCandidates(text);
     }
     const runs = 20;
     final watch = Stopwatch()..start();
-    for (var i = 0; i < runs; i++) {
+    for (int i = 0; i < runs; i++) {
       final units = splitCandidates(text);
       expect(coverageProblems(text, units.map((u) => u.span)), isEmpty);
     }
     watch.stop();
     final perRunMs = watch.elapsedMicroseconds / runs / 1000;
-    // Budget: local text work must be a negligible part of stop-to-preview
-    // latency (Jev round trips dominate). Provisional, measured on M-series.
+    // Local text work must be a negligible part of stop-to-preview latency,
+    // since Jev round trips dominate. This provisional budget was measured on
+    // M-series hardware.
     const budgetMs = 50;
     printOnFailure('split+coverage per run: ${perRunMs.toStringAsFixed(2)} ms');
     expect(perRunMs, lessThan(budgetMs));

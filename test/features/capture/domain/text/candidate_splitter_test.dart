@@ -1,66 +1,69 @@
 import 'package:capture/features/capture/domain/entities/source_span.dart';
 import 'package:capture/features/capture/domain/text/candidate_splitter.dart';
+import 'package:capture/features/capture/domain/text/coverage.dart';
 import 'package:test/test.dart';
 
-List<String> excerpts(String text) => splitCandidates(text).map((u) => u.span.excerpt).toList();
+List<String> _excerpts(String text) => [for (final u in splitCandidates(text)) u.span.excerpt];
 
 void main() {
   test('sentences become candidate units with exact excerpts', () {
     const text =
-        'I learned about Jev today. It could help organise my notes. '
-        'Remind me to buy groceries tomorrow at 2pm. Actually, make that 3pm.';
-    expect(excerpts(text), [
-      'I learned about Jev today.',
-      'It could help organise my notes.',
-      'Remind me to buy groceries tomorrow at 2pm.',
-      'Actually, make that 3pm.',
-    ]);
+        'I learned about Jev today. It could help organise my notes. Remind me to buy groceries tomorrow at 2pm. Actually, make that 3pm.';
+    expect(
+      _excerpts(text),
+      equals([
+        'I learned about Jev today.',
+        'It could help organise my notes.',
+        'Remind me to buy groceries tomorrow at 2pm.',
+        'Actually, make that 3pm.',
+      ]),
+    );
   });
 
   test('two thoughts inside one sentence get a clause candidate', () {
-    expect(excerpts('I enjoyed dinner and thought of a new app'), [
-      'I enjoyed dinner',
-      'and thought of a new app',
-    ]);
+    expect(
+      _excerpts('I enjoyed dinner and thought of a new app'),
+      equals(['I enjoyed dinner', 'and thought of a new app']),
+    );
   });
 
   test('a short coordinated object is not a candidate', () {
-    expect(excerpts('Buy milk and bread'), ['Buy milk and bread']);
-    expect(excerpts('Buy milk, eggs and bread.'), ['Buy milk, eggs and bread.']);
+    expect(_excerpts('Buy milk and bread'), equals(['Buy milk and bread']));
+    expect(_excerpts('Buy milk, eggs and bread.'), equals(['Buy milk, eggs and bread.']));
   });
 
   test('two coordinated actions produce a candidate', () {
-    expect(excerpts('Buy milk and book a haircut'), ['Buy milk', 'and book a haircut']);
+    expect(_excerpts('Buy milk and book a haircut'), equals(['Buy milk', 'and book a haircut']));
   });
 
   test('marker runs cut once at their first word', () {
-    expect(excerpts('I had a lovely evening with Sarah and also I thought of an app'), [
-      'I had a lovely evening with Sarah',
-      'and also I thought of an app',
-    ]);
+    expect(
+      _excerpts('I had a lovely evening with Sarah and also I thought of an app'),
+      equals(['I had a lovely evening with Sarah', 'and also I thought of an app']),
+    );
   });
 
   test('unpunctuated speech gets marker candidates', () {
-    expect(excerpts('i learned about jev remind me to call james at 5pm'), [
-      'i learned about jev',
-      'remind me to call james at 5pm',
-    ]);
+    expect(
+      _excerpts('i learned about jev remind me to call james at 5pm'),
+      equals(['i learned about jev', 'remind me to call james at 5pm']),
+    );
   });
 
   test('abbreviations do not end sentences', () {
-    expect(excerpts('Call Dr. Patel at 2 p.m. tomorrow please.'), [
-      'Call Dr. Patel at 2 p.m. tomorrow please.',
-    ]);
+    expect(
+      _excerpts('Call Dr. Patel at 2 p.m. tomorrow please.'),
+      equals(['Call Dr. Patel at 2 p.m. tomorrow please.']),
+    );
   });
 
   test('unit ids and boundary kinds are ordered', () {
     final units = splitCandidates('First thing here. Second thing and a third one');
-    expect(units.map((u) => u.id), ['U001', 'U002', 'U003']);
-    expect(units.map((u) => u.boundaryBefore), [
-      BoundaryKind.start,
-      BoundaryKind.sentence,
-      BoundaryKind.conjunction,
-    ]);
+    expect(units.map((u) => u.id), equals(['U001', 'U002', 'U003']));
+    expect(
+      units.map((u) => u.boundaryBefore),
+      equals([BoundaryKind.start, BoundaryKind.sentence, BoundaryKind.conjunction]),
+    );
   });
 
   test('empty and whitespace-only transcripts produce no units', () {
@@ -75,18 +78,16 @@ void main() {
     final units = splitCandidates(text);
     expect(coverageProblems(text, units.map((u) => u.span)), isEmpty);
     for (final unit in units) {
-      expect(text.substring(unit.span.start, unit.span.end), unit.span.excerpt);
+      expect(text.substring(unit.span.start, unit.span.end), equals(unit.span.excerpt));
       final first = text.codeUnitAt(unit.span.start);
       expect(first >= 0xDC00 && first <= 0xDFFF, isFalse);
     }
-    expect(units.first.span.excerpt, 'Café with Zoë 😀 was lovely.');
+    expect(units.firstOrNull?.span.excerpt, equals('Café with Zoë 😀 was lovely.'));
   });
 
   test('every non-whitespace character is covered exactly once', () {
     const samples = [
-      'I learned about Jev today. It could help organise my notes. I had a '
-          'lovely evening with Sarah, and I thought of a meal-planning app. '
-          'Remind me to buy groceries tomorrow at 2pm. Actually, make that 3pm.',
+      'I learned about Jev today. It could help organise my notes. I had a lovely evening with Sarah, and I thought of a meal-planning app. Remind me to buy groceries tomorrow at 2pm. Actually, make that 3pm.',
       "Don't remind me to call James!  I need to call James but don't remind me.",
       'so um yeah and then also anyway',
       '"Buy milk," she said. I bought groceries yesterday… what did I say?',
@@ -99,12 +100,14 @@ void main() {
 
   test('coverageProblems reports missing and duplicated text', () {
     const text = 'one two three';
-    expect(coverageProblems(text, [SourceSpan.of(text, 0, 3)]), ['missing: "two three"']);
-    expect(coverageProblems(text, [SourceSpan.of(text, 0, 7), SourceSpan.of(text, 4, 13)]), [
-      'duplicated: "two"',
-    ]);
-    expect(coverageProblems(text, [const SourceSpan(0, 3, 'xyz'), SourceSpan.of(text, 3, 13)]), [
-      'excerpt mismatch at 0',
-    ]);
+    expect(coverageProblems(text, [spanOf(text, 0, 3)]), equals(['missing: "two three"']));
+    expect(
+      coverageProblems(text, [spanOf(text, 0, 7), spanOf(text, 4, 13)]),
+      equals(['duplicated: "two"']),
+    );
+    expect(
+      coverageProblems(text, [const SourceSpan(0, 3, 'xyz'), spanOf(text, 3, 13)]),
+      equals(['excerpt mismatch at 0']),
+    );
   });
 }

@@ -9,6 +9,8 @@ class MainFlutterWindow: NSWindow {
     self.setFrame(windowFrame, display: true)
 
     RegisterGeneratedPlugins(registry: flutterViewController)
+    CaptureNativePlugin.register(
+      with: flutterViewController.registrar(forPlugin: "CaptureNativePlugin"))
     self.isReleasedWhenClosed = false
     self.title = "Capture"
     self.titlebarAppearsTransparent = true

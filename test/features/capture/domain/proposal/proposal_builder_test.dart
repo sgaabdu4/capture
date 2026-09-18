@@ -1,23 +1,29 @@
+import 'package:capture/core/domain/values/result.dart';
+import 'package:capture/features/capture/domain/dates/date_resolver.dart';
+import 'package:capture/features/capture/domain/entities/due_date.dart';
+import 'package:capture/features/capture/domain/entities/edited_field.dart';
+import 'package:capture/features/capture/domain/entities/item_kind.dart';
+import 'package:capture/features/capture/domain/entities/proposal_item.dart';
+import 'package:capture/features/capture/domain/entities/review_flag.dart';
 import 'package:capture/features/capture/domain/jev/boundary_pass.dart';
 import 'package:capture/features/capture/domain/jev/classification_pass.dart';
 import 'package:capture/features/capture/domain/jev/jev_protocol.dart';
-import 'package:capture/features/capture/domain/entities/models.dart';
 import 'package:capture/features/capture/domain/proposal/edits.dart';
 import 'package:capture/features/capture/domain/proposal/proposal_builder.dart';
-import 'package:capture/features/capture/domain/entities/source_span.dart';
+import 'package:capture/features/capture/domain/proposal/proposal_counts.dart';
 import 'package:capture/features/capture/domain/text/assembly.dart';
 import 'package:capture/features/capture/domain/text/candidate_splitter.dart';
+import 'package:capture/features/capture/domain/text/coverage.dart';
 import 'package:capture/features/capture/domain/text/titles.dart';
+import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:test/test.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
-const example =
-    'I learned about Jev today. It could help organise my notes. I had a '
-    'lovely evening with Sarah, and I thought of a meal-planning app. Remind '
-    'me to buy groceries tomorrow at 2pm. Actually, make that 3pm.';
+const _example =
+    'I learned about Jev today. It could help organise my notes. I had a lovely evening with Sarah, and I thought of a meal-planning app. Remind me to buy groceries tomorrow at 2pm. Actually, make that 3pm.';
 
-const groups = [
+const _groups = [
   Group(id: 'g-tech', name: 'Tech', description: 'Programming and AI'),
   Group(id: 'g-personal', name: 'Personal', description: 'Daily life'),
   Group(id: 'g-ideas', name: 'Ideas', description: 'Possible products'),
@@ -25,210 +31,251 @@ const groups = [
   Group(id: 'g-unsorted', name: 'Unsorted', description: 'None fits'),
 ];
 
-Map<String, Object?> choice(String c, [double confidence = 0.9]) => {
+/// The plan and the proposal built from it.
+typedef _Proposal = ({ClassificationPlan plan, List<ProposalItem> items});
+
+/// A malformed answer set and the failure it must produce.
+typedef _BadAnswers = ({Map<String, Object?> answers, JevProtocolFailure failure});
+
+Map<String, Object?> _choice(String c, [double p = 0.9]) => {
   'type': 'choice',
   'choice': c,
-  'confidence': confidence,
+  'confidence': p,
   'probabilities': {c: 0.9},
 };
 
-Map<String, Object?> noul(double p) => {'type': 'noul', 'noul': p};
+Map<String, Object?> _noul(double p) => {'type': 'noul', 'noul': p};
+
+Map<String, Object?> _thought(String id, String group, {double task = 0.1, double alert = 0.05}) =>
+    {
+      '${id}_group': _choice(group),
+      '${id}_task': _noul(task),
+      '${id}_alert': _noul(alert),
+      '${id}_recall': _noul(0.02),
+    };
+
+/// The success value of [result]; fails the test on an error.
+T _ok<T>(Result<T, JevProtocolFailure> result) => switch (result) {
+  Ok(:final value) => value,
+  Err(:final failure) => fail('unexpected $failure'),
+};
+
+/// The failure of [result], or null on success.
+JevProtocolFailure? _failure<T>(Result<T, JevProtocolFailure> result) => switch (result) {
+  Ok() => null,
+  Err(:final failure) => failure,
+};
+
+/// Thu 17 Sep 2026 20:09 in London.
+CaptureMoment _moment() => .new(
+  capturedAtUtc: .utc(2026, 9, 17, 19, 9),
+  offsetAt: (utc) => tz.getLocation('Europe/London').timeZone(utc.millisecondsSinceEpoch).offset,
+);
+
+/// Proposal for [transcript] where Jev splits before every unit index in
+/// [splits] and answers classification with [classification].
+_Proposal _propose(String transcript, Set<int> splits, Map<String, Object?> classification) {
+  final units = splitCandidates(transcript);
+  final thoughts = assembleThoughts(transcript, units, {
+    for (int i = 1; i < units.length; i++)
+      i: .new(split: splits.contains(i), uncertain: false, yes: splits.contains(i) ? 0.9 : 0.1),
+  });
+  final plan = planClassification(transcript, thoughts, _groups);
+  final decoded = _ok(decodeResponse({'answers': classification}, plan.questions)).answers;
+  int n = 0;
+  return (
+    plan: plan,
+    items: buildProposal(
+      decisions: _ok(decodeClassification(plan, thoughts, decoded)),
+      plan: plan,
+      moment: _moment(),
+      newId: () => 'item-${++n}',
+    ),
+  );
+}
 
 void main() {
   setUpAll(tzdata.initializeTimeZones);
 
   test('boundary questions name their unit in the instructions', () {
-    final units = splitCandidates(example);
+    final units = splitCandidates(_example);
     final questions = boundaryQuestions(units);
-    expect(questions.length, units.length - 1);
+    expect(questions, hasLength(units.length - 1));
     for (final u in units.skip(1)) {
-      final q = questions[boundaryKey(u)]!;
-      expect(q.instructions, contains('unit ${u.id}'));
+      expect(questions[boundaryKey(u)]?.instructions, contains('unit ${u.id}'));
     }
     expect(boundaryState(units), contains('U001| I learned about Jev today.'));
   });
 
   test('decodeResponse validates types, ranges and option membership', () {
     final asked = <String, JevQuestion>{
-      'a': const NoulQuestion('Is it?'),
-      'b': ChoiceQuestion('Which?', {'x': 'X', 'y': 'Y'}),
+      'a': const .noul('Is it?'),
+      'b': .choice('Which?', {'x': 'X', 'y': 'Y'}),
     };
-    final ok = decodeResponse({
-      'model': 'jev-1.13.0',
-      'answers': {'a': noul(0.2), 'b': choice('y', 0.5)},
-      'usage': {'input_tokens': 10, 'output_tokens': 2},
-    }, asked);
-    expect((ok.answers['a']! as NoulAnswer).yes, 0.2);
-    expect((ok.answers['b']! as ChoiceAnswer).choice, 'y');
-    expect(ok.usage.inputTokens, 10);
-
-    void bad(Map<String, Object?> answers) => expect(
-      () => decodeResponse({'answers': answers}, asked),
-      throwsA(isA<JevDecodeException>()),
+    final JevResult(:answers, :usage) = _ok(
+      decodeResponse({
+        'model': 'jev-1.13.0',
+        'answers': {'a': _noul(0.2), 'b': _choice('y', 0.5)},
+        'usage': {'input_tokens': 10, 'output_tokens': 2},
+      }, asked),
     );
-    bad({'a': noul(0.2)}); // missing b
-    bad({'a': noul(1.5), 'b': choice('x')}); // out of range
-    bad({'a': noul(0.5), 'b': choice('z')}); // not an option
-    bad({'a': choice('x'), 'b': choice('x')}); // wrong type
-    expect(() => decodeResponse('nope', asked), throwsA(isA<JevDecodeException>()));
+    expect(answers['a'], equals(const JevAnswer.noul(0.2)));
+    expect(answers['b'], isA<ChoiceAnswer>().having((a) => a.choice, 'choice', equals('y')));
+    expect(usage.inputTokens, equals(10));
+
+    final bad = <_BadAnswers>[
+      (answers: {'a': _noul(0.2)}, failure: .missingAnswer),
+      (answers: {'a': _noul(1.5), 'b': _choice('x')}, failure: .notAProbability),
+      (answers: {'a': _noul(0.5), 'b': _choice('z')}, failure: .choiceOutsideOptions),
+      (answers: {'a': _choice('x'), 'b': _choice('x')}, failure: .wrongAnswerType),
+    ];
+    for (final (:answers, :failure) in bad) {
+      expect(_failure(decodeResponse({'answers': answers}, asked)), equals(failure));
+    }
+    expect(_failure(decodeResponse('nope', asked)), equals(JevProtocolFailure.notAnObject));
   });
 
   test('batching keeps every question and repeats full state', () {
-    final questions = {
-      for (var i = 0; i < 400; i++) 'q$i': NoulQuestion('Question $i ${'padding ' * 60}'),
+    final questions = <String, JevQuestion>{
+      for (int i = 0; i < 400; i++) 'q$i': .noul('Question $i ${'padding ' * 60}'),
     };
-    final batches = batchQuestions('state', questions);
+    final batches = _ok(batchQuestions('state', questions));
     expect(batches.length, greaterThan(1));
-    expect(batches.expand((b) => b.keys).toSet(), questions.keys.toSet());
+    expect(batches.expand((b) => b.keys).toSet(), equals(questions.keys.toSet()));
     expect(
-      () => batchQuestions('x' * 80000, {'a': const NoulQuestion('q')}),
-      throwsA(isA<JevDecodeException>()),
+      _failure(batchQuestions('x' * 80000, {'a': const .noul('q')})),
+      equals(JevProtocolFailure.transcriptTooLong),
     );
   });
 
   test('assembly accounts for every source passage exactly once', () {
-    final units = splitCandidates(example);
-    final decisions = {
-      for (var i = 1; i < units.length; i++)
-        i: BoundaryDecision(i.isEven, i == 3, i.isEven ? 0.8 : 0.2),
-    };
-    final thoughts = assembleThoughts(example, units, decisions);
+    final units = splitCandidates(_example);
+    final thoughts = assembleThoughts(_example, units, {
+      for (int i = 1; i < units.length; i++)
+        i: .new(split: i.isEven, uncertain: i == 3, yes: i.isEven ? 0.8 : 0.2),
+    });
     final inside = thoughts.expand((t) => t.units).map((u) => u.span);
-    expect(coverageProblems(example, inside), isEmpty);
-    expect(coverageProblems(example, thoughts.map((t) => t.span)), isEmpty);
-    expect(thoughts.first.span.excerpt, startsWith('I learned about Jev today. It'));
+    expect(coverageProblems(_example, inside), isEmpty);
+    expect(coverageProblems(_example, thoughts.map((t) => t.span)), isEmpty);
+    expect(thoughts.firstOrNull?.span.excerpt, startsWith('I learned about Jev today. It'));
     expect(thoughts.any((t) => t.uncertainStart), isTrue);
   });
 
   test('a late correction starts its own flagged item', () {
-    const text =
-        'Remind me to call mum at 5pm. Buy stamps. '
-        'Oh, and make the call at 6pm instead.';
+    const text = 'Remind me to call mum at 5pm. Buy stamps. Oh, and make the call at 6pm instead.';
     final units = splitCandidates(text);
     expect(units, hasLength(3));
-    expect(lateCorrectionQuestions(units).keys, ['late_U003']);
+    expect(lateCorrectionQuestions(units).keys, equals(['late_U003']));
     final thoughts = assembleThoughts(text, units, {
-      1: const BoundaryDecision(true, false, 0.9),
-      2: const BoundaryDecision(false, false, 0.1, lateCorrection: true),
+      1: const .new(split: true, uncertain: false, yes: 0.9),
+      2: const .new(split: false, uncertain: false, yes: 0.1, lateCorrection: true),
     });
     expect(thoughts, hasLength(3));
     expect(thoughts.last.lateCorrection, isTrue);
     expect(thoughts.last.span.excerpt, startsWith('Oh, and make the call'));
   });
 
-  group('the brief example', () {
-    late List<Thought> thoughts;
-    late ClassificationPlan plan;
-    late List<ProposalItem> items;
-
-    setUp(() {
-      final units = splitCandidates(example);
-      expect(units.map((u) => u.span.excerpt), [
+  test('the brief example splits into the expected candidate units', () {
+    expect(
+      splitCandidates(_example).map((u) => u.span.excerpt),
+      equals([
         'I learned about Jev today.',
         'It could help organise my notes.',
         'I had a lovely evening with Sarah,',
         'and I thought of a meal-planning app.',
         'Remind me to buy groceries tomorrow at 2pm.',
         'Actually, make that 3pm.',
-      ]);
+      ]),
+    );
+  });
+
+  group('the brief example', () {
+    late ClassificationPlan plan;
+    late List<ProposalItem> items;
+
+    setUp(() {
       // Simulated Jev boundary answers: split before U003, U004, U005.
-      final yes = {2, 3, 4};
-      thoughts = assembleThoughts(example, units, {
-        for (var i = 1; i < units.length; i++)
-          i: BoundaryDecision(yes.contains(i), false, yes.contains(i) ? 0.9 : 0.1),
-      });
-      plan = planClassification(example, thoughts, groups);
-      final answers = decodeResponse({
-        'answers': {
+      (:plan, :items) = _propose(
+        _example,
+        {2, 3, 4},
+        {
           ..._thought('T1', 'Tech', task: 0.05),
           ..._thought('T2', 'Personal', task: 0.02),
           ..._thought('T3', 'Ideas'),
           ..._thought('T4', 'Personal', task: 0.95, alert: 0.97),
-          'T1_day': choice('none'),
-          'T4_day': choice('T4D1'),
-          'T4_time': choice('T4H2'),
+          'T1_day': _choice('none'),
+          'T4_day': _choice('T4D1'),
+          'T4_time': _choice('T4H2'),
         },
-      }, plan.questions);
-      final decisions = decodeClassification(plan, thoughts, answers.answers);
-      var n = 0;
-      items = buildProposal(
-        thoughts: thoughts,
-        decisions: decisions,
-        plan: plan,
-        groups: groups,
-        capturedAtUtc: DateTime.utc(2026, 9, 17, 19, 9),
-        location: tz.getLocation('Europe/London'),
-        newId: () => 'item-${++n}',
       );
     });
 
     test('four items in three groups with one corrected reminder', () {
-      expect(items.map((i) => i.groupId), ['g-tech', 'g-personal', 'g-ideas', 'g-personal']);
-      expect(items.map((i) => i.kind), [
-        ItemKind.note,
-        ItemKind.note,
-        ItemKind.note,
-        ItemKind.task,
-      ]);
-      final task = items.last;
-      expect(task.title, 'Buy groceries');
-      expect(task.reminder, const DueDate(2026, 9, 18, hour: 15, minute: 0));
-      expect(task.flags, isEmpty);
-      expect(proposalSummary(items), '3 notes · 1 task · 1 reminder');
+      expect(
+        items.map((i) => i.groupId),
+        equals(['g-tech', 'g-personal', 'g-ideas', 'g-personal']),
+      );
+      expect(
+        items.map((i) => i.kind),
+        equals([ItemKind.note, ItemKind.note, ItemKind.note, ItemKind.task]),
+      );
+      final ProposalItem(:title, :reminder, :flags) = items.last;
+      expect(title, equals('Buy groceries'));
+      expect(reminder, equals(const DueDate(2026, 9, 18, hour: 15, minute: 0)));
+      expect(flags, isEmpty);
+      expect(countProposal(items), equals((notes: 3, tasks: 1, reminders: 1)));
     });
 
     test('bodies copy the source; archived groups are not offered', () {
-      expect(items[0].body, 'I learned about Jev today. It could help organise my notes.');
-      expect(items[2].body, 'I thought of a meal-planning app.');
-      expect(items[2].sources.single.excerpt, 'and I thought of a meal-planning app.');
-      final groupQ = plan.questions['T1_group']! as ChoiceQuestion;
-      expect(groupQ.options.keys, ['Tech', 'Personal', 'Ideas', 'Unsorted']);
-      expect(groupQ.instructions, contains('thought T1'));
-      expect(coverageProblems(example, items.expand((i) => i.sources)), isEmpty);
+      expect(items[0].body, equals('I learned about Jev today. It could help organise my notes.'));
+      expect(items[2].body, equals('I thought of a meal-planning app.'));
+      expect(
+        items[2].sources.map((s) => s.excerpt),
+        equals(['and I thought of a meal-planning app.']),
+      );
+      expect(
+        plan.questions['T1_group'],
+        isA<ChoiceQuestion>()
+            .having(
+              (q) => q.options.keys,
+              'options',
+              equals(['Tech', 'Personal', 'Ideas', 'Unsorted']),
+            )
+            .having((q) => q.instructions, 'instructions', contains('thought T1')),
+      );
+      expect(coverageProblems(_example, items.expand((i) => i.sources)), isEmpty);
     });
 
     test('split and merge preserve source links and flag new pieces', () {
-      final first = items.first;
-      final at = example.indexOf('It could');
-      final (left, right) = splitItem(first, example, at, 'item-new')!;
-      expect(left.sources.single.excerpt, 'I learned about Jev today.');
-      expect(right.sources.single.excerpt, 'It could help organise my notes.');
-      expect(right.id, 'item-new');
+      final first = items[0];
+      final at = _example.indexOf('It could');
+      final (:left, :right) = splitItem(first, _example, at, 'item-new') ?? fail('no split');
+      expect(left.sources.map((s) => s.excerpt), equals(['I learned about Jev today.']));
+      expect(right.sources.map((s) => s.excerpt), equals(['It could help organise my notes.']));
+      expect(right.id, equals('item-new'));
       expect(right.flags, contains(ReviewFlag.newPiece));
       final merged = mergeItems(left, right);
-      expect(merged.sources.map((s) => s.excerpt).join(' '), first.body);
-      expect(splitItem(first, example, 0, 'x'), isNull);
+      expect(merged.sources.map((s) => s.excerpt).join(' '), equals(first.body));
+      expect(splitItem(first, _example, 0, 'x'), isNull);
     });
   });
 
   test('negated, historical and recall thoughts do not become tasks', () {
     const text =
-        "Don't remind me to call James. I bought groceries yesterday. "
-        'What did I say yesterday?';
-    final units = splitCandidates(text);
-    final thoughts = assembleThoughts(text, units, {
-      for (var i = 1; i < units.length; i++) i: const BoundaryDecision(true, false, 0.9),
-    });
-    final plan = planClassification(text, thoughts, groups);
-    final answers = decodeResponse({
-      'answers': {
+        "Don't remind me to call James. I bought groceries yesterday. What did I say yesterday?";
+    final (plan: _, :items) = _propose(
+      text,
+      {1, 2},
+      {
         ..._thought('T1', 'Personal', task: 0.4),
         ..._thought('T2', 'Personal', task: 0.02),
-        ..._thought('T3', 'Unsorted', task: 0.05, recall: 0.95),
-        'T2_day': choice('T2D1'),
-        'T3_day': choice('none'),
+        ..._thought('T3', 'Unsorted', task: 0.05),
+        'T3_recall': _noul(0.95),
+        'T2_day': _choice('T2D1'),
+        'T3_day': _choice('none'),
       },
-    }, plan.questions);
-    final items = buildProposal(
-      thoughts: thoughts,
-      decisions: decodeClassification(plan, thoughts, answers.answers),
-      plan: plan,
-      groups: groups,
-      capturedAtUtc: DateTime.utc(2026, 9, 17, 19, 9),
-      location: tz.getLocation('Europe/London'),
-      newId: () => 'id',
     );
-    expect(items.every((i) => i.kind == ItemKind.note), isTrue);
+    expect(items.every((i) => i.kind == .note), isTrue);
     expect(items.every((i) => i.reminder == null), isTrue);
     expect(items[0].flags, contains(ReviewFlag.checkTask));
     expect(items[2].included, isFalse);
@@ -239,45 +286,31 @@ void main() {
     expect(
       proposedTitle(
         'Remind me to buy groceries tomorrow at 2pm. Actually, make that 3pm.',
-        remove: const [(27, 35), (39, 42), (64, 67)],
+        remove: const [(start: 27, end: 35), (start: 39, end: 42), (start: 64, end: 67)],
       ),
-      'Buy groceries',
+      equals('Buy groceries'),
     );
-    expect(proposedTitle('and also I thought of an app'), 'I thought of an app');
+    expect(proposedTitle('and also I thought of an app'), equals('I thought of an app'));
     expect(proposedTitle('x ' * 80).length, lessThanOrEqualTo(61));
-    expect(proposedBody('and book a haircut'), 'Book a haircut');
+    expect(proposedBody('and book a haircut'), equals('Book a haircut'));
   });
 
   test('approval problems block unresolved AM/PM and missing groups', () {
     const item = ProposalItem(
       id: 'i',
-      sources: [SourceSpan(0, 1, 'x')],
-      kind: ItemKind.task,
+      sources: [.new(0, 1, 'x')],
+      kind: .task,
       groupId: null,
       title: 'Call mum',
       body: 'x',
-      flags: {ReviewFlag.chooseAmPm},
+      flags: {.chooseAmPm},
     );
-    expect(approvalProblems([item]), hasLength(2));
-    final fixed = setReminder(
-      setGroup(item, 'g-personal'),
-      const DueDate(2026, 9, 18, hour: 14, minute: 0),
-    );
-    expect(approvalProblems([fixed]), isEmpty);
-    expect(fixed.edited, containsAll(['group', 'reminder']));
-    expect(approvalProblems([setIncluded(item, false)]), isEmpty);
+    expect(item.approvalProblems, hasLength(2));
+    final fixed = item
+        .withGroup('g-personal')
+        .withReminder(const .new(2026, 9, 18, hour: 14, minute: 0));
+    expect(fixed.approvalProblems, isEmpty);
+    expect(fixed.edited, containsAll([EditedField.group, EditedField.reminder]));
+    expect(item.withIncluded(value: false).approvalProblems, isEmpty);
   });
 }
-
-Map<String, Object?> _thought(
-  String id,
-  String group, {
-  double task = 0.1,
-  double alert = 0.05,
-  double recall = 0.02,
-}) => {
-  '${id}_group': choice(group),
-  '${id}_task': noul(task),
-  '${id}_alert': noul(alert),
-  '${id}_recall': noul(recall),
-};

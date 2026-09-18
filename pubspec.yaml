@@ -9,12 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  capture_native:
-    path: packages/capture_native
+  flutter_driver:
+    sdk: flutter
   http: ^1.6.0
   timezone: ^0.11.1
   sherpa_onnx: ^1.13.8
-  path_provider: ^2.1.6
   flutter_secure_storage: ^11.2.0
   sqlite3: ^3.6.0
   flutter_local_notifications: ^22.3.1
@@ -27,7 +26,8 @@ dependencies:
   go_router: ^18.0.1
   flutter_localizations:
     sdk: flutter
-  intl: any
+  intl: ^0.20.2
+  json_annotation: ^4.12.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -37,7 +37,10 @@ dev_dependencies:
   freezed: 4.0.1
   go_router_builder: 4.5.0
   build_runner: 2.16.1
+  json_serializable: 6.14.1
+  mocktail: ^1.0.5
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - assets/fonts/

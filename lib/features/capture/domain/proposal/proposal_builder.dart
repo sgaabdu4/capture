@@ -1,116 +1,102 @@
 import 'package:capture/features/capture/domain/dates/date_resolver.dart';
+import 'package:capture/features/capture/domain/entities/due_date.dart';
+import 'package:capture/features/capture/domain/entities/proposal_item.dart';
+import 'package:capture/features/capture/domain/entities/review_flag.dart';
 import 'package:capture/features/capture/domain/jev/classification_pass.dart';
 import 'package:capture/features/capture/domain/jev/thresholds.dart';
-import 'package:capture/features/capture/domain/entities/models.dart';
-import 'package:capture/features/capture/domain/text/assembly.dart';
+import 'package:capture/features/capture/domain/text/thought.dart';
 import 'package:capture/features/capture/domain/text/titles.dart';
-import 'package:timezone/timezone.dart' as tz;
+import 'package:capture/features/groups/domain/entities/group.dart';
 
-/// Builds the application-owned proposal from thoughts + Jev decisions.
-/// Titles and bodies are copied from source text; dates are computed by code.
+/// Due date, reminder and the review flags their resolution raised.
+typedef _Dates = ({DueDate? due, DueDate? reminder, Set<ReviewFlag> flags});
+
+const _Dates _noDates = (due: null, reminder: null, flags: {});
+
+/// Builds the application-owned proposal from Jev decisions (one per
+/// thought, in order). Titles and bodies are copied from source text; dates
+/// are computed by code.
 List<ProposalItem> buildProposal({
-  required List<Thought> thoughts,
-  required Map<String, ThoughtDecision> decisions,
+  required List<ThoughtDecision> decisions,
   required ClassificationPlan plan,
-  required List<Group> groups,
-  required DateTime capturedAtUtc,
-  required tz.Location location,
+  required CaptureMoment moment,
   required String Function() newId,
-}) => [
-  for (final t in thoughts)
-    _item(t, decisions[t.id]!, plan, groups, capturedAtUtc, location, newId()),
-];
+}) => [for (final d in decisions) _item(d, plan, moment, newId())];
 
-ProposalItem _item(
-  Thought thought,
-  ThoughtDecision d,
-  ClassificationPlan plan,
-  List<Group> groups,
-  DateTime capturedAtUtc,
-  tz.Location location,
-  String id,
-) {
-  final flags = <ReviewFlag>{
-    if (thought.uncertainStart) ReviewFlag.checkSplit,
-    if (d.groupConfidence < minGroupConfidence) ReviewFlag.checkGroup,
-    if (taskBand.uncertain(d.task)) ReviewFlag.checkTask,
-    if (thought.lateCorrection) ReviewFlag.correctionElsewhere,
+ProposalItem _item(ThoughtDecision d, ClassificationPlan plan, CaptureMoment moment, String id) {
+  final ThoughtDecision(:thought, :groupOption, :groupConfidence, :task, :alert, :recall) = d;
+  final Thought(:span, :uncertainStart, :lateCorrection) = thought;
+  final asksRecall = retrievalBand.yes(recall);
+  final wantsAlert = alertBand.yes(alert) && !asksRecall;
+  final isTask = (taskBand.yes(task) || wantsAlert) && !asksRecall;
+  final judged = <ReviewFlag>{
+    if (uncertainStart) ReviewFlag.checkSplit,
+    if (groupConfidence < minGroupConfidence) ReviewFlag.checkGroup,
+    if (taskBand.uncertain(task)) ReviewFlag.checkTask,
+    if (lateCorrection) ReviewFlag.correctionElsewhere,
+    if (asksRecall) ReviewFlag.recallUnsupported,
+    if (isTask && alertBand.uncertain(alert)) ReviewFlag.checkReminder,
   };
-  final recall = retrievalBand.yes(d.recall);
-  if (recall) flags.add(ReviewFlag.recallUnsupported);
-  final wantsAlert = alertBand.yes(d.alert) && !recall;
-  final isTask = (taskBand.yes(d.task) || wantsAlert) && !recall;
-  if (isTask && alertBand.uncertain(d.alert)) {
-    flags.add(ReviewFlag.checkReminder);
-  }
-
-  final groupId = _groupId(plan, d.groupOption, groups);
-  final unsorted = d.groupOption.toLowerCase() == unsortedName.toLowerCase();
-  if (groupId == null || unsorted) flags.add(ReviewFlag.checkGroup);
-
-  final dates = isTask
-      ? _dates(d, capturedAtUtc, location, wantsAlert, flags)
-      : (due: null, reminder: null);
-  final found = plan.candidates[thought.id];
-  return ProposalItem(
+  final groupId = _groupId(plan, groupOption);
+  final unsorted = groupOption.toLowerCase() == Group.unsortedName.toLowerCase();
+  final dates = isTask ? _dates(d, moment, wantsAlert: wantsAlert) : _noDates;
+  return .new(
     id: id,
-    sources: [thought.span],
-    kind: isTask ? ItemKind.task : ItemKind.note,
+    sources: [span],
+    kind: isTask ? .task : .note,
     groupId: groupId,
-    title: proposedTitle(
-      thought.span.excerpt,
-      remove: [
-        if (isTask && found != null)
-          for (final c in [...found.days, ...found.times])
-            (c.span.start - thought.span.start, c.span.end - thought.span.start),
-      ],
-    ),
-    body: proposedBody(thought.span.excerpt),
+    title: proposedTitle(span.excerpt, remove: isTask ? _datePhrases(plan, thought) : const []),
+    body: proposedBody(span.excerpt),
     due: dates.due,
     reminder: dates.reminder,
-    flags: flags,
-    included: !recall,
+    flags: {...judged, if (groupId == null || unsorted) ReviewFlag.checkGroup, ...dates.flags},
+    included: !asksRecall,
   );
 }
 
-String? _groupId(ClassificationPlan plan, String option, List<Group> groups) =>
-    plan.groupOptions[option] ?? groups.where((g) => g.isUnsorted && !g.archived).firstOrNull?.id;
+/// Date/time phrases of [thought], relative to its excerpt, left out of a
+/// task's title.
+List<ExcerptRange> _datePhrases(ClassificationPlan plan, Thought thought) {
+  final found = plan.candidates[thought.id];
+  if (found == null) return const [];
+  final start = thought.span.start;
+  return [
+    for (final c in [...found.days, ...found.times])
+      (start: c.span.start - start, end: c.span.end - start),
+  ];
+}
 
-({DueDate? due, DueDate? reminder}) _dates(
-  ThoughtDecision d,
-  DateTime capturedAtUtc,
-  tz.Location location,
-  bool wantsAlert,
-  Set<ReviewFlag> flags,
-) {
-  final resolved = resolveDate(
-    capturedAtUtc: capturedAtUtc,
-    location: location,
-    day: d.day,
-    time: d.time,
-  );
+String? _groupId(ClassificationPlan plan, String option) => switch (plan.groupOptions[option]) {
+  final String id => id,
+  null => plan.unsortedGroupId,
+};
+
+_Dates _dates(ThoughtDecision d, CaptureMoment moment, {required bool wantsAlert}) {
+  final ThoughtDecision(:day, :time, :dayConfidence, :timeConfidence) = d;
+  final ResolvedDate(:date, :flags, :ambiguousHour) = resolveDate(moment, day: day, time: time);
   final lowConfidence =
-      (d.day != null && d.dayConfidence < minDateConfidence) ||
-      (d.time != null && d.timeConfidence < minDateConfidence);
-  if (lowConfidence) flags.add(ReviewFlag.checkDate);
-  flags.addAll(resolved.flags);
-  final date = resolved.date;
-  if (!wantsAlert) return (due: date, reminder: null);
-  if (date == null || !date.hasTime) {
-    if (resolved.ambiguousHour == null) flags.add(ReviewFlag.chooseTime);
-    return (due: date, reminder: null);
-  }
-  return (due: date, reminder: date);
+      (day != null && dayConfidence < minDateConfidence) ||
+      (time != null && timeConfidence < minDateConfidence);
+  final timed = date != null && date.hasTime;
+  return (
+    due: date,
+    reminder: wantsAlert && timed ? date : null,
+    flags: {
+      if (lowConfidence) ReviewFlag.checkDate,
+      ...flags,
+      if (wantsAlert && !timed && ambiguousHour == null) ReviewFlag.chooseTime,
+    },
+  );
 }
 
 /// Fallback proposal when classification is unavailable (service failure or
 /// invalid key): one editable Unsorted note holding the whole transcript.
-ProposalItem manualProposal(Thought whole, List<Group> groups, String id) => ProposalItem(
+ProposalItem manualProposal(Thought whole, List<Group> groups, String id) => .new(
   id: id,
   sources: [whole.span],
-  kind: ItemKind.note,
+  kind: .note,
   groupId: groups.where((g) => g.isUnsorted && !g.archived).firstOrNull?.id,
   title: proposedTitle(whole.span.excerpt),
   body: proposedBody(whole.span.excerpt),
-  flags: const {ReviewFlag.classificationFailed},
+  flags: const {.classificationFailed},
 );

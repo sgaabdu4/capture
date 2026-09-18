@@ -1,54 +1,57 @@
-import 'package:capture/features/capture/domain/entities/models.dart';
+import 'package:capture/features/capture/domain/entities/due_date.dart';
+import 'package:capture/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
-const _months = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', //
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-];
-const _weekdays = [
-  'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', //
-  'Saturday', 'Sunday',
-];
+const _daysPerWeek = 7;
+const _secondDigits = 2;
 
-/// "2:00 PM".
-String formatTime(int hour, int minute) {
-  final h = hour % 12 == 0 ? 12 : hour % 12;
-  return '$h:${minute.toString().padLeft(2, '0')} ${hour < 12 ? 'AM' : 'PM'}';
-}
+extension DueDateFormat on DueDate {
+  /// Relative to [today] (a wall-clock date in the same zone): "Today 3:00 PM",
+  /// "Tomorrow", "Friday 10:00 AM", "21 Sep", "3 Jan 2027".
+  String label(AppLocalizations l10n, DateTime today) {
+    final date = DateTime.utc(year, month, day);
+    final days = date.difference(.utc(today.year, today.month, today.day)).inDays;
+    final dayLabel = switch (days) {
+      0 => l10n.dayToday,
+      1 => l10n.dayTomorrow,
+      -1 => l10n.dayYesterday,
+      > 1 && < _daysPerWeek => DateFormat.EEEE(l10n.localeName).format(date),
+      _ when year == today.year => DateFormat('d MMM', l10n.localeName).format(date),
+      _ => DateFormat('d MMM y', l10n.localeName).format(date),
+    };
+    return switch (timeLabel(l10n)) {
+      final String time => l10n.dayWithTime(dayLabel, time),
+      null => dayLabel,
+    };
+  }
 
-/// Human date relative to [today] (a wall-clock date in the same zone):
-/// "Today 3:00 PM", "Tomorrow", "Friday 10:00 AM", "21 Sep", "3 Jan 2027".
-String formatDue(DueDate date, DateTime today) {
-  final d = DateTime.utc(date.year, date.month, date.day);
-  final t = DateTime.utc(today.year, today.month, today.day);
-  final days = d.difference(t).inDays;
-  final day = switch (days) {
-    0 => 'Today',
-    1 => 'Tomorrow',
-    -1 => 'Yesterday',
-    > 1 && < 7 => _weekdays[d.weekday - 1],
-    _ =>
-      '${date.day} ${_months[date.month - 1]}'
-          '${date.year == today.year ? '' : ' ${date.year}'}',
+  /// "2:00 PM", or null for a date-only value.
+  String? timeLabel(AppLocalizations l10n) => switch ((h: hour, m: minute)) {
+    (h: final int h, m: final int m) => _clock(l10n, h, m),
+    (h: final int h, m: null) => _clock(l10n, h, 0),
+    (h: null, m: _) => null,
   };
-  return date.hasTime ? '$day ${formatTime(date.hour!, date.minute ?? 0)}' : day;
+
+  String _clock(AppLocalizations l10n, int h, int m) =>
+      DateFormat.jm(l10n.localeName).format(.new(year, month, day, h, m));
 }
 
-/// "Just now", "5 minutes ago", "2 hours ago", "Yesterday", "3 days ago".
-String formatAgo(DateTime then, DateTime now) {
-  final diff = now.difference(then);
-  if (diff.inMinutes < 1) return 'Just now';
-  if (diff.inMinutes < 60) {
-    return '${diff.inMinutes} minute${diff.inMinutes == 1 ? '' : 's'} ago';
+extension DateTimeAgo on DateTime {
+  /// "Just now", "5 minutes ago", "2 hours ago", "Yesterday", "3 days ago".
+  String agoLabel(AppLocalizations l10n, DateTime now) {
+    final Duration(:inMinutes, :inHours, :inDays) = now.difference(this);
+    if (inMinutes < 1) return l10n.agoJustNow;
+    if (inMinutes < Duration.minutesPerHour) return l10n.agoMinutes(inMinutes);
+    if (inHours < Duration.hoursPerDay) return l10n.agoHours(inHours);
+    if (inDays == 1) return l10n.agoYesterday;
+    return l10n.agoDays(inDays);
   }
-  if (diff.inHours < 24) {
-    return '${diff.inHours} hour${diff.inHours == 1 ? '' : 's'} ago';
-  }
-  if (diff.inDays == 1) return 'Yesterday';
-  return '${diff.inDays} days ago';
 }
 
-/// "0:42" / "4:05".
-String formatDuration(double seconds) {
-  final s = seconds.round();
-  return '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
+extension DurationClock on Duration {
+  /// "0:42" / "4:05".
+  String get clockLabel {
+    final seconds = inSeconds.remainder(Duration.secondsPerMinute);
+    return '$inMinutes:${seconds.toString().padLeft(_secondDigits, '0')}';
+  }
 }
