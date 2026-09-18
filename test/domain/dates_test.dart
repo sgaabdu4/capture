@@ -71,7 +71,10 @@ void main() {
 
   test('sometime next week keeps the wording and asks for a date', () {
     final found = find('Sometime next week call the bank');
-    expect(found.days.map((d) => d.kind), [DayKind.unsupported, DayKind.unsupported]);
+    expect(found.days.map((d) => d.kind), [
+      DayKind.unsupported,
+      DayKind.unsupported,
+    ]);
     final r = resolve('Sometime next week call the bank');
     expect(r.date, isNull);
     expect(r.flags, contains(ReviewFlag.chooseDate));
@@ -131,7 +134,10 @@ void main() {
     expect(resolve('tomorrow at 14:30').date!.hour, 14);
     expect(resolve('tomorrow at 2:30').flags, contains(ReviewFlag.chooseAmPm));
     expect(resolve('tomorrow at noon').date!.hour, 12);
-    expect(resolve('tomorrow at half past two').flags, contains(ReviewFlag.chooseAmPm));
+    expect(
+      resolve('tomorrow at half past two').flags,
+      contains(ReviewFlag.chooseAmPm),
+    );
   });
 
   test('daylight-saving gap and overlap are flagged', () {

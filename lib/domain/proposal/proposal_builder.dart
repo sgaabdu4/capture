@@ -35,7 +35,7 @@ ProposalItem _item(
     if (thought.uncertainStart) ReviewFlag.checkSplit,
     if (d.groupConfidence < minGroupConfidence) ReviewFlag.checkGroup,
     if (taskBand.uncertain(d.task)) ReviewFlag.checkTask,
-    if (correctionBand.yes(d.correction)) ReviewFlag.correctionElsewhere,
+    if (thought.lateCorrection) ReviewFlag.correctionElsewhere,
   };
   final recall = retrievalBand.yes(d.recall);
   if (recall) flags.add(ReviewFlag.recallUnsupported);

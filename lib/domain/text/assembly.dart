@@ -6,7 +6,13 @@ import 'candidate_splitter.dart';
 /// Its span runs from the first unit's start to the last unit's end, so the
 /// text between units is copied exactly (never re-joined or rewritten).
 class Thought {
-  const Thought(this.id, this.units, this.span, {this.uncertainStart = false});
+  const Thought(
+    this.id,
+    this.units,
+    this.span, {
+    this.uncertainStart = false,
+    this.lateCorrection = false,
+  });
 
   final String id;
   final List<TranscriptUnit> units;
@@ -14,6 +20,10 @@ class Thought {
 
   /// True when the boundary that started this thought was uncertain.
   final bool uncertainStart;
+
+  /// True when the thought starts with a correction of an earlier,
+  /// non-adjacent thought.
+  final bool lateCorrection;
 }
 
 /// Assembles thoughts from candidate units and Jev boundary decisions keyed
@@ -26,7 +36,8 @@ List<Thought> assembleThoughts(
 ) {
   final groups = <List<int>>[];
   for (var i = 0; i < units.length; i++) {
-    final split = i == 0 || (decisions[i]?.split ?? false);
+    final d = decisions[i];
+    final split = i == 0 || (d?.split ?? false) || (d?.lateCorrection ?? false);
     if (split) {
       groups.add([i]);
     } else {
@@ -44,6 +55,7 @@ List<Thought> assembleThoughts(
           units[groups[g].last].span.end,
         ),
         uncertainStart: _uncertainAround(groups[g], decisions),
+        lateCorrection: decisions[groups[g].first]?.lateCorrection ?? false,
       ),
   ];
 }

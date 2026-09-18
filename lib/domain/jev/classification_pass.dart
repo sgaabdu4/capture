@@ -105,11 +105,6 @@ Map<String, JevQuestion> _thoughtQuestions(
     'app to find, recall, summarise or answer something (for example "What '
     'did I say yesterday?"), rather than something to save?',
   ),
-  '${id}_correction': NoulQuestion(
-    'Consider only thought $id. Is $id mainly a change or correction to '
-    'something said in an earlier thought (for example "make that call at '
-    'six instead"), rather than new content of its own?',
-  ),
   if (found.days.isNotEmpty)
     '${id}_day': ChoiceQuestion(
       'Consider only thought $id. Which listed day expression in $id gives '
@@ -145,7 +140,6 @@ class ThoughtDecision {
     required this.task,
     required this.alert,
     required this.recall,
-    required this.correction,
     this.day,
     this.dayConfidence = 1,
     this.time,
@@ -157,7 +151,6 @@ class ThoughtDecision {
   final double task;
   final double alert;
   final double recall;
-  final double correction;
   final DayCandidate? day;
   final double dayConfidence;
   final TimeCandidate? time;
@@ -191,7 +184,6 @@ ThoughtDecision _decodeThought(
     task: answer<NoulAnswer>('${id}_task').yes,
     alert: answer<NoulAnswer>('${id}_alert').yes,
     recall: answer<NoulAnswer>('${id}_recall').yes,
-    correction: answer<NoulAnswer>('${id}_correction').yes,
     day: day is ChoiceAnswer
         ? found.days.where((d) => d.id == day.choice).firstOrNull
         : null,

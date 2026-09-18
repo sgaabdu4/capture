@@ -123,36 +123,51 @@ JevResult decodeResponse(Object? json, Map<String, JevQuestion> asked) {
 
 JevAnswer _decodeAnswer(String key, Object raw, JevQuestion question) {
   final answer = _map(raw, key);
-  switch (question) {
-    case NoulQuestion():
-      if (answer['type'] != 'noul') {
-        throw JevDecodeException('$key: expected noul');
-      }
-      return NoulAnswer(_probability(answer['noul'], '$key.noul'));
-    case ChoiceQuestion(:final options):
-      if (answer['type'] != 'choice') {
-        throw JevDecodeException('$key: expected choice');
-      }
-      final choice = answer['choice'];
-      if (choice is! String || !options.containsKey(choice)) {
-        throw JevDecodeException('$key: choice outside options');
-      }
-      final probabilities = <String, double>{};
-      final rawProbabilities = answer['probabilities'];
-      if (rawProbabilities is Map<String, Object?>) {
-        for (final e in rawProbabilities.entries) {
-          if (!options.containsKey(e.key)) {
-            throw JevDecodeException('$key: unknown option ${e.key}');
-          }
-          probabilities[e.key] = _probability(e.value, '$key.${e.key}');
-        }
-      }
-      return ChoiceAnswer(
-        choice,
-        _probability(answer['confidence'], '$key.confidence'),
-        probabilities,
-      );
+  return switch (question) {
+    NoulQuestion() => _decodeNoul(key, answer),
+    ChoiceQuestion(:final options) => _decodeChoice(key, answer, options),
+  };
+}
+
+NoulAnswer _decodeNoul(String key, Map<String, Object?> answer) {
+  if (answer['type'] != 'noul') {
+    throw JevDecodeException('$key: expected noul');
   }
+  return NoulAnswer(_probability(answer['noul'], '$key.noul'));
+}
+
+ChoiceAnswer _decodeChoice(
+  String key,
+  Map<String, Object?> answer,
+  Map<String, String?> options,
+) {
+  if (answer['type'] != 'choice') {
+    throw JevDecodeException('$key: expected choice');
+  }
+  final choice = answer['choice'];
+  if (choice is! String || !options.containsKey(choice)) {
+    throw JevDecodeException('$key: choice outside options');
+  }
+  return ChoiceAnswer(
+    choice,
+    _probability(answer['confidence'], '$key.confidence'),
+    _probabilities(key, answer['probabilities'], options),
+  );
+}
+
+Map<String, double> _probabilities(
+  String key,
+  Object? raw,
+  Map<String, String?> options,
+) {
+  if (raw is! Map<String, Object?>) return const {};
+  return {
+    for (final e in raw.entries)
+      if (options.containsKey(e.key))
+        e.key: _probability(e.value, '$key.${e.key}')
+      else
+        e.key: throw JevDecodeException('$key: unknown option ${e.key}'),
+  };
 }
 
 Map<String, Object?> _map(Object? value, String name) {

@@ -100,8 +100,27 @@ void main() {
     final inside = thoughts.expand((t) => t.units).map((u) => u.span);
     expect(coverageProblems(example, inside), isEmpty);
     expect(coverageProblems(example, thoughts.map((t) => t.span)), isEmpty);
-    expect(thoughts.first.span.excerpt, startsWith('I learned about Jev today. It'));
+    expect(
+      thoughts.first.span.excerpt,
+      startsWith('I learned about Jev today. It'),
+    );
     expect(thoughts.any((t) => t.uncertainStart), isTrue);
+  });
+
+  test('a late correction starts its own flagged item', () {
+    const text =
+        'Remind me to call mum at 5pm. Buy stamps. '
+        'Oh, and make the call at 6pm instead.';
+    final units = splitCandidates(text);
+    expect(units, hasLength(3));
+    expect(lateCorrectionQuestions(units).keys, ['late_U003']);
+    final thoughts = assembleThoughts(text, units, {
+      1: const BoundaryDecision(true, false, 0.9),
+      2: const BoundaryDecision(false, false, 0.1, lateCorrection: true),
+    });
+    expect(thoughts, hasLength(3));
+    expect(thoughts.last.lateCorrection, isTrue);
+    expect(thoughts.last.span.excerpt, startsWith('Oh, and make the call'));
   });
 
   group('the brief example', () {
@@ -123,7 +142,11 @@ void main() {
       final yes = {2, 3, 4};
       thoughts = assembleThoughts(example, units, {
         for (var i = 1; i < units.length; i++)
-          i: BoundaryDecision(yes.contains(i), false, yes.contains(i) ? 0.9 : 0.1),
+          i: BoundaryDecision(
+            yes.contains(i),
+            false,
+            yes.contains(i) ? 0.9 : 0.1,
+          ),
       });
       plan = planClassification(example, thoughts, groups);
       final answers = decodeResponse({
@@ -171,13 +194,22 @@ void main() {
     });
 
     test('bodies copy the source; archived groups are not offered', () {
-      expect(items[0].body, 'I learned about Jev today. It could help organise my notes.');
+      expect(
+        items[0].body,
+        'I learned about Jev today. It could help organise my notes.',
+      );
       expect(items[2].body, 'I thought of a meal-planning app.');
-      expect(items[2].sources.single.excerpt, 'and I thought of a meal-planning app.');
+      expect(
+        items[2].sources.single.excerpt,
+        'and I thought of a meal-planning app.',
+      );
       final groupQ = plan.questions['T1_group']! as ChoiceQuestion;
       expect(groupQ.options.keys, ['Tech', 'Personal', 'Ideas', 'Unsorted']);
       expect(groupQ.instructions, contains('thought T1'));
-      expect(coverageProblems(example, items.expand((i) => i.sources)), isEmpty);
+      expect(
+        coverageProblems(example, items.expand((i) => i.sources)),
+        isEmpty,
+      );
     });
 
     test('split and merge preserve source links and flag new pieces', () {
@@ -200,7 +232,8 @@ void main() {
         'What did I say yesterday?';
     final units = splitCandidates(text);
     final thoughts = assembleThoughts(text, units, {
-      for (var i = 1; i < units.length; i++) i: const BoundaryDecision(true, false, 0.9),
+      for (var i = 1; i < units.length; i++)
+        i: const BoundaryDecision(true, false, 0.9),
     });
     final plan = planClassification(text, thoughts, groups);
     final answers = decodeResponse({
@@ -236,7 +269,10 @@ void main() {
       ),
       'Buy groceries',
     );
-    expect(proposedTitle('and also I thought of an app'), 'I thought of an app');
+    expect(
+      proposedTitle('and also I thought of an app'),
+      'I thought of an app',
+    );
     expect(proposedTitle('x ' * 80).length, lessThanOrEqualTo(61));
     expect(proposedBody('and book a haircut'), 'Book a haircut');
   });
@@ -268,11 +304,9 @@ Map<String, Object?> _thought(
   double task = 0.1,
   double alert = 0.05,
   double recall = 0.02,
-  double correction = 0.02,
 }) => {
   '${id}_group': choice(group),
   '${id}_task': noul(task),
   '${id}_alert': noul(alert),
   '${id}_recall': noul(recall),
-  '${id}_correction': noul(correction),
 };
