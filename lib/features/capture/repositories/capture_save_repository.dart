@@ -173,7 +173,8 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
     for (final (:item, :at) in due) {
       final accepted = await _reminders.schedule(itemId: item.id, title: item.title, at: at);
       refused = refused || !accepted;
-      if (accepted) {
+      // A capture deleted while the prompt was open stays deleted.
+      if (accepted && _local.get(record.id) != null) {
         scheduled.add(item.id);
         _persist(record, progress.copyWith(remindersScheduled: {...scheduled}));
       }
