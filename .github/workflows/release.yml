@@ -1,0 +1,81 @@
+name: Release
+
+# Every merge to main: build Capture.app, pack it into a DMG and, once the
+# Hard Eng check on the same commit has passed, publish it as a GitHub
+# pre-release.
+on:
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  dmg:
+    name: dmg
+    runs-on: macos-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write # Create the release and upload the DMG.
+      checks: read # Wait for the hard-eng check on this commit.
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+        with:
+          version: latest
+          runtime: node@latest
+          install: false
+      - name: Build Capture.app
+        run: |
+          pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config install flutter@latest &&
+          pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config exec flutter@latest -- flutter build macos --release
+      - name: Pack the DMG
+        run: |
+          stage="$RUNNER_TEMP/stage"
+          mkdir -p "$stage"
+          cp -R build/macos/Build/Products/Release/Capture.app "$stage/"
+          ln -s /Applications "$stage/Applications"
+          hdiutil create -volname Capture -srcfolder "$stage" -ov -format UDZO "$RUNNER_TEMP/Capture.dmg"
+          hdiutil verify "$RUNNER_TEMP/Capture.dmg"
+      - name: Wait for the hard-eng check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.sha }}
+        run: |
+          for _ in $(seq 60); do
+            conclusion="$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/check-runs?check_name=hard-eng" --jq '.check_runs[0].conclusion // ""')"
+            case "$conclusion" in
+              success) exit 0 ;;
+              "") sleep 20 ;;
+              *) echo "hard-eng finished as $conclusion; not publishing."; exit 1 ;;
+            esac
+          done
+          echo "hard-eng did not finish within 20 minutes; not publishing."
+          exit 1
+      - name: Publish the pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.sha }}
+          RUN: ${{ github.run_number }}
+        run: |
+          version="$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)"
+          name="${version}-alpha.${RUN}"
+          cat > "$RUNNER_TEMP/notes.md" <<'NOTES'
+          Built from main by the Release workflow; the Hard Eng checks passed on this commit.
+
+          Install: open the DMG and drag Capture into Applications.
+
+          This alpha is not notarised. The first time you open it, macOS says it cannot check the app. Open System Settings, then Privacy & Security, and choose Open Anyway for Capture.
+          NOTES
+          gh release create "v${name}" "$RUNNER_TEMP/Capture.dmg#Capture-${name}.dmg" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$SHA" \
+            --prerelease \
+            --title "Capture ${name}" \
+            --notes-file "$RUNNER_TEMP/notes.md"

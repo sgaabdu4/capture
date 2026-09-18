@@ -35,9 +35,15 @@ A private Mac voice diary. Press a shortcut, speak, and your thoughts land in No
   </tr>
 </table>
 
+## Download
+
+Every merge to `main` publishes a DMG under [Releases](https://github.com/sgaabdu4/capture/releases). Open it and drag Capture into Applications.
+
+The alpha is not notarised, so the first launch is blocked. Open **System Settings → Privacy & Security** and choose **Open Anyway** for Capture.
+
 ## Setup
 
-You need macOS 12 or later, Flutter 3.47 or later, a [TypeSafe](https://console.typesafe.ai) API key, and a Notion workspace.
+You need macOS 12 or later, a [TypeSafe](https://console.typesafe.ai) API key, and a Notion workspace. To build from source you also need Flutter 3.47 or later:
 
 ```bash
 git clone <this repo> && cd capture
