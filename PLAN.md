@@ -4,7 +4,7 @@ Status: Ready
 
 ## Outcome + scope
 
-Working private Mac alpha: shortcut → record → local Parakeet transcript → code candidate boundaries + Jev decisions → editable proposal → approve → Notion (captures, audio, library, groups) → approved macOS reminders. Non-goals: brief §1 exclusions (accounts, backend, OAuth, other platforms, calendars, chat, search, summaries, recurring tasks, live captions, other models).
+Working private Mac alpha: shortcut → record → local Parakeet transcript → code candidate boundaries + Jev decisions → editable proposal → approve → Notion (captures, audio, library, groups) → approved macOS reminders. Non-goals: brief §1 exclusions (accounts, backend, OAuth, other platforms, calendars, chat, semantic search, summaries, recurring tasks, live captions, other models).
 
 ## Repository context
 
@@ -14,7 +14,7 @@ Owners: `lib/` (Dart app + logic), `macos/Runner/` (Swift overlay panel, hotkey,
 
 Blockers: None
 Handoff: Approval
-Authority: Autonomous — user brief §2 "proceed to implementation instead of stopping after the plan"; local commits on `feature/capture-alpha` only; no push, publish or unrelated Notion changes.
+Authority: Autonomous — user brief §2 "proceed to implementation instead of stopping after the plan"; commits on `feature/capture-alpha`; push to the owner's private GitHub repo authorized 2026-09-18; no publish or unrelated Notion changes.
 
 ## Acceptance + steps
 
@@ -35,6 +35,9 @@ Each item names its proof. "Live" means an opt-in run with the owner's own keys 
 - [ ] A13 Reminders are scheduled only for approved, persisted tasks with a reminder (UNUserNotificationCenter); none before approval. Proof: scheduler tests + manual notification.
 - [ ] A14 Main window (Home, Groups, Recordings, To-do, Upcoming) and menu-bar popover (Record, Open app, Settings, Quit) match the approved references with the documented deviations, with truthful empty/error states. Proof: rendered screenshots in `docs/design/` + review.
 - [ ] A15 README documents setup, keys, model licence, privacy and limits. Proof: file.
+- [ ] A17 A saved note or task can be edited from the app (title, body, group, due, reminder): Notion is updated first, then the local mirror, and the task's reminder is cancelled and rescheduled in the Mac's current time zone. Only the leading body paragraphs are replaced; source quotes and anything else on the page stay. Owner request 2026-09-18. Proof: `test/features/library/` repository + remote tests + live edit on the test page.
+- [ ] A18 A saved note or task can be deleted from the app after confirmation: the Notion page moves to Notion's trash (recoverable there), it leaves the local mirror and its reminder is cancelled. Owner request 2026-09-18. Proof: `test/features/library/` tests + live delete on the test page.
+- [ ] A19 To-do has a plain text search over saved note and task titles (case-insensitive, local, no AI); bodies are not searched because they are not mirrored locally. Owner request 2026-09-18. Proof: `test/features/library/` state test + widget test.
 - [ ] A16 Full E2E: shortcut in another app → speak → review → approve → Notion rows + audio + reminder. Proof: manual live run recorded under Verification.
 
 Documented deviations from the mockups: shortcut shown as the configured keys (default ⌃⌥, not ⌘R, which apps already use); no Weekly summary; no nav item selected on Home; no active mic/waveform while reviewing; count line on the review card; truthful empty states instead of sample data.
