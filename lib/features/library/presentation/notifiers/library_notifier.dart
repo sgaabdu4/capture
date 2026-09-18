@@ -37,12 +37,7 @@ class LibraryNotifier extends _$LibraryNotifier {
   Future<void> setDone(LibraryEntry entry, {required bool done}) async {
     final result = await _ensureRepository().setDone(entry, done: done);
     if (!ref.mounted) return;
-    state = switch (result) {
-      Ok(:final value) => state.copyWith(
-        entries: [for (final e in state.entries) e.itemId == value.itemId ? value : e],
-      ),
-      Err(:final failure) => _failed(state, failure),
-    };
+    state = _replaced(result);
   }
 
   /// The body on the entry's Notion page, or null when it cannot be read.
@@ -62,12 +57,7 @@ class LibraryNotifier extends _$LibraryNotifier {
   Future<void> update(LibraryEntry entry, {String? body}) async {
     final result = await _ensureRepository().update(entry, body: body);
     if (!ref.mounted) return;
-    state = switch (result) {
-      Ok(:final value) => state.copyWith(
-        entries: [for (final e in state.entries) e.itemId == value.itemId ? value : e],
-      ),
-      Err(:final failure) => _failed(state, failure),
-    };
+    state = _replaced(result);
   }
 
   Future<void> delete(LibraryEntry entry) async {
@@ -85,6 +75,14 @@ class LibraryNotifier extends _$LibraryNotifier {
   }
 
   void search(String query) => state = state.copyWith(query: query);
+
+  /// The saved entry in place of the one with its id, or the failure.
+  LibraryState _replaced(NotionResult<LibraryEntry> result) => switch (result) {
+    Ok(:final value) => state.copyWith(
+      entries: [for (final e in state.entries) e.itemId == value.itemId ? value : e],
+    ),
+    Err(:final failure) => _failed(state, failure),
+  };
 
   static LibraryState _failed(LibraryState s, NotionFailure failure) =>
       s.copyWith(failure: failure, failureSerial: s.failureSerial + 1);
