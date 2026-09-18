@@ -69,7 +69,7 @@ void main() {
     container
         .read(captureRepositoryProvider)
         .put(
-          CaptureRecord(
+          .new(
             id: 'c1',
             capturedAtUtc: FakeSystem.now,
             timeZone: FakeSystem.zone,
