@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/data/secrets/secrets_local_datasource.dart';
 import 'package:capture/core/data/system/local_app_directories_datasource.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
@@ -56,12 +57,13 @@ Future<void> loadAppFonts() async {
   }
 }
 
-/// Fake Keychain ([secrets], empty by default), clock and native side, and
-/// a fresh on-disk database under [support].
+/// Fake Keychain ([secrets], empty by default), reminders, clock and native
+/// side, and a fresh on-disk database under [support].
 List<Override> appOverrides({
   required Directory support,
   required INativePlatformService native,
   FakeSecrets? secrets,
+  FakeReminders? reminders,
 }) => [
   appDirectoriesProvider.overrideWithValue((
     captures: '${support.path}/captures',
@@ -69,6 +71,7 @@ List<Override> appOverrides({
     database: '${support.path}/capture.sqlite',
   )),
   secretsLocalDatasourceProvider.overrideWithValue(secrets ?? FakeSecrets()),
+  reminderDatasourceProvider.overrideWithValue(reminders ?? FakeReminders()),
   systemDatasourceProvider.overrideWithValue(FakeSystem()),
   nativePlatformServiceProvider.overrideWithValue(native),
 ];

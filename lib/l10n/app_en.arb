@@ -337,7 +337,7 @@
   "privacyTitle": "Privacy",
   "privacyBody": "Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it. Keys live in the macOS Keychain. No analytics, no logs of your words.",
   "resetTitle": "Reset Capture",
-  "resetBody": "Removes both keys from the Keychain and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.",
+  "resetBody": "Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.",
   "resetButton": "Reset Capture",
   "resetConfirmTitle": "Reset Capture?",
   "resetConfirmBody": "You’ll go back to the setup steps. This can’t be undone.",

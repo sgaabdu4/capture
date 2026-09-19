@@ -1,5 +1,7 @@
+import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/data/secrets/secrets_local_datasource.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 /// In-memory credential store.
 class FakeSecrets implements ISecretsLocalDatasource {
@@ -14,6 +16,24 @@ class FakeSecrets implements ISecretsLocalDatasource {
 
   @override
   Future<void> delete(Secret secret) async => _values.remove(secret);
+}
+
+/// Notifications that are never shown; records whether all were cancelled.
+class FakeReminders implements IReminderDatasource {
+  bool cancelledAll = false;
+
+  @override
+  Future<bool> schedule({
+    required String itemId,
+    required String title,
+    required tz.TZDateTime at,
+  }) async => true;
+
+  @override
+  Future<void> cancel(String itemId) async {}
+
+  @override
+  Future<void> cancelAll() async => cancelledAll = true;
 }
 
 /// Fixed clock (2026-09-17 19:09 UTC, Europe/London) and sequential ids:
