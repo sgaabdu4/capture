@@ -50,7 +50,7 @@ final class CaptureFlowNotifierProvider
   }
 }
 
-String _$captureFlowNotifierHash() => r'e223d44db4d91bf4d81b0169e679328c816dbfdf';
+String _$captureFlowNotifierHash() => r'807646d854903cbebf65a86c66d91892aa55584d';
 
 /// The capture state machine. Every milestone is persisted before the next
 /// step (see [CaptureStage]); approval is the only path to Notion and to

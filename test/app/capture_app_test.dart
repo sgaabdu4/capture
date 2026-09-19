@@ -3,10 +3,14 @@ import 'dart:io';
 
 import 'package:capture/app/capture_app.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
+import 'package:capture/core/data/notion/notion_workspace_local_datasource.dart';
+import 'package:capture/core/data/secrets/secrets_local_datasource.dart';
 import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
+import 'package:capture/core/widgets/page_frame.dart';
+import 'package:capture/features/capture/repositories/capture_repository.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/shell/presentation/widgets/update_link.dart';
@@ -19,6 +23,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../helpers/app_harness.dart';
+import '../helpers/sample_workspace.dart';
+import '../helpers/test_fakes.dart';
 
 final _l10n = lookupAppLocalizations(const .new('en'));
 
@@ -35,17 +41,15 @@ Future<void> _launch(
   required Directory support,
   required INativePlatformService native,
   List<Override> overrides = const [],
-}) async {
+}) => _pump(tester, [...appOverrides(support: support, native: native), ...overrides]);
+
+/// Launches the real app with exactly [overrides].
+Future<void> _pump(WidgetTester tester, List<Override> overrides) async {
   tester.view
     ..physicalSize = referenceWindow
     ..devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  final container = ProviderContainer.test(
-    overrides: [
-      ...appOverrides(support: support, native: native),
-      ...overrides,
-    ],
-  );
+  final container = ProviderContainer.test(overrides: overrides);
   addTearDown(container.dispose);
   await tester.pumpWidget(
     UncontrolledProviderScope(container: container, child: const CaptureApp()),
@@ -203,6 +207,48 @@ void main() {
 
     expect([for (final e in library.updates) e.title], equals(['Milk frother for the café']));
     expect(find.text('Milk frother for the café'), findsOneWidget);
+  });
+
+  testWidgets('Reset forgets both keys, the Notion page and local captures but keeps the model', (
+    tester,
+  ) async {
+    final seed = ProviderContainer.test(
+      overrides: appOverrides(support: support, native: native),
+    );
+    seed.read(captureRepositoryProvider).put(sampleProposedCapture);
+    seed.read(notionWorkspaceLocalDatasourceProvider).write(.fromEntity(sampleWorkspace));
+    seed.dispose();
+    final recording = File('${support.path}/captures/proposed.m4a')..createSync(recursive: true);
+    final model = File('${support.path}/model/verified.json')..createSync(recursive: true);
+    final secrets = FakeSecrets({.typesafeKey: 'key', .notionToken: 'token'});
+    await _pump(tester, appOverrides(support: support, native: native, secrets: secrets));
+    await _open(tester, AppWidgetKeys.navRecordings);
+    expect(find.byKey(ValueKey(sampleProposedCapture.id)), findsOneWidget);
+    await _open(tester, AppWidgetKeys.settingsButton);
+    expect(find.text(_l10n.typesafeSaved), findsOneWidget);
+    expect(find.text(_l10n.notionNeeded), findsNothing);
+
+    final reset = find.byKey(const ValueKey(AppWidgetKeys.resetButton));
+    await tester.scrollUntilVisible(
+      reset,
+      300,
+      scrollable: find
+          .descendant(of: find.byType(PageFrame), matching: find.byType(Scrollable))
+          .first,
+    );
+    await tester.ensureVisible(reset);
+    await _settle(tester);
+    await _open(tester, AppWidgetKeys.resetButton);
+    await _open(tester, AppWidgetKeys.resetConfirmButton);
+
+    expect([for (final s in Secret.values) await secrets.read(s)], equals([null, null]));
+    expect(recording.parent.existsSync(), isFalse);
+    expect(model.existsSync(), isTrue);
+    expect(find.text(_l10n.setupTitle), findsOneWidget);
+    expect(find.text(_l10n.typesafeNeeded), findsOneWidget);
+    expect(find.text(_l10n.notionNeeded), findsOneWidget);
+    await _open(tester, AppWidgetKeys.navRecordings);
+    expect(find.text(_l10n.emptyCaptures), findsOneWidget);
   });
 
   group('recording a new shortcut', () {

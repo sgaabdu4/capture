@@ -625,6 +625,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it. Keys live in the macOS Keychain. No analytics, no logs of your words.';
 
   @override
+  String get resetTitle => 'Reset Capture';
+
+  @override
+  String get resetBody =>
+      'Removes both keys from the Keychain and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.';
+
+  @override
+  String get resetButton => 'Reset Capture';
+
+  @override
+  String get resetConfirmTitle => 'Reset Capture?';
+
+  @override
+  String get resetConfirmBody => 'You’ll go back to the setup steps. This can’t be undone.';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
   String get recordingsSubtitle => 'Kept on this Mac. Saved captures are also in Notion.';
 
   @override

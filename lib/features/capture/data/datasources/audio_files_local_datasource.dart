@@ -16,6 +16,9 @@ abstract interface class IAudioFilesLocalDatasource {
   int sizeOf(String path);
   Future<List<int>> read(String path);
   Future<void> delete(Iterable<String> paths);
+
+  /// Removes the captures folder and every recording in it.
+  void deleteAll();
 }
 
 @Riverpod(keepAlive: true)
@@ -50,5 +53,11 @@ class AudioFilesLocalDatasource implements IAudioFilesLocalDatasource {
       final file = File(path);
       if (file.existsSync()) await file.delete();
     }
+  }
+
+  @override
+  void deleteAll() {
+    final dir = Directory(_dir);
+    if (dir.existsSync()) dir.deleteSync(recursive: true);
   }
 }

@@ -8,6 +8,7 @@ import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/domain/values/result.dart';
 import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
+import 'package:capture/features/settings/data/datasources/local_data_datasource.dart';
 import 'package:capture/features/settings/data/datasources/notion_workspace_remote_datasource.dart';
 import 'package:capture/features/settings/data/datasources/shortcut_local_datasource.dart';
 import 'package:capture/features/settings/data/datasources/speech_model_datasource.dart';
@@ -41,6 +42,10 @@ abstract interface class ISettingsRepository {
   void saveShortcut(Shortcut shortcut);
   bool isSpeechModelReady();
   Stream<SpeechModelEvent> downloadSpeechModel();
+
+  /// Forgets both keys, the Notion link, the shortcut and every local
+  /// capture and recording. The speech model stays.
+  Future<void> reset();
 }
 
 /// The Notion connection: remote checks, the cached workspace and the
@@ -51,10 +56,11 @@ typedef NotionConnectionSources = ({
   IGroupsRepository groups,
 });
 
-/// Settings that live only on this Mac.
+/// Settings and data that live only on this Mac.
 typedef DeviceSettingsSources = ({
   IShortcutLocalDatasource shortcuts,
   ISpeechModelDatasource speechModel,
+  ILocalDataDatasource localData,
 });
 
 class SettingsRepository implements ISettingsRepository {
@@ -67,7 +73,8 @@ class SettingsRepository implements ISettingsRepository {
        _workspaceCache = notion.cache,
        _groups = notion.groups,
        _shortcuts = device.shortcuts,
-       _speechModel = device.speechModel;
+       _speechModel = device.speechModel,
+       _localData = device.localData;
 
   final ISecretsLocalDatasource _secrets;
   final IJevRemoteDatasource _jev;
@@ -76,6 +83,7 @@ class SettingsRepository implements ISettingsRepository {
   final IGroupsRepository _groups;
   final IShortcutLocalDatasource _shortcuts;
   final ISpeechModelDatasource _speechModel;
+  final ILocalDataDatasource _localData;
 
   @override
   Future<bool> hasTypesafeKey() async => await _secrets.read(.typesafeKey) != null;
@@ -149,6 +157,14 @@ class SettingsRepository implements ISettingsRepository {
     }
   }
 
+  @override
+  Future<void> reset() async {
+    for (final secret in Secret.values) {
+      await _secrets.delete(secret);
+    }
+    _localData.erase();
+  }
+
   static SpeechModelFailure _downloadFailure(Object error) => switch (error) {
     SocketException() || http.ClientException() => .network,
     FileSystemException() => .diskSpace,
@@ -168,5 +184,6 @@ ISettingsRepository settingsRepository(Ref ref) => SettingsRepository(
   device: (
     shortcuts: ref.read(shortcutLocalDatasourceProvider),
     speechModel: ref.read(speechModelDatasourceProvider),
+    localData: ref.read(localDataDatasourceProvider),
   ),
 );
