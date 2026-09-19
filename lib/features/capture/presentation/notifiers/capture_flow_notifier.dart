@@ -97,6 +97,17 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   void _idle({CaptureNotice? notice, CaptureFailure? failure}) =>
       state = state.copyWith(phase: .idle, activeId: null, notice: notice, failure: failure);
 
+  /// Settings' reset, then every list reread from the emptied disk. Ignored
+  /// while a capture is in progress.
+  Future<void> startOver() async {
+    if (state.busyWith) return;
+    await ref.read(settingsProvider.notifier).reset();
+    if (!ref.mounted) return;
+    _reloadCaptures();
+    ref.read(groupsProvider.notifier).reload();
+    ref.invalidate(libraryProvider);
+  }
+
   /// Drops captures cut off by a crash before they had any audio.
   void recoverInterrupted() {
     _ensureCaptures().recoverInterrupted(minimum: minCaptureDuration);

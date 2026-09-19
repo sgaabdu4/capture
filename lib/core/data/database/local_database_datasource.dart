@@ -23,6 +23,10 @@ Database openLocalDatabase(String path) {
   return sqlite3.open(path)..execute(localSchema);
 }
 
+/// Empties every table in [localSchema]; the schema stays.
+void clearLocalDatabase(Database db) =>
+    db.transaction(() => db.execute('DELETE FROM captures; DELETE FROM kv; DELETE FROM library;'));
+
 extension DatabaseTransaction on Database {
   /// Runs [body] atomically: commits, or rolls back if anything throws.
   void transaction(VoidCallback body) {

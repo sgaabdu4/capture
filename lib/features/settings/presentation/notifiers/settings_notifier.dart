@@ -104,6 +104,24 @@ class SettingsNotifier extends _$SettingsNotifier {
     state = state.copyWith(workspace: null, hasNotionToken: false);
   }
 
+  /// Back to first launch with the speech model kept: no keys, no Notion
+  /// link and the standard shortcut.
+  Future<void> reset() async {
+    final repo = _ensureRepository();
+    await repo.reset();
+    if (!ref.mounted) return;
+    final registered = await _register(.standard);
+    if (!ref.mounted) return;
+    state = .new(
+      shortcut: .standard,
+      modelReady: repo.isSpeechModelReady(),
+      modelDownload: state.modelDownload,
+      loaded: true,
+      shortcutRegistered: registered,
+      mic: state.mic,
+    );
+  }
+
   void _rejectPageLink() => state = state.copyWith(pageLinkInvalid: true, notionFailure: null);
 
   /// Resumable; progress and failure are kept in state.

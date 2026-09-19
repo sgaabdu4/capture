@@ -1136,6 +1136,42 @@ abstract class AppLocalizations {
   /// **'Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it. Keys live in the macOS Keychain. No analytics, no logs of your words.'**
   String get privacyBody;
 
+  /// No description provided for @resetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Capture'**
+  String get resetTitle;
+
+  /// No description provided for @resetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Removes both keys from the Keychain and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.'**
+  String get resetBody;
+
+  /// No description provided for @resetButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Capture'**
+  String get resetButton;
+
+  /// No description provided for @resetConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Capture?'**
+  String get resetConfirmTitle;
+
+  /// No description provided for @resetConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You’ll go back to the setup steps. This can’t be undone.'**
+  String get resetConfirmBody;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
   /// No description provided for @recordingsSubtitle.
   ///
   /// In en, this message translates to:

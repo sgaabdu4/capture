@@ -56,16 +56,19 @@ Future<void> loadAppFonts() async {
   }
 }
 
-/// Fake Keychain, clock and native side, and a fresh on-disk database under
-/// [support].
-List<Override> appOverrides({required Directory support, required INativePlatformService native}) =>
-    [
-      appDirectoriesProvider.overrideWithValue((
-        captures: '${support.path}/captures',
-        model: '${support.path}/model',
-        database: '${support.path}/capture.sqlite',
-      )),
-      secretsLocalDatasourceProvider.overrideWithValue(FakeSecrets()),
-      systemDatasourceProvider.overrideWithValue(FakeSystem()),
-      nativePlatformServiceProvider.overrideWithValue(native),
-    ];
+/// Fake Keychain ([secrets], empty by default), clock and native side, and
+/// a fresh on-disk database under [support].
+List<Override> appOverrides({
+  required Directory support,
+  required INativePlatformService native,
+  FakeSecrets? secrets,
+}) => [
+  appDirectoriesProvider.overrideWithValue((
+    captures: '${support.path}/captures',
+    model: '${support.path}/model',
+    database: '${support.path}/capture.sqlite',
+  )),
+  secretsLocalDatasourceProvider.overrideWithValue(secrets ?? FakeSecrets()),
+  systemDatasourceProvider.overrideWithValue(FakeSystem()),
+  nativePlatformServiceProvider.overrideWithValue(native),
+];

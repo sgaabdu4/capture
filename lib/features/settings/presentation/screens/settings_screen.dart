@@ -1,20 +1,41 @@
 import 'dart:async';
 
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/paper_card.dart';
 import 'package:capture/core/widgets/page_frame.dart';
+import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/screens/setup_steps_screen.dart';
 import 'package:capture/features/settings/presentation/widgets/mic_section.dart';
 import 'package:capture/features/settings/presentation/widgets/privacy_section.dart';
+import 'package:capture/features/settings/presentation/widgets/reset_dialog.dart';
+import 'package:capture/features/settings/presentation/widgets/reset_section.dart';
 import 'package:capture/features/settings/presentation/widgets/shortcut_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Setup steps, shortcut, microphone and privacy.
+/// Setup steps, shortcut, microphone, privacy and reset.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
+
+  static const _resetDialogRoute = 'reset-dialog';
+
+  Future<void> _confirmReset(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      routeSettings: const .new(name: _resetDialogRoute),
+      builder: (dialogContext) => ResetDialog(
+        onCancel: () => Navigator.of(dialogContext).pop(false),
+        onReset: () => Navigator.of(dialogContext).pop(true),
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    await ref.read(captureFlowProvider.notifier).startOver();
+    if (!context.mounted) return;
+    const HomeRoute().go(context);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,6 +47,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     final mic = ref.watch(settingsProvider.select((s) => s.mic));
+    final capturing = ref.watch(captureFlowProvider.select((s) => s.busyWith));
     return PageFrame(
       title: l10n.navSettings,
       children: [
@@ -58,6 +80,12 @@ class SettingsScreen extends ConsumerWidget {
         ),
         const SizedBox(height: Spacing.lg),
         const PaperCard(child: PrivacySection()),
+        const SizedBox(height: Spacing.lg),
+        PaperCard(
+          child: ResetSection(
+            onReset: capturing ? null : () => unawaited(_confirmReset(context, ref)),
+          ),
+        ),
       ],
     );
   }
