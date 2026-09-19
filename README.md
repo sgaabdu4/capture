@@ -12,6 +12,12 @@ A private Mac voice diary. Press a shortcut, speak, and your thoughts land in No
 
 </div>
 
+## Watch it work
+
+A spoken capture sorted into notes, tasks and reminders, then how to set Capture up. Turn the sound on.
+
+https://github.com/user-attachments/assets/bf1d3b83-6699-4a02-b5be-1f403e4bd1b2
+
 ## How it works
 
 ```
