@@ -18,7 +18,7 @@ Spoken diary entries mix unrelated thoughts (learning, personal life, ideas, err
 
 Intended flow (planned; the repository currently contains only the empty Flutter macOS scaffold):
 
-Shortcut → record → stop → transcribe locally with Parakeet-TDT-0.6B-v3 → code proposes candidate boundaries → Jev (TypeSafe API) judges boundaries and classifies each thought into user-configured groups → code builds an editable proposal (titles from source text, deterministic dates) → user approves → save capture, audio, transcript, notes and tasks to Notion → schedule approved macOS reminders.
+Shortcut → record → stop → transcribe locally with Parakeet-TDT-0.6B-v3 → code proposes candidate boundaries → Jev (TypeSafe API) judges boundaries and classifies each thought into user-configured groups → code builds an editable proposal (titles from source text, deterministic dates) → user approves (or auto-save does, when on and nothing needs a decision) → save capture, audio, transcript, notes and tasks to Notion → schedule approved macOS reminders.
 
 Notion is the source of truth for saved content and group definitions; a local SQLite database holds drafts, pending operations and a rebuildable cache. Nothing capture-related is written or scheduled before approval.
 

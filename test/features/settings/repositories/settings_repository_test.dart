@@ -5,6 +5,7 @@ import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/domain/values/result.dart';
 import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
+import 'package:capture/features/settings/data/datasources/auto_save_local_datasource.dart';
 import 'package:capture/features/settings/data/datasources/local_data_datasource.dart';
 import 'package:capture/features/settings/data/datasources/notion_workspace_remote_datasource.dart';
 import 'package:capture/features/settings/data/datasources/shortcut_local_datasource.dart';
@@ -22,6 +23,8 @@ class _MockNotion extends Mock implements INotionWorkspaceRemoteDatasource {}
 class _MockGroups extends Mock implements IGroupsRepository {}
 
 class _MockShortcuts extends Mock implements IShortcutLocalDatasource {}
+
+class _MockAutoSave extends Mock implements IAutoSaveLocalDatasource {}
 
 class _MockSpeechModel extends Mock implements ISpeechModelDatasource {}
 
@@ -67,8 +70,9 @@ final class _Fixture {
     secrets: secrets,
     jev: jev,
     notion: (remote: notion, cache: cache, groups: groups),
-    device: (
+    device: .new(
       shortcuts: _MockShortcuts(),
+      autoSave: _MockAutoSave(),
       speechModel: _MockSpeechModel(),
       localData: _MockLocalData(),
     ),

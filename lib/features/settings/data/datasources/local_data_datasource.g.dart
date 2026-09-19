@@ -48,4 +48,4 @@ final class LocalDataDatasourceProvider
   }
 }
 
-String _$localDataDatasourceHash() => r'dcf00733c944d07e353cddd979b899d8b6691181';
+String _$localDataDatasourceHash() => r'8bb55433f4b436e80ae6e748283962aee8e0b195';

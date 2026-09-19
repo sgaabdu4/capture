@@ -4,11 +4,15 @@ import 'package:timezone/timezone.dart' as tz;
 
 part 'reminder_datasource.g.dart';
 
-/// macOS notifications for approved, saved tasks only.
+/// macOS notifications for approved, saved tasks, and for captures saved
+/// without the review card.
 abstract interface class IReminderDatasource {
   /// False when notifications are not permitted.
   Future<bool> schedule({required String itemId, required String title, required tz.TZDateTime at});
   Future<void> cancel(String itemId);
+
+  /// Shows a notification now; nothing when notifications are not permitted.
+  Future<void> show({required String id, required String title, required String body});
 
   /// Every scheduled and shown reminder.
   Future<void> cancelAll();
@@ -68,6 +72,17 @@ class LocalNotificationsReminderDatasource implements IReminderDatasource {
       payload: itemId,
     );
     return true;
+  }
+
+  @override
+  Future<void> show({required String id, required String title, required String body}) async {
+    if (!await _ensure()) return;
+    await _plugin.show(
+      id: notificationId(id),
+      title: title,
+      body: body,
+      notificationDetails: const .new(macOS: .new()),
+    );
   }
 
   @override

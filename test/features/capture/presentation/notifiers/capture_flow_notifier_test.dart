@@ -5,6 +5,7 @@ import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/features/capture/domain/capture_limits.dart';
+import 'package:capture/features/capture/domain/entities/capture_failure.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
@@ -36,6 +37,12 @@ class _Connected extends SettingsNotifier {
   SettingsState build() => super.build().copyWith(workspace: _workspace, hasNotionToken: true);
 }
 
+/// Connected, with auto-save turned on.
+class _AutoSave extends _Connected {
+  @override
+  SettingsState build() => super.build().copyWith(autoSave: true);
+}
+
 /// Key, Notion and speech model all in place, so a capture can start.
 class _Ready extends SettingsNotifier {
   @override
@@ -50,13 +57,21 @@ class _Ready extends SettingsNotifier {
 /// Notion confirms every step at once; reminders wait on [prompt], like an
 /// unanswered macOS notification prompt.
 class _Saver implements ICaptureSaveRepository {
+  _Saver({this.failure});
+
+  /// Notion refuses every save with this, when set.
+  final CaptureFailure? failure;
+
   final prompt = Completer<bool>();
 
   /// Ids of captures whose reminders were scheduled.
   final reminded = <String>[];
 
   @override
-  Future<CaptureOutcome> save(CaptureRecord record, NotionWorkspace ws) async => .ok(record);
+  Future<CaptureOutcome> save(CaptureRecord record, NotionWorkspace ws) async => switch (failure) {
+    final CaptureFailure f => .err(f),
+    null => .ok(record),
+  };
 
   @override
   Future<ReminderOutcome> scheduleReminders(CaptureRecord record) async {
@@ -69,7 +84,11 @@ class _MockLibrary extends Mock implements ILibraryRepository {}
 
 /// The real flow and on-disk store, connected to Notion, with [saver]; with
 /// [native] as the Mac side and every setup step done when it is given.
-ProviderContainer _container(_Saver saver, {INativePlatformService? native}) {
+ProviderContainer _container(
+  _Saver saver, {
+  INativePlatformService? native,
+  SettingsNotifier Function()? settings,
+}) {
   final support = Directory.systemTemp.createTempSync('capture_flow_test');
   addTearDown(() => support.deleteSync(recursive: true));
   final library = _MockLibrary();
@@ -78,7 +97,7 @@ ProviderContainer _container(_Saver saver, {INativePlatformService? native}) {
   return .test(
     overrides: [
       ...appOverrides(support: support, native: native ?? stubNative()),
-      settingsProvider.overrideWith(native == null ? _Connected.new : _Ready.new),
+      settingsProvider.overrideWith(settings ?? (native == null ? _Connected.new : _Ready.new)),
       captureSaveRepositoryProvider.overrideWithValue(saver),
       libraryRepositoryProvider.overrideWithValue(library),
     ],
@@ -92,6 +111,22 @@ CaptureRecord _record(String id, CaptureStage stage) => .new(
   audioPath: '$id.m4a',
   stage: stage,
 );
+
+/// A proposal with one note, ready to save unless [groupId] or [failure] say otherwise.
+CaptureRecord _proposal(String id, {String? groupId = 'g', CaptureFailure? failure}) =>
+    _record(id, .proposed).copyWith(
+      failure: failure,
+      items: [
+        .new(
+          id: '$id-note',
+          sources: const [],
+          kind: .note,
+          groupId: groupId,
+          title: 'Idea',
+          body: '',
+        ),
+      ],
+    );
 
 void main() {
   setUpAll(() {
@@ -115,6 +150,71 @@ void main() {
     saver.prompt.complete(false);
     await approval;
     expect(container.read(captureFlowProvider).notice, equals(CaptureNotice.savedNotificationsOff));
+  });
+
+  group('with auto-save on', () {
+    test('a proposal with nothing to decide is saved without the review card', () async {
+      final saver = _Saver()..prompt.complete(true);
+      final container = _container(saver, settings: _AutoSave.new);
+      container.read(captureRepositoryProvider).put(_proposal('c1'));
+
+      await container.read(captureFlowProvider.notifier).process('c1');
+
+      final flow = container.read(captureFlowProvider);
+      expect(flow.phase, equals(CapturePhase.idle));
+      expect(flow.autoSavedId, equals('c1'));
+      expect(
+        container.read(captureRepositoryProvider).get('c1')?.stage,
+        equals(CaptureStage.saved),
+      );
+    });
+
+    final needsLook = {
+      'an item has no group': _proposal('c1', groupId: null),
+      'Jev failed and it became one note': _proposal('c1', failure: .jevUnavailable),
+      'nothing was heard': _record('c1', .proposed),
+    };
+    for (final MapEntry(key: reason, value: record) in needsLook.entries) {
+      test('the review card still opens when $reason', () async {
+        final container = _container(.new(), settings: _AutoSave.new);
+        container.read(captureRepositoryProvider).put(record);
+
+        await container.read(captureFlowProvider.notifier).process('c1');
+
+        final flow = container.read(captureFlowProvider);
+        expect(flow.phase, equals(CapturePhase.review));
+        expect(flow.autoSavedId, isNull);
+        expect(
+          container.read(captureRepositoryProvider).get('c1')?.stage,
+          equals(CaptureStage.proposed),
+        );
+      });
+    }
+
+    test('a failed save reopens the review card to retry', () async {
+      final container = _container(.new(failure: .notionUnavailable), settings: _AutoSave.new);
+      container.read(captureRepositoryProvider).put(_proposal('c1'));
+
+      await container.read(captureFlowProvider.notifier).process('c1');
+
+      final flow = container.read(captureFlowProvider);
+      expect(flow.phase, equals(CapturePhase.review));
+      expect(flow.failure, equals(CaptureFailure.notionUnavailable));
+      expect(flow.autoSavedId, isNull);
+    });
+  });
+
+  test('with auto-save off, a proposal with nothing to decide waits on the review card', () async {
+    final container = _container(.new());
+    container.read(captureRepositoryProvider).put(_proposal('c1'));
+
+    await container.read(captureFlowProvider.notifier).process('c1');
+
+    expect(container.read(captureFlowProvider).phase, equals(CapturePhase.review));
+    expect(
+      container.read(captureRepositoryProvider).get('c1')?.stage,
+      equals(CaptureStage.proposed),
+    );
   });
 
   test('a reminder a saved capture still owes is scheduled on the next launch', () async {

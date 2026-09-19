@@ -48,4 +48,4 @@ final class SettingsRepositoryProvider
   }
 }
 
-String _$settingsRepositoryHash() => r'249734686f5833ac9900bd602e70e7eda7221f26';
+String _$settingsRepositoryHash() => r'd05dd274dc52b9cc2e166908f32473b0014ac0fd';

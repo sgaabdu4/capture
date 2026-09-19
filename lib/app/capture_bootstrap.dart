@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:capture/app/app_startup.dart';
+import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_router.dart';
 import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
+import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
 import 'package:capture/features/capture/presentation/extensions/menu_lines.dart';
 import 'package:capture/features/capture/presentation/extensions/review_card_content.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
@@ -21,7 +23,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Root side effects that need localizations, above the router: the native
 /// overlay, review card and menu, navigation requested by the capture flow,
-/// and snackbars for background Notion failures.
+/// the notification for an auto-saved capture, and snackbars for background
+/// Notion failures.
 class CaptureBootstrap extends ConsumerWidget {
   const CaptureBootstrap({required this.child, super.key});
 
@@ -38,6 +41,11 @@ class CaptureBootstrap extends ConsumerWidget {
       })
       ..listen(captureFlowProvider.select((s) => s.reviewing), (_, record) {
         if (record != null) unawaited(_review(context, ref, record));
+      })
+      ..listen(captureFlowProvider.select((s) => s.autoSavedId), (_, id) {
+        if (ref.read(captureFlowProvider).byId(id) case final CaptureRecord record) {
+          unawaited(_announceSaved(context, ref, record));
+        }
       })
       ..listen(captureFlowProvider.select((s) => s.destinationSerial), (_, _) {
         if (_destination(ref.read(captureFlowProvider)) case final String location) {
@@ -78,6 +86,13 @@ class CaptureBootstrap extends ConsumerWidget {
   Future<void> _review(BuildContext context, WidgetRef ref, CaptureRecord record) => ref
       .read(nativePlatformServiceProvider)
       .showReview(record.reviewCard(context.l10n, ref.read(groupsProvider)));
+
+  Future<void> _announceSaved(BuildContext context, WidgetRef ref, CaptureRecord record) {
+    final l10n = context.l10n;
+    return ref
+        .read(reminderDatasourceProvider)
+        .show(id: record.id, title: l10n.statusSaved, body: record.includedItems.summary(l10n));
+  }
 
   /// Where the capture flow asked to go, if anywhere.
   String? _destination(CaptureFlowState state) => switch (state) {

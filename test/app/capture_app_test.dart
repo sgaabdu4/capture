@@ -6,13 +6,20 @@ import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/notion/notion_workspace_local_datasource.dart';
 import 'package:capture/core/data/secrets/secrets_local_datasource.dart';
 import 'package:capture/core/domain/entities/notion_workspace.dart';
+import 'package:capture/core/services/models/review_card_payload.dart';
 import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/widgets/page_frame.dart';
+import 'package:capture/features/capture/domain/entities/capture_record.dart';
+import 'package:capture/features/capture/domain/entities/capture_stage.dart';
+import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/capture/repositories/capture_repository.dart';
+import 'package:capture/features/capture/repositories/capture_save_repository.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
+import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
+import 'package:capture/features/settings/repositories/settings_repository.dart';
 import 'package:capture/features/shell/presentation/widgets/update_link.dart';
 import 'package:capture/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
@@ -82,6 +89,16 @@ Future<void> _recordShortcut(
   await _settle(tester);
 }
 
+/// Notion confirms every save; every reminder can be scheduled.
+class _Saver implements ICaptureSaveRepository {
+  @override
+  Future<CaptureOutcome> save(CaptureRecord record, NotionWorkspace ws) async => .ok(record);
+
+  @override
+  Future<ReminderOutcome> scheduleReminders(CaptureRecord record) async =>
+      (record: record, notificationsOff: false);
+}
+
 /// Saved entries as last synced; edits are recorded instead of sent.
 class _Library implements ILibraryRepository {
   final updates = <LibraryEntry>[];
@@ -119,6 +136,7 @@ void main() {
 
   setUpAll(() async {
     registerFallbackValue(Duration.zero);
+    registerFallbackValue(const ReviewCardPayload(countLine: '', rows: [], canApprove: false));
     await loadAppFonts();
   });
   setUp(() {
@@ -209,7 +227,59 @@ void main() {
     expect(find.text('Milk frother for the café'), findsOneWidget);
   });
 
-  testWidgets('Reset forgets keys, Notion page, captures and reminders but keeps the model', (
+  testWidgets(
+    'Reset forgets keys, Notion page, captures, auto-save and reminders; keeps the model',
+    (tester) async {
+      final seed = ProviderContainer.test(
+        overrides: appOverrides(support: support, native: native),
+      );
+      seed.read(captureRepositoryProvider).put(sampleProposedCapture);
+      seed.read(notionWorkspaceLocalDatasourceProvider).write(.fromEntity(sampleWorkspace));
+      seed.read(settingsRepositoryProvider).saveAutoSave(on: true);
+      seed.dispose();
+      final recording = File('${support.path}/captures/proposed.m4a')..createSync(recursive: true);
+      final model = File('${support.path}/model/verified.json')..createSync(recursive: true);
+      final secrets = FakeSecrets({.typesafeKey: 'key', .notionToken: 'token'});
+      final reminders = FakeReminders();
+      await _pump(
+        tester,
+        appOverrides(support: support, native: native, secrets: secrets, reminders: reminders),
+      );
+      await _open(tester, AppWidgetKeys.navRecordings);
+      expect(find.byKey(ValueKey(sampleProposedCapture.id)), findsOneWidget);
+      await _open(tester, AppWidgetKeys.settingsButton);
+      expect(find.text(_l10n.typesafeSaved), findsOneWidget);
+      expect(find.text(_l10n.notionNeeded), findsNothing);
+
+      final reset = find.byKey(const ValueKey(AppWidgetKeys.resetButton));
+      await tester.scrollUntilVisible(
+        reset,
+        300,
+        scrollable: find
+            .descendant(of: find.byType(PageFrame), matching: find.byType(Scrollable))
+            .first,
+      );
+      await tester.ensureVisible(reset);
+      await _settle(tester);
+      await _open(tester, AppWidgetKeys.resetButton);
+      await _open(tester, AppWidgetKeys.resetConfirmButton);
+
+      expect([for (final s in Secret.values) await secrets.read(s)], equals([null, null]));
+      expect(recording.parent.existsSync(), isFalse);
+      expect(model.existsSync(), isTrue);
+      expect(reminders.cancelledAll, isTrue);
+      final app = ProviderScope.containerOf(tester.element(find.byType(CaptureApp)));
+      expect(app.read(settingsProvider).autoSave, isFalse);
+      expect(app.read(settingsRepositoryProvider).autoSave(), isFalse);
+      expect(find.text(_l10n.setupTitle), findsOneWidget);
+      expect(find.text(_l10n.typesafeNeeded), findsOneWidget);
+      expect(find.text(_l10n.notionNeeded), findsOneWidget);
+      await _open(tester, AppWidgetKeys.navRecordings);
+      expect(find.text(_l10n.emptyCaptures), findsOneWidget);
+    },
+  );
+
+  testWidgets('a ticked auto-save is remembered and saves a clean capture with a notification', (
     tester,
   ) async {
     final seed = ProviderContainer.test(
@@ -218,42 +288,48 @@ void main() {
     seed.read(captureRepositoryProvider).put(sampleProposedCapture);
     seed.read(notionWorkspaceLocalDatasourceProvider).write(.fromEntity(sampleWorkspace));
     seed.dispose();
-    final recording = File('${support.path}/captures/proposed.m4a')..createSync(recursive: true);
-    final model = File('${support.path}/model/verified.json')..createSync(recursive: true);
-    final secrets = FakeSecrets({.typesafeKey: 'key', .notionToken: 'token'});
+    when(() => native.showWorking(any())).thenAnswer((_) async {});
+    when(() => native.showReview(any())).thenAnswer((_) async {});
     final reminders = FakeReminders();
-    await _pump(
-      tester,
-      appOverrides(support: support, native: native, secrets: secrets, reminders: reminders),
-    );
-    await _open(tester, AppWidgetKeys.navRecordings);
-    expect(find.byKey(ValueKey(sampleProposedCapture.id)), findsOneWidget);
+    final secrets = FakeSecrets({.typesafeKey: 'key', .notionToken: 'token'});
+    await _pump(tester, [
+      ...appOverrides(support: support, native: native, secrets: secrets, reminders: reminders),
+      captureSaveRepositoryProvider.overrideWithValue(_Saver()),
+      libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
+    ]);
     await _open(tester, AppWidgetKeys.settingsButton);
-    expect(find.text(_l10n.typesafeSaved), findsOneWidget);
-    expect(find.text(_l10n.notionNeeded), findsNothing);
-
-    final reset = find.byKey(const ValueKey(AppWidgetKeys.resetButton));
+    final autoSave = find.byKey(const ValueKey(AppWidgetKeys.autoSaveCheckbox));
     await tester.scrollUntilVisible(
-      reset,
+      autoSave,
       300,
       scrollable: find
           .descendant(of: find.byType(PageFrame), matching: find.byType(Scrollable))
           .first,
     );
-    await tester.ensureVisible(reset);
     await _settle(tester);
-    await _open(tester, AppWidgetKeys.resetButton);
-    await _open(tester, AppWidgetKeys.resetConfirmButton);
+    expect(tester.widget<Checkbox>(autoSave).value, isFalse);
 
-    expect([for (final s in Secret.values) await secrets.read(s)], equals([null, null]));
-    expect(recording.parent.existsSync(), isFalse);
-    expect(model.existsSync(), isTrue);
-    expect(reminders.cancelledAll, isTrue);
-    expect(find.text(_l10n.setupTitle), findsOneWidget);
-    expect(find.text(_l10n.typesafeNeeded), findsOneWidget);
-    expect(find.text(_l10n.notionNeeded), findsOneWidget);
-    await _open(tester, AppWidgetKeys.navRecordings);
-    expect(find.text(_l10n.emptyCaptures), findsOneWidget);
+    await _open(tester, AppWidgetKeys.autoSaveCheckbox);
+    expect(tester.widget<Checkbox>(autoSave).value, isTrue);
+    final relaunch = ProviderContainer.test(
+      overrides: appOverrides(support: support, native: native),
+    );
+    addTearDown(relaunch.dispose);
+    expect(relaunch.read(settingsRepositoryProvider).autoSave(), isTrue);
+
+    final app = ProviderScope.containerOf(tester.element(find.byType(CaptureApp)));
+    await app.read(captureFlowProvider.notifier).process(sampleProposedCapture.id);
+    await _settle(tester);
+
+    verifyNever(() => native.showReview(any()));
+    expect(
+      app.read(captureRepositoryProvider).get(sampleProposedCapture.id)?.stage,
+      equals(CaptureStage.saved),
+    );
+    expect(
+      reminders.shown,
+      equals([(title: 'Saved to Notion', body: '1 note · 1 task · 1 reminder')]),
+    );
   });
 
   group('recording a new shortcut', () {

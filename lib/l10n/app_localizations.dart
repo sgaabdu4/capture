@@ -1124,6 +1124,24 @@ abstract class AppLocalizations {
   /// **'Allow microphone'**
   String get micAllow;
 
+  /// No description provided for @autoSaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving'**
+  String get autoSaveTitle;
+
+  /// No description provided for @autoSaveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Notion automatically'**
+  String get autoSaveLabel;
+
+  /// No description provided for @autoSaveDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'After a recording, Capture saves what it sorted without asking and sends a notification. The review card still appears when something needs a look.'**
+  String get autoSaveDetail;
+
   /// No description provided for @privacyTitle.
   ///
   /// In en, this message translates to:
@@ -1133,7 +1151,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyBody.
   ///
   /// In en, this message translates to:
-  /// **'Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it. Keys live in the macOS Keychain. No analytics, no logs of your words.'**
+  /// **'Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it, or auto-save does when you turn it on. Keys live in the macOS Keychain. No analytics, no logs of your words.'**
   String get privacyBody;
 
   /// No description provided for @resetTitle.
@@ -1145,7 +1163,7 @@ abstract class AppLocalizations {
   /// No description provided for @resetBody.
   ///
   /// In en, this message translates to:
-  /// **'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.'**
+  /// **'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, shortcut, auto-save, captures and recordings on this Mac. Your Notion pages and the speech model stay.'**
   String get resetBody;
 
   /// No description provided for @resetButton.

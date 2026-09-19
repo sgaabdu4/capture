@@ -9,20 +9,20 @@ part of 'capture_flow_notifier.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 /// The capture state machine. Every milestone is persisted before the next
-/// step (see [CaptureStage]); approval is the only path to Notion and to
-/// reminders. Native events (hotkey, pill, review card, menu) land here.
+/// step (see [CaptureStage]); approval, by the user or by auto-save, is the
+/// only path to Notion and to reminders. Native events (hotkey, pill, review card, menu) land here.
 
 @ProviderFor(CaptureFlowNotifier)
 final captureFlowProvider = CaptureFlowNotifierProvider._();
 
 /// The capture state machine. Every milestone is persisted before the next
-/// step (see [CaptureStage]); approval is the only path to Notion and to
-/// reminders. Native events (hotkey, pill, review card, menu) land here.
+/// step (see [CaptureStage]); approval, by the user or by auto-save, is the
+/// only path to Notion and to reminders. Native events (hotkey, pill, review card, menu) land here.
 final class CaptureFlowNotifierProvider
     extends $NotifierProvider<CaptureFlowNotifier, CaptureFlowState> {
   /// The capture state machine. Every milestone is persisted before the next
-  /// step (see [CaptureStage]); approval is the only path to Notion and to
-  /// reminders. Native events (hotkey, pill, review card, menu) land here.
+  /// step (see [CaptureStage]); approval, by the user or by auto-save, is the
+  /// only path to Notion and to reminders. Native events (hotkey, pill, review card, menu) land here.
   CaptureFlowNotifierProvider._()
     : super(
         from: null,
@@ -50,11 +50,11 @@ final class CaptureFlowNotifierProvider
   }
 }
 
-String _$captureFlowNotifierHash() => r'807646d854903cbebf65a86c66d91892aa55584d';
+String _$captureFlowNotifierHash() => r'a624edbf51ac9d298415d63630b96f081eff923e';
 
 /// The capture state machine. Every milestone is persisted before the next
-/// step (see [CaptureStage]); approval is the only path to Notion and to
-/// reminders. Native events (hotkey, pill, review card, menu) land here.
+/// step (see [CaptureStage]); approval, by the user or by auto-save, is the
+/// only path to Notion and to reminders. Native events (hotkey, pill, review card, menu) land here.
 
 abstract class _$CaptureFlowNotifier extends $Notifier<CaptureFlowState> {
   CaptureFlowState build();
