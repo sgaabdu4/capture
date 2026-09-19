@@ -28,6 +28,9 @@
 	<string>Capture records your voice only while you are capturing, and transcribes it on this Mac.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
+	<!-- Skia until Flutter ships flutter/flutter#192522: Impeller crashes on macOS 27 when the window resizes (flutter/flutter#185394). -->
+	<key>FLTEnableImpeller</key>
+	<false/>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUEnableAutomaticChecks</key>
