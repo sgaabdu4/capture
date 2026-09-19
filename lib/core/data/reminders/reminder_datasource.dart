@@ -9,6 +9,9 @@ abstract interface class IReminderDatasource {
   /// False when notifications are not permitted.
   Future<bool> schedule({required String itemId, required String title, required tz.TZDateTime at});
   Future<void> cancel(String itemId);
+
+  /// Every scheduled and shown reminder.
+  Future<void> cancelAll();
 }
 
 /// Stable 31-bit notification id for an item id (FNV-1a).
@@ -26,20 +29,23 @@ class LocalNotificationsReminderDatasource implements IReminderDatasource {
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialised = false;
 
+  Future<void> _initialise() async {
+    if (_initialised) return;
+    await _plugin.initialize(
+      settings: const .new(
+        macOS: .new(
+          requestAlertPermission: false,
+          requestSoundPermission: false,
+          requestBadgePermission: false,
+        ),
+      ),
+    );
+    _initialised = true;
+  }
+
   /// Permission is requested on the first reminder, never at launch.
   Future<bool> _ensure() async {
-    if (!_initialised) {
-      await _plugin.initialize(
-        settings: const .new(
-          macOS: .new(
-            requestAlertPermission: false,
-            requestSoundPermission: false,
-            requestBadgePermission: false,
-          ),
-        ),
-      );
-      _initialised = true;
-    }
+    await _initialise();
     final mac = _plugin
         .resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>();
     if (mac == null) return false;
@@ -68,6 +74,13 @@ class LocalNotificationsReminderDatasource implements IReminderDatasource {
   Future<void> cancel(String itemId) async {
     if (!_initialised) await _ensure();
     await _plugin.cancel(id: notificationId(itemId));
+  }
+
+  /// Never asks for permission: there is nothing to cancel without it.
+  @override
+  Future<void> cancelAll() async {
+    await _initialise();
+    await _plugin.cancelAll();
   }
 }
 

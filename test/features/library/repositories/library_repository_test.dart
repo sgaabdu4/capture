@@ -95,6 +95,9 @@ class _Reminders implements IReminderDatasource {
 
   @override
   Future<void> cancel(String itemId) async => calls.add('cancel $itemId');
+
+  @override
+  Future<void> cancelAll() async => calls.add('cancel all');
 }
 
 /// A saved task due tomorrow (after [FakeSystem.now]) with no reminder.

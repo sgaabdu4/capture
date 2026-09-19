@@ -209,7 +209,7 @@ void main() {
     expect(find.text('Milk frother for the café'), findsOneWidget);
   });
 
-  testWidgets('Reset forgets both keys, the Notion page and local captures but keeps the model', (
+  testWidgets('Reset forgets keys, Notion page, captures and reminders but keeps the model', (
     tester,
   ) async {
     final seed = ProviderContainer.test(
@@ -221,7 +221,11 @@ void main() {
     final recording = File('${support.path}/captures/proposed.m4a')..createSync(recursive: true);
     final model = File('${support.path}/model/verified.json')..createSync(recursive: true);
     final secrets = FakeSecrets({.typesafeKey: 'key', .notionToken: 'token'});
-    await _pump(tester, appOverrides(support: support, native: native, secrets: secrets));
+    final reminders = FakeReminders();
+    await _pump(
+      tester,
+      appOverrides(support: support, native: native, secrets: secrets, reminders: reminders),
+    );
     await _open(tester, AppWidgetKeys.navRecordings);
     expect(find.byKey(ValueKey(sampleProposedCapture.id)), findsOneWidget);
     await _open(tester, AppWidgetKeys.settingsButton);
@@ -244,6 +248,7 @@ void main() {
     expect([for (final s in Secret.values) await secrets.read(s)], equals([null, null]));
     expect(recording.parent.existsSync(), isFalse);
     expect(model.existsSync(), isTrue);
+    expect(reminders.cancelledAll, isTrue);
     expect(find.text(_l10n.setupTitle), findsOneWidget);
     expect(find.text(_l10n.typesafeNeeded), findsOneWidget);
     expect(find.text(_l10n.notionNeeded), findsOneWidget);

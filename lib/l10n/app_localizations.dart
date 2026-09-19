@@ -1145,7 +1145,7 @@ abstract class AppLocalizations {
   /// No description provided for @resetBody.
   ///
   /// In en, this message translates to:
-  /// **'Removes both keys from the Keychain and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.'**
+  /// **'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.'**
   String get resetBody;
 
   /// No description provided for @resetButton.

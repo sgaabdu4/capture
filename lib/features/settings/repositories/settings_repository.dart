@@ -44,7 +44,7 @@ abstract interface class ISettingsRepository {
   Stream<SpeechModelEvent> downloadSpeechModel();
 
   /// Forgets both keys, the Notion link, the shortcut and every local
-  /// capture and recording. The speech model stays.
+  /// capture, recording and reminder. The speech model stays.
   Future<void> reset();
 }
 
@@ -162,7 +162,7 @@ class SettingsRepository implements ISettingsRepository {
     for (final secret in Secret.values) {
       await _secrets.delete(secret);
     }
-    _localData.erase();
+    await _localData.erase();
   }
 
   static SpeechModelFailure _downloadFailure(Object error) => switch (error) {

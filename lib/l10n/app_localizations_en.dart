@@ -629,7 +629,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetBody =>
-      'Removes both keys from the Keychain and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.';
+      'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.';
 
   @override
   String get resetButton => 'Reset Capture';
