@@ -23,6 +23,10 @@ sealed class CaptureFlowState with _$CaptureFlowState {
     ShellDestination? destination,
     String? editId,
     @Default(0) int destinationSerial,
+
+    /// The latest capture saved without the review card, for its
+    /// notification.
+    String? autoSavedId,
   }) = _CaptureFlowState;
 
   CaptureRecord? byId(String? id) => captures.where((c) => c.id == id).firstOrNull;

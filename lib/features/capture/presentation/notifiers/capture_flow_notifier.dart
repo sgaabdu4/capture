@@ -27,14 +27,15 @@ import 'package:capture/features/capture/repositories/capture_save_repository.da
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
+import 'package:capture/features/settings/presentation/notifiers/settings_state.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'capture_flow_notifier.g.dart';
 
 /// The capture state machine. Every milestone is persisted before the next
-/// step (see [CaptureStage]); approval is the only path to Notion and to
-/// reminders. Native events (hotkey, pill, review card, menu) land here.
+/// step (see [CaptureStage]); approval, by the user or by auto-save, is the
+/// only path to Notion and to reminders. Native events (hotkey, pill, review card, menu) land here.
 @Riverpod(keepAlive: true)
 class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   @override
@@ -195,8 +196,23 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     if (!ref.mounted || transcribed == null) return;
     final proposed = transcribed.stage == .transcribed ? await _analyse(transcribed) : transcribed;
     if (!ref.mounted) return;
-    if (proposed.stage == .proposed) showReview(id);
+    if (proposed.stage == .proposed && !await _autoSave(proposed)) showReview(id);
     if (proposed.stage == .approved) await approve(id);
+  }
+
+  /// With auto-save on, approves and saves a proposal the card would have
+  /// nothing to ask about. False when the card is still needed: auto-save
+  /// is off, Notion is not connected, Jev failed, nothing was heard or an
+  /// item blocks approval.
+  Future<bool> _autoSave(CaptureRecord record) async {
+    final SettingsState(:autoSave, :workspace, :hasNotionToken) = ref.read(settingsProvider);
+    if (!autoSave || workspace == null || !hasNotionToken || record.failure != null) {
+      return false;
+    }
+    final approved = _approved(record);
+    if (approved == null) return false;
+    await _save(approved, workspace, fromCard: true, auto: true);
+    return true;
   }
 
   /// Null when transcription failed (the failure is recorded).
@@ -317,14 +333,20 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     return next;
   }
 
-  Future<void> _save(CaptureRecord record, NotionWorkspace ws, {required bool fromCard}) async {
+  /// [auto] saves announce themselves with a notification.
+  Future<void> _save(
+    CaptureRecord record,
+    NotionWorkspace ws, {
+    required bool fromCard,
+    bool auto = false,
+  }) async {
     final id = record.id;
     _enterSaving(id);
     final saved = await _ensureSaver().save(record, ws);
     if (!ref.mounted) return;
     switch (saved) {
       case Ok(:final value):
-        await _finish(value);
+        await _finish(value, auto: auto);
       case Err(:final failure):
         _put((_ensureCaptures().get(id) ?? record).copyWith(failure: failure));
         _afterSaveFailure(id, failure, fromCard: fromCard);
@@ -340,10 +362,11 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   /// Saved once every Notion step is confirmed. Reminders follow without
   /// holding the save open: the first one waits on the macOS permission prompt.
-  Future<void> _finish(CaptureRecord record) async {
+  Future<void> _finish(CaptureRecord record, {required bool auto}) async {
     final saved = record.copyWith(stage: .saved, failure: null);
     _put(saved);
     _idle(notice: .saved);
+    if (auto) state = state.copyWith(autoSavedId: saved.id);
     unawaited(ref.read(libraryProvider.notifier).refresh());
     final reminders = await _ensureSaver().scheduleReminders(saved);
     if (!ref.mounted) return;

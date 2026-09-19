@@ -18,9 +18,20 @@ class FakeSecrets implements ISecretsLocalDatasource {
   Future<void> delete(Secret secret) async => _values.remove(secret);
 }
 
-/// Notifications that are never shown; records whether all were cancelled.
+/// A notification's text.
+typedef ShownNotification = ({String title, String body});
+
+/// Notifications that are never shown; records what would have been shown
+/// and whether all were cancelled.
 class FakeReminders implements IReminderDatasource {
   bool cancelledAll = false;
+
+  /// Title and body of each notification shown now.
+  final shown = <ShownNotification>[];
+
+  @override
+  Future<void> show({required String id, required String title, required String body}) async =>
+      shown.add((title: title, body: body));
 
   @override
   Future<bool> schedule({

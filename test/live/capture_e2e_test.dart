@@ -88,6 +88,8 @@ class _Reminders implements IReminderDatasource {
 
   @override
   Future<void> cancelAll() async {}
+  @override
+  Future<void> show({required String id, required String title, required String body}) async {}
 }
 
 String _required(String name) => switch (_env[name]) {

@@ -8,6 +8,7 @@ import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/screens/setup_steps_screen.dart';
+import 'package:capture/features/settings/presentation/widgets/auto_save_section.dart';
 import 'package:capture/features/settings/presentation/widgets/mic_section.dart';
 import 'package:capture/features/settings/presentation/widgets/privacy_section.dart';
 import 'package:capture/features/settings/presentation/widgets/reset_dialog.dart';
@@ -16,7 +17,7 @@ import 'package:capture/features/settings/presentation/widgets/shortcut_section.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Setup steps, shortcut, microphone, privacy and reset.
+/// Setup steps, shortcut, microphone, auto-save, privacy and reset.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -47,6 +48,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     final mic = ref.watch(settingsProvider.select((s) => s.mic));
+    final autoSave = ref.watch(settingsProvider.select((s) => s.autoSave));
     final capturing = ref.watch(captureFlowProvider.select((s) => s.busyWith));
     return PageFrame(
       title: l10n.navSettings,
@@ -76,6 +78,13 @@ class SettingsScreen extends ConsumerWidget {
             onAllow: mic == .undetermined
                 ? () => unawaited(ref.read(settingsProvider.notifier).ensureMic())
                 : null,
+          ),
+        ),
+        const SizedBox(height: Spacing.lg),
+        PaperCard(
+          child: AutoSaveSection(
+            on: autoSave,
+            onChanged: (on) => ref.read(settingsProvider.notifier).setAutoSave(on: on),
           ),
         ),
         const SizedBox(height: Spacing.lg),

@@ -618,18 +618,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get micAllow => 'Allow microphone';
 
   @override
+  String get autoSaveTitle => 'Saving';
+
+  @override
+  String get autoSaveLabel => 'Save to Notion automatically';
+
+  @override
+  String get autoSaveDetail =>
+      'After a recording, Capture saves what it sorted without asking and sends a notification. The review card still appears when something needs a look.';
+
+  @override
   String get privacyTitle => 'Privacy';
 
   @override
   String get privacyBody =>
-      'Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it. Keys live in the macOS Keychain. No analytics, no logs of your words.';
+      'Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it, or auto-save does when you turn it on. Keys live in the macOS Keychain. No analytics, no logs of your words.';
 
   @override
   String get resetTitle => 'Reset Capture';
 
   @override
   String get resetBody =>
-      'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, shortcut, captures and recordings on this Mac. Your Notion pages and the speech model stay.';
+      'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, shortcut, auto-save, captures and recordings on this Mac. Your Notion pages and the speech model stay.';
 
   @override
   String get resetButton => 'Reset Capture';

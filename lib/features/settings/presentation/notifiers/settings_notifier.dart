@@ -25,6 +25,7 @@ class SettingsNotifier extends _$SettingsNotifier {
       shortcut: repo.shortcut(),
       modelReady: repo.isSpeechModelReady(),
       workspace: repo.workspace(),
+      autoSave: repo.autoSave(),
     );
   }
 
@@ -120,6 +121,11 @@ class SettingsNotifier extends _$SettingsNotifier {
       shortcutRegistered: registered,
       mic: state.mic,
     );
+  }
+
+  void setAutoSave({required bool on}) {
+    _ensureRepository().saveAutoSave(on: on);
+    state = state.copyWith(autoSave: on);
   }
 
   void _rejectPageLink() => state = state.copyWith(pageLinkInvalid: true, notionFailure: null);

@@ -8,6 +8,7 @@ import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/domain/values/result.dart';
 import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
+import 'package:capture/features/settings/data/datasources/auto_save_local_datasource.dart';
 import 'package:capture/features/settings/data/datasources/local_data_datasource.dart';
 import 'package:capture/features/settings/data/datasources/notion_workspace_remote_datasource.dart';
 import 'package:capture/features/settings/data/datasources/shortcut_local_datasource.dart';
@@ -20,8 +21,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'settings_repository.g.dart';
 
-/// Credentials (Keychain only), the Notion connection, the shortcut and the
-/// speech model.
+/// Credentials (Keychain only), the Notion connection, the shortcut,
+/// auto-save and the speech model.
 abstract interface class ISettingsRepository {
   Future<bool> hasTypesafeKey();
 
@@ -40,11 +41,15 @@ abstract interface class ISettingsRepository {
   Future<void> disconnectNotion();
   Shortcut shortcut();
   void saveShortcut(Shortcut shortcut);
+
+  /// Off until turned on in Settings.
+  bool autoSave();
+  void saveAutoSave({required bool on});
   bool isSpeechModelReady();
   Stream<SpeechModelEvent> downloadSpeechModel();
 
-  /// Forgets both keys, the Notion link, the shortcut and every local
-  /// capture, recording and reminder. The speech model stays.
+  /// Forgets both keys, the Notion link, the shortcut, auto-save and every
+  /// local capture, recording and reminder. The speech model stays.
   Future<void> reset();
 }
 
@@ -57,11 +62,19 @@ typedef NotionConnectionSources = ({
 });
 
 /// Settings and data that live only on this Mac.
-typedef DeviceSettingsSources = ({
-  IShortcutLocalDatasource shortcuts,
-  ISpeechModelDatasource speechModel,
-  ILocalDataDatasource localData,
-});
+class DeviceSettingsSources {
+  const DeviceSettingsSources({
+    required this.shortcuts,
+    required this.autoSave,
+    required this.speechModel,
+    required this.localData,
+  });
+
+  final IShortcutLocalDatasource shortcuts;
+  final IAutoSaveLocalDatasource autoSave;
+  final ISpeechModelDatasource speechModel;
+  final ILocalDataDatasource localData;
+}
 
 class SettingsRepository implements ISettingsRepository {
   SettingsRepository({
@@ -73,6 +86,7 @@ class SettingsRepository implements ISettingsRepository {
        _workspaceCache = notion.cache,
        _groups = notion.groups,
        _shortcuts = device.shortcuts,
+       _autoSave = device.autoSave,
        _speechModel = device.speechModel,
        _localData = device.localData;
 
@@ -82,6 +96,7 @@ class SettingsRepository implements ISettingsRepository {
   final INotionWorkspaceLocalDatasource _workspaceCache;
   final IGroupsRepository _groups;
   final IShortcutLocalDatasource _shortcuts;
+  final IAutoSaveLocalDatasource _autoSave;
   final ISpeechModelDatasource _speechModel;
   final ILocalDataDatasource _localData;
 
@@ -142,6 +157,12 @@ class SettingsRepository implements ISettingsRepository {
   void saveShortcut(Shortcut shortcut) => _shortcuts.write(.fromEntity(shortcut));
 
   @override
+  bool autoSave() => _autoSave.on;
+
+  @override
+  void saveAutoSave({required bool on}) => _autoSave.on = on;
+
+  @override
   bool isSpeechModelReady() => _speechModel.isReady();
 
   /// Network and disk exceptions from the download end it as a failed
@@ -181,8 +202,9 @@ ISettingsRepository settingsRepository(Ref ref) => SettingsRepository(
     cache: ref.read(notionWorkspaceLocalDatasourceProvider),
     groups: ref.read(groupsRepositoryProvider),
   ),
-  device: (
+  device: .new(
     shortcuts: ref.read(shortcutLocalDatasourceProvider),
+    autoSave: ref.read(autoSaveLocalDatasourceProvider),
     speechModel: ref.read(speechModelDatasourceProvider),
     localData: ref.read(localDataDatasourceProvider),
   ),

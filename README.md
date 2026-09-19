@@ -26,7 +26,7 @@ https://github.com/user-attachments/assets/bf1d3b83-6699-4a02-b5be-1f403e4bd1b2
 
 - **Local speech.** Parakeet transcribes on your Mac. Audio never goes to an AI service.
 - **Sorted, not rewritten.** Jev (TypeSafe) splits what you said into separate thoughts and files each one into your groups. Titles and bodies come from your own words.
-- **You approve first.** Nothing reaches Notion until you press **Yes, save**.
+- **You approve first.** Nothing reaches Notion until you press **Yes, save**, unless you turn on auto-save.
 - **Notion is the library.** Captures, notes, tasks and the recording are saved under one Notion page you choose.
 - **Reminders.** Approved tasks with a time become macOS notifications.
 
@@ -76,6 +76,7 @@ Then, once, in the app:
 | Delete | **Delete**, then **Move to Notion trash**. You can restore it from Notion's trash. |
 | Groups | Name and describe your groups. Jev uses the descriptions to file things. |
 | Shortcut | **Settings → Record shortcut**, press the keys, then **Save shortcut**. |
+| Auto-save | **Settings → Save to Notion automatically**. Recordings save without the card and a notification says what was saved. The card still appears when something needs a look. |
 
 Narrow the window and the sidebar becomes a bottom bar. On large screens the content stays centred.
 

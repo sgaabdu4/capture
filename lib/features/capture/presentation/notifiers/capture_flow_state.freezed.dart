@@ -17,7 +17,9 @@ mixin _$CaptureFlowState {
 
 /// Newest first.
  List<CaptureRecord> get captures; CapturePhase get phase; String? get activeId; CaptureNotice? get notice; CaptureFailure? get failure;/// Page the main window should open; acted on once per serial.
- ShellDestination? get destination; String? get editId; int get destinationSerial;
+ ShellDestination? get destination; String? get editId; int get destinationSerial;/// The latest capture saved without the review card, for its
+/// notification.
+ String? get autoSavedId;
 /// Create a copy of CaptureFlowState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,20 +31,20 @@ $CaptureFlowStateCopyWith<CaptureFlowState> get copyWith => _$CaptureFlowStateCo
 @override
 bool operator ==(Object other) {
   final _this = this as CaptureFlowState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CaptureFlowState&&const DeepCollectionEquality().equals(other.captures, _this.captures)&&(identical(other.phase, _this.phase) || other.phase == _this.phase)&&(identical(other.activeId, _this.activeId) || other.activeId == _this.activeId)&&(identical(other.notice, _this.notice) || other.notice == _this.notice)&&(identical(other.failure, _this.failure) || other.failure == _this.failure)&&(identical(other.destination, _this.destination) || other.destination == _this.destination)&&(identical(other.editId, _this.editId) || other.editId == _this.editId)&&(identical(other.destinationSerial, _this.destinationSerial) || other.destinationSerial == _this.destinationSerial));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CaptureFlowState&&const DeepCollectionEquality().equals(other.captures, _this.captures)&&(identical(other.phase, _this.phase) || other.phase == _this.phase)&&(identical(other.activeId, _this.activeId) || other.activeId == _this.activeId)&&(identical(other.notice, _this.notice) || other.notice == _this.notice)&&(identical(other.failure, _this.failure) || other.failure == _this.failure)&&(identical(other.destination, _this.destination) || other.destination == _this.destination)&&(identical(other.editId, _this.editId) || other.editId == _this.editId)&&(identical(other.destinationSerial, _this.destinationSerial) || other.destinationSerial == _this.destinationSerial)&&(identical(other.autoSavedId, _this.autoSavedId) || other.autoSavedId == _this.autoSavedId));
 }
 
 
 @override
 int get hashCode {
   final _this = this as CaptureFlowState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.captures),_this.phase,_this.activeId,_this.notice,_this.failure,_this.destination,_this.editId,_this.destinationSerial);
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.captures),_this.phase,_this.activeId,_this.notice,_this.failure,_this.destination,_this.editId,_this.destinationSerial,_this.autoSavedId);
 }
 
 @override
 String toString() {
   final _this = this as CaptureFlowState;
-  return 'CaptureFlowState(captures: ${_this.captures}, phase: ${_this.phase}, activeId: ${_this.activeId}, notice: ${_this.notice}, failure: ${_this.failure}, destination: ${_this.destination}, editId: ${_this.editId}, destinationSerial: ${_this.destinationSerial})';
+  return 'CaptureFlowState(captures: ${_this.captures}, phase: ${_this.phase}, activeId: ${_this.activeId}, notice: ${_this.notice}, failure: ${_this.failure}, destination: ${_this.destination}, editId: ${_this.editId}, destinationSerial: ${_this.destinationSerial}, autoSavedId: ${_this.autoSavedId})';
 }
 
 
@@ -53,7 +55,7 @@ abstract mixin class $CaptureFlowStateCopyWith<$Res>  {
   factory $CaptureFlowStateCopyWith(CaptureFlowState value, $Res Function(CaptureFlowState) _then) = _$CaptureFlowStateCopyWithImpl;
 @useResult
 $Res call({
- List<CaptureRecord> captures, CapturePhase phase, String? activeId, CaptureNotice? notice, CaptureFailure? failure, ShellDestination? destination, String? editId, int destinationSerial
+ List<CaptureRecord> captures, CapturePhase phase, String? activeId, CaptureNotice? notice, CaptureFailure? failure, ShellDestination? destination, String? editId, int destinationSerial, String? autoSavedId
 });
 
 
@@ -70,7 +72,7 @@ class _$CaptureFlowStateCopyWithImpl<$Res>
 
 /// Create a copy of CaptureFlowState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? captures = null,Object? phase = null,Object? activeId = freezed,Object? notice = freezed,Object? failure = freezed,Object? destination = freezed,Object? editId = freezed,Object? destinationSerial = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? captures = null,Object? phase = null,Object? activeId = freezed,Object? notice = freezed,Object? failure = freezed,Object? destination = freezed,Object? editId = freezed,Object? destinationSerial = null,Object? autoSavedId = freezed,}) {
   return _then(CaptureFlowState(
 captures: null == captures ? _self.captures : captures // ignore: cast_nullable_to_non_nullable
 as List<CaptureRecord>,phase: null == phase ? _self.phase : phase // ignore: cast_nullable_to_non_nullable
@@ -80,7 +82,8 @@ as CaptureNotice?,failure: freezed == failure ? _self.failure : failure // ignor
 as CaptureFailure?,destination: freezed == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
 as ShellDestination?,editId: freezed == editId ? _self.editId : editId // ignore: cast_nullable_to_non_nullable
 as String?,destinationSerial: null == destinationSerial ? _self.destinationSerial : destinationSerial // ignore: cast_nullable_to_non_nullable
-as int,
+as int,autoSavedId: freezed == autoSavedId ? _self.autoSavedId : autoSavedId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -162,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<CaptureRecord> captures,  CapturePhase phase,  String? activeId,  CaptureNotice? notice,  CaptureFailure? failure,  ShellDestination? destination,  String? editId,  int destinationSerial)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<CaptureRecord> captures,  CapturePhase phase,  String? activeId,  CaptureNotice? notice,  CaptureFailure? failure,  ShellDestination? destination,  String? editId,  int destinationSerial,  String? autoSavedId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CaptureFlowState() when $default != null:
-return $default(_that.captures,_that.phase,_that.activeId,_that.notice,_that.failure,_that.destination,_that.editId,_that.destinationSerial);case _:
+return $default(_that.captures,_that.phase,_that.activeId,_that.notice,_that.failure,_that.destination,_that.editId,_that.destinationSerial,_that.autoSavedId);case _:
   return orElse();
 
 }
@@ -183,10 +186,10 @@ return $default(_that.captures,_that.phase,_that.activeId,_that.notice,_that.fai
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<CaptureRecord> captures,  CapturePhase phase,  String? activeId,  CaptureNotice? notice,  CaptureFailure? failure,  ShellDestination? destination,  String? editId,  int destinationSerial)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<CaptureRecord> captures,  CapturePhase phase,  String? activeId,  CaptureNotice? notice,  CaptureFailure? failure,  ShellDestination? destination,  String? editId,  int destinationSerial,  String? autoSavedId)  $default,) {final _that = this;
 switch (_that) {
 case _CaptureFlowState():
-return $default(_that.captures,_that.phase,_that.activeId,_that.notice,_that.failure,_that.destination,_that.editId,_that.destinationSerial);}
+return $default(_that.captures,_that.phase,_that.activeId,_that.notice,_that.failure,_that.destination,_that.editId,_that.destinationSerial,_that.autoSavedId);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -200,10 +203,10 @@ return $default(_that.captures,_that.phase,_that.activeId,_that.notice,_that.fai
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<CaptureRecord> captures,  CapturePhase phase,  String? activeId,  CaptureNotice? notice,  CaptureFailure? failure,  ShellDestination? destination,  String? editId,  int destinationSerial)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<CaptureRecord> captures,  CapturePhase phase,  String? activeId,  CaptureNotice? notice,  CaptureFailure? failure,  ShellDestination? destination,  String? editId,  int destinationSerial,  String? autoSavedId)?  $default,) {final _that = this;
 switch (_that) {
 case _CaptureFlowState() when $default != null:
-return $default(_that.captures,_that.phase,_that.activeId,_that.notice,_that.failure,_that.destination,_that.editId,_that.destinationSerial);case _:
+return $default(_that.captures,_that.phase,_that.activeId,_that.notice,_that.failure,_that.destination,_that.editId,_that.destinationSerial,_that.autoSavedId);case _:
   return null;
 
 }
@@ -215,7 +218,7 @@ return $default(_that.captures,_that.phase,_that.activeId,_that.notice,_that.fai
 
 
 class _CaptureFlowState extends CaptureFlowState {
-  const _CaptureFlowState({required  List<CaptureRecord> captures, this.phase = CapturePhase.idle, this.activeId, this.notice, this.failure, this.destination, this.editId, this.destinationSerial = 0}): _captures = captures,super._();
+  const _CaptureFlowState({required  List<CaptureRecord> captures, this.phase = CapturePhase.idle, this.activeId, this.notice, this.failure, this.destination, this.editId, this.destinationSerial = 0, this.autoSavedId}): _captures = captures,super._();
   
 
 /// Newest first.
@@ -235,6 +238,9 @@ class _CaptureFlowState extends CaptureFlowState {
 @override final  ShellDestination? destination;
 @override final  String? editId;
 @override@JsonKey() final  int destinationSerial;
+/// The latest capture saved without the review card, for its
+/// notification.
+@override final  String? autoSavedId;
 
 /// Create a copy of CaptureFlowState
 /// with the given fields replaced by the non-null parameter values.
@@ -246,18 +252,18 @@ _$CaptureFlowStateCopyWith<_CaptureFlowState> get copyWith => __$CaptureFlowStat
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CaptureFlowState&&const DeepCollectionEquality().equals(other.captures, _captures)&&(identical(other.phase, phase) || other.phase == phase)&&(identical(other.activeId, activeId) || other.activeId == activeId)&&(identical(other.notice, notice) || other.notice == notice)&&(identical(other.failure, failure) || other.failure == failure)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.editId, editId) || other.editId == editId)&&(identical(other.destinationSerial, destinationSerial) || other.destinationSerial == destinationSerial));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CaptureFlowState&&const DeepCollectionEquality().equals(other.captures, _captures)&&(identical(other.phase, phase) || other.phase == phase)&&(identical(other.activeId, activeId) || other.activeId == activeId)&&(identical(other.notice, notice) || other.notice == notice)&&(identical(other.failure, failure) || other.failure == failure)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.editId, editId) || other.editId == editId)&&(identical(other.destinationSerial, destinationSerial) || other.destinationSerial == destinationSerial)&&(identical(other.autoSavedId, autoSavedId) || other.autoSavedId == autoSavedId));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_captures),phase,activeId,notice,failure,destination,editId,destinationSerial);
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_captures),phase,activeId,notice,failure,destination,editId,destinationSerial,autoSavedId);
 }
 
 @override
 String toString() {
-    return 'CaptureFlowState(captures: $captures, phase: $phase, activeId: $activeId, notice: $notice, failure: $failure, destination: $destination, editId: $editId, destinationSerial: $destinationSerial)';
+    return 'CaptureFlowState(captures: $captures, phase: $phase, activeId: $activeId, notice: $notice, failure: $failure, destination: $destination, editId: $editId, destinationSerial: $destinationSerial, autoSavedId: $autoSavedId)';
 }
 
 
@@ -268,7 +274,7 @@ abstract mixin class _$CaptureFlowStateCopyWith<$Res> implements $CaptureFlowSta
   factory _$CaptureFlowStateCopyWith(_CaptureFlowState value, $Res Function(_CaptureFlowState) _then) = __$CaptureFlowStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<CaptureRecord> captures, CapturePhase phase, String? activeId, CaptureNotice? notice, CaptureFailure? failure, ShellDestination? destination, String? editId, int destinationSerial
+ List<CaptureRecord> captures, CapturePhase phase, String? activeId, CaptureNotice? notice, CaptureFailure? failure, ShellDestination? destination, String? editId, int destinationSerial, String? autoSavedId
 });
 
 
@@ -285,7 +291,7 @@ class __$CaptureFlowStateCopyWithImpl<$Res>
 
 /// Create a copy of CaptureFlowState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? captures = null,Object? phase = null,Object? activeId = freezed,Object? notice = freezed,Object? failure = freezed,Object? destination = freezed,Object? editId = freezed,Object? destinationSerial = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? captures = null,Object? phase = null,Object? activeId = freezed,Object? notice = freezed,Object? failure = freezed,Object? destination = freezed,Object? editId = freezed,Object? destinationSerial = null,Object? autoSavedId = freezed,}) {
   return _then(_CaptureFlowState(
 captures: null == captures ? _self._captures : captures // ignore: cast_nullable_to_non_nullable
 as List<CaptureRecord>,phase: null == phase ? _self.phase : phase // ignore: cast_nullable_to_non_nullable
@@ -295,7 +301,8 @@ as CaptureNotice?,failure: freezed == failure ? _self.failure : failure // ignor
 as CaptureFailure?,destination: freezed == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
 as ShellDestination?,editId: freezed == editId ? _self.editId : editId // ignore: cast_nullable_to_non_nullable
 as String?,destinationSerial: null == destinationSerial ? _self.destinationSerial : destinationSerial // ignore: cast_nullable_to_non_nullable
-as int,
+as int,autoSavedId: freezed == autoSavedId ? _self.autoSavedId : autoSavedId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

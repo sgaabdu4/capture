@@ -35,6 +35,8 @@ class _AllowedReminders implements IReminderDatasource {
 
   @override
   Future<void> cancelAll() async {}
+  @override
+  Future<void> show({required String id, required String title, required String body}) async {}
 }
 
 /// A task whose reminder is after [FakeSystem.now].

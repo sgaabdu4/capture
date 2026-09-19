@@ -25,6 +25,7 @@ abstract final class AppWidgetKeys {
   static const shortcutChangeButton = 'settings.shortcut.change';
   static const shortcutSaveButton = 'settings.shortcut.save';
   static const micAllowButton = 'settings.mic.allow';
+  static const autoSaveCheckbox = 'settings.autoSave';
   static const resetButton = 'settings.reset';
   static const resetConfirmButton = 'settings.reset.confirm';
 
