@@ -1,0 +1,64 @@
+name: Flutter fix watch
+
+# Capture renders with Skia on macOS (FLTEnableImpeller is false in
+# macos/Runner/Info.plist) because Impeller crashes when the window resizes
+# (flutter/flutter#185394). Once stable Flutter includes the fix,
+# flutter/flutter#192522, this opens one issue saying Impeller can come back.
+# The fix counts as shipped when stable contains its merge commit or when
+# stable's changelog lists it as a hotfix.
+on:
+  schedule:
+    - cron: "23 7 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: flutter-fix-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    name: watch
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write # Open the one reminder issue.
+    steps:
+      - name: Open an issue once stable Flutter includes the fix
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          fix=192522
+          title="Flutter fix for the macOS resize crash is in stable: re-enable Impeller"
+          if [ -n "$(gh issue list --repo "$REPO" --state all --search "\"$title\" in:title" --json number --jq '.[0].number // empty')" ]; then
+            echo "The reminder issue already exists."
+            exit 0
+          fi
+          releases=$(curl -fsSL https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json)
+          stable=$(jq -r '.current_release.stable' <<<"$releases")
+          version=$(jq -r --arg h "$stable" 'first(.releases[] | select(.hash == $h) | .version)' <<<"$releases")
+          included=false
+          merge=$(gh api "repos/flutter/flutter/pulls/$fix" --jq 'if .merged_at then .merge_commit_sha else "" end')
+          if [ -n "$merge" ]; then
+            case "$(gh api "repos/flutter/flutter/compare/$merge...$stable" --jq .status)" in
+              ahead | identical) included=true ;;
+            esac
+          fi
+          if [ "$included" = false ] &&
+            gh api -H "Accept: application/vnd.github.raw" "repos/flutter/flutter/contents/CHANGELOG.md?ref=$stable" |
+            grep -q "flutter/flutter/pull/$fix"; then
+            included=true
+          fi
+          if [ "$included" = false ]; then
+            echo "Flutter $version (stable) does not include flutter/flutter#$fix yet."
+            exit 0
+          fi
+          gh issue create --repo "$REPO" --title "$title" --body "Flutter $version (stable) includes https://github.com/flutter/flutter/pull/$fix, the fix for the Impeller crash when the window resizes (https://github.com/flutter/flutter/issues/185394).
+
+          To re-enable Impeller:
+          1. Delete the FLTEnableImpeller key and its comment from macos/Runner/Info.plist.
+          2. With Reduce Transparency on, snap the window left and right, zoom it and switch apps; it must not crash.
+          3. Ship it and delete .github/workflows/flutter-fix-watch.yml in the same change."
