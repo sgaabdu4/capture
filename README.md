@@ -43,7 +43,9 @@ https://github.com/user-attachments/assets/bf1d3b83-6699-4a02-b5be-1f403e4bd1b2
 
 ## Download
 
-**[Download the latest Capture DMG](https://github.com/sgaabdu4/capture/releases/latest)**, open it and drag Capture into Applications. Every merge to `main` publishes a new release.
+[![Latest release](https://img.shields.io/github/v/release/sgaabdu4/capture)](https://github.com/sgaabdu4/capture/releases/latest)
+
+**[Download the latest Capture DMG](https://github.com/sgaabdu4/capture/releases/latest)**, open it and drag Capture into Applications. Every merge to `main` that changes more than documentation publishes a new release.
 
 Releases are signed with a Developer ID and notarised by Apple once the signing secrets are set. An unsigned build says so in its release notes: open **System Settings → Privacy & Security** and choose **Open Anyway** for Capture.
 
