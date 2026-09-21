@@ -6,6 +6,8 @@ name: Release
 # Developer ID certificate, notarises it and publishes it as the latest
 # GitHub release with the Sparkle feed the app checks for updates. Without
 # the signing secrets the release stays ad-hoc signed and has no feed.
+# Changes to documentation alone (top-level Markdown and plans) build and
+# publish nothing; the required dmg check still reports so the PR can merge.
 on:
   push:
     branches:
@@ -19,27 +21,61 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  changes:
+    name: changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read # Compare the changed files.
+    outputs:
+      app: ${{ steps.diff.outputs.app }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Look for changes beyond documentation
+        id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          files="$(git diff --name-only "$BASE" HEAD)"
+          if printf '%s\n' "$files" | grep -Eqiv '^([^/]*\.md|features/.*/plan\.md)$'; then
+            echo "app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Only documentation changed: nothing to build or publish."
+            echo "app=false" >> "$GITHUB_OUTPUT"
+          fi
+
   dmg:
     name: dmg
+    needs: changes
     if: github.event_name == 'pull_request'
-    runs-on: macos-latest
+    runs-on: ${{ needs.changes.outputs.app == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 30
     permissions:
       contents: read # Check out the pull request.
     steps:
+      - name: Nothing to build
+        if: needs.changes.outputs.app != 'true'
+        run: echo "Only documentation changed, so there is no DMG to build."
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.changes.outputs.app == 'true'
         with:
           persist-credentials: false
       - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+        if: needs.changes.outputs.app == 'true'
         with:
           version: latest
           runtime: node@latest
           install: false
       - name: Build Capture.app
+        if: needs.changes.outputs.app == 'true'
         run: |
           pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config install flutter@latest &&
           pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config exec flutter@latest -- flutter build macos --release
       - name: Pack the DMG
+        if: needs.changes.outputs.app == 'true'
         run: |
           stage="$RUNNER_TEMP/stage"
           mkdir -p "$stage"
@@ -50,7 +86,8 @@ jobs:
 
   release:
     name: release
-    if: github.event_name == 'push'
+    needs: changes
+    if: github.event_name == 'push' && needs.changes.outputs.app == 'true'
     runs-on: macos-latest
     timeout-minutes: 60
     environment: release
