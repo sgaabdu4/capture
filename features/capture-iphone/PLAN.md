@@ -1,0 +1,94 @@
+# Capture for iPhone
+
+Status: Ready
+
+## Outcome + scope
+
+Capture runs on iPhone with the Mac app's theme, fonts, components and bottom-bar navigation. It records, transcribes on the phone with Parakeet-TDT-0.6B-v3 through FluidAudio/Core ML, sorts with Jev, reviews or auto-saves to Notion and schedules reminders exactly as on the Mac. One "Record with Capture" action is reachable from the Home Screen, Control Centre and the Action Button. Codemagic validates iPhone builds and has a separate, manually started TestFlight workflow. Non-goals: any other change to the Mac app's behaviour, look or release (the one owner-approved Mac change is recording before setup, P15); Whisper, cloud transcription, automatic rewriting, Voz (unless device numbers justify it and the owner approves); Live Activities, widgets beyond the one control, iPad layouts, Siri phrases, new features.
+
+## Repository context
+
+Owners:
+- Capture flow + events: `lib/features/capture/presentation/notifiers/capture_flow_notifier.dart`, `lib/core/services/native_platform_service.dart`, `lib/core/services/native_event.dart`.
+- Transcription boundary: `lib/features/capture/data/datasources/transcription_datasource.dart` (`ITranscriptionDatasource`; the Mac uses sherpa-onnx in an isolate).
+- Model download (pinned revision, SHA-256, resume): `lib/features/settings/data/datasources/speech_model_datasource.dart` (A8 in the root `PLAN.md`).
+- Native code lives in the Runner target, no nested packages: `docs/adr/0001-native-code-in-runner.md`. Mac Swift: `macos/Runner/Native/` (`Recorder.swift`, `M4AEncoder.swift` are plain AVFoundation/AudioToolbox; `Overlay.swift`/`Theme.swift` are the pill and review card, AppKit-hosted).
+- Layout: phones already get the labelled bottom bar (`lib/features/shell/presentation/screens/app_shell_screen.dart`, A20). Tokens: `lib/core/theme/palette.dart` mirrors `macos/Runner/Native/Theme.swift`.
+- Setup gate: `SettingsState.ready` (TypeSafe key + Notion + model). Home hint `Recorder` shows the Mac shortcut; `ShortcutSection` records Mac keys.
+- No `ios/` folder and no Codemagic config exist. Mac releases: `.github/workflows/release.yml`.
+
+Evidence (checked 2026-09-22):
+- FluidAudio v0.16.1 (Apache-2.0, iOS 17+, no telemetry in `Sources/`; network only for model downloads). `AsrModels.loadLocal(from:version:.v3,encoderPrecision:.int8)` loads from exactly our folder, never downloads, and fails locally on a missing file (`load(from:)` can fetch through `ModelHub`, so it is not used); the v3 int8 set is `Preprocessor`, `Encoder`, `Decoder`, `JointDecisionv3` (`.mlmodelc`, 5 files each) + `parakeet_vocab.json` = 21 files, about 483 MB, Hugging Face `FluidInference/parakeet-tdt-0.6b-v3-coreml` at revision `7dd20fe6b1797d35f5e3307e8b1732d9a178edfe`. `AsrManager` is an actor; `transcribe(_:decoderState:)` returns text with punctuation and capitals.
+- Voz (Desert Ant Labs): same weights, source-available licence, sends usage data to `platform.desertant.ai` by default. Excluded unless device numbers show a real gain and the owner accepts that.
+- AppIntents `supportedModes` (the non-deprecated way to open the app from a control) needs iOS 26 (Xcode 27 SDK `@available(anyAppleOS 26.0, *)`). Controls and Action Button controls need iOS 18.
+- Devices: iPhone 13, iOS 27, paired (no Action Button); iPhone 17 Pro simulator, iOS 27. Xcode 27.0, Flutter 3.47.5 with SwiftPM on. Xcode knows the Afenso Ltd team (HJ88J296A6).
+- `flutter_local_notifications` is initialised with `macOS:` settings only (`lib/core/data/reminders/reminder_datasource.dart:40`); iOS needs its own settings or startup fails.
+- Dart cannot fake `Platform.isIOS` in tests; `ISystemDatasource` (faked as `FakeSystem`) is the existing seam for environment facts. The Mac plugin answers unknown methods with `FlutterMethodNotImplemented`, so Dart must never call iPhone-only methods on the Mac.
+- Signing for the iPhone 13 needs an Afenso Apple Development certificate (only a Personal Team one is installed); Xcode automatic signing should create it on the first device build. Build-dependent.
+- `sherpa_onnx_ios` ships only a podspec, so the iPhone build also uses CocoaPods and links sherpa-onnx (unused on iPhone; binary-size cost only).
+
+## Decisions + authorization
+
+Blockers: None
+Handoff: Approval
+Authority: Human-loop — the owner approved this plan and the UX ("Approve and build") on 2026-09-22 with these answers: record before setup and hold the audio, on both Mac and iPhone (confirmed as a deliberate Mac change); a second Record request does nothing new; Home Screen = both the icon quick action and an App Shortcut. Delivery: one scoped PR from `feature/capture-iphone-0ad451`; no merge, TestFlight upload or release without explicit approval.
+
+Decisions (owner-approved 2026-09-22):
+- Recording needs only microphone permission, on Mac and iPhone. Before setup is finished a stopped recording stays on the device as a recorded capture with a truthful notice, and is transcribed and sorted by Retry once setup is done. Recording never waits for Core ML to load or for the network: the model loads only after Stop, is used and freed.
+- A Record request while a capture is already recording, transcribing, sorting, reviewing or saving does nothing new: the app comes forward on the current state. Stop is the pill's stop button or the Home mic.
+- Home Screen: both the icon quick action (touch and hold, present from install) and an App Shortcut (`AppShortcutsProvider`) for the same intent, which appears in Shortcuts and Spotlight and can be added to the Home Screen from the Shortcuts app.
+- Minimum iOS 26.0.
+- iPhone wording: "this Mac" strings get iPhone variants; the Mac's text stays byte-identical.
+- iPhone vs Mac is one fact on `ISystemDatasource`, so tests can set it and `macos/` stays byte-identical.
+- A private latch in the capture notifier stops two overlapping starts (a latent Mac race too); no new visible phase.
+- Pill and review card on iPhone are Flutter widgets with the exact `Theme.swift` sizes, colours and fonts (the Mac's SwiftUI views are AppKit-hosted and 400 pt wide). The iPhone card is opaque and full width less 16 pt margins because app content sits behind it.
+
+## Acceptance + steps
+
+- [ ] P1 `ios/` is added with `flutter create --platforms=ios`; bundle `com.afenso.capture`, extension `com.afenso.capture.CaptureControls`, team HJ88J296A6, iOS 26.0, `NSMicrophoneUsageDescription`, `UIBackgroundModes: audio`. The Mac project is untouched. Proof: `git diff --stat main -- macos` empty; `flutter build ios --simulator --debug` and `flutter build macos --debug` both succeed.
+- [ ] P2 iPhone recording reuses `macos/Runner/Native/Recorder.swift` and `M4AEncoder.swift` by file reference (unchanged), with an `AVAudioSession` record session set up in `ios/Runner/Native/`. PCM is on disk while recording (flushed each second), keeps recording with the screen locked, and an interruption (call, Siri, route change) stops the capture through the existing `recordingFailed → recordingInterrupted` path with the audio kept and processed. Proof: `capture_flow_notifier_test.dart` (interruption keeps and processes the audio); iPhone 13: record, lock for 30 s, unlock, stop → the whole clip transcribed; call-in during recording → capture kept with the interrupted notice.
+- [ ] P3 A crash or kill mid-recording loses nothing: the draft is recovered at the next launch (existing `recoverInterrupted`). Proof: existing notifier test; iPhone 13: kill the app from the app switcher while recording, relaunch → the capture is in Recordings with its audio.
+- [ ] P4 Transcription on iPhone goes through `ITranscriptionDatasource`: one `Platform.isIOS` branch in `transcriptionDatasourceProvider` selects a datasource that calls a native `transcribe(path)`; the Swift bridge loads the pinned Core ML set with FluidAudio from the model folder, transcribes, returns text and frees the models. The Mac keeps `SherpaTranscriptionDatasource`. Proof: `test/features/capture/data/datasources/` test that the iPhone datasource returns the native text and maps a native failure to a transcription failure (the capture stays retryable); iPhone 13 run below.
+- [ ] P5 The iPhone model download reuses the existing downloader with the pinned FluidInference file list (21 files, SHA-256 each, resume, progress), stores it under Application Support excluded from iCloud backup, and shows NVIDIA CC-BY-4.0 + FluidAudio attribution. Proof: `speech_model_datasource_test.dart` extended for nested `.mlmodelc` paths (a wrong hash is refused, a partial file resumes); iPhone 13: fresh install downloads, verifies and becomes ready; airplane mode afterwards still transcribes.
+- [ ] P6 One App Intent "Record with Capture" (`supportedModes = .foreground`) is shared by the app and the Control Centre control (`ControlWidgetButton` in the `CaptureControls` extension, which links neither Flutter nor FluidAudio); the Home Screen quick action and the App Shortcut send the same request. The extension does no audio or transcription work. Proof: extension target's linked frameworks list; simulator and device runs below.
+- [ ] P7 A Record request opens Capture straight into recording after microphone permission; a normal launch never records. Cold launch: native keeps one pending request that Dart takes once after settings load; warm launch: a live `recordRequested` event. A request while busy does nothing new; overlapping requests start one recording, never two drafts. Native keeps a single pending flag and sends nothing until Dart's first `takeRecordRequest` call (made once, after the capture notifier is listening, following `recoverInterrupted`); that call returns and clears the flag, and later requests arrive as live events. States: pending before handshake → recorded once at startup; pending after handshake → never set (live event instead); request while busy → ignored; normal launch → flag clear, idle. Assumption checked in slice 1: a `.foreground` intent's `perform()` runs in the app process when the control is tapped (otherwise an App Group is needed, a scope change to raise). Proof: `capture_flow_notifier_test.dart` cases — idle request records; request while recording/review/saving leaves state unchanged; two requests before the recorder answers create one draft; normal launch with no pending request stays idle; setup incomplete opens setup; mic denied shows the notice. Simulator (iPhone 17 Pro): the quick action, App Shortcut, Control Centre control and Action Button, cold and warm, and a double press.
+- [ ] P8 iPhone UI matches the proposal: no shortcut hint on Home; the recording pill (waveform from native levels, timer, stop), working pill and review card (No / Yes, save / Edit, Not saved yet with close) above the bottom bar; Settings shows "Record with Capture" setup (Control Centre, Action Button, Home Screen steps) instead of the Mac shortcut; iPhone wording for "this Mac" strings. The Mac shows none of this. Proof: widget tests on an iPhone-size view (pill shows while recording and its stop stops; card buttons approve/dismiss/edit; Quick access shown and Shortcut hidden on iPhone, and the reverse on Mac); `responsive_layout_test.dart` passes; simulator screenshots compared with `ux_reference`.
+- [ ] P9 Jev sorting, review, opt-in auto-save, Notion saving, retry without duplicates and reminders behave as on the Mac. Reminders and the auto-save notification get iOS initialisation, permission request and details equal to the Mac's (currently `macOS:` only). Offline: recording and transcription work; Jev failure becomes one editable note (existing rule); Notion save waits for Retry. Proof: existing repository and notifier tests unchanged and passing; iPhone 13 live: spoken capture → review → Yes, save → Notion items + audio → reminder fires; auto-save on → notification "Saved to Notion"; airplane mode capture → note kept, saved after reconnecting.
+- [ ] P10 Measured on iPhone 13 with the owner's voice and a fixed script, short (~15 s) and longer (~4 min), cold (first run after launch) and warm: transcript text (accuracy, punctuation, capitals) reported verbatim; peak memory (`phys_footprint` logged by the bridge around load/transcribe, profile build); Stop-to-transcript time. Voz is considered only if these numbers are poor, and only with owner approval. Proof: numbers recorded under Verification.
+- [ ] P11 Mac regression: all Hard Eng gates pass; `flutter build macos --debug` succeeds; the Mac app records with ⌃⌥ from another app, shows the native pill and review card, and saves. Proof: gate output + a Mac run by this session.
+- [ ] P12 Codemagic: `codemagic.yaml` with `ios-validate` (pull requests: `flutter analyze`, `flutter test`, unsigned `flutter build ios --simulator --debug`) and `ios-testflight` (no trigger, manual only; App Store Connect integration; `ios_signing` for the app and the extension; `flutter build ipa`; `submit_to_testflight`). GitHub Actions Mac release unchanged. `ios-validate` builds only (analysis and tests already run in the `hard-eng` GitHub check). Proof: the same build command runs locally; there is no local validator for `codemagic.yaml`, so its first Codemagic run proves it (needs a Codemagic Xcode 27 image); remaining setup listed in the PR.
+- [ ] P15 Before setup is finished, Record works on Mac (⌃⌥, menu Record, Home mic) and iPhone once the microphone is allowed; after Stop the capture stays recorded on the device with a notice saying it will be transcribed after setup, nothing is sent to Jev or Notion, and Retry in Recordings processes it once setup is done. Setup steps still show on Home. Proof: `capture_flow_notifier_test.dart` — record with no keys/model → recorded capture kept, no transcription or Jev call, notice shown; after settings become ready, Retry transcribes and proposes; `capture_app_test.dart` — Home mic enabled before setup; Mac run by this session: ⌃⌥ before setup records and the capture waits in Recordings.
+- [ ] P13 `PRODUCT.md` (boundaries: macOS and iPhone; stack) and `README.md` (iPhone setup: model, keys, quick access, TestFlight) say what is true. Proof: diff review.
+- [ ] P14 PR with tests, a walkthrough of the actual iPhone app (simulator screenshots of each state and entry point, committed to `docs/screenshots/` like the Mac's) and the remaining Apple/Codemagic setup. Proof: PR link.
+
+## Baseline + execution
+
+Result: Passed
+Evidence: 2026-09-22 on 2228e41 with only this plan added: `python3 .hooks/hard-eng.py check --plan-stage Draft --base 4b825dc642cb6eb9a060e54bf8d69288fbee4904` (empty-tree base, so every check runs) → all 14 PASS, exit 0 (lockfile, vulnerabilities, format, security, types-lint, import-boundaries, tests, dead-code-duplicates, performance, secrets-files, secrets-history, actionlint, zizmor, strict-types-lint). The plain `--plan-stage Draft` run scoped itself to the Markdown change (5 checks, all PASS).
+Execution: One builder, in slices: (1) `ios/` + recorder + native Record request with the Dart state machine and simulator entry points — this exercises the riskiest native flow first; (2) FluidAudio bridge + model download, measured on the iPhone 13; (3) iPhone widgets and wording; (4) Codemagic + PR. A fresh reviewer checks the diff against this plan before the PR.
+
+## Risks + recovery
+
+- FluidAudio or its Core ML set fails on the A15 (iPhone 13) or uses too much memory. Recovery: load the encoder with `.cpuAndNeuralEngine` (default) and free after each capture; if still unusable, report numbers and ask about Voz or the int4 encoder.
+- Flutter SwiftPM + CocoaPods (sherpa-onnx) + an app extension conflict in the build phases. Recovery: order "Embed Foundation Extensions" before Flutter's Thin Binary phase per the Flutter app-extension guide.
+- The simulator may not offer an Action Button press. Recovery: prove the assignment path in Settings and report the press as untested; the iPhone 13 has no Action Button.
+- Pinned model revision removed from Hugging Face. Recovery: download fails with the existing error; re-pin deliberately.
+
+## ux_reference
+
+Result: Passed
+Evidence: The unmodified app was rendered at iPhone size (393×852 pt, @3x) in a clean isolated checkout with the repository's fonts and sample workspace; the proposal was rendered through the same screens in a second isolated checkout with preview-only widgets (pill, working pill, review card, Quick access section, iPhone wording). Three concept images show the Apple system surfaces (not app UI). All inspected; shown to the owner 2026-09-22.
+Surface: Existing — Home, Settings (`lib/features/capture/presentation/screens/home_screen.dart`, `lib/features/settings/presentation/screens/settings_screen.dart`, shell `lib/features/shell`); New — iPhone pill and review card ported from `macos/Runner/Native/Overlay.swift` with `Theme.swift` tokens.
+Before: ![Before, Home at iPhone size](../../build/ux/capture-iphone/before/home.png)
+Proposed: ![Before/after iPhone contact sheet](../../build/ux/capture-iphone/proposed/iphone-proposal.png)
+Capture: `flutter test` golden renders (`matchesGoldenFile --update-goldens`) in scratch checkouts; files in the ignored `build/ux/capture-iphone/`. Concepts: `concept-control-centre.png`, `concept-action-button.png`, `concept-home-screen.png`, drawn with Pillow and labelled Concept.
+Review: Home idle (Mac hint "or press" removed), recording (stop mic + pill 0:12), transcribing (working pill), review card over Home, Settings before (Mac wording) and after ("Record with Capture" steps, iPhone wording). Owner approved the direction 2026-09-22; the Home Screen step also names the Shortcuts-app route.
+
+## Verification
+
+Result: Pending
+Evidence: None yet.
+E2E: Required — iPhone 17 Pro simulator: Home Screen quick action, Control Centre control and Action Button (if the simulator can press it), each cold and warm and pressed twice, record → stop → review → save; iPhone 13: live capture to Notion with reminder, lock screen, interruption, kill/recover, offline, and P10 measurements; Mac ⌃⌥ capture regression.
+
+Delivery target: PR
+Delivery: Pending — PR opened, Hard Eng CI check passes on it; Codemagic runs only after the owner connects the app.
