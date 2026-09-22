@@ -6,7 +6,8 @@ name: Release
 # Developer ID certificate, notarises it and publishes it as the latest
 # GitHub release with the Sparkle feed the app checks for updates. Without
 # the signing secrets the release stays ad-hoc signed and has no feed.
-# Changes to documentation alone (top-level Markdown and plans) build and
+# Changes to documentation alone (top-level Markdown and plans) or to the
+# iPhone app alone (ios/ and codemagic.yaml, built by Codemagic) build and
 # publish nothing; the required dmg check still reports so the PR can merge.
 on:
   push:
@@ -34,16 +35,16 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Look for changes beyond documentation
+      - name: Look for changes beyond documentation and the iPhone app
         id: diff
         env:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: |
           files="$(git diff --name-only "$BASE" HEAD)"
-          if printf '%s\n' "$files" | grep -Eqiv '^([^/]*\.md|features/.*/plan\.md)$'; then
+          if printf '%s\n' "$files" | grep -Eqiv '^([^/]*\.md|features/.*/plan\.md|ios/.*|codemagic\.yaml)$'; then
             echo "app=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Only documentation changed: nothing to build or publish."
+            echo "Only documentation or the iPhone app changed: nothing to build or publish."
             echo "app=false" >> "$GITHUB_OUTPUT"
           fi
 
