@@ -1,0 +1,57 @@
+# Capture for iPhone. The Mac app is built and released by GitHub Actions
+# (.github/workflows/release.yml); nothing here touches it. Analysis and
+# tests run in the hard-eng GitHub check, so these workflows only build.
+workflows:
+  # Every pull request: an unsigned simulator build of the app and its
+  # Control Centre extension.
+  ios-validate:
+    name: iPhone build
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      flutter: 3.47.5
+      xcode: latest
+    triggering:
+      events:
+        - pull_request
+      cancel_previous_builds: true
+    scripts:
+      - name: Dependencies
+        script: flutter pub get --enforce-lockfile
+      - name: Build for the simulator
+        script: flutter build ios --simulator --debug
+
+  # Started by hand only: signs the app and the extension for the App Store
+  # and uploads the build to TestFlight.
+  ios-testflight:
+    name: iPhone TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    integrations:
+      app_store_connect: Capture App Store Connect
+    environment:
+      flutter: 3.47.5
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        # Profiles are fetched for the app and com.afenso.capture.CaptureControls.
+        bundle_identifier: com.afenso.capture
+      vars:
+        # The app's Apple ID from App Store Connect (App Information).
+        APP_STORE_APPLE_ID: 0
+    scripts:
+      - name: Dependencies
+        script: flutter pub get --enforce-lockfile
+      - name: Signing profiles
+        script: xcode-project use-profiles
+      - name: Build the IPA
+        script: |
+          latest="$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID")"
+          flutter build ipa --release --build-number="$((latest + 1))" \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
