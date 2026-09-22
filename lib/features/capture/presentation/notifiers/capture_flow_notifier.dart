@@ -35,7 +35,9 @@ part 'capture_flow_notifier.g.dart';
 
 /// The capture state machine. Every milestone is persisted before the next
 /// step (see [CaptureStage]); approval, by the user or by auto-save, is the
-/// only path to Notion and to reminders. Native events (hotkey, pill, review card, menu) land here.
+/// only path to Notion and to reminders. Native events (hotkey, pill, review
+/// card, menu, iPhone record requests) land here. Recording needs only the
+/// microphone; a capture made before setup waits, recorded, for a Retry.
 @Riverpod(keepAlive: true)
 class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   @override
@@ -51,10 +53,20 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   ICaptureSaveRepository _ensureSaver() => ref.read(captureSaveRepositoryProvider);
 
+  /// Set from a start's first line until the recorder has answered, so two
+  /// overlapping starts cannot create two drafts.
+  bool _starting = false;
+
+  /// Set while a stop runs, so a second stop (an interruption or the limit
+  /// landing at the same moment) cannot drop the capture being processed.
+  bool _stopping = false;
+
   void _onEvent(NativeEvent event) {
     switch (event) {
       case HotkeyPressed() || MenuCommand(action: .record):
         unawaited(toggle());
+      case RecordRequested():
+        unawaited(start());
       case StopRequested():
         unawaited(stop());
       case LimitReached():
@@ -71,8 +83,8 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
         unawaited(_open(.upcoming));
       case MenuCommand(action: .recordings):
         unawaited(_open(.recordings));
-      // The shell's update link shows it.
-      case UpdateAvailable():
+      // The shell's update link and the iPhone pill show these.
+      case UpdateAvailable() || LevelChanged():
     }
   }
 
@@ -131,8 +143,25 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     if (state case CaptureFlowState(phase: .review, activeId: final String id)) showReview(id);
   }
 
+  /// A "Record with Capture" request that arrived before Dart was listening
+  /// (iPhone cold launch). Called once at startup, after recovery.
+  Future<void> takePendingRequest() async {
+    if (await _ensureNative().takeRecordRequest()) await start();
+  }
+
+  /// Starts only when nothing is in progress, so a second "Record with
+  /// Capture" during a capture leaves it as it is.
   Future<void> start() async {
-    if (!ref.read(settingsProvider).ready) return _stopWith(.setupIncomplete);
+    if (_starting || state.phase != .idle) return;
+    _starting = true;
+    try {
+      await _start();
+    } finally {
+      _starting = false;
+    }
+  }
+
+  Future<void> _start() async {
     final micAllowed = await ref.read(settingsProvider.notifier).ensureMic();
     if (!ref.mounted) return;
     if (!micAllowed) return _stopWith(.micDenied);
@@ -170,7 +199,16 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   }
 
   Future<void> stop({CaptureNotice? notice}) async {
-    if (state.phase != .recording) return;
+    if (_stopping || state.phase != .recording) return;
+    _stopping = true;
+    try {
+      await _stop(notice);
+    } finally {
+      _stopping = false;
+    }
+  }
+
+  Future<void> _stop(CaptureNotice? notice) async {
     final result = await _ensureNative().stopRecording();
     if (!ref.mounted) return;
     switch ((result: result, record: state.active)) {
@@ -187,10 +225,15 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   void _keepNotice(CaptureNotice? notice) => state = state.copyWith(notice: notice);
 
   /// Runs the pipeline from wherever [id] stopped. Safe to call again after
-  /// a failure or a relaunch.
+  /// a failure or a relaunch. Before setup is finished a recorded capture
+  /// stays as it is.
   Future<void> process(String id) async {
     final record = _ensureCaptures().get(id);
     if (record == null) return;
+    if (record.stage == .recorded && !ref.read(settingsProvider).ready) {
+      _idle(notice: .setupIncomplete);
+      return;
+    }
     _enter(state.phase, activeId: id);
     final transcribed = record.stage == .recorded ? await _transcribe(record) : record;
     if (!ref.mounted || transcribed == null) return;

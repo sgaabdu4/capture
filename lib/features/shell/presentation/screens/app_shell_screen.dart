@@ -1,9 +1,11 @@
+import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
+import 'package:capture/features/capture/presentation/screens/phone_overlay.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/shell/presentation/models/nav_destination.dart';
 import 'package:capture/features/shell/presentation/notifiers/update_available_provider.dart';
@@ -17,7 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 /// Sidebar, settings gear, the current page and, once Sparkle finds a newer
-/// release, the update link.
+/// release, the update link. On iPhone, the capture pills and review card.
 class AppShellScreen extends ConsumerWidget {
   const AppShellScreen({required this.location, required this.child, super.key});
 
@@ -70,6 +72,7 @@ class AppShellScreen extends ConsumerWidget {
     final connected = ref.watch(settingsProvider.select((s) => s.notionConnected));
     final updateAvailable = ref.watch(updateAvailableProvider.select((found) => found.hasValue));
     final compact = context.compact;
+    final phone = ref.watch(systemDatasourceProvider.select((s) => s.isPhone));
     final page = Stack(
       children: [
         Positioned.fill(child: child),
@@ -83,6 +86,13 @@ class AppShellScreen extends ConsumerWidget {
             onPressed: () => const SettingsRoute().go(context),
           ),
         ),
+        if (phone)
+          const PositionedDirectional(
+            start: 0,
+            end: 0,
+            bottom: 0,
+            child: Center(child: PhoneOverlay()),
+          ),
         if (updateAvailable)
           PositionedDirectional(
             bottom: Spacing.xs,

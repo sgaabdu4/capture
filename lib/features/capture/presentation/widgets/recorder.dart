@@ -3,7 +3,8 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/presentation/widgets/mic_button.dart';
 import 'package:flutter/material.dart';
 
-/// Mic button, what it will do, the shortcut hint and the latest flow line.
+/// Mic button, what it will do, the Mac's shortcut hint and the latest flow
+/// line.
 class Recorder extends StatelessWidget {
   const Recorder({
     required this.recording,
@@ -16,7 +17,9 @@ class Recorder extends StatelessWidget {
 
   final bool recording;
   final String phaseLabel;
-  final String shortcutLabel;
+
+  /// Null on iPhone, which has no keyboard shortcut.
+  final String? shortcutLabel;
 
   /// Null disables the mic.
   final VoidCallback? onPressed;
@@ -29,16 +32,23 @@ class Recorder extends StatelessWidget {
     final l10n = context.l10n;
     final textTheme = context.textTheme;
     return Column(
+      spacing: Spacing.lg,
       children: [
         MicButton(recording: recording, onPressed: onPressed),
-        const SizedBox(height: Spacing.lg),
-        Text(phaseLabel, style: textTheme.bodyLarge),
-        const SizedBox(height: Spacing.xxs),
-        Text(l10n.recordShortcutHint(shortcutLabel), style: textTheme.labelMedium),
-        if (message case final String line) ...[
-          const SizedBox(height: Spacing.sm),
-          Text(line, style: textTheme.labelMedium, textAlign: .center),
-        ],
+        Column(
+          mainAxisSize: .min,
+          children: [
+            Text(phaseLabel, style: textTheme.bodyLarge),
+            if (shortcutLabel case final String shortcut) ...[
+              const SizedBox(height: Spacing.xxs),
+              Text(l10n.recordShortcutHint(shortcut), style: textTheme.labelMedium),
+            ],
+            if (message case final String line) ...[
+              const SizedBox(height: Spacing.sm),
+              Text(line, style: textTheme.labelMedium, textAlign: .center),
+            ],
+          ],
+        ),
       ],
     );
   }

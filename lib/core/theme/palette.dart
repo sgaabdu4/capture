@@ -17,6 +17,17 @@ abstract final class Palette {
   static const warn = Color(0xFFC98A2B);
   static const error = Color(0xFFB4533C);
   static const cream = Color(0xFFFBF5ED);
+
+  // The recording pill and review card (`Overlay.swift`).
+  static const charcoal = Color(0xFF403B36);
+  static const charcoalRow = Color(0xFF4A443E);
+  static const charcoalButton = Color(0xFF524C45);
+  static const creamMuted = Color(0xFFBDB4AA);
+  static const pillShadow = Color(0x40000000);
+  static const cardShadow = Color(0x47000000);
+  static const cardEdge = Color(0x0FFFFFFF);
+  static const cardRule = Color(0x2E000000);
+  static const micWell = Color(0x14FFFFFF);
   static const flag = Color(0xFFF6EBD7);
   static const shadow = Color(0x0F000000);
   static const micShadow = Color(0x33000000);

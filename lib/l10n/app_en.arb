@@ -123,7 +123,7 @@
       }
     }
   },
-  "noticeSetupIncomplete": "Finish setup before your first capture.",
+  "noticeSetupIncomplete": "Kept on this Mac. Finish setup, then press Retry in Recordings.",
   "noticeMicDenied": "Capture needs microphone access. Allow it in System Settings → Privacy & Security → Microphone.",
   "noticeRecordingNotStarted": "Couldn’t start recording.",
   "noticeTooShort": "That was too short to keep.",
@@ -431,5 +431,40 @@
   "editorNothingSent": "Nothing is sent to Notion until you save.",
   "dontSave": "Don’t save",
   "saveToNotion": "Save to Notion",
-  "includeItem": "Include this item"
+  "includeItem": "Include this item",
+  "phoneOverlayTranscribing": "Transcribing on this iPhone…",
+  "phoneNoticeSavedNotificationsOff": "Saved, but notifications are off for Capture.",
+  "phoneNoticeSetupIncomplete": "Kept on this iPhone. Finish setup, then press Retry in Recordings.",
+  "phoneNoticeMicDenied": "Capture needs microphone access. Allow it in Settings → Privacy & Security → Microphone.",
+  "phoneFailureAudioMissing": "The compressed recording is missing on this iPhone.",
+  "phoneSetupSubtitle": "Three things, once. Keys stay in your iPhone’s Keychain.",
+  "phoneModelReady": "Parakeet is on this iPhone. Recordings are transcribed locally.",
+  "phoneModelNeeded": "Download Parakeet ({megabytes} MB) to transcribe on this iPhone.",
+  "@phoneModelNeeded": {
+    "placeholders": {
+      "megabytes": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneModelAttribution": "Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); Core ML conversion by FluidInference, run with FluidAudio. Runs entirely on this iPhone.",
+  "phoneMicUndetermined": "iPhone will ask the first time you record.",
+  "phonePrivacyBody": "Audio is recorded and transcribed on this iPhone. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it, or auto-save does when you turn it on. Keys live in the iPhone Keychain. No analytics, no logs of your words.",
+  "phoneResetBody": "Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, auto-save, captures and recordings on this iPhone. Your Notion pages and the speech model stay.",
+  "phoneRecordingsSubtitle": "Kept on this iPhone. Saved captures are also in Notion.",
+  "phoneDeleteFromMac": "Delete from this iPhone",
+  "phoneDeleteSavedBody": "The audio and transcript are removed from this iPhone. The copy in Notion stays.",
+  "phoneDeleteUnsavedBody": "The audio and transcript are removed from this iPhone. This can’t be undone.",
+  "reviewCardSubtitle": "Here’s what I understood",
+  "reviewCardNo": "No",
+  "reviewCardYes": "Yes, save",
+  "reviewLater": "Review later",
+  "reviewPillNotSaved": "Not saved yet",
+  "quickAccessTitle": "Record with Capture",
+  "quickAccessControlCentre": "Control Centre",
+  "quickAccessControlCentreHow": "Swipe down from the top right, tap +, then Add a Control and choose Record with Capture.",
+  "quickAccessActionButton": "Action Button",
+  "quickAccessActionButtonHow": "Settings › Action Button, swipe to Controls, then choose Record with Capture. iPhone 15 Pro and later.",
+  "quickAccessHomeScreen": "Home Screen",
+  "quickAccessHomeScreenHow": "Touch and hold the Capture icon, then tap Record with Capture. For an icon of its own, open Shortcuts, touch and hold Record with Capture, then Add to Home Screen."
 }

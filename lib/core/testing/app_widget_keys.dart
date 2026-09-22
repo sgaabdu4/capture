@@ -13,6 +13,14 @@ abstract final class AppWidgetKeys {
   // Home
   static const recordButton = 'home.record.button';
 
+  // iPhone overlay
+  static const pillStopButton = 'phone.pill.stop';
+  static const reviewLaterButton = 'phone.pill.later';
+  static const reviewCloseButton = 'phone.review.close';
+  static const reviewNoButton = 'phone.review.no';
+  static const reviewYesButton = 'phone.review.yes';
+  static const reviewEditButton = 'phone.review.edit';
+
   // Setup and Settings
   static const modelDownloadButton = 'setup.model.download';
   static const typesafeKeyField = 'setup.typesafe.field';

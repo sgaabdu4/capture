@@ -8,14 +8,18 @@ part of 'speech_model_datasource.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// sherpa-onnx files on the Mac, Core ML files on iPhone.
 
 @ProviderFor(speechModelDatasource)
 final speechModelDatasourceProvider = SpeechModelDatasourceProvider._();
+
+/// sherpa-onnx files on the Mac, Core ML files on iPhone.
 
 final class SpeechModelDatasourceProvider
     extends
         $FunctionalProvider<ISpeechModelDatasource, ISpeechModelDatasource, ISpeechModelDatasource>
     with $Provider<ISpeechModelDatasource> {
+  /// sherpa-onnx files on the Mac, Core ML files on iPhone.
   SpeechModelDatasourceProvider._()
     : super(
         from: null,
@@ -49,4 +53,4 @@ final class SpeechModelDatasourceProvider
   }
 }
 
-String _$speechModelDatasourceHash() => r'6119593738de0606f5c2181d3274f6a00a4240ce';
+String _$speechModelDatasourceHash() => r'2268aa6012d35b051db32121f77eac6a881ebcdf';

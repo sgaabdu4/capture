@@ -1,10 +1,25 @@
-/// What the native side (hotkey, recorder, overlay, menu) reports.
+/// What the native side (hotkey, recorder, overlay, menu, iPhone record
+/// requests) reports.
 sealed class NativeEvent {
   const NativeEvent();
 }
 
 final class HotkeyPressed extends NativeEvent {
   const HotkeyPressed();
+}
+
+/// "Record with Capture" from the Home Screen, Control Centre or the Action
+/// Button on iPhone, while the app was already running.
+final class RecordRequested extends NativeEvent {
+  const RecordRequested();
+}
+
+/// The iPhone recorder's latest input level (RMS) and recorded length, about
+/// ten times a second, for the Flutter recording pill.
+final class LevelChanged extends NativeEvent {
+  const LevelChanged({required this.level, required this.elapsed});
+  final double level;
+  final Duration elapsed;
 }
 
 /// The stop button on the recording pill.

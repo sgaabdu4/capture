@@ -69,7 +69,7 @@ class HomeScreen extends ConsumerWidget {
     final today = ref.watch(dueTodayEntriesProvider);
     final recent = ref.watch(captureFlowProvider.select((s) => s.captures)).take(_recentLimit);
     final groups = ref.watch(groupsProvider.select((s) => s.active)).take(_groupsLimit);
-    final canToggle = ready && (phase == .idle || phase == .recording);
+    final canToggle = phase == .idle || phase == .recording;
     final padding = compact ? _compactPadding : _padding;
     return LayoutBuilder(
       builder: (context, constraints) => SingleChildScrollView(
@@ -85,7 +85,7 @@ class HomeScreen extends ConsumerWidget {
               Recorder(
                 recording: phase == .recording,
                 phaseLabel: _phaseLabel(l10n, phase),
-                shortcutLabel: shortcut,
+                shortcutLabel: ref.read(systemDatasourceProvider).isPhone ? null : shortcut,
                 message: failure?.label(l10n) ?? notice?.label(l10n),
                 onPressed: canToggle
                     ? () => unawaited(ref.read(captureFlowProvider.notifier).toggle())

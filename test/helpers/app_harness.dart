@@ -57,21 +57,24 @@ Future<void> loadAppFonts() async {
   }
 }
 
-/// Fake Keychain ([secrets], empty by default), reminders, clock and native
-/// side, and a fresh on-disk database under [support].
+/// Fakes that replace the defaults: a Keychain with keys, recorded
+/// reminders, or the iPhone.
+typedef AppFakes = ({FakeSecrets? secrets, FakeReminders? reminders, FakeSystem? system});
+
+/// Fake Keychain (empty by default), reminders, clock (the Mac by default)
+/// and native side, and a fresh on-disk database under [support].
 List<Override> appOverrides({
   required Directory support,
   required INativePlatformService native,
-  FakeSecrets? secrets,
-  FakeReminders? reminders,
+  AppFakes fakes = (secrets: null, reminders: null, system: null),
 }) => [
   appDirectoriesProvider.overrideWithValue((
     captures: '${support.path}/captures',
     model: '${support.path}/model',
     database: '${support.path}/capture.sqlite',
   )),
-  secretsLocalDatasourceProvider.overrideWithValue(secrets ?? FakeSecrets()),
-  reminderDatasourceProvider.overrideWithValue(reminders ?? FakeReminders()),
-  systemDatasourceProvider.overrideWithValue(FakeSystem()),
+  secretsLocalDatasourceProvider.overrideWithValue(fakes.secrets ?? FakeSecrets()),
+  reminderDatasourceProvider.overrideWithValue(fakes.reminders ?? FakeReminders()),
+  systemDatasourceProvider.overrideWithValue(fakes.system ?? FakeSystem()),
   nativePlatformServiceProvider.overrideWithValue(native),
 ];
