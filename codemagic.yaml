@@ -2,12 +2,19 @@
 # (.github/workflows/release.yml); nothing here touches it. Analysis and
 # tests run in the hard-eng GitHub check, so these workflows only build.
 workflows:
-  # Every pull request: an unsigned simulator build of the app and its
-  # Control Centre extension.
+  # Every pull request that changes more than the Mac app or documentation:
+  # an unsigned simulator build of the app and its Control Centre extension.
   ios-validate:
     name: iPhone build
     instance_type: mac_mini_m2
     max_build_duration: 60
+    when:
+      changeset:
+        includes:
+          - '.'
+        excludes:
+          - 'macos/**'
+          - '**/*.md'
     environment:
       flutter: 3.47.5
       xcode: latest
@@ -28,7 +35,7 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 90
     integrations:
-      app_store_connect: Capture App Store Connect
+      app_store_connect: codemagic
     environment:
       flutter: 3.47.5
       xcode: latest
@@ -38,7 +45,7 @@ workflows:
         bundle_identifier: com.afenso.capture
       vars:
         # The app's Apple ID from App Store Connect (App Information).
-        APP_STORE_APPLE_ID: 0
+        APP_STORE_APPLE_ID: 6814996477
     scripts:
       - name: Dependencies
         script: flutter pub get --enforce-lockfile
