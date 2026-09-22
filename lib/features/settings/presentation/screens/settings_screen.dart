@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/theme/spacing.dart';
@@ -11,13 +12,15 @@ import 'package:capture/features/settings/presentation/screens/setup_steps_scree
 import 'package:capture/features/settings/presentation/widgets/auto_save_section.dart';
 import 'package:capture/features/settings/presentation/widgets/mic_section.dart';
 import 'package:capture/features/settings/presentation/widgets/privacy_section.dart';
+import 'package:capture/features/settings/presentation/widgets/quick_access_section.dart';
 import 'package:capture/features/settings/presentation/widgets/reset_dialog.dart';
 import 'package:capture/features/settings/presentation/widgets/reset_section.dart';
 import 'package:capture/features/settings/presentation/widgets/shortcut_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Setup steps, shortcut, microphone, auto-save, privacy and reset.
+/// Setup steps, shortcut (quick access on iPhone), microphone, auto-save,
+/// privacy and reset.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -48,6 +51,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     final mic = ref.watch(settingsProvider.select((s) => s.mic));
+    final phone = ref.watch(systemDatasourceProvider.select((s) => s.isPhone));
     final autoSave = ref.watch(settingsProvider.select((s) => s.autoSave));
     final capturing = ref.watch(captureFlowProvider.select((s) => s.busyWith));
     return PageFrame(
@@ -56,15 +60,18 @@ class SettingsScreen extends ConsumerWidget {
         const PaperCard(child: SetupStepsScreen()),
         const SizedBox(height: Spacing.lg),
         PaperCard(
-          child: ShortcutSection(
-            label: label,
-            registered: registered,
-            problem: problem,
-            onShortcut: (shortcut) =>
-                unawaited(ref.read(settingsProvider.notifier).setShortcut(shortcut)),
-            onRecording: (recording) =>
-                unawaited(ref.read(settingsProvider.notifier).pauseShortcut(paused: recording)),
-          ),
+          child: phone
+              ? const QuickAccessSection()
+              : ShortcutSection(
+                  label: label,
+                  registered: registered,
+                  problem: problem,
+                  onShortcut: (shortcut) =>
+                      unawaited(ref.read(settingsProvider.notifier).setShortcut(shortcut)),
+                  onRecording: (recording) => unawaited(
+                    ref.read(settingsProvider.notifier).pauseShortcut(paused: recording),
+                  ),
+                ),
         ),
         const SizedBox(height: Spacing.lg),
         PaperCard(

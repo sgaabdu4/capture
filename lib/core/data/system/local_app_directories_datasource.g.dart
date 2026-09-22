@@ -9,19 +9,22 @@ part of 'local_app_directories_datasource.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 /// Application Support inside the sandbox container (`$HOME` is the
-/// container's Data folder), matching `NSApplicationSupportDirectory`.
+/// container's Data folder), matching `NSApplicationSupportDirectory` on the
+/// Mac and iPhone.
 
 @ProviderFor(appDirectories)
 final appDirectoriesProvider = AppDirectoriesProvider._();
 
 /// Application Support inside the sandbox container (`$HOME` is the
-/// container's Data folder), matching `NSApplicationSupportDirectory`.
+/// container's Data folder), matching `NSApplicationSupportDirectory` on the
+/// Mac and iPhone.
 
 final class AppDirectoriesProvider
     extends $FunctionalProvider<AppDirectories, AppDirectories, AppDirectories>
     with $Provider<AppDirectories> {
   /// Application Support inside the sandbox container (`$HOME` is the
-  /// container's Data folder), matching `NSApplicationSupportDirectory`.
+  /// container's Data folder), matching `NSApplicationSupportDirectory` on the
+  /// Mac and iPhone.
   AppDirectoriesProvider._()
     : super(
         from: null,
@@ -55,4 +58,4 @@ final class AppDirectoriesProvider
   }
 }
 
-String _$appDirectoriesHash() => r'fe8bb7104751a420a947fa81cdac731112f9a9ed';
+String _$appDirectoriesHash() => r'0e1eb558630ffede93ee50d16b78879d84a66ba6';

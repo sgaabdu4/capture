@@ -17,7 +17,6 @@ import 'package:capture/features/capture/presentation/notifiers/capture_phase.da
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/presentation/extensions/settings_labels.dart';
-import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -66,7 +65,6 @@ class CaptureBootstrap extends ConsumerWidget {
       ..listen(captureFlowProvider.select((s) => s.captures.firstOrNull), (_, _) {
         _menu(context, ref);
       })
-      ..listen(settingsProvider.select((s) => s.ready), (_, _) => _menu(context, ref))
       ..watch(appStartupProvider);
     return child;
   }
@@ -117,7 +115,8 @@ class CaptureBootstrap extends ConsumerWidget {
           .setMenuState(
             nextUp: ref.read(libraryProvider).upcoming.firstOrNull.nextUpLine(l10n, today),
             latest: ref.read(captureFlowProvider).captures.firstOrNull.latestLine(l10n),
-            canRecord: ref.read(settingsProvider).ready,
+            // Recording needs only the microphone; setup can come later.
+            canRecord: true,
           ),
     );
   }

@@ -174,7 +174,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get noticeSetupIncomplete => 'Finish setup before your first capture.';
+  String get noticeSetupIncomplete =>
+      'Kept on this Mac. Finish setup, then press Retry in Recordings.';
 
   @override
   String get noticeMicDenied =>
@@ -855,4 +856,100 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get includeItem => 'Include this item';
+
+  @override
+  String get phoneOverlayTranscribing => 'Transcribing on this iPhone…';
+
+  @override
+  String get phoneNoticeSavedNotificationsOff => 'Saved, but notifications are off for Capture.';
+
+  @override
+  String get phoneNoticeSetupIncomplete =>
+      'Kept on this iPhone. Finish setup, then press Retry in Recordings.';
+
+  @override
+  String get phoneNoticeMicDenied =>
+      'Capture needs microphone access. Allow it in Settings → Privacy & Security → Microphone.';
+
+  @override
+  String get phoneFailureAudioMissing => 'The compressed recording is missing on this iPhone.';
+
+  @override
+  String get phoneSetupSubtitle => 'Three things, once. Keys stay in your iPhone’s Keychain.';
+
+  @override
+  String get phoneModelReady => 'Parakeet is on this iPhone. Recordings are transcribed locally.';
+
+  @override
+  String phoneModelNeeded(int megabytes) {
+    return 'Download Parakeet ($megabytes MB) to transcribe on this iPhone.';
+  }
+
+  @override
+  String get phoneModelAttribution =>
+      'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); Core ML conversion by FluidInference, run with FluidAudio. Runs entirely on this iPhone.';
+
+  @override
+  String get phoneMicUndetermined => 'iPhone will ask the first time you record.';
+
+  @override
+  String get phonePrivacyBody =>
+      'Audio is recorded and transcribed on this iPhone. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it, or auto-save does when you turn it on. Keys live in the iPhone Keychain. No analytics, no logs of your words.';
+
+  @override
+  String get phoneResetBody =>
+      'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, auto-save, captures and recordings on this iPhone. Your Notion pages and the speech model stay.';
+
+  @override
+  String get phoneRecordingsSubtitle => 'Kept on this iPhone. Saved captures are also in Notion.';
+
+  @override
+  String get phoneDeleteFromMac => 'Delete from this iPhone';
+
+  @override
+  String get phoneDeleteSavedBody =>
+      'The audio and transcript are removed from this iPhone. The copy in Notion stays.';
+
+  @override
+  String get phoneDeleteUnsavedBody =>
+      'The audio and transcript are removed from this iPhone. This can’t be undone.';
+
+  @override
+  String get reviewCardSubtitle => 'Here’s what I understood';
+
+  @override
+  String get reviewCardNo => 'No';
+
+  @override
+  String get reviewCardYes => 'Yes, save';
+
+  @override
+  String get reviewLater => 'Review later';
+
+  @override
+  String get reviewPillNotSaved => 'Not saved yet';
+
+  @override
+  String get quickAccessTitle => 'Record with Capture';
+
+  @override
+  String get quickAccessControlCentre => 'Control Centre';
+
+  @override
+  String get quickAccessControlCentreHow =>
+      'Swipe down from the top right, tap +, then Add a Control and choose Record with Capture.';
+
+  @override
+  String get quickAccessActionButton => 'Action Button';
+
+  @override
+  String get quickAccessActionButtonHow =>
+      'Settings › Action Button, swipe to Controls, then choose Record with Capture. iPhone 15 Pro and later.';
+
+  @override
+  String get quickAccessHomeScreen => 'Home Screen';
+
+  @override
+  String get quickAccessHomeScreenHow =>
+      'Touch and hold the Capture icon, then tap Record with Capture. For an icon of its own, open Shortcuts, touch and hold Record with Capture, then Add to Home Screen.';
 }

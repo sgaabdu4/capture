@@ -359,7 +359,7 @@ abstract class AppLocalizations {
   /// No description provided for @noticeSetupIncomplete.
   ///
   /// In en, this message translates to:
-  /// **'Finish setup before your first capture.'**
+  /// **'Kept on this Mac. Finish setup, then press Retry in Recordings.'**
   String get noticeSetupIncomplete;
 
   /// No description provided for @noticeMicDenied.
@@ -1573,6 +1573,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Include this item'**
   String get includeItem;
+
+  /// No description provided for @phoneOverlayTranscribing.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcribing on this iPhone…'**
+  String get phoneOverlayTranscribing;
+
+  /// No description provided for @phoneNoticeSavedNotificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved, but notifications are off for Capture.'**
+  String get phoneNoticeSavedNotificationsOff;
+
+  /// No description provided for @phoneNoticeSetupIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept on this iPhone. Finish setup, then press Retry in Recordings.'**
+  String get phoneNoticeSetupIncomplete;
+
+  /// No description provided for @phoneNoticeMicDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture needs microphone access. Allow it in Settings → Privacy & Security → Microphone.'**
+  String get phoneNoticeMicDenied;
+
+  /// No description provided for @phoneFailureAudioMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The compressed recording is missing on this iPhone.'**
+  String get phoneFailureAudioMissing;
+
+  /// No description provided for @phoneSetupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Three things, once. Keys stay in your iPhone’s Keychain.'**
+  String get phoneSetupSubtitle;
+
+  /// No description provided for @phoneModelReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Parakeet is on this iPhone. Recordings are transcribed locally.'**
+  String get phoneModelReady;
+
+  /// No description provided for @phoneModelNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Parakeet ({megabytes} MB) to transcribe on this iPhone.'**
+  String phoneModelNeeded(int megabytes);
+
+  /// No description provided for @phoneModelAttribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); Core ML conversion by FluidInference, run with FluidAudio. Runs entirely on this iPhone.'**
+  String get phoneModelAttribution;
+
+  /// No description provided for @phoneMicUndetermined.
+  ///
+  /// In en, this message translates to:
+  /// **'iPhone will ask the first time you record.'**
+  String get phoneMicUndetermined;
+
+  /// No description provided for @phonePrivacyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio is recorded and transcribed on this iPhone. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it, or auto-save does when you turn it on. Keys live in the iPhone Keychain. No analytics, no logs of your words.'**
+  String get phonePrivacyBody;
+
+  /// No description provided for @phoneResetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, auto-save, captures and recordings on this iPhone. Your Notion pages and the speech model stay.'**
+  String get phoneResetBody;
+
+  /// No description provided for @phoneRecordingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept on this iPhone. Saved captures are also in Notion.'**
+  String get phoneRecordingsSubtitle;
+
+  /// No description provided for @phoneDeleteFromMac.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete from this iPhone'**
+  String get phoneDeleteFromMac;
+
+  /// No description provided for @phoneDeleteSavedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The audio and transcript are removed from this iPhone. The copy in Notion stays.'**
+  String get phoneDeleteSavedBody;
+
+  /// No description provided for @phoneDeleteUnsavedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The audio and transcript are removed from this iPhone. This can’t be undone.'**
+  String get phoneDeleteUnsavedBody;
+
+  /// No description provided for @reviewCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Here’s what I understood'**
+  String get reviewCardSubtitle;
+
+  /// No description provided for @reviewCardNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get reviewCardNo;
+
+  /// No description provided for @reviewCardYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, save'**
+  String get reviewCardYes;
+
+  /// No description provided for @reviewLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Review later'**
+  String get reviewLater;
+
+  /// No description provided for @reviewPillNotSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Not saved yet'**
+  String get reviewPillNotSaved;
+
+  /// No description provided for @quickAccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record with Capture'**
+  String get quickAccessTitle;
+
+  /// No description provided for @quickAccessControlCentre.
+  ///
+  /// In en, this message translates to:
+  /// **'Control Centre'**
+  String get quickAccessControlCentre;
+
+  /// No description provided for @quickAccessControlCentreHow.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe down from the top right, tap +, then Add a Control and choose Record with Capture.'**
+  String get quickAccessControlCentreHow;
+
+  /// No description provided for @quickAccessActionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Action Button'**
+  String get quickAccessActionButton;
+
+  /// No description provided for @quickAccessActionButtonHow.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings › Action Button, swipe to Controls, then choose Record with Capture. iPhone 15 Pro and later.'**
+  String get quickAccessActionButtonHow;
+
+  /// No description provided for @quickAccessHomeScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Screen'**
+  String get quickAccessHomeScreen;
+
+  /// No description provided for @quickAccessHomeScreenHow.
+  ///
+  /// In en, this message translates to:
+  /// **'Touch and hold the Capture icon, then tap Record with Capture. For an icon of its own, open Shortcuts, touch and hold Record with Capture, then Add to Home Screen.'**
+  String get quickAccessHomeScreenHow;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -13,6 +13,8 @@ typedef RecordingResult = ({String path, Duration duration});
 
 /// What the app needs from the native side (`macos/Runner/Native`): global hotkey,
 /// recorder, overlay panel, menu-bar popover, M4A encoding and Sparkle updates.
+/// On iPhone (`ios/Runner/Native`) the recorder, encoder, record requests and
+/// Core ML transcription; the Mac-only calls do nothing there.
 abstract interface class INativePlatformService {
   Stream<NativeEvent> get events;
   Future<void> installMenu();
@@ -45,6 +47,15 @@ abstract interface class INativePlatformService {
   /// Opens Sparkle's check, which offers to download and install a newer
   /// release.
   Future<void> checkForUpdates();
+
+  /// iPhone only. True once when a record request arrived before Dart was
+  /// listening (a cold launch from a shortcut or control); later requests
+  /// arrive as [RecordRequested].
+  Future<bool> takeRecordRequest();
+
+  /// iPhone only. Transcript of a PCM16 16 kHz mono file with the Core ML
+  /// model in [modelDir]; the model is loaded, used and freed.
+  Future<String> transcribe({required String pcmPath, required String modelDir});
 }
 
 class NativePlatformService implements INativePlatformService {
@@ -67,6 +78,8 @@ class NativePlatformService implements INativePlatformService {
       'review' => _reviewEvent(call.arguments),
       'menu' => _menuEvent(call.arguments),
       'updateAvailable' => const UpdateAvailable(),
+      'recordRequested' => const RecordRequested(),
+      'level' => _levelEvent(call.arguments),
       _ => null,
     };
     if (event != null) _events.add(event);
@@ -77,6 +90,15 @@ class NativePlatformService implements INativePlatformService {
         final ReviewAction action => ReviewCardAction(action),
         null => null,
       };
+
+  NativeEvent? _levelEvent(Object? arguments) => switch (arguments) {
+    {NativeChannelKeys.level: final num level, NativeChannelKeys.seconds: final num seconds} =>
+      LevelChanged(
+        level: level.toDouble(),
+        elapsed: .new(milliseconds: (seconds * Duration.millisecondsPerSecond).round()),
+      ),
+    _ => null,
+  };
 
   NativeEvent? _menuEvent(Object? arguments) => switch (MenuAction.values.asNameMap()[arguments]) {
     final MenuAction action => MenuCommand(action),
@@ -190,6 +212,18 @@ class NativePlatformService implements INativePlatformService {
 
   @override
   Future<void> checkForUpdates() => _channel.invokeMethod<void>('checkForUpdates');
+
+  @override
+  Future<bool> takeRecordRequest() async =>
+      await _channel.invokeMethod<bool>('takeRecordRequest') == true;
+
+  @override
+  Future<String> transcribe({required String pcmPath, required String modelDir}) async =>
+      await _channel.invokeMethod<String>('transcribe', {
+        NativeChannelKeys.path: pcmPath,
+        NativeChannelKeys.modelDir: modelDir,
+      }) ??
+      '';
 
   Future<void> dispose() => _events.close();
 }

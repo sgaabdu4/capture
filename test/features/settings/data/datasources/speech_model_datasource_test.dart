@@ -45,10 +45,10 @@ Future<List<String?>> _answerAll(
   return ranges;
 }
 
-SpeechModelDatasource _model(Directory dir, HttpServer server) => .new(
+SpeechModelDatasource _model(Directory dir, HttpServer server, {String name = _name}) => .new(
   dir.path,
   baseUrl: 'http://${server.address.host}:${server.port}',
-  files: [(name: _name, bytes: _size, sha256: sha256.convert(_bytes).toString())],
+  files: [(name: name, bytes: _size, sha256: sha256.convert(_bytes).toString())],
 );
 
 void main() {
@@ -91,5 +91,17 @@ void main() {
     expect(events.lastOrNull, equals(const SpeechModelEvent.failed(.checksum)));
     expect(File('${dir.path}/$_name').existsSync(), isFalse);
     expect(model.isReady(), isFalse);
+  });
+
+  test('a file inside a Core ML model folder downloads into that folder', () async {
+    const nested = 'Encoder.mlmodelc/weights/weight.bin';
+    final (:server, ranges: _) = await _serve(_bytes);
+    final model = _model(dir, server, name: nested);
+
+    final events = await model.download().toList();
+
+    expect(events.lastOrNull, equals(const SpeechModelEvent.ready()));
+    expect(File('${dir.path}/$nested').readAsBytesSync(), equals(_bytes));
+    expect(model.isReady(), isTrue);
   });
 }

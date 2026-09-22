@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -5,7 +6,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'system_datasource.g.dart';
 
-/// Clock, time zone and id source; replaced by fixed values in tests.
+/// Clock, time zone, id source and device kind; replaced by fixed values in
+/// tests.
 abstract interface class ISystemDatasource {
   DateTime nowUtc();
 
@@ -14,6 +16,9 @@ abstract interface class ISystemDatasource {
 
   /// Random, URL-safe id for captures and items.
   String newId();
+
+  /// Running on iPhone rather than the Mac.
+  bool get isPhone;
 }
 
 @Riverpod(keepAlive: true)
@@ -33,6 +38,9 @@ class SystemDatasource implements ISystemDatasource {
 
   @override
   Future<String> timeZone() async => (await FlutterTimezone.getLocalTimezone()).identifier;
+
+  @override
+  bool get isPhone => Platform.isIOS;
 
   @override
   String newId() => [

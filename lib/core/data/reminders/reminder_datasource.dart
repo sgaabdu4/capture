@@ -4,7 +4,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 part 'reminder_datasource.g.dart';
 
-/// macOS notifications for approved, saved tasks, and for captures saved
+/// Mac and iPhone notifications for approved, saved tasks, and for captures saved
 /// without the review card.
 abstract interface class IReminderDatasource {
   /// False when notifications are not permitted.
@@ -33,16 +33,18 @@ class LocalNotificationsReminderDatasource implements IReminderDatasource {
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialised = false;
 
+  /// Permission is asked on the first reminder, not at start-up.
+  static const _quietStart = DarwinInitializationSettings(
+    requestAlertPermission: false,
+    requestSoundPermission: false,
+    requestBadgePermission: false,
+  );
+  static const _withSound = DarwinNotificationDetails(presentSound: true);
+
   Future<void> _initialise() async {
     if (_initialised) return;
     await _plugin.initialize(
-      settings: const .new(
-        macOS: .new(
-          requestAlertPermission: false,
-          requestSoundPermission: false,
-          requestBadgePermission: false,
-        ),
-      ),
+      settings: const .new(macOS: _quietStart, iOS: _quietStart),
     );
     _initialised = true;
   }
@@ -52,8 +54,18 @@ class LocalNotificationsReminderDatasource implements IReminderDatasource {
     await _initialise();
     final mac = _plugin
         .resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>();
-    if (mac == null) return false;
-    return await mac.requestPermissions(alert: true, sound: true) == true;
+    final phone = _plugin
+        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+    final granted = switch ((mac: mac, phone: phone)) {
+      (mac: final MacOSFlutterLocalNotificationsPlugin mac, phone: _) => mac.requestPermissions(
+        alert: true,
+        sound: true,
+      ),
+      (mac: null, phone: final IOSFlutterLocalNotificationsPlugin phone) =>
+        phone.requestPermissions(alert: true, sound: true),
+      _ => Future.value(false),
+    };
+    return await granted == true;
   }
 
   @override
@@ -67,7 +79,7 @@ class LocalNotificationsReminderDatasource implements IReminderDatasource {
       id: notificationId(itemId),
       title: title,
       scheduledDate: at,
-      notificationDetails: const .new(macOS: .new(presentSound: true)),
+      notificationDetails: const .new(macOS: _withSound, iOS: _withSound),
       androidScheduleMode: .inexactAllowWhileIdle,
       payload: itemId,
     );
@@ -81,7 +93,7 @@ class LocalNotificationsReminderDatasource implements IReminderDatasource {
       id: notificationId(id),
       title: title,
       body: body,
-      notificationDetails: const .new(macOS: .new()),
+      notificationDetails: const .new(macOS: .new(), iOS: .new()),
     );
   }
 

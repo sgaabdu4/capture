@@ -88,7 +88,7 @@ class SetupStepsScreen extends ConsumerWidget {
         ModelStep(
           ready: modelReady,
           download: modelDownload,
-          totalBytes: parakeetTotalBytes,
+          totalBytes: ref.watch(speechModelDatasourceProvider.select((m) => m.totalBytes)),
           onDownload: () => ref.read(settingsProvider.notifier).downloadModel(),
         ),
         const Divider(height: _dividerHeight),

@@ -50,6 +50,11 @@ class FakeReminders implements IReminderDatasource {
 /// Fixed clock (2026-09-17 19:09 UTC, Europe/London) and sequential ids:
 /// `item-1`, `item-2`, …
 class FakeSystem implements ISystemDatasource {
+  FakeSystem({this.isPhone = false});
+
+  @override
+  final bool isPhone;
+
   int _next = 0;
 
   static final now = DateTime.utc(2026, 9, 17, 19, 9);

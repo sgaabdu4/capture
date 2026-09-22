@@ -1,4 +1,5 @@
-/// The `capture_native` method channel (Swift side: `macos/Runner/Native`)
+/// The `capture_native` method channel (Swift side: `macos/Runner/Native`
+/// and `ios/Runner/Native`)
 /// and its argument and result keys.
 abstract final class NativeChannelKeys {
   static const channel = 'capture_native';
@@ -24,4 +25,6 @@ abstract final class NativeChannelKeys {
   static const input = 'input';
   static const output = 'output';
   static const bitRate = 'bitRate';
+  static const level = 'level';
+  static const modelDir = 'modelDir';
 }

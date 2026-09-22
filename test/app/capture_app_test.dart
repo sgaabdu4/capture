@@ -14,6 +14,7 @@ import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
+import 'package:capture/features/capture/presentation/widgets/recorder.dart';
 import 'package:capture/features/capture/repositories/capture_repository.dart';
 import 'package:capture/features/capture/repositories/capture_save_repository.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
@@ -28,6 +29,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:timezone/data/latest.dart' as tzdata;
 
 import '../helpers/app_harness.dart';
 import '../helpers/sample_workspace.dart';
@@ -50,11 +52,19 @@ Future<void> _launch(
   List<Override> overrides = const [],
 }) => _pump(tester, [...appOverrides(support: support, native: native), ...overrides]);
 
-/// Launches the real app with exactly [overrides].
-Future<void> _pump(WidgetTester tester, List<Override> overrides) async {
+/// A window size in physical pixels and its pixel ratio.
+typedef _Screen = ({Size size, double pixelRatio});
+
+const _Screen _mac = (size: referenceWindow, pixelRatio: 1);
+
+/// iPhone 17 Pro's screen: 393 × 852 points at 3×.
+const _Screen _phone = (size: Size(1179, 2556), pixelRatio: 3);
+
+/// Launches the real app with exactly [overrides] on [screen].
+Future<void> _pump(WidgetTester tester, List<Override> overrides, {_Screen screen = _mac}) async {
   tester.view
-    ..physicalSize = referenceWindow
-    ..devicePixelRatio = 1;
+    ..physicalSize = screen.size
+    ..devicePixelRatio = screen.pixelRatio;
   addTearDown(tester.view.reset);
   final container = ProviderContainer.test(overrides: overrides);
   addTearDown(container.dispose);
@@ -62,6 +72,24 @@ Future<void> _pump(WidgetTester tester, List<Override> overrides) async {
     UncontrolledProviderScope(container: container, child: const CaptureApp()),
   );
   await _settle(tester);
+}
+
+/// Launches the real app as it runs on iPhone.
+Future<void> _launchPhone(
+  WidgetTester tester, {
+  required Directory support,
+  required INativePlatformService native,
+}) {
+  when(native.takeRecordRequest).thenAnswer((_) async => false);
+  return _pump(
+    tester,
+    appOverrides(
+      support: support,
+      native: native,
+      fakes: (secrets: null, reminders: null, system: FakeSystem(isPhone: true)),
+    ),
+    screen: _phone,
+  );
 }
 
 Future<void> _open(WidgetTester tester, String key) async {
@@ -135,6 +163,7 @@ void main() {
   late INativePlatformService native;
 
   setUpAll(() async {
+    tzdata.initializeTimeZones();
     registerFallbackValue(Duration.zero);
     registerFallbackValue(const ReviewCardPayload(countLine: '', rows: [], canApprove: false));
     await loadAppFonts();
@@ -145,12 +174,18 @@ void main() {
   });
   tearDown(() => support.deleteSync(recursive: true));
 
-  testWidgets('first launch shows the setup steps and does not record', (tester) async {
+  testWidgets('first launch shows the setup steps and still records', (tester) async {
+    when(native.requestMic).thenAnswer((_) async => true);
+    when(() => native.startRecording(any(), limit: any(named: 'limit'))).thenAnswer((_) async {});
     await _launch(tester, support: support, native: native);
 
     expect(find.text(_l10n.setupTitle), findsOneWidget);
-    await _open(tester, AppWidgetKeys.recordButton);
-    verifyNever(() => native.startRecording(any(), limit: any(named: 'limit')));
+    // Real time, so the draft's folder is created on disk.
+    await tester.runAsync(() async {
+      await tester.tap(find.byKey(const ValueKey(AppWidgetKeys.recordButton)));
+      await Future<void>.delayed(const .new(milliseconds: 100));
+    });
+    verify(() => native.startRecording(any(), limit: any(named: 'limit'))).called(1);
     verify(native.installMenu).called(1);
   });
 
@@ -243,7 +278,11 @@ void main() {
       final reminders = FakeReminders();
       await _pump(
         tester,
-        appOverrides(support: support, native: native, secrets: secrets, reminders: reminders),
+        appOverrides(
+          support: support,
+          native: native,
+          fakes: (secrets: secrets, reminders: reminders, system: null),
+        ),
       );
       await _open(tester, AppWidgetKeys.navRecordings);
       expect(find.byKey(ValueKey(sampleProposedCapture.id)), findsOneWidget);
@@ -293,7 +332,11 @@ void main() {
     final reminders = FakeReminders();
     final secrets = FakeSecrets({.typesafeKey: 'key', .notionToken: 'token'});
     await _pump(tester, [
-      ...appOverrides(support: support, native: native, secrets: secrets, reminders: reminders),
+      ...appOverrides(
+        support: support,
+        native: native,
+        fakes: (secrets: secrets, reminders: reminders, system: null),
+      ),
       captureSaveRepositoryProvider.overrideWithValue(_Saver()),
       libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
     ]);
@@ -332,6 +375,120 @@ void main() {
     );
   });
 
+  group('on iPhone', () {
+    testWidgets('Home has no shortcut hint and Settings sets up Record with Capture', (
+      tester,
+    ) async {
+      await _launchPhone(tester, support: support, native: native);
+      expect(tester.widget<Recorder>(find.byType(Recorder)).shortcutLabel, isNull);
+      await _open(tester, AppWidgetKeys.settingsButton);
+      final quickAccess = find.text(_l10n.quickAccessTitle);
+      await tester.scrollUntilVisible(
+        quickAccess,
+        300,
+        scrollable: find
+            .descendant(of: find.byType(PageFrame), matching: find.byType(Scrollable))
+            .first,
+      );
+
+      expect(quickAccess, findsOneWidget);
+      expect(find.text(_l10n.shortcutTitle), findsNothing);
+    });
+
+    testWidgets('the recording pill stops the recording', (tester) async {
+      when(native.requestMic).thenAnswer((_) async => true);
+      when(() => native.startRecording(any(), limit: any(named: 'limit'))).thenAnswer((_) async {});
+      when(native.stopRecording).thenAnswer((_) async => null);
+      await _launchPhone(tester, support: support, native: native);
+      await tester.runAsync(() async {
+        await tester.tap(find.byKey(const ValueKey(AppWidgetKeys.recordButton)));
+        await Future<void>.delayed(const .new(milliseconds: 100));
+      });
+      await tester.pump();
+
+      await tester.tap(find.byKey(const ValueKey(AppWidgetKeys.pillStopButton)));
+      await _settle(tester);
+      verify(native.stopRecording).called(1);
+      expect(find.byKey(const ValueKey(AppWidgetKeys.pillStopButton)), findsNothing);
+    });
+
+    testWidgets('the review card keeps a capture for later, edits it or dismisses it', (
+      tester,
+    ) async {
+      final seed = ProviderContainer.test(
+        overrides: appOverrides(support: support, native: native),
+      );
+      seed.read(captureRepositoryProvider).put(sampleProposedCapture);
+      seed.dispose();
+      when(() => native.showReview(any())).thenAnswer((_) async {});
+      when(native.showMainWindow).thenAnswer((_) async {});
+      await _launchPhone(tester, support: support, native: native);
+      final app = ProviderScope.containerOf(tester.element(find.byType(CaptureApp)));
+      final flow = app.read(captureFlowProvider.notifier);
+      final no = find.byKey(const ValueKey(AppWidgetKeys.reviewNoButton));
+
+      flow.showReview(sampleProposedCapture.id);
+      await _settle(tester);
+      expect(no, findsOneWidget);
+      await _open(tester, AppWidgetKeys.reviewLaterButton);
+      expect(no, findsNothing);
+      expect(
+        app.read(captureRepositoryProvider).get(sampleProposedCapture.id)?.stage,
+        equals(CaptureStage.proposed),
+      );
+
+      flow.showReview(sampleProposedCapture.id);
+      await _settle(tester);
+      await _open(tester, AppWidgetKeys.reviewEditButton);
+      expect(find.byKey(const ValueKey(AppWidgetKeys.editorSaveButton)), findsOneWidget);
+      await _open(tester, AppWidgetKeys.navHome);
+
+      flow.showReview(sampleProposedCapture.id);
+      await _settle(tester);
+      await _open(tester, AppWidgetKeys.reviewNoButton);
+      expect(no, findsNothing);
+      expect(
+        app.read(captureRepositoryProvider).get(sampleProposedCapture.id)?.stage,
+        equals(CaptureStage.dismissed),
+      );
+    });
+
+    testWidgets('Yes, save on the review card saves the capture to Notion', (tester) async {
+      final seed = ProviderContainer.test(
+        overrides: appOverrides(support: support, native: native),
+      );
+      seed.read(captureRepositoryProvider).put(sampleProposedCapture);
+      seed.read(notionWorkspaceLocalDatasourceProvider).write(.fromEntity(sampleWorkspace));
+      seed.dispose();
+      when(() => native.showReview(any())).thenAnswer((_) async {});
+      when(() => native.showWorking(any())).thenAnswer((_) async {});
+      when(native.takeRecordRequest).thenAnswer((_) async => false);
+      await _pump(tester, [
+        ...appOverrides(
+          support: support,
+          native: native,
+          fakes: (
+            secrets: FakeSecrets({.typesafeKey: 'key', .notionToken: 'token'}),
+            reminders: FakeReminders(),
+            system: FakeSystem(isPhone: true),
+          ),
+        ),
+        captureSaveRepositoryProvider.overrideWithValue(_Saver()),
+        libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
+      ], screen: _phone);
+      final app = ProviderScope.containerOf(tester.element(find.byType(CaptureApp)));
+      app.read(captureFlowProvider.notifier).showReview(sampleProposedCapture.id);
+      await _settle(tester);
+
+      await _open(tester, AppWidgetKeys.reviewYesButton);
+
+      expect(
+        app.read(captureRepositoryProvider).get(sampleProposedCapture.id)?.stage,
+        equals(CaptureStage.saved),
+      );
+    });
+  });
+
   group('recording a new shortcut', () {
     testWidgets('modifiers pressed alone become the shortcut only once saved', (tester) async {
       await _recordShortcut(tester, support: support, native: native, () async {
@@ -342,6 +499,7 @@ void main() {
       });
 
       expect(find.text('⌃⌘'), findsOneWidget);
+      expect(find.text(_l10n.quickAccessTitle), findsNothing);
       verify(() => native.pauseHotKey(paused: true)).called(1);
       verifyNever(() => native.setHotKey(keyCode: null, modifiers: _controlCommand, label: '⌃⌘'));
       await _open(tester, AppWidgetKeys.shortcutSaveButton);
