@@ -31,7 +31,7 @@ Evidence (checked 2026-09-22):
 
 Blockers: None
 Handoff: Approval
-Authority: Human-loop — the owner approved this plan and the UX ("Approve and build") on 2026-09-22 with these answers: record before setup and hold the audio, on both Mac and iPhone (confirmed as a deliberate Mac change); a second Record request does nothing new; Home Screen = both the icon quick action and an App Shortcut. Delivery: one scoped PR from `feature/capture-iphone-0ad451`; no merge, TestFlight upload or release without explicit approval.
+Authority: Human-loop — the owner approved this plan and the UX ("Approve and build") on 2026-09-22 with these answers: record before setup and hold the audio, on both Mac and iPhone (confirmed as a deliberate Mac change); a second Record request does nothing new; Home Screen = both the icon quick action and an App Shortcut. Delivery: one scoped PR from `feature/capture-iphone-0ad451`; no merge, TestFlight upload or release without explicit approval. The owner approved merging PR #19 on 2026-09-23.
 
 Decisions (owner-approved 2026-09-22):
 - Recording needs only microphone permission, on Mac and iPhone. Before setup is finished a stopped recording stays on the device as a recorded capture with a truthful notice, and is transcribed and sorted by Retry once setup is done. Recording never waits for Core ML to load or for the network: the model loads only after Stop, is used and freed.
@@ -112,5 +112,5 @@ Evidence: 2026-09-22 to 2026-09-23 on `feature/capture-iphone-0ad451`; the final
 - Not run: the Action Button (no hardware), the 5-minute limit while locked, the auto-save "Saved to Notion" notification on the device, a ~4-minute device capture. Codemagic: the first run needs the owner's Codemagic app, the `Capture App Store Connect` integration and `APP_STORE_APPLE_ID` set.
 E2E: Passed — simulator: Home Screen quick action and App Shortcut, cold, warm and pressed twice. iPhone 13, with session logs: recording, lock screen, transcription accuracy and speed, Notion save, reminders with Capture open and with the phone locked. Owner-reported without logs: interruption, kill and recover, offline, Control Centre press. Mac: ⌃⌥ capture. Not run, and the owner chose to proceed without them (2026-09-23): the auto-save notification and a ~4-minute capture on the iPhone 13, and the 5-minute limit while locked. Untestable: the Action Button (no hardware).
 
-Delivery target: PR
-Delivery: Pending — PR opened, Hard Eng CI check passes on it; Codemagic runs only after the owner connects the app.
+Delivery target: Merge
+Delivery: Pending — https://github.com/sgaabdu4/capture/pull/19 opened; its CI passed and the ship ready check passed at 62883f8. The owner approved the merge on 2026-09-23. Still to prove: the merged revision on `main` and its CI. The Mac Release job waits for the owner's approval in the protected `release` environment. Codemagic runs only once the owner connects the app.
