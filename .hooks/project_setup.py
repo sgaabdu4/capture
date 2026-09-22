@@ -520,6 +520,55 @@ def python_gate_command(command: list[str], manager: str) -> list[str]:
     return [*prefix, *command]
 
 
+def strict_scanner_flags(package: Group) -> None:
+    """Give an older scanner gate the flags the check now requires of it."""
+    from fallow_report import native_scanner_command, option
+
+    for gate in package["checks"]:
+        invocation = native_scanner_command(gate["command"])
+        if invocation is None or "&&" in gate["command"]:
+            continue
+        required: list[str] = []
+        if invocation[0] == "react-doctor":
+            required = ["--no-respect-inline-disables"]
+        elif invocation[0] == "dart-decimate":
+            required = ["--strict"] if "check" in invocation else required
+        elif "audit" in invocation:
+            required = required if option(invocation, "--gate") else ["--gate", "all"]
+        else:
+            required = ["--fail-on-issues"]
+        if required and required[0] not in invocation:
+            gate["command"] = [*gate["command"], *required]
+
+
+def parallel_pytest(package: Group) -> None:
+    """Run a generated pytest gate on every core; `-n 0` keeps a suite serial."""
+    for gate in package["checks"]:
+        command = gate["command"]
+        runners = [
+            index
+            for index, argument in enumerate(command)
+            if argument == "pytest"
+            and command[index - 1] not in {"--with", "--upgrade-package"}
+        ]
+        if gate.get("role") != "tests" or not runners or "--with" not in command:
+            continue
+        options = command[runners[0] + 1 :]
+        if "no:xdist" in options or any(
+            option.startswith(("-n", "--numprocesses", "--dist")) for option in options
+        ):
+            continue
+        xdist = ["--with", "pytest-xdist", "--upgrade-package", "pytest-xdist"]
+        gate["command"] = [
+            *command[: runners[0]],
+            *([] if "pytest-xdist" in command else xdist),
+            "pytest",
+            "-n",
+            "auto",
+            *options,
+        ]
+
+
 def python_interpreter(directory: Path, timeout: float) -> str:
     from tool_setup import managed_command
 
