@@ -88,6 +88,9 @@ ThemeData buildAppTheme() => .new(
     linearTrackColor: Palette.selected,
     linearMinHeight: Sizes.progressBar,
   ),
+  // The dial's digits default to displayLarge, the hero wordmark, which
+  // overflows the picker's fixed fields.
+  timePickerTheme: .new(hourMinuteTextStyle: _textTheme.displayMedium),
   dialogTheme: const .new(
     backgroundColor: Palette.paper,
     shape: RoundedRectangleBorder(borderRadius: Radii.rounded16),
