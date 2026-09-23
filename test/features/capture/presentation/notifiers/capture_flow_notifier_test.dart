@@ -107,6 +107,23 @@ ProviderContainer _container(
   );
 }
 
+/// Completes once the flow reaches [phase]. A start writes its draft to disk,
+/// which draining the event queue does not wait for.
+Future<void> _reach(ProviderContainer container, CapturePhase phase) async {
+  final reached = Completer<void>();
+  final subscription = container.listen(captureFlowProvider.select((state) => state.phase), (
+    _,
+    next,
+  ) {
+    if (next == phase && !reached.isCompleted) reached.complete();
+  }, fireImmediately: true);
+  try {
+    await reached.future.timeout(const .new(seconds: 5));
+  } finally {
+    subscription.close();
+  }
+}
+
 CaptureRecord _record(String id, CaptureStage stage) => .new(
   id: id,
   capturedAtUtc: FakeSystem.now,
@@ -299,7 +316,7 @@ void main() {
       container.read(captureFlowProvider);
 
       events.add(const RecordRequested());
-      await pumpEventQueue();
+      await _reach(container, .recording);
 
       expect(container.read(captureFlowProvider).phase, equals(CapturePhase.recording));
     });
@@ -312,7 +329,7 @@ void main() {
       for (final _ in [1, 2]) {
         events.add(const RecordRequested());
       }
-      await pumpEventQueue();
+      await _reach(container, .recording);
       events.add(const RecordRequested());
       await pumpEventQueue();
 
