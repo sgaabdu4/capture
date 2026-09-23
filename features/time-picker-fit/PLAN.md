@@ -4,7 +4,7 @@ Status: Complete
 
 ## Outcome + scope
 
-The time picker opened from the "9:00 AM" chip shows its whole hour and minute on iPhone 13 (390 × 844 pt). Out of scope: the date picker, the editor and review card layout, and the Mac page layout.
+The time picker opened from the "9:00 AM" chip shows its whole hour and minute on iPhone 13 (390 × 844 pt), and its selected AM/PM is readable. Out of scope: other readability findings (listed under Risks), the date picker, the editor and review card layout, and the Mac page layout.
 
 ## Repository context
 
@@ -19,6 +19,7 @@ Authority: Human-loop — on 2026-09-23 the owner asked for a fix, proof and a P
 ## Acceptance + steps
 
 - [x] T1 On iPhone 13, the hour and minute digits are laid out at their full height, so nothing clips them → `test/app/capture_app_test.dart` "the time picker opened from the review card shows its whole time on iPhone 13" passes. Without the fix it fails: 84 > 80.
+- [x] T3 The selected AM/PM is readable: cream on ink, 16.2:1, like the selected hour. Before it was dark text on `Palette.muted` (tertiary colours unset, falling back to secondary), about 3.3:1 against WCAG AA 4.5:1 → after screenshot at 390 × 844 and 1280 × 800.
 - [x] T2 Every page and dialog still lays out from 320 pt to 4K → `test/app/responsive_layout_test.dart` passes.
 
 ## Baseline + execution
@@ -29,7 +30,8 @@ Execution: One builder. Add `timePickerTheme.hourMinuteTextStyle = displayMedium
 
 ## Risks + recovery
 
-- Digits are smaller on Mac too (84 → 48 pt). That was agreed; recovery is to revert the one theme line.
+- Digits are smaller on Mac too (84 → 48 pt). That was agreed; recovery is to revert the theme lines.
+- Not fixed here, reported to the owner: Flutter's `textContrastGuideline` across every page found the iPhone bottom bar's unselected labels at 2.39:1 (`Palette.faint` on `Palette.sidebar`, `bottom_nav_item.dart`). `Palette.faint` is also the field hint colour (2.5:1). The guideline missed the AM/PM case, so it is not exhaustive.
 
 ## ux_reference
 
