@@ -45,7 +45,7 @@ https://github.com/user-attachments/assets/bf1d3b83-6699-4a02-b5be-1f403e4bd1b2
 
 [![Latest release](https://img.shields.io/github/v/release/sgaabdu4/capture)](https://github.com/sgaabdu4/capture/releases/latest)
 
-**[Download the latest Capture DMG](https://github.com/sgaabdu4/capture/releases/latest)**, open it and drag Capture into Applications. Every merge to `main` that changes more than documentation publishes a new release.
+**[Download the latest Capture DMG](https://github.com/sgaabdu4/capture/releases/latest)**, open it and drag Capture into Applications. Every merge to `main` that changes the app publishes a new release, numbered as the next patch version (1.0.1, 1.0.2, …). A minor or major release comes from raising the version in `pubspec.yaml`.
 
 Releases are signed with a Developer ID and notarised by Apple once the signing secrets are set. An unsigned build says so in its release notes: open **System Settings → Privacy & Security** and choose **Open Anyway** for Capture.
 
@@ -112,7 +112,7 @@ Stop with the pill's stop button or the mic. Opening Capture normally never star
   <img src="docs/screenshots/iphone-editor.png" alt="Reviewing a capture on iPhone" width="200">
 </p>
 
-Builds come from Codemagic: `ios-validate` builds every pull request, and `ios-testflight` is started by hand to sign and upload a TestFlight build.
+Builds come from Codemagic: `ios-validate` builds every pull request. Each release tag starts `ios-testflight`, which builds the same version, submits it to TestFlight and App Store review, and releases it once Apple approves. Pull requests that change the app give the App Store's "What's New" text under a `## What's New` heading in their description.
 
 ## Privacy
 

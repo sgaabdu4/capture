@@ -1,14 +1,18 @@
 name: Release
 
-# Pull requests build and pack the DMG without publishing. Every merge to
-# main builds Capture.app in the protected release environment and, once
-# the Hard Eng check on the same commit has passed, signs it with the
-# Developer ID certificate, notarises it and publishes it as the latest
-# GitHub release with the Sparkle feed the app checks for updates. Without
-# the signing secrets the release stays ad-hoc signed and has no feed.
-# Changes to documentation alone (top-level Markdown and plans) or to the
-# iPhone app alone (ios/ and codemagic.yaml, built by Codemagic) build and
-# publish nothing; the required dmg check still reports so the PR can merge.
+# Pull requests build and pack the DMG without publishing, and must give the
+# App Store "What's New" text under a "## What's New" heading in their
+# description. Every merge to main builds Capture.app in the protected
+# release environment as the next patch version after the newest vX.Y.Z tag
+# (or the pubspec.yaml version when that is higher) and, once the Hard Eng
+# check on the same commit has passed, signs it with the Developer ID
+# certificate, notarises it and publishes it as the latest GitHub release
+# vX.Y.Z with the Sparkle feed the app checks for updates. That tag starts
+# Codemagic's iPhone TestFlight and App Store build of the same version,
+# which reads its What's New from the release_notes.json asset. Without the
+# signing secrets the release stays ad-hoc signed and has no feed. Changes
+# outside the app (tests, CI, plans, documentation) build and publish
+# nothing; the required dmg check still reports so the PR can merge.
 on:
   push:
     branches:
@@ -30,23 +34,39 @@ jobs:
       contents: read # Compare the changed files.
     outputs:
       app: ${{ steps.diff.outputs.app }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Look for changes beyond documentation and the iPhone app
+      - name: Look for changes to the app
         id: diff
         env:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: |
           files="$(git diff --name-only "$BASE" HEAD)"
-          if printf '%s\n' "$files" | grep -Eqiv '^([^/]*\.md|features/.*/plan\.md|ios/.*|codemagic\.yaml)$'; then
+          if printf '%s\n' "$files" | grep -Eq '^(lib/|assets/|macos/|ios/|pubspec\.(yaml|lock)$|l10n\.yaml$|codemagic\.yaml$)'; then
             echo "app=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Only documentation or the iPhone app changed: nothing to build or publish."
+            echo "Nothing in the app changed: nothing to build or publish."
             echo "app=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Pick the version
+        id: version
+        if: github.event_name == 'push' && steps.diff.outputs.app == 'true'
+        # The next patch after the newest vX.Y.Z tag, or the pubspec.yaml
+        # version when that is higher, which is how a minor or major
+        # release is made.
+        run: |
+          floor="$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)"
+          latest="$(git tag -l 'v*' | sed -n 's/^v\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)$/\1/p' | sort -V | tail -n 1)"
+          version="$floor"
+          if [ -n "$latest" ]; then
+            version="$(printf '%s\n' "$floor" "${latest%.*}.$((${latest##*.} + 1))" | sort -V | tail -n 1)"
+          fi
+          echo "Releasing $version."
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
   dmg:
     name: dmg
@@ -56,10 +76,35 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read # Check out the pull request.
+      pull-requests: read # Read the description's What's New text.
     steps:
       - name: Nothing to build
         if: needs.changes.outputs.app != 'true'
-        run: echo "Only documentation changed, so there is no DMG to build."
+        run: echo "Nothing in the app changed, so there is no DMG to build."
+      - name: Check the App Store What's New text
+        if: needs.changes.outputs.app == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        # Reads the live description, so editing it and re-running this
+        # check is enough. Dependabot's updates get the default text.
+        run: |
+          if [ "$AUTHOR" = 'dependabot[bot]' ]; then
+            echo "Dependabot update: the release says \"Bug fixes and improvements.\""
+            exit 0
+          fi
+          text="$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq '.body // ""' | tr -d '\r' |
+            awk '/^## /{on = tolower($0) ~ /^## what.*s new[[:space:]]*$/; next} on' | sed '/[^[:space:]]/,$!d')"
+          if [ -z "$text" ]; then
+            echo "::error::This pull request changes the app, so its description needs a \"## What's New\" heading followed by one or two plain sentences for the App Store and the release notes. It is public. Edit the description, then re-run this check."
+            exit 1
+          fi
+          if [ "$(printf '%s' "$text" | wc -m)" -gt 4000 ]; then
+            echo "::error::The What's New text is longer than the App Store's 4000 characters."
+            exit 1
+          fi
+          printf "What's New:\n%s\n" "$text"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: needs.changes.outputs.app == 'true'
         with:
@@ -95,6 +140,9 @@ jobs:
     permissions:
       contents: write # Create the release and upload the DMG.
       checks: read # Wait for the hard-eng check on this commit.
+      pull-requests: read # Read the merged pull request's What's New text.
+    env:
+      VERSION: ${{ needs.changes.outputs.version }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -110,7 +158,7 @@ jobs:
         # The run number is the build number Sparkle compares.
         run: |
           pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config install flutter@latest &&
-          pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config exec flutter@latest -- flutter build macos --release --build-number="$RUN"
+          pnpm dlx --allow-build=@jdxcode/mise --package=@jdxcode/mise@latest mise --no-config exec flutter@latest -- flutter build macos --release --build-name="$VERSION" --build-number="$RUN"
       - name: Wait for the hard-eng check
         env:
           GH_TOKEN: ${{ github.token }}
@@ -195,14 +243,9 @@ jobs:
           xcrun stapler staple "$RUNNER_TEMP/Capture.dmg"
           echo "NOTARISED=true" >> "$GITHUB_ENV"
       - name: Name the DMG
-        env:
-          RUN: ${{ github.run_number }}
         run: |
-          version="$(sed -n 's/^version: \([^+]*\).*/\1/p' pubspec.yaml)"
-          name="${version}-alpha.${RUN}"
           mkdir "$RUNNER_TEMP/release"
-          mv "$RUNNER_TEMP/Capture.dmg" "$RUNNER_TEMP/release/Capture-${name}.dmg"
-          echo "RELEASE_NAME=$name" >> "$GITHUB_ENV"
+          mv "$RUNNER_TEMP/Capture.dmg" "$RUNNER_TEMP/release/Capture-${VERSION}.dmg"
       - name: Write the update feed
         env:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
@@ -214,15 +257,21 @@ jobs:
           fi
           printf '%s' "$SPARKLE_PRIVATE_KEY" |
             build/macos/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_appcast --ed-key-file - \
-              --download-url-prefix "https://github.com/$GITHUB_REPOSITORY/releases/download/v${RELEASE_NAME}/" \
+              --download-url-prefix "https://github.com/$GITHUB_REPOSITORY/releases/download/v${VERSION}/" \
               -o "$RUNNER_TEMP/release/appcast.xml" "$RUNNER_TEMP/release"
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ github.sha }}
+        # The merged pull request's What's New text also goes to the App
+        # Store, through the release_notes.json asset Codemagic reads.
         run: |
-          name="$RELEASE_NAME"
+          text="$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls" --jq '.[0].body // ""' | tr -d '\r' |
+            awk '/^## /{on = tolower($0) ~ /^## what.*s new[[:space:]]*$/; next} on' | sed '/[^[:space:]]/,$!d')"
+          [ -n "$text" ] || text="Bug fixes and improvements."
+          jq -n --arg text "$text" '[{language: "en-GB", text: $text}]' > "$RUNNER_TEMP/release/release_notes.json"
           {
+            printf '%s\n\n' "$text"
             echo "Built from main by the Release workflow; the Hard Eng checks passed on this commit."
             echo
             echo "Install: open the DMG and drag Capture into Applications."
@@ -233,11 +282,11 @@ jobs:
               echo "This build is not notarised. The first time you open it, macOS says it cannot check the app. Open System Settings, then Privacy & Security, and choose Open Anyway for Capture."
             fi
           } > "$RUNNER_TEMP/notes.md"
-          gh release create "v${name}" "$RUNNER_TEMP/release/"* \
+          gh release create "v${VERSION}" "$RUNNER_TEMP/release/"* \
             --repo "$GITHUB_REPOSITORY" \
             --target "$SHA" \
             --latest \
-            --title "Capture ${name}" \
+            --title "Capture ${VERSION}" \
             --notes-file "$RUNNER_TEMP/notes.md"
       - name: Remove the signing keychain
         if: always()
