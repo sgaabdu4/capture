@@ -50,7 +50,7 @@ Review: Inspected iPhone 13 dial and entry modes and the Mac dial, and the befor
 ## Verification
 
 Result: Passed
-Evidence: 2026-09-23. The new test fails without the fix (`Expected: <= 80.0, Actual: 84.0`) and passes with it. `flutter test test/app/responsive_layout_test.dart test/app/capture_app_test.dart` → 17/17 passed. `python3 .hooks/hard-eng.py check --plan-stage Complete` → 14/14 PASS, exit 0.
+Evidence: 2026-09-23. The new test fails without the fix (`Expected: <= 80.0, Actual: 84.0`) and passes with it. `flutter test test/app/responsive_layout_test.dart test/app/capture_app_test.dart` → 17/17 passed. `python3 .hooks/hard-eng.py check --plan-stage Complete` → 14/14 PASS, exit 0. After merging `main` (value objects, Hard Eng 732b31c) the picker test passes the id's text; the Complete check → 14/14 PASS, exit 0. Two earlier runs failed an unrelated timing test each (setup recording wait; transcript perf budget) while the machine's load average was 142 on 16 cores; both pass alone, and the full suite passed 152/152.
 E2E: Passed — the iPhone review card → Edit → time chip → picker journey, run as a widget test at 390 × 844 pt.
 
 Delivery target: Merge
