@@ -30,7 +30,8 @@ workflows:
 
   # Started by each vX.Y.Z tag that the Mac release workflow publishes, or by
   # hand on a tag: signs the app and the extension for the App Store, builds
-  # that version, submits it to TestFlight and App Store review in place of
+  # that version and uploads it, where TestFlight's internal testers get it
+  # without beta review. It submits the build to App Store review in place of
   # any earlier submission, and releases it once Apple approves.
   ios-testflight:
     name: iPhone TestFlight
@@ -82,7 +83,6 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
         submit_to_app_store: true
         cancel_previous_submissions: true
         release_type: AFTER_APPROVAL

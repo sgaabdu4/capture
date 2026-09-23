@@ -112,7 +112,7 @@ Stop with the pill's stop button or the mic. Opening Capture normally never star
   <img src="docs/screenshots/iphone-editor.png" alt="Reviewing a capture on iPhone" width="200">
 </p>
 
-Builds come from Codemagic: `ios-validate` builds every pull request. Each release tag starts `ios-testflight`, which builds the same version, submits it to TestFlight and App Store review, and releases it once Apple approves. Pull requests that change the app give the App Store's "What's New" text under a `## What's New` heading in their description.
+Builds come from Codemagic: `ios-validate` builds every pull request. Each release tag starts `ios-testflight`, which builds the same version, uploads it to TestFlight for internal testing, submits it to App Store review, and releases it once Apple approves. Pull requests that change the app give the App Store's "What's New" text under a `## What's New` heading in their description.
 
 ## Privacy
 
