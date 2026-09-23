@@ -29,7 +29,7 @@ sealed class CaptureFlowState with _$CaptureFlowState {
     String? autoSavedId,
   }) = _CaptureFlowState;
 
-  CaptureRecord? byId(String? id) => captures.where((c) => c.id == id).firstOrNull;
+  CaptureRecord? byId(String? id) => captures.where((c) => c.id.value == id).firstOrNull;
 
   CaptureRecord? get active => byId(activeId);
 

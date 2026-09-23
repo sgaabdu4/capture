@@ -1,3 +1,4 @@
+import 'package:capture/features/capture/domain/values/excerpt.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'source_span.freezed.dart';
@@ -10,5 +11,5 @@ part 'source_span.freezed.dart';
 sealed class SourceSpan with _$SourceSpan {
   /// [excerpt] is an exact copy of the source text; kept separately because
   /// offsets alone go stale if the transcript is later edited elsewhere.
-  const factory SourceSpan(int start, int end, String excerpt) = _SourceSpan;
+  const factory SourceSpan(int start, int end, Excerpt excerpt) = _SourceSpan;
 }

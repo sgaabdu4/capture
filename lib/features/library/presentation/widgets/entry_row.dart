@@ -52,7 +52,7 @@ class EntryRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    Text(entry.title, style: context.textTheme.bodyMedium),
+                    Text(entry.title ?? '', style: context.textTheme.bodyMedium),
                     if (detail case final String d) Text(d, style: context.textTheme.labelMedium),
                   ],
                 ),

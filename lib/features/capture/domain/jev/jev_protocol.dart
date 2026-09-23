@@ -13,6 +13,7 @@ import 'package:capture/features/capture/domain/jev/jev_protocol_failure.dart';
 import 'package:capture/features/capture/domain/jev/jev_result.dart';
 import 'package:capture/features/capture/domain/jev/jev_usage.dart';
 import 'package:capture/features/capture/domain/values/jev_answer.dart';
+import 'package:capture/features/capture/domain/values/jev_model.dart';
 import 'package:capture/features/capture/domain/values/jev_question.dart';
 
 export 'package:capture/features/capture/domain/jev/jev_protocol_failure.dart';
@@ -68,9 +69,9 @@ Result<JevResult, JevProtocolFailure> decodeResponse(Object? json, Map<String, J
   return const .err(.notAnObject);
 }
 
-String _model(Object? response) => switch (response) {
-  {jevModelField: final String model} => model,
-  _ => jevUnknownModel,
+JevModel _model(Object? response) => switch (response) {
+  {jevModelField: final String model} when model.trim().isNotEmpty => .new(model),
+  _ => .new(jevUnknownModel),
 };
 
 JevUsage _usage(Object? response) => switch (response) {

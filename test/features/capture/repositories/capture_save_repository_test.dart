@@ -40,34 +40,34 @@ class _AllowedReminders implements IReminderDatasource {
 }
 
 /// A task whose reminder is after [FakeSystem.now].
-const _dentist = ProposalItem(
-  id: 'item-1',
+final _dentist = ProposalItem(
+  id: .new('item-1'),
   sources: [],
   kind: .task,
-  groupId: 'g',
+  groupId: .new('g'),
   title: 'Call the dentist',
   body: '',
-  reminder: .new(2026, 9, 19, hour: 9, minute: 0),
+  reminder: const .new(2026, 9, 19, hour: 9, minute: 0),
 );
 
 /// A task with no reminder.
-const _tomatoes = ProposalItem(
-  id: 'item-2',
+final _tomatoes = ProposalItem(
+  id: .new('item-2'),
   sources: [],
   kind: .task,
-  groupId: 'g',
+  groupId: .new('g'),
   title: 'Plant tomatoes',
   body: '',
 );
 
 /// A saved capture with [_dentist].
 final _record = CaptureRecord(
-  id: 'c1',
+  id: .new('c1'),
   capturedAtUtc: FakeSystem.now,
-  timeZone: FakeSystem.zone,
-  audioPath: 'c1.m4a',
+  timeZone: .new(FakeSystem.zone),
+  audioPath: .new('c1.m4a'),
   stage: .saved,
-  items: const [_dentist],
+  items: [_dentist],
 );
 
 /// Schedules [_record]'s reminder; [stored] is whether the local store
@@ -89,17 +89,17 @@ Future<List<CaptureRecordModel>> _schedule({required bool stored}) async {
   return writes;
 }
 
-const _workspace = NotionWorkspace(
-  parentPageId: 'parent',
-  areaPageId: 'area',
-  groups: 'groups',
-  captures: 'captures',
-  library: 'library',
-  maxUploadBytes: 1,
+final _workspace = NotionWorkspace(
+  parentPageId: .new('parent'),
+  areaPageId: .new('area'),
+  groups: .new('groups'),
+  captures: .new('captures'),
+  library: .new('library'),
+  maxUpload: .fromBytes(1),
 );
 
 /// [_record] approved with a second item and no audio to upload.
-final _approved = _record.copyWith(stage: .approved, items: const [_dentist, _tomatoes]);
+final _approved = _record.copyWith(stage: .approved, items: [_dentist, _tomatoes]);
 
 /// Notion with nothing saved yet, where creating [failingItem]'s page fails
 /// once and then works. Every page Notion is asked to make goes into
@@ -116,7 +116,7 @@ _MockRemote _notion({required String failingItem, required List<String> created}
   when(() => remote.createItemPage(any(), any(), any(), capturePageId: any(named: 'capturePageId')))
       .thenAnswer((call) async {
         final id = switch (call.positionalArguments) {
-          [_, _, ProposalItem(:final id)] => id,
+          [_, _, ProposalItem(:final id)] => id.value,
           _ => fail('createItemPage without an item'),
         };
         created.add(id);

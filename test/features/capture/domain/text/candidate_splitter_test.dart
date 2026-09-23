@@ -3,7 +3,9 @@ import 'package:capture/features/capture/domain/text/candidate_splitter.dart';
 import 'package:capture/features/capture/domain/text/coverage.dart';
 import 'package:test/test.dart';
 
-List<String> _excerpts(String text) => [for (final u in splitCandidates(text)) u.span.excerpt];
+List<String> _excerpts(String text) => [
+  for (final u in splitCandidates(text)) u.span.excerpt.value,
+];
 
 void main() {
   test('sentences become candidate units with exact excerpts', () {
@@ -59,7 +61,7 @@ void main() {
 
   test('unit ids and boundary kinds are ordered', () {
     final units = splitCandidates('First thing here. Second thing and a third one');
-    expect(units.map((u) => u.id), equals(['U001', 'U002', 'U003']));
+    expect(units.map((u) => u.id.value), equals(['U001', 'U002', 'U003']));
     expect(
       units.map((u) => u.boundaryBefore),
       equals([BoundaryKind.start, BoundaryKind.sentence, BoundaryKind.conjunction]),
@@ -78,11 +80,11 @@ void main() {
     final units = splitCandidates(text);
     expect(coverageProblems(text, units.map((u) => u.span)), isEmpty);
     for (final unit in units) {
-      expect(text.substring(unit.span.start, unit.span.end), equals(unit.span.excerpt));
+      expect(text.substring(unit.span.start, unit.span.end), equals(unit.span.excerpt.value));
       final first = text.codeUnitAt(unit.span.start);
       expect(first >= 0xDC00 && first <= 0xDFFF, isFalse);
     }
-    expect(units.firstOrNull?.span.excerpt, equals('Café with Zoë 😀 was lovely.'));
+    expect(units.firstOrNull?.span.excerpt.value, equals('Café with Zoë 😀 was lovely.'));
   });
 
   test('every non-whitespace character is covered exactly once', () {
@@ -106,7 +108,7 @@ void main() {
       equals(['duplicated: "two"']),
     );
     expect(
-      coverageProblems(text, [const SourceSpan(0, 3, 'xyz'), spanOf(text, 3, 13)]),
+      coverageProblems(text, [SourceSpan(0, 3, .new('xyz')), spanOf(text, 3, 13)]),
       equals(['excerpt mismatch at 0']),
     );
   });

@@ -67,18 +67,21 @@ class NotionCaptureRemoteDatasource implements INotionCaptureRemoteDatasource {
 
   @override
   Future<NotionResult<String?>> findCapturePage(NotionWorkspace ws, String captureId) =>
-      _findBy(ws.captures, P.captureId, captureId);
+      _findBy(ws.captures.value, P.captureId, captureId);
 
   @override
   Future<NotionResult<String>> createCapturePage(NotionWorkspace ws, CaptureRecord r) => _create({
-    NotionKeys.parent: {NotionKeys.type: 'data_source_id', NotionKeys.dataSourceId: ws.captures},
+    NotionKeys.parent: {
+      NotionKeys.type: 'data_source_id',
+      NotionKeys.dataSourceId: ws.captures.value,
+    },
     NotionKeys.properties: {
       P.name: titleValue(captureTitle(r)),
-      P.captureId: textValue(r.id),
+      P.captureId: textValue(r.id.value),
       P.capturedAt: {
         NotionKeys.date: {NotionKeys.start: r.capturedAtUtc.toUtc().toIso8601String()},
       },
-      P.timeZone: textValue(r.timeZone),
+      P.timeZone: textValue(r.timeZone.value),
       P.duration: {
         NotionKeys.number:
             (r.duration.inMilliseconds * _durationScale / Duration.millisecondsPerSecond).round() /
@@ -91,7 +94,7 @@ class NotionCaptureRemoteDatasource implements INotionCaptureRemoteDatasource {
 
   @override
   Future<NotionResult<String?>> findItemPage(NotionWorkspace ws, String itemId) =>
-      _findBy(ws.library, P.itemId, itemId);
+      _findBy(ws.library.value, P.itemId, itemId);
 
   @override
   Future<NotionResult<String>> createItemPage(
@@ -100,16 +103,19 @@ class NotionCaptureRemoteDatasource implements INotionCaptureRemoteDatasource {
     ProposalItem item, {
     required String capturePageId,
   }) => _create({
-    NotionKeys.parent: {NotionKeys.type: 'data_source_id', NotionKeys.dataSourceId: ws.library},
+    NotionKeys.parent: {
+      NotionKeys.type: 'data_source_id',
+      NotionKeys.dataSourceId: ws.library.value,
+    },
     NotionKeys.properties: {
-      P.name: titleValue(item.title),
-      P.itemId: textValue(item.id),
+      P.name: titleValue(item.title ?? ''),
+      P.itemId: textValue(item.id.value),
       P.kind: selectValue(item.isTask ? NotionValues.task : NotionValues.note),
-      P.group: relationValue([?item.groupId]),
+      P.group: relationValue([?item.groupId?.value]),
       P.capture: relationValue([capturePageId]),
       P.done: {NotionKeys.checkbox: false},
-      P.due: dateValue(item.isTask ? item.due : null, r.timeZone),
-      P.reminder: dateValue(item.isTask ? item.reminder : null, r.timeZone),
+      P.due: dateValue(item.isTask ? item.due : null, r.timeZone.value),
+      P.reminder: dateValue(item.isTask ? item.reminder : null, r.timeZone.value),
     },
     NotionKeys.children: itemBlocks(item),
   });
@@ -162,15 +168,16 @@ class NotionCaptureRemoteDatasource implements INotionCaptureRemoteDatasource {
 }
 
 /// "Capture 18 Sep 2026, 09:30" in the capture's own time zone.
-String captureTitle(CaptureRecord r) =>
-    captureTitleFormat.format(tz.TZDateTime.from(r.capturedAtUtc, tz.getLocation(r.timeZone)));
+String captureTitle(CaptureRecord r) => captureTitleFormat.format(
+  tz.TZDateTime.from(r.capturedAtUtc, tz.getLocation(r.timeZone.value)),
+);
 
 List<Json> transcriptBlocks(String transcript) =>
     [block('heading_2', 'Transcript'), ...paragraphs(transcript)].take(maxChildren).toList();
 
 List<Json> itemBlocks(ProposalItem item) => [
-  if (item.body.trim().isNotEmpty) ...paragraphs(item.body),
-  for (final s in item.sources) block('quote', s.excerpt),
+  if (item.body case final body?) ...paragraphs(body),
+  for (final s in item.sources) block('quote', s.excerpt.value),
 ].take(maxChildren).toList();
 
 @Riverpod(keepAlive: true)

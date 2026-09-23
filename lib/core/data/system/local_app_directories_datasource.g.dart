@@ -8,23 +8,26 @@ part of 'local_app_directories_datasource.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Application Support inside the sandbox container (`$HOME` is the
-/// container's Data folder), matching `NSApplicationSupportDirectory` on the
-/// Mac and iPhone.
+/// Application Support inside the sandbox container, matching
+/// `NSApplicationSupportDirectory`. On the Mac `$HOME` is the container's
+/// Data folder; iPhone apps have no `$HOME`, and their temporary folder is
+/// `tmp` inside the container.
 
 @ProviderFor(appDirectories)
 final appDirectoriesProvider = AppDirectoriesProvider._();
 
-/// Application Support inside the sandbox container (`$HOME` is the
-/// container's Data folder), matching `NSApplicationSupportDirectory` on the
-/// Mac and iPhone.
+/// Application Support inside the sandbox container, matching
+/// `NSApplicationSupportDirectory`. On the Mac `$HOME` is the container's
+/// Data folder; iPhone apps have no `$HOME`, and their temporary folder is
+/// `tmp` inside the container.
 
 final class AppDirectoriesProvider
     extends $FunctionalProvider<AppDirectories, AppDirectories, AppDirectories>
     with $Provider<AppDirectories> {
-  /// Application Support inside the sandbox container (`$HOME` is the
-  /// container's Data folder), matching `NSApplicationSupportDirectory` on the
-  /// Mac and iPhone.
+  /// Application Support inside the sandbox container, matching
+  /// `NSApplicationSupportDirectory`. On the Mac `$HOME` is the container's
+  /// Data folder; iPhone apps have no `$HOME`, and their temporary folder is
+  /// `tmp` inside the container.
   AppDirectoriesProvider._()
     : super(
         from: null,
@@ -58,4 +61,4 @@ final class AppDirectoriesProvider
   }
 }
 
-String _$appDirectoriesHash() => r'0e1eb558630ffede93ee50d16b78879d84a66ba6';
+String _$appDirectoriesHash() => r'd2ca3fe7723901dd842771b393b7f7963649d995';

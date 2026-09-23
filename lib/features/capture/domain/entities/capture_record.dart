@@ -2,6 +2,9 @@ import 'package:capture/features/capture/domain/entities/capture_failure.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/domain/entities/save_progress.dart';
+import 'package:capture/features/capture/domain/values/audio_path.dart';
+import 'package:capture/features/capture/domain/values/capture_id.dart';
+import 'package:capture/features/capture/domain/values/time_zone_id.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'capture_record.freezed.dart';
@@ -14,14 +17,14 @@ sealed class CaptureRecord with _$CaptureRecord {
   const CaptureRecord._();
 
   const factory CaptureRecord({
-    required String id,
+    required CaptureId id,
     required DateTime capturedAtUtc,
 
     /// IANA zone at capture time; dates in the proposal are resolved in it.
-    required String timeZone,
+    required TimeZoneId timeZone,
 
     /// Raw PCM16 16 kHz mono file written while recording.
-    required String audioPath,
+    required AudioPath audioPath,
     @Default(Duration.zero) Duration duration,
     @Default(CaptureStage.recorded) CaptureStage stage,
     String? transcript,

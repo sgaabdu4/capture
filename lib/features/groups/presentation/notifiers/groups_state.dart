@@ -1,4 +1,5 @@
 import 'package:capture/core/data/notion/notion_http_service.dart';
+import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -28,5 +29,5 @@ sealed class GroupsState with _$GroupsState {
       if (g.archived) g,
   ];
 
-  Group? byId(String? id) => groups.where((g) => g.id == id).firstOrNull;
+  Group? byId(NotionId? id) => groups.where((g) => g.id == id).firstOrNull;
 }

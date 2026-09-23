@@ -35,9 +35,9 @@ class SourceWords extends StatelessWidget {
           Wrap(
             children: [
               for (final SourceSpan(:start, :excerpt) in sources)
-                for (final match in _word.allMatches(excerpt))
+                for (final match in _word.allMatches(excerpt.value))
                   SourceWord(
-                    text: excerpt.substring(match.start, match.end),
+                    text: excerpt.value.substring(match.start, match.end),
                     onTap: switch (onSplit) {
                       final ValueChanged<int> split when match.start > 0 => () => split(
                         start + match.start,

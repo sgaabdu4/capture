@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -17,8 +18,17 @@ sealed class GroupModel with _$GroupModel {
 
   factory GroupModel.fromJson(Map<String, dynamic> json) => _$GroupModelFromJson(json);
 
-  factory GroupModel.fromEntity(Group g) =>
-      GroupModel(id: g.id, name: g.name, description: g.description, archived: g.archived);
+  factory GroupModel.fromEntity(Group g) => GroupModel(
+    id: g.id.value,
+    name: g.name.value,
+    description: g.description ?? '',
+    archived: g.archived,
+  );
 
-  Group toEntity() => .new(id: id, name: name, description: description, archived: archived);
+  Group toEntity() => .new(
+    id: .new(id),
+    name: .new(name),
+    description: optionalText(description),
+    archived: archived,
+  );
 }

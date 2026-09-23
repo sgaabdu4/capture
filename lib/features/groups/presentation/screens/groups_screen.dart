@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
@@ -45,7 +46,7 @@ class GroupsScreen extends ConsumerWidget {
       case final Group g:
         await ref
             .read(groupsProvider.notifier)
-            .update(g.copyWith(name: name, description: description));
+            .update(g.copyWith(name: .new(name), description: optionalText(description)));
       case null:
         await ref.read(groupsProvider.notifier).create(draft);
     }

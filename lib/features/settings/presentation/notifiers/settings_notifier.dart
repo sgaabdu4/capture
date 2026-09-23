@@ -79,7 +79,7 @@ class SettingsNotifier extends _$SettingsNotifier {
   Future<void> connectNotion({required String token, required String pageLink}) async {
     if (state.connecting) return;
     final link = pageLink.trim();
-    final pageId = link.isEmpty ? state.workspace?.parentPageId : parseNotionId(link);
+    final pageId = link.isEmpty ? state.workspace?.parentPageId.value : parseNotionId(link);
     if (pageId == null) {
       _rejectPageLink();
       return;

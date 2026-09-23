@@ -35,16 +35,18 @@ class GroupsRepository implements IGroupsRepository {
   final IGroupsRemoteDatasource _remote;
   final IGroupsLocalDatasource _local;
 
-  List<Group> _sorted(Iterable<GroupModel> models) =>
-      [for (final m in models) m.toEntity()]
-        ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  /// A Groups row with no name cannot be offered or chosen, so it is skipped.
+  List<Group> _sorted(Iterable<GroupModel> models) => [
+    for (final m in models)
+      if (m.name.trim().isNotEmpty) m.toEntity(),
+  ]..sort((a, b) => a.name.value.toLowerCase().compareTo(b.name.value.toLowerCase()));
 
   @override
   List<Group> cached() => _sorted(_local.read());
 
   @override
   Future<NotionResult<List<Group>>> refresh(NotionWorkspace ws) async =>
-      switch (await _remote.fetch(ws.groups)) {
+      switch (await _remote.fetch(ws.groups.value)) {
         Ok(:final value) => .ok(_cache(value)),
         Err(:final failure) => .err(failure),
       };
@@ -56,12 +58,12 @@ class GroupsRepository implements IGroupsRepository {
 
   @override
   Future<NotionResult<List<Group>>> seedIfEmpty(NotionWorkspace ws) async {
-    final existing = await _remote.fetch(ws.groups);
+    final existing = await _remote.fetch(ws.groups.value);
     if (existing case Err(:final failure)) return .err(failure);
     if (existing case Ok(:final value) when value.isNotEmpty) return .ok(_cache(value));
     final seeded = <GroupModel>[];
     for (final g in defaultGroups) {
-      switch (await _remote.create(ws.groups, name: g.name, description: g.description)) {
+      switch (await _remote.create(ws.groups.value, name: g.name, description: g.description)) {
         case Ok(:final value):
           seeded.add(value);
         case Err(:final failure):
@@ -74,7 +76,7 @@ class GroupsRepository implements IGroupsRepository {
   @override
   Future<NotionResult<Group>> create(NotionWorkspace ws, GroupDraft draft) async =>
       switch (await _remote.create(
-        ws.groups,
+        ws.groups.value,
         name: draft.name.trim(),
         description: draft.description.trim(),
       )) {
@@ -91,7 +93,9 @@ class GroupsRepository implements IGroupsRepository {
   Future<NotionResult<void>> update(Group group) async {
     final model = GroupModel.fromEntity(group);
     final result = await _remote.update(model);
-    if (result is Ok) _local.write([for (final g in _local.read()) g.id == group.id ? model : g]);
+    if (result is Ok) {
+      _local.write([for (final g in _local.read()) g.id == group.id.value ? model : g]);
+    }
     return result;
   }
 }

@@ -57,7 +57,7 @@ class _FakeJevHttp implements IJevHttpService {
 
 final _groups = [
   for (final (i, g) in defaultGroups.indexed)
-    Group(id: 'g$i', name: g.name, description: g.description),
+    Group(id: .new('g$i'), name: .new(g.name), description: g.description),
 ];
 
 Future<Analysis?> _run(String transcript) async {
@@ -96,6 +96,6 @@ void main() {
   });
 
   test('wholeTranscript trims to the spoken text', () {
-    expect(wholeTranscript('  hello there  ').span.excerpt, equals('hello there'));
+    expect(wholeTranscript('  hello there  ').span.excerpt.value, equals('hello there'));
   });
 }

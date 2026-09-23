@@ -1,5 +1,6 @@
 import 'package:capture/features/capture/domain/text/thought.dart';
 import 'package:capture/features/capture/domain/values/date_candidate.dart';
+import 'package:capture/features/groups/domain/values/group_name.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'thought_decision.freezed.dart';
@@ -10,7 +11,7 @@ part 'thought_decision.freezed.dart';
 sealed class ThoughtDecision with _$ThoughtDecision {
   const factory ThoughtDecision({
     required Thought thought,
-    required String groupOption,
+    required GroupName groupOption,
     required double groupConfidence,
 
     /// P(yes) that the thought is a to-do.

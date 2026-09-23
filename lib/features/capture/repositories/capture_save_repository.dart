@@ -87,7 +87,7 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
 
   Future<Result<String, CaptureFailure>> _capturePage(CaptureRecord r, NotionWorkspace ws) async {
     if (r.progress.capturePageId case final String id) return .ok(id);
-    return _mapped(switch (await _remote.findCapturePage(ws, r.id)) {
+    return _mapped(switch (await _remote.findCapturePage(ws, r.id.value)) {
       Ok(value: final String id) => .ok(id),
       Ok() => await _remote.createCapturePage(ws, r),
       Err(:final failure) => .err(failure),
@@ -98,11 +98,11 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
   /// rest, so a failure keeps every page already confirmed.
   Future<CaptureOutcome> _itemPages(CaptureRecord r, NotionWorkspace ws, String pageId) async {
     final itemPages = r.progress.itemPages;
-    final item = r.includedItems.where((i) => !itemPages.containsKey(i.id)).firstOrNull;
+    final item = r.includedItems.where((i) => !itemPages.containsKey(i.id.value)).firstOrNull;
     if (item == null) return .ok(r);
     return switch (await _itemPage(r, ws, item, pageId)) {
       Ok(:final value) => await _itemPages(
-        _persist(r, r.progress.copyWith(itemPages: {...itemPages, item.id: value})),
+        _persist(r, r.progress.copyWith(itemPages: {...itemPages, item.id.value: value})),
         ws,
         pageId,
       ),
@@ -115,7 +115,7 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
     NotionWorkspace ws,
     ProposalItem item,
     String pageId,
-  ) async => _mapped(switch (await _remote.findItemPage(ws, item.id)) {
+  ) async => _mapped(switch (await _remote.findItemPage(ws, item.id.value)) {
     Ok(value: final String id) => .ok(id),
     Ok() => await _remote.createItemPage(ws, r, item, capturePageId: pageId),
     Err(:final failure) => .err(failure),
@@ -132,11 +132,11 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
     if (attached case Err(:final failure)) return .err(_captureFailure(failure));
     if (attached case Ok(value: true)) return .ok(progress.copyWith(audioAttached: true));
     if (_files.sizeOf(path) == 0) return const .err(.audioMissing);
-    if (_files.sizeOf(path) > ws.maxUploadBytes) {
+    if (_files.sizeOf(path) > ws.maxUpload.inBytes) {
       return const .err(.audioTooLarge);
     }
     final bytes = await _files.read(path);
-    return switch (await _remote.attachRecording(pageId, bytes, name: 'capture-$id.m4a')) {
+    return switch (await _remote.attachRecording(pageId, bytes, name: 'capture-${id.value}.m4a')) {
       Ok(:final value) => .ok(progress.copyWith(audioUploadId: value, audioAttached: true)),
       Err(:final failure) => .err(_captureFailure(failure)),
     };
@@ -158,24 +158,28 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
   @override
   Future<ReminderOutcome> scheduleReminders(CaptureRecord record) async {
     final CaptureRecord(:id, :timeZone, :includedItems, :progress, :copyWith) = record;
-    final offsets = zoneOffsets(timeZone);
-    final location = tz.getLocation(timeZone);
+    final offsets = zoneOffsets(timeZone.value);
+    final location = tz.getLocation(timeZone.value);
     final now = _system.nowUtc();
     final due = [
       for (final item in includedItems)
         if (item case ProposalItem(isTask: true, reminder: final reminder?))
-          if (!progress.remindersScheduled.contains(item.id))
+          if (!progress.remindersScheduled.contains(item.id.value))
             if (reminderInstant(reminder, offsets) case final at? when at.isAfter(now))
               (item: item, at: tz.TZDateTime.from(at, location)),
     ];
     final scheduled = {...progress.remindersScheduled};
     bool refused = false;
     for (final (:item, :at) in due) {
-      final accepted = await _reminders.schedule(itemId: item.id, title: item.title, at: at);
+      final accepted = await _reminders.schedule(
+        itemId: item.id.value,
+        title: item.title ?? '',
+        at: at,
+      );
       refused = refused || !accepted;
       // A capture deleted while the prompt was open stays deleted.
-      if (accepted && _local.get(id) != null) {
-        scheduled.add(item.id);
+      if (accepted && _local.get(id.value) != null) {
+        scheduled.add(item.id.value);
         _persist(record, progress.copyWith(remindersScheduled: {...scheduled}));
       }
     }

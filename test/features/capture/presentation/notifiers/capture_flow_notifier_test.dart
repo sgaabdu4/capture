@@ -24,13 +24,13 @@ import 'package:mocktail/mocktail.dart';
 import '../../../../helpers/app_harness.dart';
 import '../../../../helpers/test_fakes.dart';
 
-const _workspace = NotionWorkspace(
-  parentPageId: 'parent',
-  areaPageId: 'area',
-  groups: 'groups',
-  captures: 'captures',
-  library: 'library',
-  maxUploadBytes: 1,
+final _workspace = NotionWorkspace(
+  parentPageId: .new('parent'),
+  areaPageId: .new('area'),
+  groups: .new('groups'),
+  captures: .new('captures'),
+  library: .new('library'),
+  maxUpload: .fromBytes(1),
 );
 
 class _Connected extends SettingsNotifier {
@@ -76,7 +76,7 @@ class _Saver implements ICaptureSaveRepository {
 
   @override
   Future<ReminderOutcome> scheduleReminders(CaptureRecord record) async {
-    reminded.add(record.id);
+    reminded.add(record.id.value);
     return (record: record, notificationsOff: !await prompt.future);
   }
 }
@@ -107,11 +107,28 @@ ProviderContainer _container(
   );
 }
 
+/// Completes once the flow reaches [phase]. A start writes its draft to disk,
+/// which draining the event queue does not wait for.
+Future<void> _reach(ProviderContainer container, CapturePhase phase) async {
+  final reached = Completer<void>();
+  final subscription = container.listen(captureFlowProvider.select((state) => state.phase), (
+    _,
+    next,
+  ) {
+    if (next == phase && !reached.isCompleted) reached.complete();
+  }, fireImmediately: true);
+  try {
+    await reached.future.timeout(const .new(seconds: 5));
+  } finally {
+    subscription.close();
+  }
+}
+
 CaptureRecord _record(String id, CaptureStage stage) => .new(
-  id: id,
+  id: .new(id),
   capturedAtUtc: FakeSystem.now,
-  timeZone: FakeSystem.zone,
-  audioPath: '$id.m4a',
+  timeZone: .new(FakeSystem.zone),
+  audioPath: .new('$id.m4a'),
   stage: stage,
 );
 
@@ -130,10 +147,10 @@ CaptureRecord _proposal(String id, {String? groupId = 'g', CaptureFailure? failu
       failure: failure,
       items: [
         .new(
-          id: '$id-note',
+          id: .new('$id-note'),
           sources: const [],
           kind: .note,
-          groupId: groupId,
+          groupId: groupId == null ? null : .new(groupId),
           title: 'Idea',
           body: '',
         ),
@@ -249,8 +266,8 @@ void main() {
     final twoSeconds = File('${audio.path}/c1.pcm')..writeAsBytesSync(.filled(64000, 0));
     final accidental = File('${audio.path}/c2.pcm')..writeAsBytesSync(.filled(3200, 0));
     final captures = container.read(captureRepositoryProvider)
-      ..put(_record('c1', .recorded).copyWith(audioPath: twoSeconds.path))
-      ..put(_record('c2', .recorded).copyWith(audioPath: accidental.path));
+      ..put(_record('c1', .recorded).copyWith(audioPath: .new(twoSeconds.path)))
+      ..put(_record('c2', .recorded).copyWith(audioPath: .new(accidental.path)));
 
     container.read(captureFlowProvider.notifier).recoverInterrupted();
 
@@ -299,7 +316,7 @@ void main() {
       container.read(captureFlowProvider);
 
       events.add(const RecordRequested());
-      await pumpEventQueue();
+      await _reach(container, .recording);
 
       expect(container.read(captureFlowProvider).phase, equals(CapturePhase.recording));
     });
@@ -312,7 +329,7 @@ void main() {
       for (final _ in [1, 2]) {
         events.add(const RecordRequested());
       }
-      await pumpEventQueue();
+      await _reach(container, .recording);
       events.add(const RecordRequested());
       await pumpEventQueue();
 

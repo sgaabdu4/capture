@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Thought {
 
- String get id; List<TranscriptUnit> get units; SourceSpan get span;/// True when the boundary that started this thought was uncertain.
+ PassageId get id; List<TranscriptUnit> get units; SourceSpan get span;/// True when the boundary that started this thought was uncertain.
  bool get uncertainStart;/// True when the thought starts with a correction of an earlier,
 /// non-adjacent thought.
  bool get lateCorrection;
@@ -54,7 +54,7 @@ abstract mixin class $ThoughtCopyWith<$Res>  {
   factory $ThoughtCopyWith(Thought value, $Res Function(Thought) _then) = _$ThoughtCopyWithImpl;
 @useResult
 $Res call({
- String id, List<TranscriptUnit> units, SourceSpan span, bool uncertainStart, bool lateCorrection
+ PassageId id, List<TranscriptUnit> units, SourceSpan span, bool uncertainStart, bool lateCorrection
 });
 
 
@@ -74,7 +74,7 @@ class _$ThoughtCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? units = null,Object? span = null,Object? uncertainStart = null,Object? lateCorrection = null,}) {
   return _then(Thought(
 null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
+as PassageId,null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
 as List<TranscriptUnit>,null == span ? _self.span : span // ignore: cast_nullable_to_non_nullable
 as SourceSpan,uncertainStart: null == uncertainStart ? _self.uncertainStart : uncertainStart // ignore: cast_nullable_to_non_nullable
 as bool,lateCorrection: null == lateCorrection ? _self.lateCorrection : lateCorrection // ignore: cast_nullable_to_non_nullable
@@ -169,7 +169,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  List<TranscriptUnit> units,  SourceSpan span,  bool uncertainStart,  bool lateCorrection)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( PassageId id,  List<TranscriptUnit> units,  SourceSpan span,  bool uncertainStart,  bool lateCorrection)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Thought() when $default != null:
 return $default(_that.id,_that.units,_that.span,_that.uncertainStart,_that.lateCorrection);case _:
@@ -190,7 +190,7 @@ return $default(_that.id,_that.units,_that.span,_that.uncertainStart,_that.lateC
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  List<TranscriptUnit> units,  SourceSpan span,  bool uncertainStart,  bool lateCorrection)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( PassageId id,  List<TranscriptUnit> units,  SourceSpan span,  bool uncertainStart,  bool lateCorrection)  $default,) {final _that = this;
 switch (_that) {
 case _Thought():
 return $default(_that.id,_that.units,_that.span,_that.uncertainStart,_that.lateCorrection);}
@@ -207,7 +207,7 @@ return $default(_that.id,_that.units,_that.span,_that.uncertainStart,_that.lateC
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  List<TranscriptUnit> units,  SourceSpan span,  bool uncertainStart,  bool lateCorrection)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( PassageId id,  List<TranscriptUnit> units,  SourceSpan span,  bool uncertainStart,  bool lateCorrection)?  $default,) {final _that = this;
 switch (_that) {
 case _Thought() when $default != null:
 return $default(_that.id,_that.units,_that.span,_that.uncertainStart,_that.lateCorrection);case _:
@@ -225,7 +225,7 @@ class _Thought implements Thought {
   const _Thought(this.id,  List<TranscriptUnit> units, this.span, {this.uncertainStart = false, this.lateCorrection = false}): _units = units;
   
 
-@override final  String id;
+@override final  PassageId id;
  final  List<TranscriptUnit> _units;
 @override List<TranscriptUnit> get units {
   if (_units is EqualUnmodifiableListView) return _units;
@@ -272,7 +272,7 @@ abstract mixin class _$ThoughtCopyWith<$Res> implements $ThoughtCopyWith<$Res> {
   factory _$ThoughtCopyWith(_Thought value, $Res Function(_Thought) _then) = __$ThoughtCopyWithImpl;
 @override @useResult
 $Res call({
- String id, List<TranscriptUnit> units, SourceSpan span, bool uncertainStart, bool lateCorrection
+ PassageId id, List<TranscriptUnit> units, SourceSpan span, bool uncertainStart, bool lateCorrection
 });
 
 
@@ -292,7 +292,7 @@ class __$ThoughtCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? units = null,Object? span = null,Object? uncertainStart = null,Object? lateCorrection = null,}) {
   return _then(_Thought(
 null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,null == units ? _self._units : units // ignore: cast_nullable_to_non_nullable
+as PassageId,null == units ? _self._units : units // ignore: cast_nullable_to_non_nullable
 as List<TranscriptUnit>,null == span ? _self.span : span // ignore: cast_nullable_to_non_nullable
 as SourceSpan,uncertainStart: null == uncertainStart ? _self.uncertainStart : uncertainStart // ignore: cast_nullable_to_non_nullable
 as bool,lateCorrection: null == lateCorrection ? _self.lateCorrection : lateCorrection // ignore: cast_nullable_to_non_nullable

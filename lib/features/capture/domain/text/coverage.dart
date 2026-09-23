@@ -1,7 +1,8 @@
 import 'package:capture/features/capture/domain/entities/source_span.dart';
 
 /// Span over [text] from [start] to [end] with its exact excerpt.
-SourceSpan spanOf(String text, int start, int end) => .new(start, end, text.substring(start, end));
+SourceSpan spanOf(String text, int start, int end) =>
+    .new(start, end, .new(text.substring(start, end)));
 
 /// Returns the non-whitespace text of [text] that is not covered by [spans],
 /// or that is covered more than once. Empty result means every source
@@ -24,7 +25,7 @@ List<String> coverageProblems(String text, Iterable<SourceSpan> spans) {
 String? _spanProblem(String text, SourceSpan span) {
   final SourceSpan(:start, :end, :excerpt) = span;
   if (start < 0 || end > text.length || start > end) return 'invalid span $start-$end';
-  if (text.substring(start, end) != excerpt) return 'excerpt mismatch at $start';
+  if (text.substring(start, end) != excerpt.value) return 'excerpt mismatch at $start';
   return null;
 }
 

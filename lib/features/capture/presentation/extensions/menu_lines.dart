@@ -7,7 +7,10 @@ import 'package:capture/l10n/app_localizations.dart';
 extension MenuNextUp on LibraryEntry? {
   /// "Call the dentist · Tomorrow 9:00 AM", or the empty line.
   String nextUpLine(AppLocalizations l10n, DateTime today) => switch (this) {
-    LibraryEntry(:final title, when: final due?) => l10n.menuNextUp(title, due.label(l10n, today)),
+    LibraryEntry(:final title, when: final due?) => l10n.menuNextUp(
+      title ?? '',
+      due.label(l10n, today),
+    ),
     _ => l10n.menuNothingScheduled,
   };
 }

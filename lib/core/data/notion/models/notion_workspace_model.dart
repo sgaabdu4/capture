@@ -22,22 +22,22 @@ sealed class NotionWorkspaceModel with _$NotionWorkspaceModel {
       _$NotionWorkspaceModelFromJson(json);
 
   factory NotionWorkspaceModel.fromEntity(NotionWorkspace w) => NotionWorkspaceModel(
-    parentPageId: w.parentPageId,
-    areaPageId: w.areaPageId,
-    groups: w.groups,
-    captures: w.captures,
-    library: w.library,
-    maxUploadBytes: w.maxUploadBytes,
+    parentPageId: w.parentPageId.value,
+    areaPageId: w.areaPageId.value,
+    groups: w.groups.value,
+    captures: w.captures.value,
+    library: w.library.value,
+    maxUploadBytes: w.maxUpload.inBytes,
     workspaceName: w.workspaceName,
   );
 
   NotionWorkspace toEntity() => .new(
-    parentPageId: parentPageId,
-    areaPageId: areaPageId,
-    groups: groups,
-    captures: captures,
-    library: library,
-    maxUploadBytes: maxUploadBytes,
+    parentPageId: .new(parentPageId),
+    areaPageId: .new(areaPageId),
+    groups: .new(groups),
+    captures: .new(captures),
+    library: .new(library),
+    maxUpload: .fromBytes(maxUploadBytes),
     workspaceName: workspaceName,
   );
 }

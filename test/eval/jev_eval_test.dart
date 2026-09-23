@@ -222,7 +222,7 @@ class _Report {
   }
 
   List<String> _compareGroup(EvalCase c, Expected e, ProposalItem item) {
-    final group = c.groups.where((g) => g.id == item.groupId).firstOrNull?.name;
+    final group = c.groups.where((g) => g.id == item.groupId).firstOrNull?.name.value;
     if (e.groups.contains(group)) {
       groupCorrect++;
       return const [];

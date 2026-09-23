@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ThoughtDecision {
 
- Thought get thought; String get groupOption; double get groupConfidence;/// P(yes) that the thought is a to-do.
+ Thought get thought; GroupName get groupOption; double get groupConfidence;/// P(yes) that the thought is a to-do.
  double get task;/// P(yes) that the thought asks for a reminder.
  double get alert;/// P(yes) that the thought asks the app to recall something.
  double get recall; DayCandidate? get day; double get dayConfidence; TimeCandidate? get time; double get timeConfidence;
@@ -54,7 +54,7 @@ abstract mixin class $ThoughtDecisionCopyWith<$Res>  {
   factory $ThoughtDecisionCopyWith(ThoughtDecision value, $Res Function(ThoughtDecision) _then) = _$ThoughtDecisionCopyWithImpl;
 @useResult
 $Res call({
- Thought thought, String groupOption, double groupConfidence, double task, double alert, double recall, DayCandidate? day, double dayConfidence, TimeCandidate? time, double timeConfidence
+ Thought thought, GroupName groupOption, double groupConfidence, double task, double alert, double recall, DayCandidate? day, double dayConfidence, TimeCandidate? time, double timeConfidence
 });
 
 
@@ -75,7 +75,7 @@ class _$ThoughtDecisionCopyWithImpl<$Res>
   return _then(ThoughtDecision(
 thought: null == thought ? _self.thought : thought // ignore: cast_nullable_to_non_nullable
 as Thought,groupOption: null == groupOption ? _self.groupOption : groupOption // ignore: cast_nullable_to_non_nullable
-as String,groupConfidence: null == groupConfidence ? _self.groupConfidence : groupConfidence // ignore: cast_nullable_to_non_nullable
+as GroupName,groupConfidence: null == groupConfidence ? _self.groupConfidence : groupConfidence // ignore: cast_nullable_to_non_nullable
 as double,task: null == task ? _self.task : task // ignore: cast_nullable_to_non_nullable
 as double,alert: null == alert ? _self.alert : alert // ignore: cast_nullable_to_non_nullable
 as double,recall: null == recall ? _self.recall : recall // ignore: cast_nullable_to_non_nullable
@@ -174,7 +174,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Thought thought,  String groupOption,  double groupConfidence,  double task,  double alert,  double recall,  DayCandidate? day,  double dayConfidence,  TimeCandidate? time,  double timeConfidence)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Thought thought,  GroupName groupOption,  double groupConfidence,  double task,  double alert,  double recall,  DayCandidate? day,  double dayConfidence,  TimeCandidate? time,  double timeConfidence)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ThoughtDecision() when $default != null:
 return $default(_that.thought,_that.groupOption,_that.groupConfidence,_that.task,_that.alert,_that.recall,_that.day,_that.dayConfidence,_that.time,_that.timeConfidence);case _:
@@ -195,7 +195,7 @@ return $default(_that.thought,_that.groupOption,_that.groupConfidence,_that.task
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Thought thought,  String groupOption,  double groupConfidence,  double task,  double alert,  double recall,  DayCandidate? day,  double dayConfidence,  TimeCandidate? time,  double timeConfidence)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Thought thought,  GroupName groupOption,  double groupConfidence,  double task,  double alert,  double recall,  DayCandidate? day,  double dayConfidence,  TimeCandidate? time,  double timeConfidence)  $default,) {final _that = this;
 switch (_that) {
 case _ThoughtDecision():
 return $default(_that.thought,_that.groupOption,_that.groupConfidence,_that.task,_that.alert,_that.recall,_that.day,_that.dayConfidence,_that.time,_that.timeConfidence);}
@@ -212,7 +212,7 @@ return $default(_that.thought,_that.groupOption,_that.groupConfidence,_that.task
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Thought thought,  String groupOption,  double groupConfidence,  double task,  double alert,  double recall,  DayCandidate? day,  double dayConfidence,  TimeCandidate? time,  double timeConfidence)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Thought thought,  GroupName groupOption,  double groupConfidence,  double task,  double alert,  double recall,  DayCandidate? day,  double dayConfidence,  TimeCandidate? time,  double timeConfidence)?  $default,) {final _that = this;
 switch (_that) {
 case _ThoughtDecision() when $default != null:
 return $default(_that.thought,_that.groupOption,_that.groupConfidence,_that.task,_that.alert,_that.recall,_that.day,_that.dayConfidence,_that.time,_that.timeConfidence);case _:
@@ -231,7 +231,7 @@ class _ThoughtDecision implements ThoughtDecision {
   
 
 @override final  Thought thought;
-@override final  String groupOption;
+@override final  GroupName groupOption;
 @override final  double groupConfidence;
 /// P(yes) that the thought is a to-do.
 @override final  double task;
@@ -276,7 +276,7 @@ abstract mixin class _$ThoughtDecisionCopyWith<$Res> implements $ThoughtDecision
   factory _$ThoughtDecisionCopyWith(_ThoughtDecision value, $Res Function(_ThoughtDecision) _then) = __$ThoughtDecisionCopyWithImpl;
 @override @useResult
 $Res call({
- Thought thought, String groupOption, double groupConfidence, double task, double alert, double recall, DayCandidate? day, double dayConfidence, TimeCandidate? time, double timeConfidence
+ Thought thought, GroupName groupOption, double groupConfidence, double task, double alert, double recall, DayCandidate? day, double dayConfidence, TimeCandidate? time, double timeConfidence
 });
 
 
@@ -297,7 +297,7 @@ class __$ThoughtDecisionCopyWithImpl<$Res>
   return _then(_ThoughtDecision(
 thought: null == thought ? _self.thought : thought // ignore: cast_nullable_to_non_nullable
 as Thought,groupOption: null == groupOption ? _self.groupOption : groupOption // ignore: cast_nullable_to_non_nullable
-as String,groupConfidence: null == groupConfidence ? _self.groupConfidence : groupConfidence // ignore: cast_nullable_to_non_nullable
+as GroupName,groupConfidence: null == groupConfidence ? _self.groupConfidence : groupConfidence // ignore: cast_nullable_to_non_nullable
 as double,task: null == task ? _self.task : task // ignore: cast_nullable_to_non_nullable
 as double,alert: null == alert ? _self.alert : alert // ignore: cast_nullable_to_non_nullable
 as double,recall: null == recall ? _self.recall : recall // ignore: cast_nullable_to_non_nullable

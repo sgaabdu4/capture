@@ -52,7 +52,7 @@ class GroupList extends StatelessWidget {
             const SizedBox(height: Spacing.xs),
           ],
           GroupCard(
-            key: ValueKey(id),
+            key: ValueKey(id.value),
             group: group,
             items: entries.filedIn(id),
             busy: busy,
