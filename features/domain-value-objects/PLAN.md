@@ -42,14 +42,13 @@ Rejected: fake `HiveField` markers (no Hive here), renaming to dodge the unit ru
 
 ## Baseline + execution
 
-Result: Failed
-Evidence: 2026-09-23, Hard Eng updater on `6bb5608` (main after PR #22) → `FAIL types-lint (exit 3)`: 24 `domain_raw_required_string` and 1 `domain_unit_primitive` across the 12 entities above; every other gate passed (import-boundaries, tests 76.26% coverage, dead-code-duplicates, performance, strict-types-lint, secrets, actionlint, zizmor). Reproduced on branch `fix/domain-value-objects` with the pin bumped: `dart analyze --fatal-infos` → the same 25.
-Current baseline after repair: the updater, run on `abc96b2`, verified and installed `732b31c` (commit `bad49a4`, exit 0).
+Result: Passed
+Evidence: Current baseline after repair: the updater, run on `abc96b2`, verified and installed `732b31c` (commit `bad49a4`, exit 0). Original failed baseline (preserved): 2026-09-23, Hard Eng updater on `6bb5608` (main after PR #22) → `FAIL types-lint (exit 3)`: 24 `domain_raw_required_string` and 1 `domain_unit_primitive` across the 12 entities above; every other gate passed (import-boundaries, tests 76.26% coverage, dead-code-duplicates, performance, strict-types-lint, secrets, actionlint, zizmor). Reproduced on branch `fix/domain-value-objects` with the pin bumped: `dart analyze --fatal-infos` → the same 25.
 Execution: One builder. Add value objects, change entities, regenerate Freezed, follow the compiler through mappers and callers, update tests, then run the updater and commit its changes with the code.
 
 ## Risks + recovery
 
-- A value object throws on data that was valid before. Recovery: Notion input is filtered at the datasource; locally built values come from code that already rejects blanks; tests cover the mappers.
+- A value object's assert fires on data that was valid before (debug builds only; release keeps the value). Recovery: Notion input is filtered in the repositories; locally built values come from code that already rejects blanks; tests cover the mappers.
 - Library pages made directly in Notion stop appearing in To-Do/Upcoming. Recovery: they never had a stable local row; restore by reading them by page id in a later change if wanted.
 
 ## ux_reference
@@ -64,8 +63,8 @@ Evidence: 2026-09-23 on `fix/domain-value-objects`.
 - `flutter test` → 150 passed, 2 skipped (137 before, plus 11 value-object cases and 2 skip cases).
 - Skip proof: with the two repository filters removed (not committed), both skip tests fail with "GroupName must not be blank" / "ItemId must not be blank"; restored, they pass.
 - Silent-conversion review: value objects placed in JSON maps, string interpolation or widget keys compile without error, so every such site was checked. Notion request bodies, Jev prompts and keys now use `.value`; widget keys stay `ValueKey<String>` for Marionette and tests.
-- Gates: `python3 .hooks/hard-eng.py check --plan-stage Complete` → below.
-E2E: The app-level widget tests (`capture_app_test.dart`, `responsive_layout_test.dart`) run the real app with fakes and pass. Not run against the owner's real local data on a device; the mappers keep the stored JSON shape, and blank Notion rows are filtered.
+- Gates: `python3 .hooks/hard-eng.py check --plan-stage Complete` → 14/14 PASS, exit 0 (Line coverage: 3821/5003 (76.37%; minimum 70%)).
+E2E: Passed — the app-level widget tests (`capture_app_test.dart`, `responsive_layout_test.dart`) run the real app with fakes and pass. Not run against the owner's real local data on a device; the mappers keep the stored JSON shape, and blank Notion rows are filtered.
 
 Delivery target: Merge
 Delivery: Pending — PR, merge to `main`, main CI green; then PR #23 takes the new Hard Eng from `main`.
