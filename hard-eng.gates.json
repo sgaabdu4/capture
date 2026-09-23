@@ -237,7 +237,7 @@
       "assets/*"
     ],
     "ci_seconds": 420,
-    "pre_push_seconds": 120,
+    "pre_push_seconds": 240,
     "delivery": []
   }
 }

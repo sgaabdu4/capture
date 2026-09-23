@@ -30,6 +30,8 @@ Optional text (`String?`, blank normalised to null at the boundary): `ProposalIt
 
 Notion rows missing a required field are skipped where the repositories turn models into entities (covering Notion reads and caches written by older versions): a Groups row with no name, and a Library page with no Item ID (pages made directly in Notion; today they all share one local row keyed by the blank ID).
 
+Pre-push budget: `hard-eng.gates.json` `pre_push_seconds` 120 → 240. Set on 2026-09-18 for a smaller project; the check alone now takes 119 s and a push carrying a Hard Eng update measured about 170 s, so the update could not be pushed. The owner chose 240 s when asked. Every gate still runs; only the local time limit changes.
+
 Rejected: fake `HiveField` markers (no Hive here), renaming to dodge the unit rule, moving types out of `/domain/`.
 
 ## Acceptance + steps
