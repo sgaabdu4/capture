@@ -20,7 +20,7 @@ Authority: Human-loop — on 2026-09-23 the owner asked for a fix, proof and a P
 
 - [x] T1 On iPhone 13, the hour and minute digits are laid out at their full height, so nothing clips them → `test/app/capture_app_test.dart` "the time picker opened from the review card shows its whole time on iPhone 13" passes. Without the fix it fails: 84 > 80.
 - [x] T3 The selected AM/PM is readable: cream on ink, 16.2:1, like the selected hour. Before it was dark text on `Palette.muted` (tertiary colours unset, falling back to secondary), about 3.3:1 against WCAG AA 4.5:1 → after screenshot at 390 × 844 and 1280 × 800.
-- [x] T4 The iPhone bottom bar's unselected labels and icons are readable: `onSurfaceVariant` (`Palette.muted`, 4.89:1 on the bar) instead of `Palette.faint` (2.39:1) → `test/app/responsive_layout_test.dart` "every page keeps its text readable on a phone and on the Mac" runs `textContrastGuideline` on every page at 390 pt and the Mac window. It fails without the fix (2.39 on each label) and passes with it.
+- [x] T4 The iPhone bottom bar's unselected labels and icons are readable: `onSurfaceVariant` (`Palette.muted`, 4.89:1 on the bar) instead of `Palette.faint` (2.39:1) → `test/app/responsive_layout_test.dart` "every page keeps its text readable on a phone and on the Mac" runs `textContrastGuideline` on every page at 390 pt and the Mac window. It fails without the fix (2.39 on each label) and passes with it. The review card's transcript words are skipped by that pixel check and their colour is checked directly (≥ 4.5 on the card), because a one-glyph word cannot be measured reliably (below).
 - [x] T5 Text-field hints use `labelMedium` (muted, 5.2:1 on a field) instead of `Palette.faint` (2.5:1) → before/after screenshot of the To-Do search field.
 - [x] T6 The setup step's unchecked circle, a state icon, uses `onSurfaceVariant` (5.1:1) instead of `Palette.faint` (2.49:1, under the 3:1 needed for icons) → before/after screenshot of setup.
 - [x] T2 Every page and dialog still lays out from 320 pt to 4K → `test/app/responsive_layout_test.dart` passes.
@@ -35,6 +35,7 @@ Execution: One builder. Add `timePickerTheme.hourMinuteTextStyle = displayMedium
 
 - Digits are smaller on Mac too (84 → 48 pt). That was agreed; recovery is to revert the theme lines.
 - `textContrastGuideline` only checks text it can find in the semantics tree; it missed the AM/PM case, so screenshots remain that proof.
+- The pixel check reads the most common dark pixel. For the review card's one-glyph transcript word "9" (italic, muted, 5.2:1), Linux's lighter anti-aliasing made that a blend: CI measured 2.14:1 on the Mac-width editor, while macOS passed. The test skips only the sample transcript's words in the pixel check and checks their effective colour against the card by the WCAG formula instead.
 - Deliberately unchanged: excluded proposal items and disabled buttons are faded (WCAG exempts inactive controls; no fade keeps grey text at 4.5:1). `Palette.faint` stays for the "not saved" status dot, which sits beside a text label giving the same status.
 
 ## ux_reference
@@ -51,6 +52,7 @@ Review: Inspected iPhone 13 dial and entry modes and the Mac dial, and the befor
 
 Result: Passed
 Evidence: 2026-09-23. The new test fails without the fix (`Expected: <= 80.0, Actual: 84.0`) and passes with it. `flutter test test/app/responsive_layout_test.dart test/app/capture_app_test.dart` → 17/17 passed. `python3 .hooks/hard-eng.py check --plan-stage Complete` → 14/14 PASS, exit 0. After merging `main` (value objects, Hard Eng 732b31c) the picker test passes the id's text; the Complete check → 14/14 PASS, exit 0. Two earlier runs failed an unrelated timing test each (setup recording wait; transcript perf budget) while the machine's load average was 142 on 16 cores; both pass alone, and the full suite passed 152/152.
+- CI (Linux) then failed the contrast test on the transcript word "9" (2.14:1). Reproduced in Docker with Linux Flutter 3.47.5, CI's version. After the change, it passes on macOS and on Linux. The test still fails on both when the bottom bar goes back to `Palette.faint` (every page at 390) or the transcript words are made faint ("transcript word: 2.54"); both experiments were reverted.
 E2E: Passed — the iPhone review card → Edit → time chip → picker journey, run as a widget test at 390 × 844 pt.
 
 Delivery target: Merge

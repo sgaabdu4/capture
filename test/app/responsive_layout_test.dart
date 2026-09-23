@@ -1,13 +1,17 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:capture/app/capture_app.dart';
+import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
+import 'package:capture/features/capture/presentation/widgets/source_word.dart';
 import 'package:capture/features/capture/repositories/capture_repository.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -33,6 +37,30 @@ final Map<String, void Function(BuildContext)> _pages = {
   'upcoming': const UpcomingRoute().go,
   'settings': const SettingsRoute().go,
 };
+
+/// Every word the review card shows from the sample transcript.
+final Set<String> _transcriptWords = {
+  for (final item in sampleProposedCapture.items)
+    for (final span in item.sources) ...span.excerpt.value.split(' '),
+};
+
+/// Flutter's text contrast check, minus the review card's transcript words.
+/// Each word is its own tappable node, and a one-glyph word such as "9" has
+/// too few pixels to measure: Linux's lighter anti-aliasing reads its muted
+/// colour (5.2:1) as 2.14:1. Their colour is checked directly instead.
+class _TextContrast extends MinimumTextContrastGuideline {
+  const _TextContrast();
+
+  @override
+  bool shouldSkipNode(SemanticsData data) =>
+      super.shouldSkipNode(data) || _transcriptWords.contains(data.label);
+}
+
+/// WCAG contrast of [text] on [background].
+double _contrast(Color text, Color background) {
+  final (x: a, y: b) = (x: text.computeLuminance(), y: background.computeLuminance());
+  return (max(a, b) + 0.05) / (min(a, b) + 0.05);
+}
 
 const _frame = Duration(milliseconds: 16);
 const _settleLimit = Duration(seconds: 5);
@@ -153,12 +181,22 @@ void main() {
       await _resize(tester, width);
       for (final MapEntry(key: page, value: open) in _pages.entries) {
         await _go(tester, open);
-        final result = await textContrastGuideline.evaluate(tester);
+        final result = await const _TextContrast().evaluate(tester);
         if (!result.passed) failures.add('$page @ ${width.toInt()}: ${result.reason ?? ''}');
       }
     }
     semantics.dispose();
+    await _go(tester, const EditorRoute(recordId: 'proposed').go);
+    final words = find.descendant(of: find.byType(SourceWord), matching: find.byType(Text));
+    for (final word in words.evaluate()) {
+      if (word.widget case Text(:final style)) {
+        final color = DefaultTextStyle.of(word).style.merge(style).color;
+        final ratio = _contrast(color ?? Colors.transparent, word.paper.card);
+        if (ratio < 4.5) failures.add('transcript word: ${ratio.toStringAsFixed(2)}');
+      }
+    }
 
+    expect(words, findsWidgets);
     expect(failures, isEmpty);
   });
 
