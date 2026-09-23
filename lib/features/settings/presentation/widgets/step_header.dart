@@ -27,7 +27,7 @@ class StepHeader extends StatelessWidget {
       children: [
         Icon(
           done ? Icons.check_circle : Icons.radio_button_unchecked,
-          color: done ? paper.ok : paper.faint,
+          color: done ? paper.ok : context.colors.onSurfaceVariant,
           size: IconSizes.s24,
         ),
         Expanded(

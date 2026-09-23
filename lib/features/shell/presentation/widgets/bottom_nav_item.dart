@@ -23,7 +23,7 @@ class BottomNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ink = selected ? context.colors.onSurface : context.paper.faint;
+    final ink = selected ? context.colors.onSurface : context.colors.onSurfaceVariant;
     return Semantics(
       button: true,
       selected: selected,

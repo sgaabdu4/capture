@@ -145,6 +145,23 @@ void main() {
     expect(errors, isEmpty);
   });
 
+  testWidgets('every page keeps its text readable on a phone and on the Mac', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await _launch(tester, support, ready: true);
+    final failures = <String>[];
+    for (final width in [390.0, referenceWindow.width]) {
+      await _resize(tester, width);
+      for (final MapEntry(key: page, value: open) in _pages.entries) {
+        await _go(tester, open);
+        final result = await textContrastGuideline.evaluate(tester);
+        if (!result.passed) failures.add('$page @ ${width.toInt()}: ${result.reason ?? ''}');
+      }
+    }
+    semantics.dispose();
+
+    expect(failures, isEmpty);
+  });
+
   testWidgets('setup lays out without overflow from a small phone to a 4K screen', (tester) async {
     await _launch(tester, support, ready: false);
     final errors = <String>[];

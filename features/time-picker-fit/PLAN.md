@@ -4,7 +4,7 @@ Status: Complete
 
 ## Outcome + scope
 
-The time picker opened from the "9:00 AM" chip shows its whole hour and minute on iPhone 13 (390 × 844 pt), and its selected AM/PM is readable. Out of scope: other readability findings (listed under Risks), the date picker, the editor and review card layout, and the Mac page layout.
+The time picker opened from the "9:00 AM" chip shows its whole hour and minute on iPhone 13 (390 × 844 pt), its selected AM/PM is readable, and the app's other low-contrast text and state icon meet WCAG AA. Out of scope: the date picker, the editor and review card layout, and the Mac page layout.
 
 ## Repository context
 
@@ -20,6 +20,9 @@ Authority: Human-loop — on 2026-09-23 the owner asked for a fix, proof and a P
 
 - [x] T1 On iPhone 13, the hour and minute digits are laid out at their full height, so nothing clips them → `test/app/capture_app_test.dart` "the time picker opened from the review card shows its whole time on iPhone 13" passes. Without the fix it fails: 84 > 80.
 - [x] T3 The selected AM/PM is readable: cream on ink, 16.2:1, like the selected hour. Before it was dark text on `Palette.muted` (tertiary colours unset, falling back to secondary), about 3.3:1 against WCAG AA 4.5:1 → after screenshot at 390 × 844 and 1280 × 800.
+- [x] T4 The iPhone bottom bar's unselected labels and icons are readable: `onSurfaceVariant` (`Palette.muted`, 4.89:1 on the bar) instead of `Palette.faint` (2.39:1) → `test/app/responsive_layout_test.dart` "every page keeps its text readable on a phone and on the Mac" runs `textContrastGuideline` on every page at 390 pt and the Mac window. It fails without the fix (2.39 on each label) and passes with it.
+- [x] T5 Text-field hints use `labelMedium` (muted, 5.2:1 on a field) instead of `Palette.faint` (2.5:1) → before/after screenshot of the To-Do search field.
+- [x] T6 The setup step's unchecked circle, a state icon, uses `onSurfaceVariant` (5.1:1) instead of `Palette.faint` (2.49:1, under the 3:1 needed for icons) → before/after screenshot of setup.
 - [x] T2 Every page and dialog still lays out from 320 pt to 4K → `test/app/responsive_layout_test.dart` passes.
 
 ## Baseline + execution
@@ -31,7 +34,8 @@ Execution: One builder. Add `timePickerTheme.hourMinuteTextStyle = displayMedium
 ## Risks + recovery
 
 - Digits are smaller on Mac too (84 → 48 pt). That was agreed; recovery is to revert the theme lines.
-- Not fixed here, reported to the owner: Flutter's `textContrastGuideline` across every page found the iPhone bottom bar's unselected labels at 2.39:1 (`Palette.faint` on `Palette.sidebar`, `bottom_nav_item.dart`). `Palette.faint` is also the field hint colour (2.5:1). The guideline missed the AM/PM case, so it is not exhaustive.
+- `textContrastGuideline` only checks text it can find in the semantics tree; it missed the AM/PM case, so screenshots remain that proof.
+- Deliberately unchanged: excluded proposal items and disabled buttons are faded (WCAG exempts inactive controls; no fade keeps grey text at 4.5:1). `Palette.faint` stays for the "not saved" status dot, which sits beside a text label giving the same status.
 
 ## ux_reference
 
@@ -41,7 +45,7 @@ Surface: Existing — Material time picker from the editor's time chip, themed b
 Before: ![Before, iPhone 13 time picker with "00" clipped](../../build/ux/time-picker-fit/before/iphone13-time-picker.png)
 Proposed: ![After, iPhone 13 time picker showing the whole 9 : 00](../../build/ux/time-picker-fit/proposed/iphone13-time-picker.png)
 Capture: `matchesGoldenFile` of `MaterialApp` in a throwaway test (not committed): phone editor at 390 × 844 and Mac at 1280 × 800, dial and keyboard entry, the time chip tapped. The keyboard-entry mode already used 48 pt and is unchanged.
-Review: Inspected iPhone 13 dial and entry modes and the Mac dial; the Mac has the same clipping before and is fixed after, with no change to the dialog or page size.
+Review: Inspected iPhone 13 dial and entry modes and the Mac dial, and the before/after bottom bar, search hint (`build/ux/time-picker-fit/proposed/iphone-nav-and-hint.png`) and setup step (`iphone-setup-step.png`); the Mac has the same clipping before and is fixed after, with no change to the dialog or page size.
 
 ## Verification
 

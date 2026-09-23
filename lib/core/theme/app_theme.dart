@@ -135,7 +135,7 @@ InputDecorationThemeData _inputTheme() => .new(
   isDense: true,
   contentPadding: const EdgeInsets.all(Spacing.sm),
   labelStyle: _textTheme.labelMedium,
-  hintStyle: _textTheme.labelMedium?.copyWith(color: Palette.faint),
+  hintStyle: _textTheme.labelMedium,
   border: _fieldBorder,
   enabledBorder: _fieldBorder,
   focusedBorder: _fieldBorder.copyWith(borderSide: const .new(color: Palette.ink)),
