@@ -43,7 +43,8 @@ Decisions:
   - The `dmg` check fails an app-changing PR without it. Dependabot's PRs are exempt and get "Bug fixes and improvements."
   - The check reads the live description, so editing it and re-running the check is enough.
   - The release puts the text in the GitHub release notes and publishes it as the `release_notes.json` asset. Codemagic downloads that asset, falling back to the default text.
-- **Replacing earlier submissions.** Codemagic expires the build still waiting for TestFlight beta review and cancels the previous App Store submission, so each release replaces the one before it.
+- **Replacing earlier submissions.** Codemagic cancels the previous App Store submission, so each release replaces the one before it. Expiring the build waiting for TestFlight beta review was left out: nobody asked for it, and build 4 is also attached to the App Store 1.0 submission.
+- **Locale.** `release_notes.json` uses `en-GB`, the listing's primary language (English (U.K.) in App Store Connect, checked 2026-09-23).
 
 ## Acceptance + steps
 
@@ -65,6 +66,8 @@ Execution: One builder; release.yml, codemagic.yaml, README.md and AGENTS.md; th
 - The first release cancels the 1.0 review and resubmits build 5 for 1.0; the owner accepted this.
 - Concurrent merges cannot pick the same version, because the release concurrency group runs them one at a time.
 - A failed Mac release publishes no tag, so the next run reuses the version.
+- On this first run, build 5's TestFlight beta-review submission may be refused while build 4 still waits for beta review. Recovery: submit build 5 to beta review by hand, and check that the App Store submission went through.
+- This merge proves the pubspec floor (1.0.0), not the tag bump. The next app-changing merge proves the bump (expect 1.0.1). If tags were missing from the checkout, the version would repeat and `gh release create` would fail loudly on the existing tag.
 
 ## ux_reference
 
