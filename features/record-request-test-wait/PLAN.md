@@ -14,7 +14,7 @@ Owner: `test/features/capture/presentation/notifiers/capture_flow_notifier_test.
 
 Blockers: None
 Handoff: Approval
-Authority: Human-loop — on 2026-09-23 the Hard Eng gate reported "Record with Capture a request while idle starts recording: Expected recording, Actual idle", and the owner asked to "fix it and open a PR".
+Authority: Human-loop — on 2026-09-23 the Hard Eng gate reported "Record with Capture a request while idle starts recording: Expected recording, Actual idle", and the owner asked to "fix it and open a PR". Later that day the owner approved the merge ("merge all"), which publishes one Mac release.
 
 ## Acceptance + steps
 
@@ -43,5 +43,5 @@ Evidence: 2026-09-23 on `fix/record-request-test-wait`.
 - Gates: `python3 .hooks/hard-eng.py check --plan-stage Complete` → 14/14 PASS, exit 0.
 E2E: N/A — tests only.
 
-Delivery target: PR
-Delivery: Pending — PR opened after Hard Eng CI passes.
+Delivery target: Merge
+Delivery: Pending — PR #22 opened with Hard Eng CI passing; merge to `main`.
