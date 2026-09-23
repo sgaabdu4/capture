@@ -29,7 +29,7 @@ sealed class LibraryState with _$LibraryState {
     final needle = query.trim().toLowerCase();
     return [
       for (final e in entries)
-        if (needle.isNotEmpty && e.title.toLowerCase().contains(needle)) e,
+        if (needle.isNotEmpty && (e.title ?? '').toLowerCase().contains(needle)) e,
     ];
   }
 
@@ -49,6 +49,6 @@ sealed class LibraryState with _$LibraryState {
     (x: final String x, y: final String y) => x.compareTo(y),
     (x: String(), y: null) => -1,
     (x: null, y: String()) => 1,
-    (x: null, y: null) => a.title.compareTo(b.title),
+    (x: null, y: null) => (a.title ?? '').compareTo(b.title ?? ''),
   };
 }

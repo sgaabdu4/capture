@@ -15,8 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NotionWorkspace {
 
- String get parentPageId; String get areaPageId;/// Data source ids.
- String get groups; String get captures; String get library; int get maxUploadBytes; String? get workspaceName;
+ NotionId get parentPageId; NotionId get areaPageId;/// Data source ids.
+ NotionId get groups; NotionId get captures; NotionId get library; ByteSize get maxUpload; String? get workspaceName;
 /// Create a copy of NotionWorkspace
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,20 +28,20 @@ $NotionWorkspaceCopyWith<NotionWorkspace> get copyWith => _$NotionWorkspaceCopyW
 @override
 bool operator ==(Object other) {
   final _this = this as NotionWorkspace;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotionWorkspace&&(identical(other.parentPageId, _this.parentPageId) || other.parentPageId == _this.parentPageId)&&(identical(other.areaPageId, _this.areaPageId) || other.areaPageId == _this.areaPageId)&&(identical(other.groups, _this.groups) || other.groups == _this.groups)&&(identical(other.captures, _this.captures) || other.captures == _this.captures)&&(identical(other.library, _this.library) || other.library == _this.library)&&(identical(other.maxUploadBytes, _this.maxUploadBytes) || other.maxUploadBytes == _this.maxUploadBytes)&&(identical(other.workspaceName, _this.workspaceName) || other.workspaceName == _this.workspaceName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotionWorkspace&&(identical(other.parentPageId, _this.parentPageId) || other.parentPageId == _this.parentPageId)&&(identical(other.areaPageId, _this.areaPageId) || other.areaPageId == _this.areaPageId)&&(identical(other.groups, _this.groups) || other.groups == _this.groups)&&(identical(other.captures, _this.captures) || other.captures == _this.captures)&&(identical(other.library, _this.library) || other.library == _this.library)&&(identical(other.maxUpload, _this.maxUpload) || other.maxUpload == _this.maxUpload)&&(identical(other.workspaceName, _this.workspaceName) || other.workspaceName == _this.workspaceName));
 }
 
 
 @override
 int get hashCode {
   final _this = this as NotionWorkspace;
-  return Object.hash(runtimeType,_this.parentPageId,_this.areaPageId,_this.groups,_this.captures,_this.library,_this.maxUploadBytes,_this.workspaceName);
+  return Object.hash(runtimeType,_this.parentPageId,_this.areaPageId,_this.groups,_this.captures,_this.library,_this.maxUpload,_this.workspaceName);
 }
 
 @override
 String toString() {
   final _this = this as NotionWorkspace;
-  return 'NotionWorkspace(parentPageId: ${_this.parentPageId}, areaPageId: ${_this.areaPageId}, groups: ${_this.groups}, captures: ${_this.captures}, library: ${_this.library}, maxUploadBytes: ${_this.maxUploadBytes}, workspaceName: ${_this.workspaceName})';
+  return 'NotionWorkspace(parentPageId: ${_this.parentPageId}, areaPageId: ${_this.areaPageId}, groups: ${_this.groups}, captures: ${_this.captures}, library: ${_this.library}, maxUpload: ${_this.maxUpload}, workspaceName: ${_this.workspaceName})';
 }
 
 
@@ -52,7 +52,7 @@ abstract mixin class $NotionWorkspaceCopyWith<$Res>  {
   factory $NotionWorkspaceCopyWith(NotionWorkspace value, $Res Function(NotionWorkspace) _then) = _$NotionWorkspaceCopyWithImpl;
 @useResult
 $Res call({
- String parentPageId, String areaPageId, String groups, String captures, String library, int maxUploadBytes, String? workspaceName
+ NotionId parentPageId, NotionId areaPageId, NotionId groups, NotionId captures, NotionId library, ByteSize maxUpload, String? workspaceName
 });
 
 
@@ -69,15 +69,15 @@ class _$NotionWorkspaceCopyWithImpl<$Res>
 
 /// Create a copy of NotionWorkspace
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? parentPageId = null,Object? areaPageId = null,Object? groups = null,Object? captures = null,Object? library = null,Object? maxUploadBytes = null,Object? workspaceName = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? parentPageId = null,Object? areaPageId = null,Object? groups = null,Object? captures = null,Object? library = null,Object? maxUpload = null,Object? workspaceName = freezed,}) {
   return _then(NotionWorkspace(
 parentPageId: null == parentPageId ? _self.parentPageId : parentPageId // ignore: cast_nullable_to_non_nullable
-as String,areaPageId: null == areaPageId ? _self.areaPageId : areaPageId // ignore: cast_nullable_to_non_nullable
-as String,groups: null == groups ? _self.groups : groups // ignore: cast_nullable_to_non_nullable
-as String,captures: null == captures ? _self.captures : captures // ignore: cast_nullable_to_non_nullable
-as String,library: null == library ? _self.library : library // ignore: cast_nullable_to_non_nullable
-as String,maxUploadBytes: null == maxUploadBytes ? _self.maxUploadBytes : maxUploadBytes // ignore: cast_nullable_to_non_nullable
-as int,workspaceName: freezed == workspaceName ? _self.workspaceName : workspaceName // ignore: cast_nullable_to_non_nullable
+as NotionId,areaPageId: null == areaPageId ? _self.areaPageId : areaPageId // ignore: cast_nullable_to_non_nullable
+as NotionId,groups: null == groups ? _self.groups : groups // ignore: cast_nullable_to_non_nullable
+as NotionId,captures: null == captures ? _self.captures : captures // ignore: cast_nullable_to_non_nullable
+as NotionId,library: null == library ? _self.library : library // ignore: cast_nullable_to_non_nullable
+as NotionId,maxUpload: null == maxUpload ? _self.maxUpload : maxUpload // ignore: cast_nullable_to_non_nullable
+as ByteSize,workspaceName: freezed == workspaceName ? _self.workspaceName : workspaceName // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -160,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String parentPageId,  String areaPageId,  String groups,  String captures,  String library,  int maxUploadBytes,  String? workspaceName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( NotionId parentPageId,  NotionId areaPageId,  NotionId groups,  NotionId captures,  NotionId library,  ByteSize maxUpload,  String? workspaceName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NotionWorkspace() when $default != null:
-return $default(_that.parentPageId,_that.areaPageId,_that.groups,_that.captures,_that.library,_that.maxUploadBytes,_that.workspaceName);case _:
+return $default(_that.parentPageId,_that.areaPageId,_that.groups,_that.captures,_that.library,_that.maxUpload,_that.workspaceName);case _:
   return orElse();
 
 }
@@ -181,10 +181,10 @@ return $default(_that.parentPageId,_that.areaPageId,_that.groups,_that.captures,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String parentPageId,  String areaPageId,  String groups,  String captures,  String library,  int maxUploadBytes,  String? workspaceName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( NotionId parentPageId,  NotionId areaPageId,  NotionId groups,  NotionId captures,  NotionId library,  ByteSize maxUpload,  String? workspaceName)  $default,) {final _that = this;
 switch (_that) {
 case _NotionWorkspace():
-return $default(_that.parentPageId,_that.areaPageId,_that.groups,_that.captures,_that.library,_that.maxUploadBytes,_that.workspaceName);}
+return $default(_that.parentPageId,_that.areaPageId,_that.groups,_that.captures,_that.library,_that.maxUpload,_that.workspaceName);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -198,10 +198,10 @@ return $default(_that.parentPageId,_that.areaPageId,_that.groups,_that.captures,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String parentPageId,  String areaPageId,  String groups,  String captures,  String library,  int maxUploadBytes,  String? workspaceName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( NotionId parentPageId,  NotionId areaPageId,  NotionId groups,  NotionId captures,  NotionId library,  ByteSize maxUpload,  String? workspaceName)?  $default,) {final _that = this;
 switch (_that) {
 case _NotionWorkspace() when $default != null:
-return $default(_that.parentPageId,_that.areaPageId,_that.groups,_that.captures,_that.library,_that.maxUploadBytes,_that.workspaceName);case _:
+return $default(_that.parentPageId,_that.areaPageId,_that.groups,_that.captures,_that.library,_that.maxUpload,_that.workspaceName);case _:
   return null;
 
 }
@@ -213,16 +213,16 @@ return $default(_that.parentPageId,_that.areaPageId,_that.groups,_that.captures,
 
 
 class _NotionWorkspace implements NotionWorkspace {
-  const _NotionWorkspace({required this.parentPageId, required this.areaPageId, required this.groups, required this.captures, required this.library, required this.maxUploadBytes, this.workspaceName});
+  const _NotionWorkspace({required this.parentPageId, required this.areaPageId, required this.groups, required this.captures, required this.library, required this.maxUpload, this.workspaceName});
   
 
-@override final  String parentPageId;
-@override final  String areaPageId;
+@override final  NotionId parentPageId;
+@override final  NotionId areaPageId;
 /// Data source ids.
-@override final  String groups;
-@override final  String captures;
-@override final  String library;
-@override final  int maxUploadBytes;
+@override final  NotionId groups;
+@override final  NotionId captures;
+@override final  NotionId library;
+@override final  ByteSize maxUpload;
 @override final  String? workspaceName;
 
 /// Create a copy of NotionWorkspace
@@ -235,18 +235,18 @@ _$NotionWorkspaceCopyWith<_NotionWorkspace> get copyWith => __$NotionWorkspaceCo
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotionWorkspace&&(identical(other.parentPageId, parentPageId) || other.parentPageId == parentPageId)&&(identical(other.areaPageId, areaPageId) || other.areaPageId == areaPageId)&&(identical(other.groups, groups) || other.groups == groups)&&(identical(other.captures, captures) || other.captures == captures)&&(identical(other.library, library) || other.library == library)&&(identical(other.maxUploadBytes, maxUploadBytes) || other.maxUploadBytes == maxUploadBytes)&&(identical(other.workspaceName, workspaceName) || other.workspaceName == workspaceName));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotionWorkspace&&(identical(other.parentPageId, parentPageId) || other.parentPageId == parentPageId)&&(identical(other.areaPageId, areaPageId) || other.areaPageId == areaPageId)&&(identical(other.groups, groups) || other.groups == groups)&&(identical(other.captures, captures) || other.captures == captures)&&(identical(other.library, library) || other.library == library)&&(identical(other.maxUpload, maxUpload) || other.maxUpload == maxUpload)&&(identical(other.workspaceName, workspaceName) || other.workspaceName == workspaceName));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,parentPageId,areaPageId,groups,captures,library,maxUploadBytes,workspaceName);
+    return Object.hash(runtimeType,parentPageId,areaPageId,groups,captures,library,maxUpload,workspaceName);
 }
 
 @override
 String toString() {
-    return 'NotionWorkspace(parentPageId: $parentPageId, areaPageId: $areaPageId, groups: $groups, captures: $captures, library: $library, maxUploadBytes: $maxUploadBytes, workspaceName: $workspaceName)';
+    return 'NotionWorkspace(parentPageId: $parentPageId, areaPageId: $areaPageId, groups: $groups, captures: $captures, library: $library, maxUpload: $maxUpload, workspaceName: $workspaceName)';
 }
 
 
@@ -257,7 +257,7 @@ abstract mixin class _$NotionWorkspaceCopyWith<$Res> implements $NotionWorkspace
   factory _$NotionWorkspaceCopyWith(_NotionWorkspace value, $Res Function(_NotionWorkspace) _then) = __$NotionWorkspaceCopyWithImpl;
 @override @useResult
 $Res call({
- String parentPageId, String areaPageId, String groups, String captures, String library, int maxUploadBytes, String? workspaceName
+ NotionId parentPageId, NotionId areaPageId, NotionId groups, NotionId captures, NotionId library, ByteSize maxUpload, String? workspaceName
 });
 
 
@@ -274,15 +274,15 @@ class __$NotionWorkspaceCopyWithImpl<$Res>
 
 /// Create a copy of NotionWorkspace
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? parentPageId = null,Object? areaPageId = null,Object? groups = null,Object? captures = null,Object? library = null,Object? maxUploadBytes = null,Object? workspaceName = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? parentPageId = null,Object? areaPageId = null,Object? groups = null,Object? captures = null,Object? library = null,Object? maxUpload = null,Object? workspaceName = freezed,}) {
   return _then(_NotionWorkspace(
 parentPageId: null == parentPageId ? _self.parentPageId : parentPageId // ignore: cast_nullable_to_non_nullable
-as String,areaPageId: null == areaPageId ? _self.areaPageId : areaPageId // ignore: cast_nullable_to_non_nullable
-as String,groups: null == groups ? _self.groups : groups // ignore: cast_nullable_to_non_nullable
-as String,captures: null == captures ? _self.captures : captures // ignore: cast_nullable_to_non_nullable
-as String,library: null == library ? _self.library : library // ignore: cast_nullable_to_non_nullable
-as String,maxUploadBytes: null == maxUploadBytes ? _self.maxUploadBytes : maxUploadBytes // ignore: cast_nullable_to_non_nullable
-as int,workspaceName: freezed == workspaceName ? _self.workspaceName : workspaceName // ignore: cast_nullable_to_non_nullable
+as NotionId,areaPageId: null == areaPageId ? _self.areaPageId : areaPageId // ignore: cast_nullable_to_non_nullable
+as NotionId,groups: null == groups ? _self.groups : groups // ignore: cast_nullable_to_non_nullable
+as NotionId,captures: null == captures ? _self.captures : captures // ignore: cast_nullable_to_non_nullable
+as NotionId,library: null == library ? _self.library : library // ignore: cast_nullable_to_non_nullable
+as NotionId,maxUpload: null == maxUpload ? _self.maxUpload : maxUpload // ignore: cast_nullable_to_non_nullable
+as ByteSize,workspaceName: freezed == workspaceName ? _self.workspaceName : workspaceName // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

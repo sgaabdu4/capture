@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/features/capture/domain/dates/date_resolver.dart';
 import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
@@ -6,6 +7,7 @@ import 'package:capture/features/capture/domain/jev/classification_pass.dart';
 import 'package:capture/features/capture/domain/jev/thresholds.dart';
 import 'package:capture/features/capture/domain/text/thought.dart';
 import 'package:capture/features/capture/domain/text/titles.dart';
+import 'package:capture/features/capture/domain/values/item_id.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 
 /// Due date, reminder and the review flags their resolution raised.
@@ -21,9 +23,9 @@ List<ProposalItem> buildProposal({
   required ClassificationPlan plan,
   required CaptureMoment moment,
   required String Function() newId,
-}) => [for (final d in decisions) _item(d, plan, moment, newId())];
+}) => [for (final d in decisions) _item(d, plan, moment, ItemId(newId()))];
 
-ProposalItem _item(ThoughtDecision d, ClassificationPlan plan, CaptureMoment moment, String id) {
+ProposalItem _item(ThoughtDecision d, ClassificationPlan plan, CaptureMoment moment, ItemId id) {
   final ThoughtDecision(:thought, :groupOption, :groupConfidence, :task, :alert, :recall) = d;
   final Thought(:span, :uncertainStart, :lateCorrection) = thought;
   final asksRecall = retrievalBand.yes(recall);
@@ -37,16 +39,19 @@ ProposalItem _item(ThoughtDecision d, ClassificationPlan plan, CaptureMoment mom
     if (asksRecall) ReviewFlag.recallUnsupported,
     if (isTask && alertBand.uncertain(alert)) ReviewFlag.checkReminder,
   };
-  final groupId = _groupId(plan, groupOption);
-  final unsorted = groupOption.toLowerCase() == Group.unsortedName.toLowerCase();
+  final groupId = _groupId(plan, groupOption.value);
+  final unsorted = groupOption.value.toLowerCase() == Group.unsortedName.toLowerCase();
   final dates = isTask ? _dates(d, moment, wantsAlert: wantsAlert) : _noDates;
   return .new(
     id: id,
     sources: [span],
     kind: isTask ? .task : .note,
     groupId: groupId,
-    title: proposedTitle(span.excerpt, remove: isTask ? _datePhrases(plan, thought) : const []),
-    body: proposedBody(span.excerpt),
+    title: proposedTitle(
+      span.excerpt.value,
+      remove: isTask ? _datePhrases(plan, thought) : const [],
+    ),
+    body: proposedBody(span.excerpt.value),
     due: dates.due,
     reminder: dates.reminder,
     flags: {...judged, if (groupId == null || unsorted) ReviewFlag.checkGroup, ...dates.flags},
@@ -57,7 +62,7 @@ ProposalItem _item(ThoughtDecision d, ClassificationPlan plan, CaptureMoment mom
 /// Date/time phrases of [thought], relative to its excerpt, left out of a
 /// task's title.
 List<ExcerptRange> _datePhrases(ClassificationPlan plan, Thought thought) {
-  final found = plan.candidates[thought.id];
+  final found = plan.candidates[thought.id.value];
   if (found == null) return const [];
   final start = thought.span.start;
   return [
@@ -66,8 +71,8 @@ List<ExcerptRange> _datePhrases(ClassificationPlan plan, Thought thought) {
   ];
 }
 
-String? _groupId(ClassificationPlan plan, String option) => switch (plan.groupOptions[option]) {
-  final String id => id,
+NotionId? _groupId(ClassificationPlan plan, String option) => switch (plan.groupOptions[option]) {
+  final NotionId id => id,
   null => plan.unsortedGroupId,
 };
 
@@ -92,11 +97,11 @@ _Dates _dates(ThoughtDecision d, CaptureMoment moment, {required bool wantsAlert
 /// Fallback proposal when classification is unavailable (service failure or
 /// invalid key): one editable Unsorted note holding the whole transcript.
 ProposalItem manualProposal(Thought whole, List<Group> groups, String id) => .new(
-  id: id,
+  id: ItemId(id),
   sources: [whole.span],
   kind: .note,
   groupId: groups.where((g) => g.isUnsorted && !g.archived).firstOrNull?.id,
-  title: proposedTitle(whole.span.excerpt),
-  body: proposedBody(whole.span.excerpt),
+  title: proposedTitle(whole.span.excerpt.value),
+  body: proposedBody(whole.span.excerpt.value),
   flags: const {.classificationFailed},
 );

@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
@@ -63,16 +64,16 @@ class _ProposalItemEditorState extends State<ProposalItemEditor> {
   void initState() {
     super.initState();
     final ProposalItem(:title, :body) = widget.item;
-    _title.text = title;
-    _body.text = body;
+    _title.text = title ?? '';
+    _body.text = body ?? '';
   }
 
   @override
   void didUpdateWidget(covariant ProposalItemEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
     final ProposalItem(:title, :body) = widget.item;
-    if (title != _title.text) _title.text = title;
-    if (body != _body.text) _body.text = body;
+    if (title != optionalText(_title.text)) _title.text = title ?? '';
+    if (body != optionalText(_body.text)) _body.text = body ?? '';
   }
 
   @override

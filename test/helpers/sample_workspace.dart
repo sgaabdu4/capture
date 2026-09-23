@@ -13,13 +13,13 @@ import 'test_fakes.dart';
 
 /// A fully set-up, synthetic workspace: keys saved, Notion connected, model
 /// downloaded, with a few groups, saved entries and captures.
-const sampleWorkspace = NotionWorkspace(
-  parentPageId: 'parent',
-  areaPageId: 'area',
-  groups: 'groups',
-  captures: 'captures',
-  library: 'library',
-  maxUploadBytes: 5242880,
+final sampleWorkspace = NotionWorkspace(
+  parentPageId: .new('parent'),
+  areaPageId: .new('area'),
+  groups: .new('groups'),
+  captures: .new('captures'),
+  library: .new('library'),
+  maxUpload: .fromBytes(5242880),
 );
 
 /// Settings with everything in place; nothing is read from the Mac.
@@ -39,17 +39,25 @@ class ReadySettings extends SettingsNotifier {
   Future<void> load() async {}
 }
 
-const sampleGroups = [
+final sampleGroups = [
   Group(
-    id: 'ideas',
-    name: 'Ideas',
+    id: .new('ideas'),
+    name: .new('Ideas'),
     description: 'Possible products, improvements and things to explore.',
   ),
-  Group(id: 'home', name: 'Home', description: 'Household jobs, family and personal errands.'),
-  Group(id: 'learning', name: 'Learning', description: 'Things read, watched or worth studying.'),
   Group(
-    id: 'work',
-    name: 'Work',
+    id: .new('home'),
+    name: .new('Home'),
+    description: 'Household jobs, family and personal errands.',
+  ),
+  Group(
+    id: .new('learning'),
+    name: .new('Learning'),
+    description: 'Things read, watched or worth studying.',
+  ),
+  Group(
+    id: .new('work'),
+    name: .new('Work'),
     description: 'Meetings, follow-ups and professional commitments.',
   ),
 ];
@@ -60,15 +68,14 @@ class SampleGroups implements IGroupsRepository {
   List<Group> cached() => sampleGroups;
 
   @override
-  Future<NotionResult<List<Group>>> refresh(NotionWorkspace ws) async => const .ok(sampleGroups);
+  Future<NotionResult<List<Group>>> refresh(NotionWorkspace ws) async => .ok(sampleGroups);
 
   @override
-  Future<NotionResult<List<Group>>> seedIfEmpty(NotionWorkspace ws) async =>
-      const .ok(sampleGroups);
+  Future<NotionResult<List<Group>>> seedIfEmpty(NotionWorkspace ws) async => .ok(sampleGroups);
 
   @override
   Future<NotionResult<Group>> create(NotionWorkspace ws, GroupDraft draft) async =>
-      .ok(.new(id: 'new', name: draft.name, description: draft.description));
+      .ok(.new(id: .new('new'), name: .new(draft.name), description: draft.description));
 
   @override
   Future<NotionResult<void>> update(Group group) async => const .ok(null);
@@ -77,52 +84,52 @@ class SampleGroups implements IGroupsRepository {
 /// Title of the first saved task.
 const sampleTaskTitle = 'Water the tomato seedlings';
 
-const sampleEntries = [
+final sampleEntries = [
   LibraryEntry(
-    pageId: '1',
-    itemId: '1',
+    pageId: .new('1'),
+    itemId: .new('1'),
     title: sampleTaskTitle,
     kind: .task,
-    groupId: 'home',
-    due: .new(2026, 9, 17, hour: 20, minute: 0),
+    groupId: .new('home'),
+    due: const .new(2026, 9, 17, hour: 20, minute: 0),
   ),
   LibraryEntry(
-    pageId: '2',
-    itemId: '2',
+    pageId: .new('2'),
+    itemId: .new('2'),
     title: 'Book the car in for its MOT',
     kind: .task,
-    groupId: 'home',
-    due: .new(2026, 9, 18, hour: 9, minute: 0),
-    reminder: .new(2026, 9, 18, hour: 9, minute: 0),
+    groupId: .new('home'),
+    due: const .new(2026, 9, 18, hour: 9, minute: 0),
+    reminder: const .new(2026, 9, 18, hour: 9, minute: 0),
   ),
   LibraryEntry(
-    pageId: '3',
-    itemId: '3',
+    pageId: .new('3'),
+    itemId: .new('3'),
     title: 'Send Priya the sprint notes and the list of open questions from Thursday',
     kind: .task,
-    groupId: 'work',
-    due: .new(2026, 9, 18, hour: 14, minute: 0),
+    groupId: .new('work'),
+    due: const .new(2026, 9, 18, hour: 14, minute: 0),
   ),
   LibraryEntry(
-    pageId: '4',
-    itemId: '4',
+    pageId: .new('4'),
+    itemId: .new('4'),
     title: 'Read the chapter on Rust lifetimes',
     kind: .task,
-    groupId: 'learning',
+    groupId: .new('learning'),
   ),
   LibraryEntry(
-    pageId: '5',
-    itemId: '5',
+    pageId: .new('5'),
+    itemId: .new('5'),
     title: 'A tiny app that sorts spoken notes',
     kind: .note,
-    groupId: 'ideas',
+    groupId: .new('ideas'),
   ),
   LibraryEntry(
-    pageId: '6',
-    itemId: '6',
+    pageId: .new('6'),
+    itemId: .new('6'),
     title: 'Tomatoes along the south fence next year',
     kind: .note,
-    groupId: 'ideas',
+    groupId: .new('ideas'),
   ),
 ];
 
@@ -132,8 +139,7 @@ class SampleLibrary implements ILibraryRepository {
   List<LibraryEntry> cached() => sampleEntries;
 
   @override
-  Future<NotionResult<List<LibraryEntry>>> refresh(NotionWorkspace ws) async =>
-      const .ok(sampleEntries);
+  Future<NotionResult<List<LibraryEntry>>> refresh(NotionWorkspace ws) async => .ok(sampleEntries);
 
   @override
   Future<NotionResult<LibraryEntry>> setDone(LibraryEntry entry, {required bool done}) async =>
@@ -155,30 +161,32 @@ const _transcript =
 
 /// A capture saved twenty minutes before [FakeSystem.now].
 final sampleSavedCapture = CaptureRecord(
-  id: 'saved',
+  id: .new('saved'),
   capturedAtUtc: FakeSystem.now.subtract(const .new(minutes: 20)),
-  timeZone: FakeSystem.zone,
-  audioPath: 'saved.m4a',
+  timeZone: .new(FakeSystem.zone),
+  audioPath: .new('saved.m4a'),
   duration: const .new(seconds: 14),
   stage: .saved,
   progress: const .new(markedSaved: true, audioAttached: true, remindersScheduled: {'2'}),
   transcript: _transcript,
-  items: const [
+  items: [
     .new(
-      id: '2',
-      sources: [.new(0, 58, 'Remind me tomorrow at 9 am to book the car in for its MOT.')],
+      id: .new('2'),
+      sources: [.new(0, 58, .new('Remind me tomorrow at 9 am to book the car in for its MOT.'))],
       kind: .task,
-      groupId: 'home',
+      groupId: .new('home'),
       title: 'Book the car in for its MOT',
       body: '',
-      due: .new(2026, 9, 18, hour: 9, minute: 0),
-      reminder: .new(2026, 9, 18, hour: 9, minute: 0),
+      due: const .new(2026, 9, 18, hour: 9, minute: 0),
+      reminder: const .new(2026, 9, 18, hour: 9, minute: 0),
     ),
     .new(
-      id: '6',
-      sources: [.new(65, 130, 'an idea for the garden: tomatoes along the south fence next year.')],
+      id: .new('6'),
+      sources: [
+        .new(65, 130, .new('an idea for the garden: tomatoes along the south fence next year.')),
+      ],
       kind: .note,
-      groupId: 'ideas',
+      groupId: .new('ideas'),
       title: 'Tomatoes along the south fence next year',
       body: 'An idea for the garden: tomatoes along the south fence next year.',
     ),
@@ -187,7 +195,7 @@ final sampleSavedCapture = CaptureRecord(
 
 /// The same speech, waiting for review.
 final sampleProposedCapture = sampleSavedCapture.copyWith(
-  id: 'proposed',
+  id: .new('proposed'),
   stage: .proposed,
   progress: const .new(),
 );

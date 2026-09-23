@@ -17,6 +17,7 @@ import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/domain/entities/review_flag.dart';
 import 'package:capture/features/capture/domain/proposal/edits.dart';
 import 'package:capture/features/capture/domain/proposal/proposal_builder.dart';
+import 'package:capture/features/capture/domain/values/item_id.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_state.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_notice.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_phase.dart';
@@ -169,7 +170,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     if (!ref.mounted) return;
     _beginDraft(draft);
     try {
-      await _ensureNative().startRecording(draft.audioPath, limit: maxCaptureDuration);
+      await _ensureNative().startRecording(draft.audioPath.value, limit: maxCaptureDuration);
       if (!ref.mounted) return;
       _enter(.recording);
     } on PlatformException {
@@ -185,7 +186,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   }
 
   void _beginDraft(CaptureRecord draft) => state = state.copyWith(
-    activeId: draft.id,
+    activeId: draft.id.value,
     captures: _ensureCaptures().all(),
     notice: null,
     failure: null,
@@ -216,7 +217,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
         if (result.duration < minCaptureDuration) return _discard(record, .tooShort);
         _put(record.copyWith(duration: result.duration));
         _keepNotice(notice);
-        await process(record.id);
+        await process(record.id.value);
       case _:
         _idle(notice: notice);
     }
@@ -290,7 +291,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
         .analyze(
           transcript: text,
           groups: groups,
-          moment: .new(capturedAtUtc: capturedAtUtc, offsetAt: zoneOffsets(timeZone)),
+          moment: .new(capturedAtUtc: capturedAtUtc, offsetAt: zoneOffsets(timeZone.value)),
         );
     if (!ref.mounted) return record;
     final next = switch (result) {
@@ -384,15 +385,15 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     bool auto = false,
   }) async {
     final id = record.id;
-    _enterSaving(id);
+    _enterSaving(id.value);
     final saved = await _ensureSaver().save(record, ws);
     if (!ref.mounted) return;
     switch (saved) {
       case Ok(:final value):
         await _finish(value, auto: auto);
       case Err(:final failure):
-        _put((_ensureCaptures().get(id) ?? record).copyWith(failure: failure));
-        _afterSaveFailure(id, failure, fromCard: fromCard);
+        _put((_ensureCaptures().get(id.value) ?? record).copyWith(failure: failure));
+        _afterSaveFailure(id.value, failure, fromCard: fromCard);
     }
   }
 
@@ -409,7 +410,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     final saved = record.copyWith(stage: .saved, failure: null);
     _put(saved);
     _idle(notice: .saved);
-    if (auto) state = state.copyWith(autoSavedId: saved.id);
+    if (auto) state = state.copyWith(autoSavedId: saved.id.value);
     unawaited(ref.read(libraryProvider.notifier).refresh());
     final reminders = await _ensureSaver().scheduleReminders(saved);
     if (!ref.mounted) return;
@@ -465,14 +466,17 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   void clearWhen(String captureId, ProposalItem item) =>
       editItem(captureId, item.withDue(null).withReminder(null));
 
-  Set<ReviewFlag> _checks(CaptureRecord r, DueDate date) =>
-      checkInstant(date, zoneOffsets(r.timeZone), ref.read(systemDatasourceProvider).nowUtc());
+  Set<ReviewFlag> _checks(CaptureRecord r, DueDate date) => checkInstant(
+    date,
+    zoneOffsets(r.timeZone.value),
+    ref.read(systemDatasourceProvider).nowUtc(),
+  );
 
   /// Splits [item] before transcript offset [at].
   void split(String captureId, ProposalItem item, int at) {
     if (_editable(captureId) case CaptureRecord(:final transcript, :final items, :final copyWith)) {
       final newId = ref.read(systemDatasourceProvider).newId();
-      if (splitItem(item, transcript ?? '', at, newId) case (:final left, :final right)) {
+      if (splitItem(item, transcript ?? '', at, ItemId(newId)) case (:final left, :final right)) {
         _put(
           copyWith(
             items: [

@@ -3,6 +3,9 @@ import 'package:capture/features/capture/data/models/save_progress_model.dart';
 import 'package:capture/features/capture/domain/entities/capture_failure.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
+import 'package:capture/features/capture/domain/values/audio_path.dart';
+import 'package:capture/features/capture/domain/values/capture_id.dart';
+import 'package:capture/features/capture/domain/values/time_zone_id.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'capture_record_model.freezed.dart';
@@ -30,10 +33,10 @@ sealed class CaptureRecordModel with _$CaptureRecordModel {
       _$CaptureRecordModelFromJson(json);
 
   factory CaptureRecordModel.fromEntity(CaptureRecord r) => CaptureRecordModel(
-    id: r.id,
+    id: r.id.value,
     capturedAtUtc: r.capturedAtUtc,
-    timeZone: r.timeZone,
-    audioPath: r.audioPath,
+    timeZone: r.timeZone.value,
+    audioPath: r.audioPath.value,
     durationMs: r.duration.inMilliseconds,
     stage: r.stage,
     transcript: r.transcript,
@@ -44,10 +47,10 @@ sealed class CaptureRecordModel with _$CaptureRecordModel {
   );
 
   CaptureRecord toEntity() => .new(
-    id: id,
+    id: CaptureId(id),
     capturedAtUtc: capturedAtUtc,
-    timeZone: timeZone,
-    audioPath: audioPath,
+    timeZone: TimeZoneId(timeZone),
+    audioPath: AudioPath(audioPath),
     duration: .new(milliseconds: durationMs),
     stage: stage,
     transcript: transcript,

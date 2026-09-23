@@ -15,9 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ClassificationPlan {
 
- String get state; Map<String, JevQuestion> get questions;/// Option name → group id (null for the implicit Unsorted fallback).
- Map<String, String?> get groupOptions;/// The user's active Unsorted group, filed to when an option has no id.
- String? get unsortedGroupId;/// Date/time candidates per thought id.
+ JevState get state; Map<String, JevQuestion> get questions;/// Option name → group id (null for the implicit Unsorted fallback).
+ Map<String, NotionId?> get groupOptions;/// The user's active Unsorted group, filed to when an option has no id.
+ NotionId? get unsortedGroupId;/// Date/time candidates per thought id.
  Map<String, FoundCandidates> get candidates;
 /// Create a copy of ClassificationPlan
 /// with the given fields replaced by the non-null parameter values.
@@ -54,7 +54,7 @@ abstract mixin class $ClassificationPlanCopyWith<$Res>  {
   factory $ClassificationPlanCopyWith(ClassificationPlan value, $Res Function(ClassificationPlan) _then) = _$ClassificationPlanCopyWithImpl;
 @useResult
 $Res call({
- String state, Map<String, JevQuestion> questions, Map<String, String?> groupOptions, String? unsortedGroupId, Map<String, FoundCandidates> candidates
+ JevState state, Map<String, JevQuestion> questions, Map<String, NotionId?> groupOptions, NotionId? unsortedGroupId, Map<String, FoundCandidates> candidates
 });
 
 
@@ -74,10 +74,10 @@ class _$ClassificationPlanCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? state = null,Object? questions = null,Object? groupOptions = null,Object? unsortedGroupId = freezed,Object? candidates = null,}) {
   return _then(ClassificationPlan(
 state: null == state ? _self.state : state // ignore: cast_nullable_to_non_nullable
-as String,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
+as JevState,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
 as Map<String, JevQuestion>,groupOptions: null == groupOptions ? _self.groupOptions : groupOptions // ignore: cast_nullable_to_non_nullable
-as Map<String, String?>,unsortedGroupId: freezed == unsortedGroupId ? _self.unsortedGroupId : unsortedGroupId // ignore: cast_nullable_to_non_nullable
-as String?,candidates: null == candidates ? _self.candidates : candidates // ignore: cast_nullable_to_non_nullable
+as Map<String, NotionId?>,unsortedGroupId: freezed == unsortedGroupId ? _self.unsortedGroupId : unsortedGroupId // ignore: cast_nullable_to_non_nullable
+as NotionId?,candidates: null == candidates ? _self.candidates : candidates // ignore: cast_nullable_to_non_nullable
 as Map<String, FoundCandidates>,
   ));
 }
@@ -160,7 +160,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String state,  Map<String, JevQuestion> questions,  Map<String, String?> groupOptions,  String? unsortedGroupId,  Map<String, FoundCandidates> candidates)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( JevState state,  Map<String, JevQuestion> questions,  Map<String, NotionId?> groupOptions,  NotionId? unsortedGroupId,  Map<String, FoundCandidates> candidates)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClassificationPlan() when $default != null:
 return $default(_that.state,_that.questions,_that.groupOptions,_that.unsortedGroupId,_that.candidates);case _:
@@ -181,7 +181,7 @@ return $default(_that.state,_that.questions,_that.groupOptions,_that.unsortedGro
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String state,  Map<String, JevQuestion> questions,  Map<String, String?> groupOptions,  String? unsortedGroupId,  Map<String, FoundCandidates> candidates)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( JevState state,  Map<String, JevQuestion> questions,  Map<String, NotionId?> groupOptions,  NotionId? unsortedGroupId,  Map<String, FoundCandidates> candidates)  $default,) {final _that = this;
 switch (_that) {
 case _ClassificationPlan():
 return $default(_that.state,_that.questions,_that.groupOptions,_that.unsortedGroupId,_that.candidates);}
@@ -198,7 +198,7 @@ return $default(_that.state,_that.questions,_that.groupOptions,_that.unsortedGro
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String state,  Map<String, JevQuestion> questions,  Map<String, String?> groupOptions,  String? unsortedGroupId,  Map<String, FoundCandidates> candidates)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( JevState state,  Map<String, JevQuestion> questions,  Map<String, NotionId?> groupOptions,  NotionId? unsortedGroupId,  Map<String, FoundCandidates> candidates)?  $default,) {final _that = this;
 switch (_that) {
 case _ClassificationPlan() when $default != null:
 return $default(_that.state,_that.questions,_that.groupOptions,_that.unsortedGroupId,_that.candidates);case _:
@@ -213,10 +213,10 @@ return $default(_that.state,_that.questions,_that.groupOptions,_that.unsortedGro
 
 
 class _ClassificationPlan implements ClassificationPlan {
-  const _ClassificationPlan({required this.state, required  Map<String, JevQuestion> questions, required  Map<String, String?> groupOptions, required this.unsortedGroupId, required  Map<String, FoundCandidates> candidates}): _questions = questions,_groupOptions = groupOptions,_candidates = candidates;
+  const _ClassificationPlan({required this.state, required  Map<String, JevQuestion> questions, required  Map<String, NotionId?> groupOptions, required this.unsortedGroupId, required  Map<String, FoundCandidates> candidates}): _questions = questions,_groupOptions = groupOptions,_candidates = candidates;
   
 
-@override final  String state;
+@override final  JevState state;
  final  Map<String, JevQuestion> _questions;
 @override Map<String, JevQuestion> get questions {
   if (_questions is EqualUnmodifiableMapView) return _questions;
@@ -225,16 +225,16 @@ class _ClassificationPlan implements ClassificationPlan {
 }
 
 /// Option name → group id (null for the implicit Unsorted fallback).
- final  Map<String, String?> _groupOptions;
+ final  Map<String, NotionId?> _groupOptions;
 /// Option name → group id (null for the implicit Unsorted fallback).
-@override Map<String, String?> get groupOptions {
+@override Map<String, NotionId?> get groupOptions {
   if (_groupOptions is EqualUnmodifiableMapView) return _groupOptions;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(_groupOptions);
 }
 
 /// The user's active Unsorted group, filed to when an option has no id.
-@override final  String? unsortedGroupId;
+@override final  NotionId? unsortedGroupId;
 /// Date/time candidates per thought id.
  final  Map<String, FoundCandidates> _candidates;
 /// Date/time candidates per thought id.
@@ -277,7 +277,7 @@ abstract mixin class _$ClassificationPlanCopyWith<$Res> implements $Classificati
   factory _$ClassificationPlanCopyWith(_ClassificationPlan value, $Res Function(_ClassificationPlan) _then) = __$ClassificationPlanCopyWithImpl;
 @override @useResult
 $Res call({
- String state, Map<String, JevQuestion> questions, Map<String, String?> groupOptions, String? unsortedGroupId, Map<String, FoundCandidates> candidates
+ JevState state, Map<String, JevQuestion> questions, Map<String, NotionId?> groupOptions, NotionId? unsortedGroupId, Map<String, FoundCandidates> candidates
 });
 
 
@@ -297,10 +297,10 @@ class __$ClassificationPlanCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? state = null,Object? questions = null,Object? groupOptions = null,Object? unsortedGroupId = freezed,Object? candidates = null,}) {
   return _then(_ClassificationPlan(
 state: null == state ? _self.state : state // ignore: cast_nullable_to_non_nullable
-as String,questions: null == questions ? _self._questions : questions // ignore: cast_nullable_to_non_nullable
+as JevState,questions: null == questions ? _self._questions : questions // ignore: cast_nullable_to_non_nullable
 as Map<String, JevQuestion>,groupOptions: null == groupOptions ? _self._groupOptions : groupOptions // ignore: cast_nullable_to_non_nullable
-as Map<String, String?>,unsortedGroupId: freezed == unsortedGroupId ? _self.unsortedGroupId : unsortedGroupId // ignore: cast_nullable_to_non_nullable
-as String?,candidates: null == candidates ? _self._candidates : candidates // ignore: cast_nullable_to_non_nullable
+as Map<String, NotionId?>,unsortedGroupId: freezed == unsortedGroupId ? _self.unsortedGroupId : unsortedGroupId // ignore: cast_nullable_to_non_nullable
+as NotionId?,candidates: null == candidates ? _self._candidates : candidates // ignore: cast_nullable_to_non_nullable
 as Map<String, FoundCandidates>,
   ));
 }

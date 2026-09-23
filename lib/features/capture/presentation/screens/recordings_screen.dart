@@ -31,7 +31,7 @@ class RecordingsScreen extends ConsumerWidget {
       ),
     );
     if (confirmed != true || !context.mounted) return;
-    _delete(ref, record.id);
+    _delete(ref, record.id.value);
   }
 
   void _delete(WidgetRef ref, String id) =>
@@ -56,15 +56,17 @@ class RecordingsScreen extends ConsumerWidget {
         if (captures.isEmpty) EmptyNote(l10n.emptyCaptures),
         for (final record in captures)
           CaptureCard(
-            key: ValueKey(record.id),
+            key: ValueKey(record.id.value),
             record: record,
             nowUtc: nowUtc,
-            busy: activeId == record.id && phase != .idle,
+            busy: activeId == record.id.value && phase != .idle,
             idle: phase == .idle,
-            onRetry: () => unawaited(ref.read(captureFlowProvider.notifier).process(record.id)),
-            onReview: () => EditorRoute(recordId: record.id).go(context),
-            onRetrySave: () => unawaited(ref.read(captureFlowProvider.notifier).approve(record.id)),
-            onReviewAgain: () => _reviewAgain(context, ref, record.id),
+            onRetry: () =>
+                unawaited(ref.read(captureFlowProvider.notifier).process(record.id.value)),
+            onReview: () => EditorRoute(recordId: record.id.value).go(context),
+            onRetrySave: () =>
+                unawaited(ref.read(captureFlowProvider.notifier).approve(record.id.value)),
+            onReviewAgain: () => _reviewAgain(context, ref, record.id.value),
             onDelete: () => unawaited(_confirmDelete(context, ref, record)),
           ),
       ],

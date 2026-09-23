@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../../../helpers/sample_workspace.dart';
 import '../../../helpers/test_fakes.dart';
 
 /// Notion's Library: [failure] makes every write fail; otherwise writes land
@@ -104,13 +105,13 @@ class _Reminders implements IReminderDatasource {
 }
 
 /// A saved task due tomorrow (after [FakeSystem.now]) with no reminder.
-const _task = LibraryEntry(
-  pageId: 'page-1',
-  itemId: 'item-1',
+final _task = LibraryEntry(
+  pageId: .new('page-1'),
+  itemId: .new('item-1'),
   title: 'Call the dentist',
   kind: .task,
-  groupId: 'personal',
-  due: .new(2026, 9, 18, hour: 9, minute: 0),
+  groupId: .new('personal'),
+  due: const .new(2026, 9, 18, hour: 9, minute: 0),
 );
 
 /// The repository over fresh fakes, with [_task] in the mirror.
@@ -180,6 +181,22 @@ void main() {
     expect(notion.trashed, equals(['page-1']));
     expect(mirror.rows, isEmpty);
     expect(reminders.calls, equals(['cancel item-1']));
+  });
+
+  test('a page made in Notion without an Item ID is skipped, not thrown', () async {
+    final _Fixture(:repo, :notion) = _Fixture();
+    notion.pages['page-1'] = .fromEntity(_task);
+    notion.pages['page-2'] = const LibraryEntryModel(
+      pageId: 'page-2',
+      itemId: '',
+      title: 'Typed straight into Notion',
+      kind: .task,
+    );
+
+    final refreshed = await repo.refresh(sampleWorkspace);
+
+    expect(refreshed.valueOrNull, equals([_task]));
+    expect(repo.cached(), equals([_task]));
   });
 
   test('when Notion refuses a delete, the entry stays', () async {

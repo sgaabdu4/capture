@@ -274,7 +274,7 @@ void main() {
       final ws = _workspace(container);
       final found = await container
           .read(notionCaptureRemoteDatasourceProvider)
-          .findCapturePage(ws, saved.id);
+          .findCapturePage(ws, saved.id.value);
       expect(switch (found) {
         Ok(:final value) => value,
         Err() => null,

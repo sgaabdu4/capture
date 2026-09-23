@@ -77,7 +77,7 @@ const _ideas = {'Ideas'};
 
 final defaultEvalGroups = [
   for (final g in defaultGroups)
-    Group(id: 'g-${g.name.toLowerCase()}', name: g.name, description: g.description),
+    Group(id: .new('g-${g.name.toLowerCase()}'), name: .new(g.name), description: g.description),
 ];
 
 final evalCases = <EvalCase>[
@@ -199,9 +199,9 @@ final evalCases = <EvalCase>[
     ],
     [
       ...defaultEvalGroups,
-      const .new(
-        id: 'g-garden',
-        name: 'Garden',
+      .new(
+        id: .new('g-garden'),
+        name: .new('Garden'),
         description: 'Plants, vegetables, watering and the allotment.',
       ),
     ],

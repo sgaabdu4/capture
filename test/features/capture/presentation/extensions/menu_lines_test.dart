@@ -10,13 +10,15 @@ import 'package:intl/date_symbol_data_local.dart';
 final _l10n = lookupAppLocalizations(const .new('en'));
 
 CaptureRecord _record(CaptureStage stage, {bool failed = false}) => .new(
-  id: 'c1',
+  id: .new('c1'),
   capturedAtUtc: .utc(2026, 9, 18),
-  timeZone: 'UTC',
-  audioPath: 'c1.pcm',
+  timeZone: .new('UTC'),
+  audioPath: .new('c1.pcm'),
   stage: stage,
   failure: failed ? .transcription : null,
-  items: const [.new(id: 'a', sources: [], kind: .task, groupId: 'g', title: 'Call', body: '')],
+  items: [
+    .new(id: .new('a'), sources: [], kind: .task, groupId: .new('g'), title: 'Call', body: ''),
+  ],
 );
 
 void main() {
@@ -35,12 +37,12 @@ void main() {
   });
 
   test('next-up line names the soonest dated task, or says nothing is scheduled', () {
-    const entry = LibraryEntry(
-      pageId: 'p',
-      itemId: 'i',
+    final entry = LibraryEntry(
+      pageId: .new('p'),
+      itemId: .new('i'),
       title: 'Dentist',
       kind: .task,
-      due: .new(2026, 9, 19),
+      due: const .new(2026, 9, 19),
     );
 
     expect(entry.nextUpLine(l10n, .new(2026, 9, 18)), equals('Dentist · Tomorrow'));

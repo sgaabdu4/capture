@@ -44,12 +44,12 @@ class GroupCard extends StatelessWidget {
     final TextTheme(:titleMedium, :labelMedium, :bodySmall, :bodyMedium) = context.textTheme;
     return ExpandableCard(
       title: Text(
-        group.name,
+        group.name.value,
         style: titleMedium?.copyWith(
           color: group.archived ? context.colors.onSurfaceVariant : context.colors.onSurface,
         ),
       ),
-      subtitle: Text(group.description, style: labelMedium),
+      subtitle: Text(group.description ?? '', style: labelMedium),
       trailing: Row(
         mainAxisSize: .min,
         spacing: Spacing.xs,
@@ -86,7 +86,7 @@ class GroupCard extends StatelessWidget {
               LibraryEntry(done: true) => Icons.check_box_outlined,
               LibraryEntry() => Icons.check_box_outline_blank,
             }, color: context.colors.onSurface),
-            title: Text(entry.title, style: bodyMedium),
+            title: Text(entry.title ?? '', style: bodyMedium),
           ),
       ],
     );

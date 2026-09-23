@@ -38,7 +38,7 @@ void main() {
   test('a correction yields two time candidates; the chosen one is used', () {
     const text = 'Buy groceries tomorrow at 2pm. Actually, make that 3pm.';
     final found = _find(text);
-    expect(found.times.map((t) => t.span.excerpt), equals(['2pm', '3pm']));
+    expect(found.times.map((t) => t.span.excerpt.value), equals(['2pm', '3pm']));
     expect(found.times.map((t) => t.id), equals(['H1', 'H2']));
     final r = _resolve(text, time: 1);
     expect(r.date, equals(const DueDate(2026, 9, 18, hour: 15, minute: 0)));

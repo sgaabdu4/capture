@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
@@ -30,7 +31,7 @@ extension LibrarySyncLabel on LibraryState {
 
 extension LibraryEntriesInGroup on Iterable<LibraryEntry> {
   /// Entries filed in the group with [groupId].
-  List<LibraryEntry> filedIn(String groupId) => [
+  List<LibraryEntry> filedIn(NotionId groupId) => [
     for (final e in this)
       if (e.groupId == groupId) e,
   ];

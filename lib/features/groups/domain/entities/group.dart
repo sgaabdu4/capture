@@ -1,3 +1,5 @@
+import 'package:capture/core/domain/values/notion_id.dart';
+import 'package:capture/features/groups/domain/values/group_name.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'group.freezed.dart';
@@ -9,9 +11,9 @@ sealed class Group with _$Group {
   const Group._();
 
   const factory Group({
-    required String id,
-    required String name,
-    required String description,
+    required NotionId id,
+    required GroupName name,
+    String? description,
     @Default(false) bool archived,
   }) = _Group;
 
@@ -19,5 +21,5 @@ sealed class Group with _$Group {
 
   bool get isUnsorted => sameName(unsortedName);
 
-  bool sameName(String other) => name.trim().toLowerCase() == other.trim().toLowerCase();
+  bool sameName(String other) => name.value.trim().toLowerCase() == other.trim().toLowerCase();
 }

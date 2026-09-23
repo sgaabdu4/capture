@@ -2,6 +2,7 @@ import 'package:capture/features/capture/domain/jev/boundary_decision.dart';
 import 'package:capture/features/capture/domain/text/coverage.dart';
 import 'package:capture/features/capture/domain/text/thought.dart';
 import 'package:capture/features/capture/domain/text/transcript_unit.dart';
+import 'package:capture/features/capture/domain/values/passage_id.dart';
 
 export 'package:capture/features/capture/domain/text/thought.dart';
 
@@ -21,7 +22,7 @@ List<Thought> assembleThoughts(
   return [
     for (int g = 0; g < starts.length; g++)
       Thought(
-        'T${g + 1}',
+        PassageId('T${g + 1}'),
         units.sublist(starts[g], ends[g]),
         spanOf(transcript, units[starts[g]].span.start, units[ends[g] - 1].span.end),
         uncertainStart: _uncertainAround(starts[g], ends[g], decisions),

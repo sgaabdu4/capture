@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
@@ -9,6 +10,7 @@ import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/domain/group_rules.dart';
+import 'package:capture/features/groups/domain/values/group_name.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/groups/presentation/widgets/group_dialog.dart';
 import 'package:capture/features/groups/presentation/widgets/group_list.dart';
@@ -45,7 +47,7 @@ class GroupsScreen extends ConsumerWidget {
       case final Group g:
         await ref
             .read(groupsProvider.notifier)
-            .update(g.copyWith(name: name, description: description));
+            .update(g.copyWith(name: GroupName(name), description: optionalText(description)));
       case null:
         await ref.read(groupsProvider.notifier).create(draft);
     }

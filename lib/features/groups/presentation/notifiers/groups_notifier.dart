@@ -50,7 +50,7 @@ class GroupsNotifier extends _$GroupsNotifier {
 
   Future<void> update(Group group) async {
     final Group(:id, :name, :description) = group;
-    final GroupDraft draft = (name: name, description: description);
+    final GroupDraft draft = (name: name.value, description: description ?? '');
     if (state.busy || groupProblem(draft, state.groups, editingId: id) != null) return;
     _markBusy();
     final result = await _ensureRepository().update(group);
@@ -68,5 +68,6 @@ class GroupsNotifier extends _$GroupsNotifier {
       state.copyWith(busy: false, failure: failure, failureSerial: state.failureSerial + 1);
 
   static List<Group> _sorted(Iterable<Group> groups) =>
-      groups.toList()..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      groups.toList()
+        ..sort((a, b) => a.name.value.toLowerCase().compareTo(b.name.value.toLowerCase()));
 }

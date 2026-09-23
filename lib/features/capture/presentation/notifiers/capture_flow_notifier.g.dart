@@ -56,7 +56,7 @@ final class CaptureFlowNotifierProvider
   }
 }
 
-String _$captureFlowNotifierHash() => r'241284b1695589ba7daecbe7dbbaa9df3681bd0a';
+String _$captureFlowNotifierHash() => r'927c96f0765c93c62878c90f7ecc3021539931da';
 
 /// The capture state machine. Every milestone is persisted before the next
 /// step (see [CaptureStage]); approval, by the user or by auto-save, is the

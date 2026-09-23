@@ -5,6 +5,7 @@ import 'package:capture/features/capture/domain/entities/source_span.dart';
 import 'package:capture/features/capture/domain/text/candidate_splitter.dart';
 import 'package:capture/features/capture/domain/text/coverage.dart';
 import 'package:capture/features/capture/domain/text/titles.dart';
+import 'package:capture/features/capture/domain/values/item_id.dart';
 
 /// The two items a split produces, in source order.
 typedef SplitItems = ({ProposalItem left, ProposalItem right});
@@ -13,7 +14,7 @@ typedef SplitItems = ({ProposalItem left, ProposalItem right});
 /// one of its source spans, on whitespace/word start). Both pieces keep
 /// their source links, reset body/title to their own source text and are
 /// flagged for group/type review. Returns null for an invalid split point.
-SplitItems? splitItem(ProposalItem item, String transcript, int at, String newId) {
+SplitItems? splitItem(ProposalItem item, String transcript, int at, ItemId newId) {
   final sources = item.sources;
   final index = sources.indexWhere((s) => at > s.start && at < s.end);
   if (index < 0) return null;
@@ -28,8 +29,8 @@ SplitItems? splitItem(ProposalItem item, String transcript, int at, String newId
 }
 
 /// One split piece of [item] holding [sources].
-ProposalItem _piece(ProposalItem item, String id, List<SourceSpan> sources) {
-  final excerpt = sources.map((s) => s.excerpt).join(' ');
+ProposalItem _piece(ProposalItem item, ItemId id, List<SourceSpan> sources) {
+  final excerpt = sources.map((s) => s.excerpt.value).join(' ');
   final ProposalItem(:kind, :groupId, :due, :reminder, :flags) = item;
   return .new(
     id: id,
@@ -74,7 +75,7 @@ ProposalItem mergeItems(ProposalItem first, ProposalItem second) {
     flags: secondFlags,
   ) = second;
   final merged = [...sources, ...secondSources]..sort((a, b) => a.start.compareTo(b.start));
-  final excerpt = merged.map((s) => s.excerpt).join(' ');
+  final excerpt = merged.map((s) => s.excerpt.value).join(' ');
   final bodyEdited = edited.contains(EditedField.body) || secondEdited.contains(EditedField.body);
   final conflicting = groupId != secondGroupId || kind != secondKind;
   return copyWith(

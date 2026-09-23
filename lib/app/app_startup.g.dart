@@ -49,4 +49,4 @@ final class AppStartupProvider extends $FunctionalProvider<AsyncValue<void>, voi
   }
 }
 
-String _$appStartupHash() => r'1ac9e1d06ea10476fd2483cf8529ecaabddc6d36';
+String _$appStartupHash() => r'63bb1571e6f25b5388bee58c3d176e0bd4a3f039';
