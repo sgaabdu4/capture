@@ -1,9 +1,8 @@
 import 'package:capture/features/capture/domain/entities/source_span.dart';
-import 'package:capture/features/capture/domain/values/excerpt.dart';
 
 /// Span over [text] from [start] to [end] with its exact excerpt.
 SourceSpan spanOf(String text, int start, int end) =>
-    .new(start, end, Excerpt(text.substring(start, end)));
+    .new(start, end, .new(text.substring(start, end)));
 
 /// Returns the non-whitespace text of [text] that is not covered by [spans],
 /// or that is covered more than once. Empty result means every source

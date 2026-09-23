@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/features/capture/domain/entities/edited_field.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/domain/entities/review_flag.dart';
@@ -80,7 +81,7 @@ ProposalItem mergeItems(ProposalItem first, ProposalItem second) {
   final conflicting = groupId != secondGroupId || kind != secondKind;
   return copyWith(
     sources: merged,
-    body: bodyEdited ? '$body\n$secondBody' : proposedBody(excerpt),
+    body: bodyEdited ? optionalText([?body, ?secondBody].join('\n')) : proposedBody(excerpt),
     title: edited.contains(EditedField.title) ? title : proposedTitle(excerpt),
     due: due ?? secondDue,
     reminder: reminder ?? secondReminder,

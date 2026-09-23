@@ -12,7 +12,6 @@ import 'package:capture/features/capture/domain/proposal/proposal_builder.dart';
 import 'package:capture/features/capture/domain/text/assembly.dart';
 import 'package:capture/features/capture/domain/text/candidate_splitter.dart';
 import 'package:capture/features/capture/domain/text/coverage.dart';
-import 'package:capture/features/capture/domain/values/passage_id.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -149,7 +148,7 @@ class CaptureAnalysisRepository implements ICaptureAnalysisRepository {
 Thought wholeTranscript(String transcript) {
   final start = firstNonSpace(transcript, 0);
   final end = trimEnd(transcript, start, transcript.length);
-  return .new(PassageId('T1'), const [], spanOf(transcript, start, end));
+  return .new(thoughtId(1), const [], spanOf(transcript, start, end));
 }
 
 @Riverpod(keepAlive: true)

@@ -23,7 +23,7 @@ List<ProposalItem> buildProposal({
   required ClassificationPlan plan,
   required CaptureMoment moment,
   required String Function() newId,
-}) => [for (final d in decisions) _item(d, plan, moment, ItemId(newId()))];
+}) => [for (final d in decisions) _item(d, plan, moment, .new(newId()))];
 
 ProposalItem _item(ThoughtDecision d, ClassificationPlan plan, CaptureMoment moment, ItemId id) {
   final ThoughtDecision(:thought, :groupOption, :groupConfidence, :task, :alert, :recall) = d;
@@ -97,7 +97,7 @@ _Dates _dates(ThoughtDecision d, CaptureMoment moment, {required bool wantsAlert
 /// Fallback proposal when classification is unavailable (service failure or
 /// invalid key): one editable Unsorted note holding the whole transcript.
 ProposalItem manualProposal(Thought whole, List<Group> groups, String id) => .new(
-  id: ItemId(id),
+  id: .new(id),
   sources: [whole.span],
   kind: .note,
   groupId: groups.where((g) => g.isUnsorted && !g.archived).firstOrNull?.id,

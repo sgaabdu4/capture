@@ -1,7 +1,5 @@
-import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
-import 'package:capture/features/groups/domain/values/group_name.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'group_model.freezed.dart';
@@ -28,8 +26,8 @@ sealed class GroupModel with _$GroupModel {
   );
 
   Group toEntity() => .new(
-    id: NotionId(id),
-    name: GroupName(name),
+    id: .new(id),
+    name: .new(name),
     description: optionalText(description),
     archived: archived,
   );

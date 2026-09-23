@@ -22,7 +22,7 @@ List<Thought> assembleThoughts(
   return [
     for (int g = 0; g < starts.length; g++)
       Thought(
-        PassageId('T${g + 1}'),
+        thoughtId(g + 1),
         units.sublist(starts[g], ends[g]),
         spanOf(transcript, units[starts[g]].span.start, units[ends[g] - 1].span.end),
         uncertainStart: _uncertainAround(starts[g], ends[g], decisions),
@@ -40,3 +40,8 @@ bool _isLateCorrection(BoundaryDecision? decision) => decision != null && decisi
 /// uncertain "no split" was absorbed inside it.
 bool _uncertainAround(int from, int to, Map<int, BoundaryDecision> decisions) =>
     [for (int i = from; i < to; i++) decisions[i]].any((d) => d != null && d.uncertain);
+
+/// Thought ids are `T1`, `T2`, … in source order.
+PassageId thoughtId(int number) => .new('$_thoughtIdPrefix$number');
+
+const _thoughtIdPrefix = 'T';

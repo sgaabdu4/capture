@@ -7,9 +7,6 @@ import 'package:capture/features/capture/data/datasources/transcription_datasour
 import 'package:capture/features/capture/domain/audio_chunks.dart';
 import 'package:capture/features/capture/domain/entities/capture_failure.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
-import 'package:capture/features/capture/domain/values/audio_path.dart';
-import 'package:capture/features/capture/domain/values/capture_id.dart';
-import 'package:capture/features/capture/domain/values/time_zone_id.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -81,10 +78,10 @@ class CaptureRepository implements ICaptureRepository {
   Future<CaptureRecord> createDraft() async {
     final id = _system.newId();
     final record = CaptureRecord(
-      id: CaptureId(id),
+      id: .new(id),
       capturedAtUtc: _system.nowUtc(),
-      timeZone: TimeZoneId(await _system.timeZone()),
-      audioPath: AudioPath(await _files.pcmPathFor(id)),
+      timeZone: .new(await _system.timeZone()),
+      audioPath: .new(await _files.pcmPathFor(id)),
     );
     put(record);
     return record;

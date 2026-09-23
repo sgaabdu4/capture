@@ -1,8 +1,6 @@
-import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/features/capture/data/models/due_date_model.dart';
 import 'package:capture/features/capture/domain/entities/item_kind.dart';
-import 'package:capture/features/capture/domain/values/item_id.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -47,12 +45,12 @@ sealed class LibraryEntryModel with _$LibraryEntryModel {
   );
 
   LibraryEntry toEntity() => .new(
-    pageId: NotionId(pageId),
-    itemId: ItemId(itemId),
+    pageId: .new(pageId),
+    itemId: .new(itemId),
     title: optionalText(title),
     kind: kind,
     groupId: switch (groupId) {
-      final g? => NotionId(g),
+      final g? => .new(g),
       null => null,
     },
     due: due?.toEntity(),

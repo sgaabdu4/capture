@@ -159,6 +159,8 @@ class _Splitter {
 }
 
 /// Unit ids are `U001`, `U002`, … in source order.
-PassageId _unitId(int number) => PassageId('U${number.toString().padLeft(_unitIdDigits, '0')}');
+PassageId _unitId(int number) =>
+    .new('$_unitIdPrefix${number.toString().padLeft(_unitIdDigits, '0')}');
 
+const _unitIdPrefix = 'U';
 const _unitIdDigits = 3;

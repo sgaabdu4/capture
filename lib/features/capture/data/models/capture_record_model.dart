@@ -3,9 +3,6 @@ import 'package:capture/features/capture/data/models/save_progress_model.dart';
 import 'package:capture/features/capture/domain/entities/capture_failure.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
-import 'package:capture/features/capture/domain/values/audio_path.dart';
-import 'package:capture/features/capture/domain/values/capture_id.dart';
-import 'package:capture/features/capture/domain/values/time_zone_id.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'capture_record_model.freezed.dart';
@@ -47,10 +44,10 @@ sealed class CaptureRecordModel with _$CaptureRecordModel {
   );
 
   CaptureRecord toEntity() => .new(
-    id: CaptureId(id),
+    id: .new(id),
     capturedAtUtc: capturedAtUtc,
-    timeZone: TimeZoneId(timeZone),
-    audioPath: AudioPath(audioPath),
+    timeZone: .new(timeZone),
+    audioPath: .new(audioPath),
     duration: .new(milliseconds: durationMs),
     stage: stage,
     transcript: transcript,

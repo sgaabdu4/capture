@@ -1,5 +1,4 @@
 import 'package:capture/core/domain/entities/notion_workspace.dart';
-import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'notion_workspace_model.freezed.dart';
@@ -33,11 +32,11 @@ sealed class NotionWorkspaceModel with _$NotionWorkspaceModel {
   );
 
   NotionWorkspace toEntity() => .new(
-    parentPageId: NotionId(parentPageId),
-    areaPageId: NotionId(areaPageId),
-    groups: NotionId(groups),
-    captures: NotionId(captures),
-    library: NotionId(library),
+    parentPageId: .new(parentPageId),
+    areaPageId: .new(areaPageId),
+    groups: .new(groups),
+    captures: .new(captures),
+    library: .new(library),
     maxUpload: .fromBytes(maxUploadBytes),
     workspaceName: workspaceName,
   );

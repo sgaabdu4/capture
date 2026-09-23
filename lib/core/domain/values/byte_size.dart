@@ -10,7 +10,7 @@ sealed class ByteSize with _$ByteSize {
   const factory ByteSize._raw(int inBytes) = _ByteSize;
 
   factory ByteSize.fromBytes(int bytes) {
-    if (bytes < 0) throw ArgumentError.value(bytes, 'bytes', 'must not be negative');
+    assert(bytes >= 0, 'ByteSize must not be negative');
     return ByteSize._raw(bytes);
   }
 }

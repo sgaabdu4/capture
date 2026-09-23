@@ -186,7 +186,7 @@ void main() {
   test('a page made in Notion without an Item ID is skipped, not thrown', () async {
     final _Fixture(:repo, :notion) = _Fixture();
     notion.pages['page-1'] = .fromEntity(_task);
-    notion.pages['page-2'] = const LibraryEntryModel(
+    notion.pages['page-2'] = const .new(
       pageId: 'page-2',
       itemId: '',
       title: 'Typed straight into Notion',

@@ -1,5 +1,4 @@
 import 'package:capture/features/capture/domain/entities/source_span.dart';
-import 'package:capture/features/capture/domain/values/excerpt.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'source_span_model.freezed.dart';
@@ -17,5 +16,5 @@ sealed class SourceSpanModel with _$SourceSpanModel {
   factory SourceSpanModel.fromEntity(SourceSpan s) =>
       SourceSpanModel(start: s.start, end: s.end, excerpt: s.excerpt.value);
 
-  SourceSpan toEntity() => .new(start, end, Excerpt(excerpt));
+  SourceSpan toEntity() => .new(start, end, .new(excerpt));
 }

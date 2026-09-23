@@ -1,4 +1,3 @@
-import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/features/capture/data/models/due_date_model.dart';
 import 'package:capture/features/capture/data/models/source_span_model.dart';
@@ -6,7 +5,6 @@ import 'package:capture/features/capture/domain/entities/edited_field.dart';
 import 'package:capture/features/capture/domain/entities/item_kind.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/domain/entities/review_flag.dart';
-import 'package:capture/features/capture/domain/values/item_id.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'proposal_item_model.freezed.dart';
@@ -54,11 +52,11 @@ sealed class ProposalItemModel with _$ProposalItemModel {
   );
 
   ProposalItem toEntity() => .new(
-    id: ItemId(id),
+    id: .new(id),
     sources: [for (final s in sources) s.toEntity()],
     kind: kind,
     groupId: switch (groupId) {
-      final g? => NotionId(g),
+      final g? => .new(g),
       null => null,
     },
     title: optionalText(title),

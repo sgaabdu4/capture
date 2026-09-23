@@ -48,11 +48,15 @@ sealed class ProposalItem with _$ProposalItem {
 
   bool get isTask => kind == .task;
 
-  ProposalItem withTitle(String value) =>
-      copyWith(title: optionalText(value), edited: {...edited, .title});
+  ProposalItem withTitle(String value) {
+    final ProposalItem next = copyWith(title: optionalText(value), edited: {...edited, .title});
+    return next;
+  }
 
-  ProposalItem withBody(String value) =>
-      copyWith(body: optionalText(value), edited: {...edited, .body});
+  ProposalItem withBody(String value) {
+    final ProposalItem next = copyWith(body: optionalText(value), edited: {...edited, .body});
+    return next;
+  }
 
   ProposalItem withGroup(NotionId value) => copyWith(
     groupId: value,

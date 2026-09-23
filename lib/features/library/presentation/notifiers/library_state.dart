@@ -49,6 +49,14 @@ sealed class LibraryState with _$LibraryState {
     (x: final String x, y: final String y) => x.compareTo(y),
     (x: String(), y: null) => -1,
     (x: null, y: String()) => 1,
-    (x: null, y: null) => (a.title ?? '').compareTo(b.title ?? ''),
+    (x: null, y: null) => _byTitle(a.title, b.title),
+  };
+
+  /// Untitled entries sort first, as blank titles did.
+  static int _byTitle(String? a, String? b) => switch ((x: a, y: b)) {
+    (x: final String x, y: final String y) => x.compareTo(y),
+    (x: null, y: String()) => -1,
+    (x: String(), y: null) => 1,
+    (x: null, y: null) => 0,
   };
 }

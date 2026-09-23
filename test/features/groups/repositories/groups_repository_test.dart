@@ -21,10 +21,10 @@ class _Notion implements IGroupsRemoteDatasource {
     String dataSource, {
     required String name,
     required String description,
-  }) => throw UnimplementedError();
+  }) async => const .err(.invalidRequest);
 
   @override
-  Future<NotionResult<void>> update(GroupModel group) => throw UnimplementedError();
+  Future<NotionResult<void>> update(GroupModel group) async => const .ok(null);
 }
 
 class _Cache implements IGroupsLocalDatasource {

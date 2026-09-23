@@ -27,14 +27,14 @@ void main() {
 
   for (final MapEntry(key: name, value: make) in requiredText.entries) {
     test('$name rejects blank text and keeps other text exactly', () {
-      expect(() => make(''), throwsArgumentError);
-      expect(() => make(' \n'), throwsArgumentError);
+      expect(() => make(''), throwsA(isA<AssertionError>()));
+      expect(() => make(' \n'), throwsA(isA<AssertionError>()));
       expect(make(' Work ').toString(), equals(' Work '));
     });
   }
 
   test('ByteSize rejects a negative size', () {
-    expect(() => ByteSize.fromBytes(-1), throwsArgumentError);
+    expect(() => ByteSize.fromBytes(-1), throwsA(isA<AssertionError>()));
     expect(ByteSize.fromBytes(0).inBytes, equals(0));
   });
 }

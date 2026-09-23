@@ -17,7 +17,6 @@ import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/domain/entities/review_flag.dart';
 import 'package:capture/features/capture/domain/proposal/edits.dart';
 import 'package:capture/features/capture/domain/proposal/proposal_builder.dart';
-import 'package:capture/features/capture/domain/values/item_id.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_state.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_notice.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_phase.dart';
@@ -476,7 +475,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   void split(String captureId, ProposalItem item, int at) {
     if (_editable(captureId) case CaptureRecord(:final transcript, :final items, :final copyWith)) {
       final newId = ref.read(systemDatasourceProvider).newId();
-      if (splitItem(item, transcript ?? '', at, ItemId(newId)) case (:final left, :final right)) {
+      if (splitItem(item, transcript ?? '', at, .new(newId)) case (:final left, :final right)) {
         _put(
           copyWith(
             items: [

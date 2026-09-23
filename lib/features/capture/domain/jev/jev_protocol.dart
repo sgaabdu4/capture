@@ -70,8 +70,8 @@ Result<JevResult, JevProtocolFailure> decodeResponse(Object? json, Map<String, J
 }
 
 JevModel _model(Object? response) => switch (response) {
-  {jevModelField: final String model} when model.trim().isNotEmpty => JevModel(model),
-  _ => JevModel(jevUnknownModel),
+  {jevModelField: final String model} when model.trim().isNotEmpty => .new(model),
+  _ => .new(jevUnknownModel),
 };
 
 JevUsage _usage(Object? response) => switch (response) {

@@ -6,9 +6,7 @@ import 'package:capture/features/capture/domain/jev/jev_keys.dart';
 import 'package:capture/features/capture/domain/jev/jev_protocol.dart';
 import 'package:capture/features/capture/domain/jev/thought_decision.dart';
 import 'package:capture/features/capture/domain/text/thought.dart';
-import 'package:capture/features/capture/domain/values/jev_state.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
-import 'package:capture/features/groups/domain/values/group_name.dart';
 
 export 'package:capture/features/capture/domain/jev/classification_plan.dart';
 export 'package:capture/features/capture/domain/jev/thought_decision.dart';
@@ -36,7 +34,7 @@ ClassificationPlan planClassification(
     questions.addAll(_thoughtQuestions(id, criteria, found));
   }
   return .new(
-    state: JevState(_state(thoughts)),
+    state: .new(_state(thoughts)),
     questions: questions,
     groupOptions: groupOptions,
     unsortedGroupId: groups.where((g) => g.isUnsorted && !g.archived).firstOrNull?.id,
@@ -139,7 +137,7 @@ ThoughtDecision? _decodeThought(
   final time = answers[timeQuestionKey(id)];
   return .new(
     thought: thought,
-    groupOption: GroupName(group.choice),
+    groupOption: .new(group.choice),
     groupConfidence: group.confidence,
     task: task.yes,
     alert: alert.yes,
