@@ -176,16 +176,20 @@ void main() {
   tearDown(() => support.deleteSync(recursive: true));
 
   testWidgets('first launch shows the setup steps and still records', (tester) async {
+    bool started = false;
     when(native.requestMic).thenAnswer((_) async => true);
-    when(() => native.startRecording(any(), limit: any(named: 'limit'))).thenAnswer((_) async {});
+    when(() => native.startRecording(any(), limit: any(named: 'limit')))
+        .thenAnswer((_) async => started = true);
     await _launch(tester, support: support, native: native);
 
     expect(find.text(_l10n.setupTitle), findsOneWidget);
-    // Real time, so the draft's folder is created on disk.
-    await tester.runAsync(() async {
-      await tester.tap(find.byKey(const ValueKey(AppWidgetKeys.recordButton)));
-      await Future<void>.delayed(const .new(milliseconds: 100));
-    });
+    // Real time, so the draft's folder is created on disk, until the
+    // recorder starts (at most 5 seconds, however slow the disk is).
+    await tester.runAsync(() => tester.tap(find.byKey(const ValueKey(AppWidgetKeys.recordButton))));
+    for (int waited = 0; !started && waited < 50; waited++) {
+      await tester.runAsync(() => Future<void>.delayed(const .new(milliseconds: 100)));
+      await tester.pump();
+    }
     verify(() => native.startRecording(any(), limit: any(named: 'limit'))).called(1);
     verify(native.installMenu).called(1);
   });
