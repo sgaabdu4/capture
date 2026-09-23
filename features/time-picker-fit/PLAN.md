@@ -14,7 +14,7 @@ Owners: `lib/core/theme/app_theme.dart` owns the text theme. Material 3's `showT
 
 Blockers: None
 Handoff: Approval
-Authority: Human-loop — on 2026-09-23 the owner asked for a fix, proof and a PR, and said not to change the Mac layout. When asked, they chose to fix the shared theme so the Mac picker's clipped digits are fixed as well ("Fix both"). No Mac page or dialog size changes. Merging is not authorized.
+Authority: Human-loop — on 2026-09-23 the owner asked for a fix, proof and a PR, and said not to change the Mac layout. When asked, they chose to fix the shared theme so the Mac picker's clipped digits are fixed as well ("Fix both"). No Mac page or dialog size changes. Later on 2026-09-23 the owner approved the merge ("merge all"), which publishes one Mac release.
 
 ## Acceptance + steps
 
@@ -47,5 +47,5 @@ Result: Passed
 Evidence: 2026-09-23. The new test fails without the fix (`Expected: <= 80.0, Actual: 84.0`) and passes with it. `flutter test test/app/responsive_layout_test.dart test/app/capture_app_test.dart` → 17/17 passed. `python3 .hooks/hard-eng.py check --plan-stage Complete` → 14/14 PASS, exit 0.
 E2E: Passed — the iPhone review card → Edit → time chip → picker journey, run as a widget test at 390 × 844 pt.
 
-Delivery target: PR
-Delivery: Pending — PR with before/after screenshots and green Hard Eng CI.
+Delivery target: Merge
+Delivery: Pending — PR #23 with before/after screenshots and green Hard Eng CI; merge to `main`.
