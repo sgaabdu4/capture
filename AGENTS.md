@@ -17,3 +17,6 @@
 - Hard Eng = follow `.agents/skills/he/SKILL.md` when working on this repository; use `python3 .hooks/hard-eng.py --help` for commands.
 <!-- hard-eng:end -->
 
+# Project rules
+
+- What's New = a pull request that changes the app (`lib/`, `assets/`, `macos/`, `ios/`, `pubspec.yaml`, `pubspec.lock`, `l10n.yaml`, `codemagic.yaml`) puts one or two plain sentences for the App Store and release notes under a `## What's New` heading in its description. The required `dmg` check fails without it. The text is public: no private details.
