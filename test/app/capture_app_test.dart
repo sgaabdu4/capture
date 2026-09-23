@@ -25,6 +25,7 @@ import 'package:capture/features/shell/presentation/widgets/update_link.dart';
 import 'package:capture/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -451,6 +452,49 @@ void main() {
         app.read(captureRepositoryProvider).get(sampleProposedCapture.id.value)?.stage,
         equals(CaptureStage.dismissed),
       );
+    });
+
+    testWidgets('the time picker opened from the review card shows its whole time on iPhone 13', (
+      tester,
+    ) async {
+      final seed = ProviderContainer.test(
+        overrides: appOverrides(support: support, native: native),
+      );
+      seed.read(captureRepositoryProvider).put(sampleProposedCapture);
+      seed.dispose();
+      when(() => native.showReview(any())).thenAnswer((_) async {});
+      when(native.showMainWindow).thenAnswer((_) async {});
+      when(native.takeRecordRequest).thenAnswer((_) async => false);
+      await _pump(
+        tester,
+        appOverrides(
+          support: support,
+          native: native,
+          fakes: (secrets: null, reminders: null, system: FakeSystem(isPhone: true)),
+        ),
+        // iPhone 13's screen: 390 × 844 points at 3×.
+        screen: (size: const Size(1170, 2532), pixelRatio: 3),
+      );
+      ProviderScope.containerOf(tester.element(find.byType(CaptureApp)))
+          .read(captureFlowProvider.notifier)
+          .showReview(sampleProposedCapture.id.value);
+      await _settle(tester);
+      await _open(tester, AppWidgetKeys.reviewEditButton);
+
+      await tester.tap(find.textContaining('9:00'));
+      await _settle(tester);
+
+      // Digits squeezed into a shorter field are clipped.
+      for (final digits in ['9', '00']) {
+        final text = tester.renderObject<RenderParagraph>(
+          find.descendant(of: find.byType(Dialog), matching: find.text(digits)),
+        );
+        expect(
+          text.getMaxIntrinsicHeight(.infinity),
+          lessThanOrEqualTo(text.size.height),
+          reason: digits,
+        );
+      }
     });
 
     testWidgets('Yes, save on the review card saves the capture to Notion', (tester) async {

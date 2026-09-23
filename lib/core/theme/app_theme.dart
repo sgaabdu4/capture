@@ -88,6 +88,19 @@ ThemeData buildAppTheme() => .new(
     linearTrackColor: Palette.selected,
     linearMinHeight: Sizes.progressBar,
   ),
+  timePickerTheme: .new(
+    // The default, displayLarge, is the hero wordmark and overflows the
+    // picker's fixed fields.
+    hourMinuteTextStyle: _textTheme.displayMedium,
+    // The default AM/PM uses the unset tertiary colours, grey on grey;
+    // selected matches the selected hour instead.
+    dayPeriodColor: WidgetStateColor.resolveWith(
+      (s) => s.contains(WidgetState.selected) ? Palette.ink : Colors.transparent,
+    ),
+    dayPeriodTextColor: WidgetStateColor.resolveWith(
+      (s) => s.contains(WidgetState.selected) ? Palette.cream : Palette.muted,
+    ),
+  ),
   dialogTheme: const .new(
     backgroundColor: Palette.paper,
     shape: RoundedRectangleBorder(borderRadius: Radii.rounded16),
@@ -122,7 +135,7 @@ InputDecorationThemeData _inputTheme() => .new(
   isDense: true,
   contentPadding: const EdgeInsets.all(Spacing.sm),
   labelStyle: _textTheme.labelMedium,
-  hintStyle: _textTheme.labelMedium?.copyWith(color: Palette.faint),
+  hintStyle: _textTheme.labelMedium,
   border: _fieldBorder,
   enabledBorder: _fieldBorder,
   focusedBorder: _fieldBorder.copyWith(borderSide: const .new(color: Palette.ink)),
