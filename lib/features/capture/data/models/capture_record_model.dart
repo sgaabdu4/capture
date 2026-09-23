@@ -30,10 +30,10 @@ sealed class CaptureRecordModel with _$CaptureRecordModel {
       _$CaptureRecordModelFromJson(json);
 
   factory CaptureRecordModel.fromEntity(CaptureRecord r) => CaptureRecordModel(
-    id: r.id,
+    id: r.id.value,
     capturedAtUtc: r.capturedAtUtc,
-    timeZone: r.timeZone,
-    audioPath: r.audioPath,
+    timeZone: r.timeZone.value,
+    audioPath: r.audioPath.value,
     durationMs: r.duration.inMilliseconds,
     stage: r.stage,
     transcript: r.transcript,
@@ -44,10 +44,10 @@ sealed class CaptureRecordModel with _$CaptureRecordModel {
   );
 
   CaptureRecord toEntity() => .new(
-    id: id,
+    id: .new(id),
     capturedAtUtc: capturedAtUtc,
-    timeZone: timeZone,
-    audioPath: audioPath,
+    timeZone: .new(timeZone),
+    audioPath: .new(audioPath),
     duration: .new(milliseconds: durationMs),
     stage: stage,
     transcript: transcript,

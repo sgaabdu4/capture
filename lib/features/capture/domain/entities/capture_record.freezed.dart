@@ -15,9 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CaptureRecord {
 
- String get id; DateTime get capturedAtUtc;/// IANA zone at capture time; dates in the proposal are resolved in it.
- String get timeZone;/// Raw PCM16 16 kHz mono file written while recording.
- String get audioPath; Duration get duration; CaptureStage get stage; String? get transcript; List<ProposalItem> get items; SaveProgress get progress;/// Last failure; cleared when the step succeeds.
+ CaptureId get id; DateTime get capturedAtUtc;/// IANA zone at capture time; dates in the proposal are resolved in it.
+ TimeZoneId get timeZone;/// Raw PCM16 16 kHz mono file written while recording.
+ AudioPath get audioPath; Duration get duration; CaptureStage get stage; String? get transcript; List<ProposalItem> get items; SaveProgress get progress;/// Last failure; cleared when the step succeeds.
  CaptureFailure? get failure;/// Compressed audio uploaded to Notion.
  String? get m4aPath;
 /// Create a copy of CaptureRecord
@@ -55,7 +55,7 @@ abstract mixin class $CaptureRecordCopyWith<$Res>  {
   factory $CaptureRecordCopyWith(CaptureRecord value, $Res Function(CaptureRecord) _then) = _$CaptureRecordCopyWithImpl;
 @useResult
 $Res call({
- String id, DateTime capturedAtUtc, String timeZone, String audioPath, Duration duration, CaptureStage stage, String? transcript, List<ProposalItem> items, SaveProgress progress, CaptureFailure? failure, String? m4aPath
+ CaptureId id, DateTime capturedAtUtc, TimeZoneId timeZone, AudioPath audioPath, Duration duration, CaptureStage stage, String? transcript, List<ProposalItem> items, SaveProgress progress, CaptureFailure? failure, String? m4aPath
 });
 
 
@@ -75,10 +75,10 @@ class _$CaptureRecordCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? capturedAtUtc = null,Object? timeZone = null,Object? audioPath = null,Object? duration = null,Object? stage = null,Object? transcript = freezed,Object? items = null,Object? progress = null,Object? failure = freezed,Object? m4aPath = freezed,}) {
   return _then(CaptureRecord(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,capturedAtUtc: null == capturedAtUtc ? _self.capturedAtUtc : capturedAtUtc // ignore: cast_nullable_to_non_nullable
+as CaptureId,capturedAtUtc: null == capturedAtUtc ? _self.capturedAtUtc : capturedAtUtc // ignore: cast_nullable_to_non_nullable
 as DateTime,timeZone: null == timeZone ? _self.timeZone : timeZone // ignore: cast_nullable_to_non_nullable
-as String,audioPath: null == audioPath ? _self.audioPath : audioPath // ignore: cast_nullable_to_non_nullable
-as String,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as TimeZoneId,audioPath: null == audioPath ? _self.audioPath : audioPath // ignore: cast_nullable_to_non_nullable
+as AudioPath,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as Duration,stage: null == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable
 as CaptureStage,transcript: freezed == transcript ? _self.transcript : transcript // ignore: cast_nullable_to_non_nullable
 as String?,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
@@ -176,7 +176,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  DateTime capturedAtUtc,  String timeZone,  String audioPath,  Duration duration,  CaptureStage stage,  String? transcript,  List<ProposalItem> items,  SaveProgress progress,  CaptureFailure? failure,  String? m4aPath)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( CaptureId id,  DateTime capturedAtUtc,  TimeZoneId timeZone,  AudioPath audioPath,  Duration duration,  CaptureStage stage,  String? transcript,  List<ProposalItem> items,  SaveProgress progress,  CaptureFailure? failure,  String? m4aPath)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CaptureRecord() when $default != null:
 return $default(_that.id,_that.capturedAtUtc,_that.timeZone,_that.audioPath,_that.duration,_that.stage,_that.transcript,_that.items,_that.progress,_that.failure,_that.m4aPath);case _:
@@ -197,7 +197,7 @@ return $default(_that.id,_that.capturedAtUtc,_that.timeZone,_that.audioPath,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  DateTime capturedAtUtc,  String timeZone,  String audioPath,  Duration duration,  CaptureStage stage,  String? transcript,  List<ProposalItem> items,  SaveProgress progress,  CaptureFailure? failure,  String? m4aPath)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( CaptureId id,  DateTime capturedAtUtc,  TimeZoneId timeZone,  AudioPath audioPath,  Duration duration,  CaptureStage stage,  String? transcript,  List<ProposalItem> items,  SaveProgress progress,  CaptureFailure? failure,  String? m4aPath)  $default,) {final _that = this;
 switch (_that) {
 case _CaptureRecord():
 return $default(_that.id,_that.capturedAtUtc,_that.timeZone,_that.audioPath,_that.duration,_that.stage,_that.transcript,_that.items,_that.progress,_that.failure,_that.m4aPath);}
@@ -214,7 +214,7 @@ return $default(_that.id,_that.capturedAtUtc,_that.timeZone,_that.audioPath,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  DateTime capturedAtUtc,  String timeZone,  String audioPath,  Duration duration,  CaptureStage stage,  String? transcript,  List<ProposalItem> items,  SaveProgress progress,  CaptureFailure? failure,  String? m4aPath)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( CaptureId id,  DateTime capturedAtUtc,  TimeZoneId timeZone,  AudioPath audioPath,  Duration duration,  CaptureStage stage,  String? transcript,  List<ProposalItem> items,  SaveProgress progress,  CaptureFailure? failure,  String? m4aPath)?  $default,) {final _that = this;
 switch (_that) {
 case _CaptureRecord() when $default != null:
 return $default(_that.id,_that.capturedAtUtc,_that.timeZone,_that.audioPath,_that.duration,_that.stage,_that.transcript,_that.items,_that.progress,_that.failure,_that.m4aPath);case _:
@@ -232,12 +232,12 @@ class _CaptureRecord extends CaptureRecord {
   const _CaptureRecord({required this.id, required this.capturedAtUtc, required this.timeZone, required this.audioPath, this.duration = Duration.zero, this.stage = CaptureStage.recorded, this.transcript,  List<ProposalItem> items = const [], this.progress = const SaveProgress(), this.failure, this.m4aPath}): _items = items,super._();
   
 
-@override final  String id;
+@override final  CaptureId id;
 @override final  DateTime capturedAtUtc;
 /// IANA zone at capture time; dates in the proposal are resolved in it.
-@override final  String timeZone;
+@override final  TimeZoneId timeZone;
 /// Raw PCM16 16 kHz mono file written while recording.
-@override final  String audioPath;
+@override final  AudioPath audioPath;
 @override@JsonKey() final  Duration duration;
 @override@JsonKey() final  CaptureStage stage;
 @override final  String? transcript;
@@ -286,7 +286,7 @@ abstract mixin class _$CaptureRecordCopyWith<$Res> implements $CaptureRecordCopy
   factory _$CaptureRecordCopyWith(_CaptureRecord value, $Res Function(_CaptureRecord) _then) = __$CaptureRecordCopyWithImpl;
 @override @useResult
 $Res call({
- String id, DateTime capturedAtUtc, String timeZone, String audioPath, Duration duration, CaptureStage stage, String? transcript, List<ProposalItem> items, SaveProgress progress, CaptureFailure? failure, String? m4aPath
+ CaptureId id, DateTime capturedAtUtc, TimeZoneId timeZone, AudioPath audioPath, Duration duration, CaptureStage stage, String? transcript, List<ProposalItem> items, SaveProgress progress, CaptureFailure? failure, String? m4aPath
 });
 
 
@@ -306,10 +306,10 @@ class __$CaptureRecordCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? capturedAtUtc = null,Object? timeZone = null,Object? audioPath = null,Object? duration = null,Object? stage = null,Object? transcript = freezed,Object? items = null,Object? progress = null,Object? failure = freezed,Object? m4aPath = freezed,}) {
   return _then(_CaptureRecord(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,capturedAtUtc: null == capturedAtUtc ? _self.capturedAtUtc : capturedAtUtc // ignore: cast_nullable_to_non_nullable
+as CaptureId,capturedAtUtc: null == capturedAtUtc ? _self.capturedAtUtc : capturedAtUtc // ignore: cast_nullable_to_non_nullable
 as DateTime,timeZone: null == timeZone ? _self.timeZone : timeZone // ignore: cast_nullable_to_non_nullable
-as String,audioPath: null == audioPath ? _self.audioPath : audioPath // ignore: cast_nullable_to_non_nullable
-as String,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
+as TimeZoneId,audioPath: null == audioPath ? _self.audioPath : audioPath // ignore: cast_nullable_to_non_nullable
+as AudioPath,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as Duration,stage: null == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable
 as CaptureStage,transcript: freezed == transcript ? _self.transcript : transcript // ignore: cast_nullable_to_non_nullable
 as String?,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable

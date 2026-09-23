@@ -98,7 +98,7 @@ class HomeScreen extends ConsumerWidget {
                   today: .new(
                     items: [
                       for (final (:entry, :due) in today)
-                        (title: entry.title, due: due.label(l10n, now), done: entry.done),
+                        (title: entry.title ?? '', due: due.label(l10n, now), done: entry.done),
                     ],
                     onDoneChanged: (index, {required done}) => unawaited(
                       ref.read(libraryProvider.notifier).setDone(today[index].entry, done: done),
@@ -111,7 +111,7 @@ class HomeScreen extends ConsumerWidget {
                     onViewAll: () => const RecordingsRoute().go(context),
                   ),
                   groups: .new(
-                    names: [for (final g in groups) g.name],
+                    names: [for (final g in groups) g.name.value],
                     onOpen: () => const GroupsRoute().go(context),
                   ),
                 ),

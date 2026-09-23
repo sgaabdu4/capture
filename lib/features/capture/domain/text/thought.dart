@@ -1,5 +1,6 @@
 import 'package:capture/features/capture/domain/entities/source_span.dart';
 import 'package:capture/features/capture/domain/text/transcript_unit.dart';
+import 'package:capture/features/capture/domain/values/passage_id.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'thought.freezed.dart';
@@ -10,7 +11,7 @@ part 'thought.freezed.dart';
 @freezed
 sealed class Thought with _$Thought {
   const factory Thought(
-    String id,
+    PassageId id,
     List<TranscriptUnit> units,
     SourceSpan span, {
 

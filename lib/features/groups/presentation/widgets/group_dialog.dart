@@ -52,8 +52,8 @@ class _GroupDialogState extends State<GroupDialog> {
   void initState() {
     super.initState();
     if (widget.editing case Group(:final name, :final description)) {
-      _name.text = name;
-      _description.text = description;
+      _name.text = name.value;
+      _description.text = description ?? '';
     }
   }
 

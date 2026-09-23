@@ -60,7 +60,7 @@ class EditorScreen extends ConsumerWidget {
     final CaptureRecord(:items, :includedItems, :stage, :failure, :transcript, :timeZone) = record;
     final today = tz.TZDateTime.from(
       ref.watch(systemDatasourceProvider.select((s) => s.nowUtc())),
-      tz.getLocation(timeZone),
+      tz.getLocation(timeZone.value),
     );
     final editable = stage == .proposed;
     final problems = {for (final item in items) ...item.approvalProblems};
@@ -82,7 +82,7 @@ class EditorScreen extends ConsumerWidget {
             children: [
               for (final (index, item) in items.indexed)
                 ProposalItemEditor(
-                  key: ValueKey(item.id),
+                  key: ValueKey(item.id.value),
                   item: item,
                   groups: groups,
                   today: today,

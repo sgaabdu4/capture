@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JevCallMetrics {
 
- String get model; Duration get latency; int get inputTokens; int get outputTokens; int get questions; String? get requestId;
+ JevModel get model; Duration get latency; int get inputTokens; int get outputTokens; int get questions; String? get requestId;
 /// Create a copy of JevCallMetrics
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,7 +51,7 @@ abstract mixin class $JevCallMetricsCopyWith<$Res>  {
   factory $JevCallMetricsCopyWith(JevCallMetrics value, $Res Function(JevCallMetrics) _then) = _$JevCallMetricsCopyWithImpl;
 @useResult
 $Res call({
- String model, Duration latency, int inputTokens, int outputTokens, int questions, String? requestId
+ JevModel model, Duration latency, int inputTokens, int outputTokens, int questions, String? requestId
 });
 
 
@@ -71,7 +71,7 @@ class _$JevCallMetricsCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? model = null,Object? latency = null,Object? inputTokens = null,Object? outputTokens = null,Object? questions = null,Object? requestId = freezed,}) {
   return _then(JevCallMetrics(
 model: null == model ? _self.model : model // ignore: cast_nullable_to_non_nullable
-as String,latency: null == latency ? _self.latency : latency // ignore: cast_nullable_to_non_nullable
+as JevModel,latency: null == latency ? _self.latency : latency // ignore: cast_nullable_to_non_nullable
 as Duration,inputTokens: null == inputTokens ? _self.inputTokens : inputTokens // ignore: cast_nullable_to_non_nullable
 as int,outputTokens: null == outputTokens ? _self.outputTokens : outputTokens // ignore: cast_nullable_to_non_nullable
 as int,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
@@ -158,7 +158,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String model,  Duration latency,  int inputTokens,  int outputTokens,  int questions,  String? requestId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( JevModel model,  Duration latency,  int inputTokens,  int outputTokens,  int questions,  String? requestId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JevCallMetrics() when $default != null:
 return $default(_that.model,_that.latency,_that.inputTokens,_that.outputTokens,_that.questions,_that.requestId);case _:
@@ -179,7 +179,7 @@ return $default(_that.model,_that.latency,_that.inputTokens,_that.outputTokens,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String model,  Duration latency,  int inputTokens,  int outputTokens,  int questions,  String? requestId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( JevModel model,  Duration latency,  int inputTokens,  int outputTokens,  int questions,  String? requestId)  $default,) {final _that = this;
 switch (_that) {
 case _JevCallMetrics():
 return $default(_that.model,_that.latency,_that.inputTokens,_that.outputTokens,_that.questions,_that.requestId);}
@@ -196,7 +196,7 @@ return $default(_that.model,_that.latency,_that.inputTokens,_that.outputTokens,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String model,  Duration latency,  int inputTokens,  int outputTokens,  int questions,  String? requestId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( JevModel model,  Duration latency,  int inputTokens,  int outputTokens,  int questions,  String? requestId)?  $default,) {final _that = this;
 switch (_that) {
 case _JevCallMetrics() when $default != null:
 return $default(_that.model,_that.latency,_that.inputTokens,_that.outputTokens,_that.questions,_that.requestId);case _:
@@ -214,7 +214,7 @@ class _JevCallMetrics implements JevCallMetrics {
   const _JevCallMetrics({required this.model, required this.latency, required this.inputTokens, required this.outputTokens, required this.questions, this.requestId});
   
 
-@override final  String model;
+@override final  JevModel model;
 @override final  Duration latency;
 @override final  int inputTokens;
 @override final  int outputTokens;
@@ -253,7 +253,7 @@ abstract mixin class _$JevCallMetricsCopyWith<$Res> implements $JevCallMetricsCo
   factory _$JevCallMetricsCopyWith(_JevCallMetrics value, $Res Function(_JevCallMetrics) _then) = __$JevCallMetricsCopyWithImpl;
 @override @useResult
 $Res call({
- String model, Duration latency, int inputTokens, int outputTokens, int questions, String? requestId
+ JevModel model, Duration latency, int inputTokens, int outputTokens, int questions, String? requestId
 });
 
 
@@ -273,7 +273,7 @@ class __$JevCallMetricsCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? model = null,Object? latency = null,Object? inputTokens = null,Object? outputTokens = null,Object? questions = null,Object? requestId = freezed,}) {
   return _then(_JevCallMetrics(
 model: null == model ? _self.model : model // ignore: cast_nullable_to_non_nullable
-as String,latency: null == latency ? _self.latency : latency // ignore: cast_nullable_to_non_nullable
+as JevModel,latency: null == latency ? _self.latency : latency // ignore: cast_nullable_to_non_nullable
 as Duration,inputTokens: null == inputTokens ? _self.inputTokens : inputTokens // ignore: cast_nullable_to_non_nullable
 as int,outputTokens: null == outputTokens ? _self.outputTokens : outputTokens // ignore: cast_nullable_to_non_nullable
 as int,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable

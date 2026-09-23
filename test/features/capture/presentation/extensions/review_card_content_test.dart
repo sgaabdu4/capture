@@ -11,25 +11,25 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 final _l10n = lookupAppLocalizations(const .new('en'));
 
-const _groups = GroupsState(
-  groups: [.new(id: 'g1', name: 'Work', description: 'Job things')],
+final _groups = GroupsState(
+  groups: [.new(id: .new('g1'), name: .new('Work'), description: 'Job things')],
 );
 
 ProposalItem _item(String id, {String? groupId = 'g1', DueDate? due, bool task = false}) => .new(
-  id: id,
+  id: .new(id),
   sources: const [],
   kind: task ? .task : .note,
-  groupId: groupId,
+  groupId: groupId == null ? null : .new(groupId),
   title: 'Item $id',
   body: '',
   due: due,
 );
 
 CaptureRecord _record(List<ProposalItem> items, {CaptureFailure? failure}) => .new(
-  id: 'c1',
+  id: .new('c1'),
   capturedAtUtc: .utc(2026, 9, 18, 9),
-  timeZone: 'Europe/London',
-  audioPath: 'c1.pcm',
+  timeZone: .new('Europe/London'),
+  audioPath: .new('c1.pcm'),
   stage: .proposed,
   items: items,
   failure: failure,
@@ -37,7 +37,7 @@ CaptureRecord _record(List<ProposalItem> items, {CaptureFailure? failure}) => .n
 
 void main() {
   final l10n = _l10n;
-  const groups = _groups;
+  final groups = _groups;
 
   setUpAll(() async {
     tzdata.initializeTimeZones();

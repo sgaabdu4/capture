@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JevResult {
 
- String get model; Map<String, JevAnswer> get answers; JevUsage get usage;
+ JevModel get model; Map<String, JevAnswer> get answers; JevUsage get usage;
 /// Create a copy of JevResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,7 +51,7 @@ abstract mixin class $JevResultCopyWith<$Res>  {
   factory $JevResultCopyWith(JevResult value, $Res Function(JevResult) _then) = _$JevResultCopyWithImpl;
 @useResult
 $Res call({
- String model, Map<String, JevAnswer> answers, JevUsage usage
+ JevModel model, Map<String, JevAnswer> answers, JevUsage usage
 });
 
 
@@ -71,7 +71,7 @@ class _$JevResultCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? model = null,Object? answers = null,Object? usage = null,}) {
   return _then(JevResult(
 null == model ? _self.model : model // ignore: cast_nullable_to_non_nullable
-as String,null == answers ? _self.answers : answers // ignore: cast_nullable_to_non_nullable
+as JevModel,null == answers ? _self.answers : answers // ignore: cast_nullable_to_non_nullable
 as Map<String, JevAnswer>,null == usage ? _self.usage : usage // ignore: cast_nullable_to_non_nullable
 as JevUsage,
   ));
@@ -164,7 +164,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String model,  Map<String, JevAnswer> answers,  JevUsage usage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( JevModel model,  Map<String, JevAnswer> answers,  JevUsage usage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JevResult() when $default != null:
 return $default(_that.model,_that.answers,_that.usage);case _:
@@ -185,7 +185,7 @@ return $default(_that.model,_that.answers,_that.usage);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String model,  Map<String, JevAnswer> answers,  JevUsage usage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( JevModel model,  Map<String, JevAnswer> answers,  JevUsage usage)  $default,) {final _that = this;
 switch (_that) {
 case _JevResult():
 return $default(_that.model,_that.answers,_that.usage);}
@@ -202,7 +202,7 @@ return $default(_that.model,_that.answers,_that.usage);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String model,  Map<String, JevAnswer> answers,  JevUsage usage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( JevModel model,  Map<String, JevAnswer> answers,  JevUsage usage)?  $default,) {final _that = this;
 switch (_that) {
 case _JevResult() when $default != null:
 return $default(_that.model,_that.answers,_that.usage);case _:
@@ -220,7 +220,7 @@ class _JevResult implements JevResult {
   const _JevResult(this.model,  Map<String, JevAnswer> answers, this.usage): _answers = answers;
   
 
-@override final  String model;
+@override final  JevModel model;
  final  Map<String, JevAnswer> _answers;
 @override Map<String, JevAnswer> get answers {
   if (_answers is EqualUnmodifiableMapView) return _answers;
@@ -262,7 +262,7 @@ abstract mixin class _$JevResultCopyWith<$Res> implements $JevResultCopyWith<$Re
   factory _$JevResultCopyWith(_JevResult value, $Res Function(_JevResult) _then) = __$JevResultCopyWithImpl;
 @override @useResult
 $Res call({
- String model, Map<String, JevAnswer> answers, JevUsage usage
+ JevModel model, Map<String, JevAnswer> answers, JevUsage usage
 });
 
 
@@ -282,7 +282,7 @@ class __$JevResultCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? model = null,Object? answers = null,Object? usage = null,}) {
   return _then(_JevResult(
 null == model ? _self.model : model // ignore: cast_nullable_to_non_nullable
-as String,null == answers ? _self._answers : answers // ignore: cast_nullable_to_non_nullable
+as JevModel,null == answers ? _self._answers : answers // ignore: cast_nullable_to_non_nullable
 as Map<String, JevAnswer>,null == usage ? _self.usage : usage // ignore: cast_nullable_to_non_nullable
 as JevUsage,
   ));

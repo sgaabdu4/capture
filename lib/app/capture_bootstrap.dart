@@ -89,7 +89,11 @@ class CaptureBootstrap extends ConsumerWidget {
     final l10n = context.l10n;
     return ref
         .read(reminderDatasourceProvider)
-        .show(id: record.id, title: l10n.statusSaved, body: record.includedItems.summary(l10n));
+        .show(
+          id: record.id.value,
+          title: l10n.statusSaved,
+          body: record.includedItems.summary(l10n),
+        );
   }
 
   /// Where the capture flow asked to go, if anywhere.

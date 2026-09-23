@@ -14,7 +14,7 @@ sealed class SourceSpanModel with _$SourceSpanModel {
   factory SourceSpanModel.fromJson(Map<String, dynamic> json) => _$SourceSpanModelFromJson(json);
 
   factory SourceSpanModel.fromEntity(SourceSpan s) =>
-      SourceSpanModel(start: s.start, end: s.end, excerpt: s.excerpt);
+      SourceSpanModel(start: s.start, end: s.end, excerpt: s.excerpt.value);
 
-  SourceSpan toEntity() => .new(start, end, excerpt);
+  SourceSpan toEntity() => .new(start, end, .new(excerpt));
 }

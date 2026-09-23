@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TranscriptUnit {
 
- String get id; SourceSpan get span; BoundaryKind get boundaryBefore;
+ PassageId get id; SourceSpan get span; BoundaryKind get boundaryBefore;
 /// Create a copy of TranscriptUnit
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,7 +51,7 @@ abstract mixin class $TranscriptUnitCopyWith<$Res>  {
   factory $TranscriptUnitCopyWith(TranscriptUnit value, $Res Function(TranscriptUnit) _then) = _$TranscriptUnitCopyWithImpl;
 @useResult
 $Res call({
- String id, SourceSpan span, BoundaryKind boundaryBefore
+ PassageId id, SourceSpan span, BoundaryKind boundaryBefore
 });
 
 
@@ -71,7 +71,7 @@ class _$TranscriptUnitCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? span = null,Object? boundaryBefore = null,}) {
   return _then(TranscriptUnit(
 null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,null == span ? _self.span : span // ignore: cast_nullable_to_non_nullable
+as PassageId,null == span ? _self.span : span // ignore: cast_nullable_to_non_nullable
 as SourceSpan,null == boundaryBefore ? _self.boundaryBefore : boundaryBefore // ignore: cast_nullable_to_non_nullable
 as BoundaryKind,
   ));
@@ -164,7 +164,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  SourceSpan span,  BoundaryKind boundaryBefore)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( PassageId id,  SourceSpan span,  BoundaryKind boundaryBefore)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TranscriptUnit() when $default != null:
 return $default(_that.id,_that.span,_that.boundaryBefore);case _:
@@ -185,7 +185,7 @@ return $default(_that.id,_that.span,_that.boundaryBefore);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  SourceSpan span,  BoundaryKind boundaryBefore)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( PassageId id,  SourceSpan span,  BoundaryKind boundaryBefore)  $default,) {final _that = this;
 switch (_that) {
 case _TranscriptUnit():
 return $default(_that.id,_that.span,_that.boundaryBefore);}
@@ -202,7 +202,7 @@ return $default(_that.id,_that.span,_that.boundaryBefore);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  SourceSpan span,  BoundaryKind boundaryBefore)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( PassageId id,  SourceSpan span,  BoundaryKind boundaryBefore)?  $default,) {final _that = this;
 switch (_that) {
 case _TranscriptUnit() when $default != null:
 return $default(_that.id,_that.span,_that.boundaryBefore);case _:
@@ -220,7 +220,7 @@ class _TranscriptUnit implements TranscriptUnit {
   const _TranscriptUnit(this.id, this.span, this.boundaryBefore);
   
 
-@override final  String id;
+@override final  PassageId id;
 @override final  SourceSpan span;
 @override final  BoundaryKind boundaryBefore;
 
@@ -256,7 +256,7 @@ abstract mixin class _$TranscriptUnitCopyWith<$Res> implements $TranscriptUnitCo
   factory _$TranscriptUnitCopyWith(_TranscriptUnit value, $Res Function(_TranscriptUnit) _then) = __$TranscriptUnitCopyWithImpl;
 @override @useResult
 $Res call({
- String id, SourceSpan span, BoundaryKind boundaryBefore
+ PassageId id, SourceSpan span, BoundaryKind boundaryBefore
 });
 
 
@@ -276,7 +276,7 @@ class __$TranscriptUnitCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? span = null,Object? boundaryBefore = null,}) {
   return _then(_TranscriptUnit(
 null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,null == span ? _self.span : span // ignore: cast_nullable_to_non_nullable
+as PassageId,null == span ? _self.span : span // ignore: cast_nullable_to_non_nullable
 as SourceSpan,null == boundaryBefore ? _self.boundaryBefore : boundaryBefore // ignore: cast_nullable_to_non_nullable
 as BoundaryKind,
   ));

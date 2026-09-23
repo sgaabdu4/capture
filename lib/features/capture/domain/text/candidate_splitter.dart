@@ -1,6 +1,7 @@
 import 'package:capture/features/capture/domain/text/boundary_kind.dart';
 import 'package:capture/features/capture/domain/text/coverage.dart';
 import 'package:capture/features/capture/domain/text/transcript_unit.dart';
+import 'package:capture/features/capture/domain/values/passage_id.dart';
 
 export 'package:capture/features/capture/domain/text/boundary_kind.dart';
 export 'package:capture/features/capture/domain/text/transcript_unit.dart';
@@ -158,6 +159,8 @@ class _Splitter {
 }
 
 /// Unit ids are `U001`, `U002`, … in source order.
-String _unitId(int number) => 'U${number.toString().padLeft(_unitIdDigits, '0')}';
+PassageId _unitId(int number) =>
+    .new('$_unitIdPrefix${number.toString().padLeft(_unitIdDigits, '0')}');
 
+const _unitIdPrefix = 'U';
 const _unitIdDigits = 3;

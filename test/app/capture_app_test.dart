@@ -132,10 +132,10 @@ class _Library implements ILibraryRepository {
   final updates = <LibraryEntry>[];
 
   @override
-  List<LibraryEntry> cached() => const [
-    .new(pageId: 'p1', itemId: 'i1', title: 'Buy oat milk', kind: .task),
-    .new(pageId: 'p2', itemId: 'i2', title: 'Milk frother idea', kind: .note),
-    .new(pageId: 'p3', itemId: 'i3', title: 'Call the dentist', kind: .task),
+  List<LibraryEntry> cached() => [
+    .new(pageId: .new('p1'), itemId: .new('i1'), title: 'Buy oat milk', kind: .task),
+    .new(pageId: .new('p2'), itemId: .new('i2'), title: 'Milk frother idea', kind: .note),
+    .new(pageId: .new('p3'), itemId: .new('i3'), title: 'Call the dentist', kind: .task),
   ];
 
   @override
@@ -285,7 +285,7 @@ void main() {
         ),
       );
       await _open(tester, AppWidgetKeys.navRecordings);
-      expect(find.byKey(ValueKey(sampleProposedCapture.id)), findsOneWidget);
+      expect(find.byKey(ValueKey(sampleProposedCapture.id.value)), findsOneWidget);
       await _open(tester, AppWidgetKeys.settingsButton);
       expect(find.text(_l10n.typesafeSaved), findsOneWidget);
       expect(find.text(_l10n.notionNeeded), findsNothing);
@@ -361,12 +361,12 @@ void main() {
     expect(relaunch.read(settingsRepositoryProvider).autoSave(), isTrue);
 
     final app = ProviderScope.containerOf(tester.element(find.byType(CaptureApp)));
-    await app.read(captureFlowProvider.notifier).process(sampleProposedCapture.id);
+    await app.read(captureFlowProvider.notifier).process(sampleProposedCapture.id.value);
     await _settle(tester);
 
     verifyNever(() => native.showReview(any()));
     expect(
-      app.read(captureRepositoryProvider).get(sampleProposedCapture.id)?.stage,
+      app.read(captureRepositoryProvider).get(sampleProposedCapture.id.value)?.stage,
       equals(CaptureStage.saved),
     );
     expect(
@@ -427,28 +427,28 @@ void main() {
       final flow = app.read(captureFlowProvider.notifier);
       final no = find.byKey(const ValueKey(AppWidgetKeys.reviewNoButton));
 
-      flow.showReview(sampleProposedCapture.id);
+      flow.showReview(sampleProposedCapture.id.value);
       await _settle(tester);
       expect(no, findsOneWidget);
       await _open(tester, AppWidgetKeys.reviewLaterButton);
       expect(no, findsNothing);
       expect(
-        app.read(captureRepositoryProvider).get(sampleProposedCapture.id)?.stage,
+        app.read(captureRepositoryProvider).get(sampleProposedCapture.id.value)?.stage,
         equals(CaptureStage.proposed),
       );
 
-      flow.showReview(sampleProposedCapture.id);
+      flow.showReview(sampleProposedCapture.id.value);
       await _settle(tester);
       await _open(tester, AppWidgetKeys.reviewEditButton);
       expect(find.byKey(const ValueKey(AppWidgetKeys.editorSaveButton)), findsOneWidget);
       await _open(tester, AppWidgetKeys.navHome);
 
-      flow.showReview(sampleProposedCapture.id);
+      flow.showReview(sampleProposedCapture.id.value);
       await _settle(tester);
       await _open(tester, AppWidgetKeys.reviewNoButton);
       expect(no, findsNothing);
       expect(
-        app.read(captureRepositoryProvider).get(sampleProposedCapture.id)?.stage,
+        app.read(captureRepositoryProvider).get(sampleProposedCapture.id.value)?.stage,
         equals(CaptureStage.dismissed),
       );
     });
@@ -477,13 +477,13 @@ void main() {
         libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
       ], screen: _phone);
       final app = ProviderScope.containerOf(tester.element(find.byType(CaptureApp)));
-      app.read(captureFlowProvider.notifier).showReview(sampleProposedCapture.id);
+      app.read(captureFlowProvider.notifier).showReview(sampleProposedCapture.id.value);
       await _settle(tester);
 
       await _open(tester, AppWidgetKeys.reviewYesButton);
 
       expect(
-        app.read(captureRepositoryProvider).get(sampleProposedCapture.id)?.stage,
+        app.read(captureRepositoryProvider).get(sampleProposedCapture.id.value)?.stage,
         equals(CaptureStage.saved),
       );
     });

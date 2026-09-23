@@ -21,7 +21,7 @@ extension ReviewCardContent on CaptureRecord {
   ReviewCardPayload reviewCard(AppLocalizations l10n, GroupsState groups) {
     final included = includedItems;
     final problem = included.expand((i) => i.approvalProblems).firstOrNull;
-    final today = tz.TZDateTime.from(capturedAtUtc, tz.getLocation(timeZone));
+    final today = tz.TZDateTime.from(capturedAtUtc, tz.getLocation(timeZone.value));
     return .new(
       countLine: included.isEmpty ? l10n.reviewNothing : included.summary(l10n),
       rows: [for (final item in included) _row(item, l10n, groups, today)],
@@ -39,7 +39,7 @@ extension ReviewCardContent on CaptureRecord {
     final when = reminder ?? due;
     final detail = [
       kind.label(l10n),
-      ?groups.byId(groupId)?.name,
+      ?groups.byId(groupId)?.name.value,
       ?when?.label(l10n, today),
       ?flags.firstOrNull?.label(l10n),
     ].join(l10n.detailSeparator);
@@ -48,6 +48,6 @@ extension ReviewCardContent on CaptureRecord {
       (kind: .task, when: DueDate()) => _datedSymbol,
       (kind: .task, when: null) => _taskSymbol,
     };
-    return .new(id: id, icon: icon, title: title, detail: detail);
+    return .new(id: id.value, icon: icon, title: title ?? '', detail: detail);
   }
 }

@@ -47,7 +47,7 @@ final class RecordingMeterNotifierProvider
   }
 }
 
-String _$recordingMeterNotifierHash() => r'01d3d4f7d5a0c17ac296ac425d80b0b63e1dae4e';
+String _$recordingMeterNotifierHash() => r'3e093a6eed5afea227b0eea4a5d36274e03c18ae';
 
 /// Follows the recorder's level events. A new recording (its time going
 /// back) starts from a silent waveform.

@@ -70,18 +70,18 @@ class CaptureRepository implements ICaptureRepository {
   @override
   Future<void> delete(CaptureRecord record) async {
     final CaptureRecord(:audioPath, :m4aPath, :id) = record;
-    await _files.delete([audioPath, ?m4aPath]);
-    _local.delete(id);
+    await _files.delete([audioPath.value, ?m4aPath]);
+    _local.delete(id.value);
   }
 
   @override
   Future<CaptureRecord> createDraft() async {
     final id = _system.newId();
     final record = CaptureRecord(
-      id: id,
+      id: .new(id),
       capturedAtUtc: _system.nowUtc(),
-      timeZone: await _system.timeZone(),
-      audioPath: await _files.pcmPathFor(id),
+      timeZone: .new(await _system.timeZone()),
+      audioPath: .new(await _files.pcmPathFor(id)),
     );
     put(record);
     return record;
@@ -91,7 +91,7 @@ class CaptureRepository implements ICaptureRepository {
   Future<CaptureOutcome> transcribe(CaptureRecord record) async {
     final String transcript;
     try {
-      transcript = await _transcription.transcribe(record.audioPath);
+      transcript = await _transcription.transcribe(record.audioPath.value);
     } on Exception {
       return const .err(.transcription);
     }
@@ -107,9 +107,9 @@ class CaptureRepository implements ICaptureRepository {
 
   /// Null when encoding fails: the capture is then saved without audio.
   Future<String?> _encode(CaptureRecord record) async {
-    final out = _files.m4aPathFor(record.id);
+    final out = _files.m4aPathFor(record.id.value);
     try {
-      final bytes = await _native.encodeM4a(input: record.audioPath, output: out);
+      final bytes = await _native.encodeM4a(input: record.audioPath.value, output: out);
       return bytes > 0 ? out : null;
     } on PlatformException {
       return null;
@@ -123,9 +123,9 @@ class CaptureRepository implements ICaptureRepository {
       final CaptureRecord(:audioPath, :id, :copyWith) = r;
       final duration = Duration(
         milliseconds:
-            _files.sizeOf(audioPath) * Duration.millisecondsPerSecond ~/ _pcmBytesPerSecond,
+            _files.sizeOf(audioPath.value) * Duration.millisecondsPerSecond ~/ _pcmBytesPerSecond,
       );
-      if (duration < minimum) _local.delete(id);
+      if (duration < minimum) _local.delete(id.value);
       if (duration >= minimum) put(copyWith(duration: duration));
     }
   }

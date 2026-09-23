@@ -23,12 +23,12 @@ import 'package:timezone/timezone.dart' as tz;
 const _example =
     'I learned about Jev today. It could help organise my notes. I had a lovely evening with Sarah, and I thought of a meal-planning app. Remind me to buy groceries tomorrow at 2pm. Actually, make that 3pm.';
 
-const _groups = [
-  Group(id: 'g-tech', name: 'Tech', description: 'Programming and AI'),
-  Group(id: 'g-personal', name: 'Personal', description: 'Daily life'),
-  Group(id: 'g-ideas', name: 'Ideas', description: 'Possible products'),
-  Group(id: 'g-old', name: 'Old', description: 'Archived', archived: true),
-  Group(id: 'g-unsorted', name: 'Unsorted', description: 'None fits'),
+final _groups = [
+  Group(id: .new('g-tech'), name: .new('Tech'), description: 'Programming and AI'),
+  Group(id: .new('g-personal'), name: .new('Personal'), description: 'Daily life'),
+  Group(id: .new('g-ideas'), name: .new('Ideas'), description: 'Possible products'),
+  Group(id: .new('g-old'), name: .new('Old'), description: 'Archived', archived: true),
+  Group(id: .new('g-unsorted'), name: .new('Unsorted'), description: 'None fits'),
 ];
 
 /// The plan and the proposal built from it.
@@ -157,7 +157,7 @@ void main() {
     final inside = thoughts.expand((t) => t.units).map((u) => u.span);
     expect(coverageProblems(_example, inside), isEmpty);
     expect(coverageProblems(_example, thoughts.map((t) => t.span)), isEmpty);
-    expect(thoughts.firstOrNull?.span.excerpt, startsWith('I learned about Jev today. It'));
+    expect(thoughts.firstOrNull?.span.excerpt.value, startsWith('I learned about Jev today. It'));
     expect(thoughts.any((t) => t.uncertainStart), isTrue);
   });
 
@@ -172,12 +172,12 @@ void main() {
     });
     expect(thoughts, hasLength(3));
     expect(thoughts.last.lateCorrection, isTrue);
-    expect(thoughts.last.span.excerpt, startsWith('Oh, and make the call'));
+    expect(thoughts.last.span.excerpt.value, startsWith('Oh, and make the call'));
   });
 
   test('the brief example splits into the expected candidate units', () {
     expect(
-      splitCandidates(_example).map((u) => u.span.excerpt),
+      splitCandidates(_example).map((u) => u.span.excerpt.value),
       equals([
         'I learned about Jev today.',
         'It could help organise my notes.',
@@ -212,7 +212,7 @@ void main() {
 
     test('four items in three groups with one corrected reminder', () {
       expect(
-        items.map((i) => i.groupId),
+        items.map((i) => i.groupId?.value),
         equals(['g-tech', 'g-personal', 'g-ideas', 'g-personal']),
       );
       expect(
@@ -230,7 +230,7 @@ void main() {
       expect(items[0].body, equals('I learned about Jev today. It could help organise my notes.'));
       expect(items[2].body, equals('I thought of a meal-planning app.'));
       expect(
-        items[2].sources.map((s) => s.excerpt),
+        items[2].sources.map((s) => s.excerpt.value),
         equals(['and I thought of a meal-planning app.']),
       );
       expect(
@@ -249,14 +249,17 @@ void main() {
     test('split and merge preserve source links and flag new pieces', () {
       final first = items[0];
       final at = _example.indexOf('It could');
-      final (:left, :right) = splitItem(first, _example, at, 'item-new') ?? fail('no split');
-      expect(left.sources.map((s) => s.excerpt), equals(['I learned about Jev today.']));
-      expect(right.sources.map((s) => s.excerpt), equals(['It could help organise my notes.']));
-      expect(right.id, equals('item-new'));
+      final (:left, :right) = splitItem(first, _example, at, .new('item-new')) ?? fail('no split');
+      expect(left.sources.map((s) => s.excerpt.value), equals(['I learned about Jev today.']));
+      expect(
+        right.sources.map((s) => s.excerpt.value),
+        equals(['It could help organise my notes.']),
+      );
+      expect(right.id.value, equals('item-new'));
       expect(right.flags, contains(ReviewFlag.newPiece));
       final merged = mergeItems(left, right);
-      expect(merged.sources.map((s) => s.excerpt).join(' '), equals(first.body));
-      expect(splitItem(first, _example, 0, 'x'), isNull);
+      expect(merged.sources.map((s) => s.excerpt.value).join(' '), equals(first.body));
+      expect(splitItem(first, _example, 0, .new('x')), isNull);
     });
   });
 
@@ -303,9 +306,9 @@ void main() {
   });
 
   test('approval problems block unresolved AM/PM and missing groups', () {
-    const item = ProposalItem(
-      id: 'i',
-      sources: [.new(0, 1, 'x')],
+    final item = ProposalItem(
+      id: .new('i'),
+      sources: [.new(0, 1, .new('x'))],
       kind: .task,
       groupId: null,
       title: 'Call mum',
@@ -314,7 +317,7 @@ void main() {
     );
     expect(item.approvalProblems, hasLength(2));
     final fixed = item
-        .withGroup('g-personal')
+        .withGroup(.new('g-personal'))
         .withReminder(const .new(2026, 9, 18, hour: 14, minute: 0));
     expect(fixed.approvalProblems, isEmpty);
     expect(fixed.edited, containsAll([EditedField.group, EditedField.reminder]));

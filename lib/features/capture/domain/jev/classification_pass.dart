@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/core/domain/values/result.dart';
 import 'package:capture/features/capture/domain/dates/date_candidates.dart';
 import 'package:capture/features/capture/domain/jev/classification_plan.dart';
@@ -19,7 +20,7 @@ ClassificationPlan planClassification(
 ) {
   final groupOptions = _groupOptions(groups);
   final criteria = <String, String?>{
-    for (final g in groups.where((g) => !g.archived)) g.name.trim(): g.description,
+    for (final g in groups.where((g) => !g.archived)) g.name.value.trim(): g.description,
   };
   if (!criteria.keys.any((k) => k.toLowerCase() == Group.unsortedName.toLowerCase())) {
     criteria[Group.unsortedName] = 'None of the other groups clearly fits.';
@@ -27,12 +28,13 @@ ClassificationPlan planClassification(
   final questions = <String, JevQuestion>{};
   final candidates = <String, FoundCandidates>{};
   for (final t in thoughts) {
-    final found = findDateCandidates(transcript, t.span, prefix: t.id);
-    candidates[t.id] = found;
-    questions.addAll(_thoughtQuestions(t.id, criteria, found));
+    final id = t.id.value;
+    final found = findDateCandidates(transcript, t.span, prefix: id);
+    candidates[id] = found;
+    questions.addAll(_thoughtQuestions(id, criteria, found));
   }
   return .new(
-    state: _state(thoughts),
+    state: .new(_state(thoughts)),
     questions: questions,
     groupOptions: groupOptions,
     unsortedGroupId: groups.where((g) => g.isUnsorted && !g.archived).firstOrNull?.id,
@@ -40,9 +42,9 @@ ClassificationPlan planClassification(
   );
 }
 
-Map<String, String?> _groupOptions(List<Group> groups) {
-  final map = <String, String?>{
-    for (final g in groups.where((g) => !g.archived)) g.name.trim(): g.id,
+Map<String, NotionId?> _groupOptions(List<Group> groups) {
+  final map = <String, NotionId?>{
+    for (final g in groups.where((g) => !g.archived)) g.name.value.trim(): g.id,
   };
   if (!map.keys.any((k) => k.toLowerCase() == Group.unsortedName.toLowerCase())) {
     map[Group.unsortedName] = null;
@@ -54,7 +56,7 @@ String _state(List<Thought> thoughts) => [
   'Thoughts from one voice diary recording, in spoken order.',
   'Each line is "<thought id>| <exact words>". Judge each thought by its own words; other lines are context only.',
   '',
-  for (final t in thoughts) '${t.id}| ${t.span.excerpt}',
+  for (final t in thoughts) '${t.id.value}| ${t.span.excerpt.value}',
 ].join('\n');
 
 Map<String, JevQuestion> _thoughtQuestions(
@@ -83,7 +85,7 @@ Map<String, JevQuestion> _thoughtQuestions(
     dayQuestionKey(id): ChoiceQuestion(
       'Consider only thought $id. Which listed day expression in $id gives the day the speaker finally intends for this task, deadline or reminder? Ignore expressions describing past events, negated expressions, and expressions replaced by a later correction. Choose $noneOption if none applies or it is unclear.',
       {
-        for (final d in found.days) d.id: '"${d.span.excerpt}" in $id',
+        for (final d in found.days) d.id: '"${d.span.excerpt.value}" in $id',
         noneOption: 'No listed expression gives the intended day.',
       },
     ),
@@ -91,7 +93,7 @@ Map<String, JevQuestion> _thoughtQuestions(
     timeQuestionKey(id): ChoiceQuestion(
       'Consider only thought $id. Which listed time expression in $id gives the time of day the speaker finally intends for this task or reminder? If the speaker corrects a time (for example "at 2pm, actually 3pm"), choose the corrected one. Ignore past, negated or replaced times. Choose $noneOption if none applies or it is unclear.',
       {
-        for (final t in found.times) t.id: '"${t.span.excerpt}" in $id',
+        for (final t in found.times) t.id: '"${t.span.excerpt.value}" in $id',
         noneOption: 'No listed expression gives the intended time.',
       },
     ),
@@ -118,7 +120,7 @@ ThoughtDecision? _decodeThought(
   Thought thought,
   Map<String, JevAnswer> answers,
 ) {
-  final id = thought.id;
+  final id = thought.id.value;
   final group = answers[groupQuestionKey(id)];
   final task = answers[taskQuestionKey(id)];
   final alert = answers[alertQuestionKey(id)];
@@ -135,7 +137,7 @@ ThoughtDecision? _decodeThought(
   final time = answers[timeQuestionKey(id)];
   return .new(
     thought: thought,
-    groupOption: group.choice,
+    groupOption: .new(group.choice),
     groupConfidence: group.confidence,
     task: task.yes,
     alert: alert.yes,

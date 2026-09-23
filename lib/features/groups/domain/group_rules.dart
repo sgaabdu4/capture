@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/domain/entities/group_problem.dart';
 
@@ -31,7 +32,7 @@ const List<GroupDraft> defaultGroups = [
 const maxGroupNameLength = 60;
 
 /// Why a group edit is invalid, or null when it can be saved.
-GroupProblem? groupProblem(GroupDraft draft, Iterable<Group> existing, {String? editingId}) {
+GroupProblem? groupProblem(GroupDraft draft, Iterable<Group> existing, {NotionId? editingId}) {
   final name = draft.name.trim();
   if (name.isEmpty) return .nameMissing;
   if (name.length > maxGroupNameLength) return .nameTooLong;

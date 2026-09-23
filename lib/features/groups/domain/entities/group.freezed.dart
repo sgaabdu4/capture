@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Group {
 
- String get id; String get name; String get description; bool get archived;
+ NotionId get id; GroupName get name; String? get description; bool get archived;
 /// Create a copy of Group
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,7 +51,7 @@ abstract mixin class $GroupCopyWith<$Res>  {
   factory $GroupCopyWith(Group value, $Res Function(Group) _then) = _$GroupCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String description, bool archived
+ NotionId id, GroupName name, String? description, bool archived
 });
 
 
@@ -68,12 +68,12 @@ class _$GroupCopyWithImpl<$Res>
 
 /// Create a copy of Group
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = null,Object? archived = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? archived = null,}) {
   return _then(Group(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String,archived: null == archived ? _self.archived : archived // ignore: cast_nullable_to_non_nullable
+as NotionId,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as GroupName,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,archived: null == archived ? _self.archived : archived // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -156,7 +156,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String description,  bool archived)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( NotionId id,  GroupName name,  String? description,  bool archived)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Group() when $default != null:
 return $default(_that.id,_that.name,_that.description,_that.archived);case _:
@@ -177,7 +177,7 @@ return $default(_that.id,_that.name,_that.description,_that.archived);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String description,  bool archived)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( NotionId id,  GroupName name,  String? description,  bool archived)  $default,) {final _that = this;
 switch (_that) {
 case _Group():
 return $default(_that.id,_that.name,_that.description,_that.archived);}
@@ -194,7 +194,7 @@ return $default(_that.id,_that.name,_that.description,_that.archived);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String description,  bool archived)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( NotionId id,  GroupName name,  String? description,  bool archived)?  $default,) {final _that = this;
 switch (_that) {
 case _Group() when $default != null:
 return $default(_that.id,_that.name,_that.description,_that.archived);case _:
@@ -209,12 +209,12 @@ return $default(_that.id,_that.name,_that.description,_that.archived);case _:
 
 
 class _Group extends Group {
-  const _Group({required this.id, required this.name, required this.description, this.archived = false}): super._();
+  const _Group({required this.id, required this.name, this.description, this.archived = false}): super._();
   
 
-@override final  String id;
-@override final  String name;
-@override final  String description;
+@override final  NotionId id;
+@override final  GroupName name;
+@override final  String? description;
 @override@JsonKey() final  bool archived;
 
 /// Create a copy of Group
@@ -249,7 +249,7 @@ abstract mixin class _$GroupCopyWith<$Res> implements $GroupCopyWith<$Res> {
   factory _$GroupCopyWith(_Group value, $Res Function(_Group) _then) = __$GroupCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String description, bool archived
+ NotionId id, GroupName name, String? description, bool archived
 });
 
 
@@ -266,12 +266,12 @@ class __$GroupCopyWithImpl<$Res>
 
 /// Create a copy of Group
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = null,Object? archived = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? archived = null,}) {
   return _then(_Group(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String,archived: null == archived ? _self.archived : archived // ignore: cast_nullable_to_non_nullable
+as NotionId,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as GroupName,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,archived: null == archived ? _self.archived : archived // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/features/capture/data/models/due_date_model.dart';
 import 'package:capture/features/capture/domain/entities/item_kind.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
@@ -26,11 +27,11 @@ sealed class LibraryEntryModel with _$LibraryEntryModel {
       _$LibraryEntryModelFromJson(json);
 
   factory LibraryEntryModel.fromEntity(LibraryEntry e) => LibraryEntryModel(
-    pageId: e.pageId,
-    itemId: e.itemId,
-    title: e.title,
+    pageId: e.pageId.value,
+    itemId: e.itemId.value,
+    title: e.title ?? '',
     kind: e.kind,
-    groupId: e.groupId,
+    groupId: e.groupId?.value,
     due: switch (e.due) {
       final d? => .fromEntity(d),
       null => null,
@@ -44,11 +45,14 @@ sealed class LibraryEntryModel with _$LibraryEntryModel {
   );
 
   LibraryEntry toEntity() => .new(
-    pageId: pageId,
-    itemId: itemId,
-    title: title,
+    pageId: .new(pageId),
+    itemId: .new(itemId),
+    title: optionalText(title),
     kind: kind,
-    groupId: groupId,
+    groupId: switch (groupId) {
+      final g? => .new(g),
+      null => null,
+    },
     due: due?.toEntity(),
     reminder: reminder?.toEntity(),
     done: done,

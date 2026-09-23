@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
@@ -10,8 +11,8 @@ class GroupMenu extends StatelessWidget {
   final List<Group> groups;
 
   /// Selected group id; null while the user must choose.
-  final String? value;
-  final ValueChanged<String>? onChanged;
+  final NotionId? value;
+  final ValueChanged<NotionId>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class GroupMenu extends StatelessWidget {
     final onChanged = this.onChanged;
     return SizedBox(
       width: Sizes.groupMenuWidth,
-      child: DropdownButtonFormField<String>(
+      child: DropdownButtonFormField<NotionId>(
         initialValue: groups.any((g) => g.id == value) ? value : null,
         hint: Text(l10n.groupHint, style: textTheme.labelMedium),
         isExpanded: true,
@@ -29,12 +30,12 @@ class GroupMenu extends StatelessWidget {
           for (final Group(:id, :name) in groups)
             DropdownMenuItem(
               value: id,
-              child: Text(name, overflow: .ellipsis),
+              child: Text(name.value, overflow: .ellipsis),
             ),
         ],
         onChanged: switch (onChanged) {
-          final ValueChanged<String> changed => (id) {
-            if (id case final String picked) changed(picked);
+          final ValueChanged<NotionId> changed => (id) {
+            if (id case final NotionId picked) changed(picked);
           },
           null => null,
         },

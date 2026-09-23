@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LibraryEntry {
 
- String get pageId; String get itemId; String get title; ItemKind get kind; String? get groupId; DueDate? get due; DueDate? get reminder; bool get done; String? get captureId;
+ NotionId get pageId; ItemId get itemId; String? get title; ItemKind get kind; NotionId? get groupId; DueDate? get due; DueDate? get reminder; bool get done; String? get captureId;
 /// Create a copy of LibraryEntry
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,7 +51,7 @@ abstract mixin class $LibraryEntryCopyWith<$Res>  {
   factory $LibraryEntryCopyWith(LibraryEntry value, $Res Function(LibraryEntry) _then) = _$LibraryEntryCopyWithImpl;
 @useResult
 $Res call({
- String pageId, String itemId, String title, ItemKind kind, String? groupId, DueDate? due, DueDate? reminder, bool done, String? captureId
+ NotionId pageId, ItemId itemId, String? title, ItemKind kind, NotionId? groupId, DueDate? due, DueDate? reminder, bool done, String? captureId
 });
 
 
@@ -68,14 +68,14 @@ class _$LibraryEntryCopyWithImpl<$Res>
 
 /// Create a copy of LibraryEntry
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? pageId = null,Object? itemId = null,Object? title = null,Object? kind = null,Object? groupId = freezed,Object? due = freezed,Object? reminder = freezed,Object? done = null,Object? captureId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? pageId = null,Object? itemId = null,Object? title = freezed,Object? kind = null,Object? groupId = freezed,Object? due = freezed,Object? reminder = freezed,Object? done = null,Object? captureId = freezed,}) {
   return _then(LibraryEntry(
 pageId: null == pageId ? _self.pageId : pageId // ignore: cast_nullable_to_non_nullable
-as String,itemId: null == itemId ? _self.itemId : itemId // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as NotionId,itemId: null == itemId ? _self.itemId : itemId // ignore: cast_nullable_to_non_nullable
+as ItemId,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
 as ItemKind,groupId: freezed == groupId ? _self.groupId : groupId // ignore: cast_nullable_to_non_nullable
-as String?,due: freezed == due ? _self.due : due // ignore: cast_nullable_to_non_nullable
+as NotionId?,due: freezed == due ? _self.due : due // ignore: cast_nullable_to_non_nullable
 as DueDate?,reminder: freezed == reminder ? _self.reminder : reminder // ignore: cast_nullable_to_non_nullable
 as DueDate?,done: null == done ? _self.done : done // ignore: cast_nullable_to_non_nullable
 as bool,captureId: freezed == captureId ? _self.captureId : captureId // ignore: cast_nullable_to_non_nullable
@@ -185,7 +185,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String pageId,  String itemId,  String title,  ItemKind kind,  String? groupId,  DueDate? due,  DueDate? reminder,  bool done,  String? captureId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( NotionId pageId,  ItemId itemId,  String? title,  ItemKind kind,  NotionId? groupId,  DueDate? due,  DueDate? reminder,  bool done,  String? captureId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LibraryEntry() when $default != null:
 return $default(_that.pageId,_that.itemId,_that.title,_that.kind,_that.groupId,_that.due,_that.reminder,_that.done,_that.captureId);case _:
@@ -206,7 +206,7 @@ return $default(_that.pageId,_that.itemId,_that.title,_that.kind,_that.groupId,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String pageId,  String itemId,  String title,  ItemKind kind,  String? groupId,  DueDate? due,  DueDate? reminder,  bool done,  String? captureId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( NotionId pageId,  ItemId itemId,  String? title,  ItemKind kind,  NotionId? groupId,  DueDate? due,  DueDate? reminder,  bool done,  String? captureId)  $default,) {final _that = this;
 switch (_that) {
 case _LibraryEntry():
 return $default(_that.pageId,_that.itemId,_that.title,_that.kind,_that.groupId,_that.due,_that.reminder,_that.done,_that.captureId);}
@@ -223,7 +223,7 @@ return $default(_that.pageId,_that.itemId,_that.title,_that.kind,_that.groupId,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String pageId,  String itemId,  String title,  ItemKind kind,  String? groupId,  DueDate? due,  DueDate? reminder,  bool done,  String? captureId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( NotionId pageId,  ItemId itemId,  String? title,  ItemKind kind,  NotionId? groupId,  DueDate? due,  DueDate? reminder,  bool done,  String? captureId)?  $default,) {final _that = this;
 switch (_that) {
 case _LibraryEntry() when $default != null:
 return $default(_that.pageId,_that.itemId,_that.title,_that.kind,_that.groupId,_that.due,_that.reminder,_that.done,_that.captureId);case _:
@@ -238,14 +238,14 @@ return $default(_that.pageId,_that.itemId,_that.title,_that.kind,_that.groupId,_
 
 
 class _LibraryEntry extends LibraryEntry {
-  const _LibraryEntry({required this.pageId, required this.itemId, required this.title, required this.kind, this.groupId, this.due, this.reminder, this.done = false, this.captureId}): super._();
+  const _LibraryEntry({required this.pageId, required this.itemId, this.title, required this.kind, this.groupId, this.due, this.reminder, this.done = false, this.captureId}): super._();
   
 
-@override final  String pageId;
-@override final  String itemId;
-@override final  String title;
+@override final  NotionId pageId;
+@override final  ItemId itemId;
+@override final  String? title;
 @override final  ItemKind kind;
-@override final  String? groupId;
+@override final  NotionId? groupId;
 @override final  DueDate? due;
 @override final  DueDate? reminder;
 @override@JsonKey() final  bool done;
@@ -283,7 +283,7 @@ abstract mixin class _$LibraryEntryCopyWith<$Res> implements $LibraryEntryCopyWi
   factory _$LibraryEntryCopyWith(_LibraryEntry value, $Res Function(_LibraryEntry) _then) = __$LibraryEntryCopyWithImpl;
 @override @useResult
 $Res call({
- String pageId, String itemId, String title, ItemKind kind, String? groupId, DueDate? due, DueDate? reminder, bool done, String? captureId
+ NotionId pageId, ItemId itemId, String? title, ItemKind kind, NotionId? groupId, DueDate? due, DueDate? reminder, bool done, String? captureId
 });
 
 
@@ -300,14 +300,14 @@ class __$LibraryEntryCopyWithImpl<$Res>
 
 /// Create a copy of LibraryEntry
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? pageId = null,Object? itemId = null,Object? title = null,Object? kind = null,Object? groupId = freezed,Object? due = freezed,Object? reminder = freezed,Object? done = null,Object? captureId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? pageId = null,Object? itemId = null,Object? title = freezed,Object? kind = null,Object? groupId = freezed,Object? due = freezed,Object? reminder = freezed,Object? done = null,Object? captureId = freezed,}) {
   return _then(_LibraryEntry(
 pageId: null == pageId ? _self.pageId : pageId // ignore: cast_nullable_to_non_nullable
-as String,itemId: null == itemId ? _self.itemId : itemId // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as NotionId,itemId: null == itemId ? _self.itemId : itemId // ignore: cast_nullable_to_non_nullable
+as ItemId,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
 as ItemKind,groupId: freezed == groupId ? _self.groupId : groupId // ignore: cast_nullable_to_non_nullable
-as String?,due: freezed == due ? _self.due : due // ignore: cast_nullable_to_non_nullable
+as NotionId?,due: freezed == due ? _self.due : due // ignore: cast_nullable_to_non_nullable
 as DueDate?,reminder: freezed == reminder ? _self.reminder : reminder // ignore: cast_nullable_to_non_nullable
 as DueDate?,done: null == done ? _self.done : done // ignore: cast_nullable_to_non_nullable
 as bool,captureId: freezed == captureId ? _self.captureId : captureId // ignore: cast_nullable_to_non_nullable

@@ -46,7 +46,7 @@ final class GroupsNotifierProvider extends $NotifierProvider<GroupsNotifier, Gro
   }
 }
 
-String _$groupsNotifierHash() => r'802a35d71094ab9c76ba278286924e39a64fe208';
+String _$groupsNotifierHash() => r'97b473c8647706867cdbcab30fc3fa10f32aebb1';
 
 /// Groups editor state. Groups are archived, never deleted, so existing
 /// library relations stay valid.

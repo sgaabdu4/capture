@@ -1,3 +1,4 @@
+import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/features/capture/data/models/due_date_model.dart';
 import 'package:capture/features/capture/data/models/source_span_model.dart';
 import 'package:capture/features/capture/domain/entities/edited_field.dart';
@@ -31,12 +32,12 @@ sealed class ProposalItemModel with _$ProposalItemModel {
       _$ProposalItemModelFromJson(json);
 
   factory ProposalItemModel.fromEntity(ProposalItem i) => ProposalItemModel(
-    id: i.id,
+    id: i.id.value,
     sources: [for (final s in i.sources) SourceSpanModel.fromEntity(s)],
     kind: i.kind,
-    groupId: i.groupId,
-    title: i.title,
-    body: i.body,
+    groupId: i.groupId?.value,
+    title: i.title ?? '',
+    body: i.body ?? '',
     due: switch (i.due) {
       final d? => .fromEntity(d),
       null => null,
@@ -51,12 +52,15 @@ sealed class ProposalItemModel with _$ProposalItemModel {
   );
 
   ProposalItem toEntity() => .new(
-    id: id,
+    id: .new(id),
     sources: [for (final s in sources) s.toEntity()],
     kind: kind,
-    groupId: groupId,
-    title: title,
-    body: body,
+    groupId: switch (groupId) {
+      final g? => .new(g),
+      null => null,
+    },
+    title: optionalText(title),
+    body: optionalText(body),
     due: due?.toEntity(),
     reminder: reminder?.toEntity(),
     flags: flags,

@@ -63,8 +63,8 @@ class _EntryDialogState extends State<EntryDialog> {
   @override
   void initState() {
     super.initState();
-    _title.text = widget.entry.title;
-    _titleEmpty = widget.entry.title.trim().isEmpty;
+    _title.text = widget.entry.title ?? '';
+    _titleEmpty = widget.entry.title == null;
     unawaited(_loadBody());
   }
 

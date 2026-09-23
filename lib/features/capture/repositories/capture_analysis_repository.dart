@@ -67,7 +67,7 @@ class CaptureAnalysisRepository implements ICaptureAnalysisRepository {
     final thoughts = assembleThoughts(transcript, units, decisions);
     final plan = planClassification(transcript, thoughts, groups);
     final Map<String, JevAnswer> answers;
-    switch (await _askAll(plan.state, plan.questions, calls)) {
+    switch (await _askAll(plan.state.value, plan.questions, calls)) {
       case Ok(:final value):
         answers = value;
       case Err(:final failure):
@@ -148,7 +148,7 @@ class CaptureAnalysisRepository implements ICaptureAnalysisRepository {
 Thought wholeTranscript(String transcript) {
   final start = firstNonSpace(transcript, 0);
   final end = trimEnd(transcript, start, transcript.length);
-  return .new('T1', const [], spanOf(transcript, start, end));
+  return .new(thoughtId(1), const [], spanOf(transcript, start, end));
 }
 
 @Riverpod(keepAlive: true)

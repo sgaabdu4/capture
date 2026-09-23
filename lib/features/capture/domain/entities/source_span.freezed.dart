@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SourceSpan {
 
- int get start; int get end; String get excerpt;
+ int get start; int get end; Excerpt get excerpt;
 /// Create a copy of SourceSpan
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,7 +51,7 @@ abstract mixin class $SourceSpanCopyWith<$Res>  {
   factory $SourceSpanCopyWith(SourceSpan value, $Res Function(SourceSpan) _then) = _$SourceSpanCopyWithImpl;
 @useResult
 $Res call({
- int start, int end, String excerpt
+ int start, int end, Excerpt excerpt
 });
 
 
@@ -73,7 +73,7 @@ class _$SourceSpanCopyWithImpl<$Res>
 null == start ? _self.start : start // ignore: cast_nullable_to_non_nullable
 as int,null == end ? _self.end : end // ignore: cast_nullable_to_non_nullable
 as int,null == excerpt ? _self.excerpt : excerpt // ignore: cast_nullable_to_non_nullable
-as String,
+as Excerpt,
   ));
 }
 
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int start,  int end,  String excerpt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int start,  int end,  Excerpt excerpt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SourceSpan() when $default != null:
 return $default(_that.start,_that.end,_that.excerpt);case _:
@@ -176,7 +176,7 @@ return $default(_that.start,_that.end,_that.excerpt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int start,  int end,  String excerpt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int start,  int end,  Excerpt excerpt)  $default,) {final _that = this;
 switch (_that) {
 case _SourceSpan():
 return $default(_that.start,_that.end,_that.excerpt);}
@@ -193,7 +193,7 @@ return $default(_that.start,_that.end,_that.excerpt);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int start,  int end,  String excerpt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int start,  int end,  Excerpt excerpt)?  $default,) {final _that = this;
 switch (_that) {
 case _SourceSpan() when $default != null:
 return $default(_that.start,_that.end,_that.excerpt);case _:
@@ -213,7 +213,7 @@ class _SourceSpan implements SourceSpan {
 
 @override final  int start;
 @override final  int end;
-@override final  String excerpt;
+@override final  Excerpt excerpt;
 
 /// Create a copy of SourceSpan
 /// with the given fields replaced by the non-null parameter values.
@@ -247,7 +247,7 @@ abstract mixin class _$SourceSpanCopyWith<$Res> implements $SourceSpanCopyWith<$
   factory _$SourceSpanCopyWith(_SourceSpan value, $Res Function(_SourceSpan) _then) = __$SourceSpanCopyWithImpl;
 @override @useResult
 $Res call({
- int start, int end, String excerpt
+ int start, int end, Excerpt excerpt
 });
 
 
@@ -269,7 +269,7 @@ class __$SourceSpanCopyWithImpl<$Res>
 null == start ? _self.start : start // ignore: cast_nullable_to_non_nullable
 as int,null == end ? _self.end : end // ignore: cast_nullable_to_non_nullable
 as int,null == excerpt ? _self.excerpt : excerpt // ignore: cast_nullable_to_non_nullable
-as String,
+as Excerpt,
   ));
 }
 

@@ -84,6 +84,6 @@ void main() {
     final outcome = await captures.transcribe(recorded);
 
     expect(outcome, equals(const Result<CaptureRecord, CaptureFailure>.err(.transcription)));
-    expect(captures.get(recorded.id)?.stage, equals(CaptureStage.recorded));
+    expect(captures.get(recorded.id.value)?.stage, equals(CaptureStage.recorded));
   });
 }
