@@ -13,11 +13,12 @@ import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/widgets/entry_dialog_actions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// An edited entry and its new body, or null when the body is unchanged.
 typedef EntryEdit = ({LibraryEntry entry, String? body});
 
-class EntryDialogScreen extends StatefulWidget {
+class EntryDialogScreen extends ConsumerStatefulWidget {
   const EntryDialogScreen({
     required this.entry,
     required this.groups,
@@ -42,10 +43,10 @@ class EntryDialogScreen extends StatefulWidget {
   final VoidCallback onCancel;
 
   @override
-  State<EntryDialogScreen> createState() => _EntryDialogScreenState();
+  ConsumerState<EntryDialogScreen> createState() => _EntryDialogScreenState();
 }
 
-class _EntryDialogScreenState extends State<EntryDialogScreen> {
+class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
   static const _bodyMinLines = 3;
   static const _bodyMaxLines = 8;
 
@@ -64,24 +65,18 @@ class _EntryDialogScreenState extends State<EntryDialogScreen> {
     super.initState();
     _title.text = widget.entry.title ?? '';
     _titleEmpty = widget.entry.title == null;
-    unawaited(_loadBody());
+    unawaited(_loadBody().catchError(Crash.error));
   }
 
   Future<void> _loadBody() async {
     final context = this.context;
-    try {
-      final body = await widget.body;
-      if (!context.mounted) return;
-      setState(() {
-        _loading = false;
-        _loadedBody = body;
-        _body.text = body ?? '';
-      });
-    } on Exception catch (error, stackTrace) {
-      Crash.error(error, stackTrace);
-      if (!context.mounted) return;
-      setState(() => _loading = false);
-    }
+    final body = await widget.body;
+    if (!context.mounted) return;
+    setState(() {
+      _loading = false;
+      _loadedBody = body;
+      _body.text = body ?? '';
+    });
   }
 
   @override

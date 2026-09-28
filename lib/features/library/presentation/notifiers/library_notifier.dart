@@ -55,14 +55,19 @@ class LibraryNotifier extends _$LibraryNotifier {
 
   /// The body on the entry's Notion page, or null when it cannot be read.
   Future<String?> body(LibraryEntry entry) async {
-    final result = await _ensureRepository().body(entry);
-    if (!ref.mounted) return null;
-    switch (result) {
-      case Ok(:final value):
-        return value;
-      case Err(:final failure):
-        state = _failed(state, failure);
-        return null;
+    try {
+      final result = await _ensureRepository().body(entry);
+      if (!ref.mounted) return null;
+      switch (result) {
+        case Ok(:final value):
+          return value;
+        case Err(:final failure):
+          state = _failed(state, failure);
+          return null;
+      }
+    } on Exception catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+      return null;
     }
   }
 

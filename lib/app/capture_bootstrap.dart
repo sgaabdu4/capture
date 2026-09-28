@@ -30,6 +30,7 @@ class CaptureBootstrap extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     ref
       ..listen(appStartupProvider, (_, next) {
         if (next.hasValue) _menu(context, ref);
@@ -52,15 +53,15 @@ class CaptureBootstrap extends ConsumerWidget {
       })
       ..listen(groupsProvider.select((s) => s.failureSerial), (_, _) {
         if (ref.read(groupsProvider).failure case final failure?) {
-          _snack(context, failure.label(context.l10n));
+          _snack(context, failure.label(l10n));
         }
       })
       ..listen(libraryProvider.select((s) => s.failureSerial), (_, _) {
         final library = ref.read(libraryProvider);
         if (library.cacheRefreshFailed) {
-          _snack(context, context.l10n.libraryRefreshFailed);
+          _snack(context, l10n.libraryRefreshFailed);
         } else if (library.failure case final failure?) {
-          _snack(context, failure.label(context.l10n));
+          _snack(context, failure.label(l10n));
         }
       })
       ..listen(libraryProvider.select((s) => s.upcoming.firstOrNull), (_, _) => _menu(context, ref))

@@ -27,6 +27,7 @@ class _Notion implements ILibraryRemoteDatasource {
   final trashed = <String>[];
   String? zone;
   String bodyText = 'Old details';
+  Exception? bodyException;
   String? newBody;
 
   NotionResult<void> get _write => switch (failure) {
@@ -51,8 +52,10 @@ class _Notion implements ILibraryRemoteDatasource {
   }
 
   @override
-  Future<NotionResult<ItemBody>> body(String pageId) async =>
-      .ok((text: bodyText, blockIds: ['p1']));
+  Future<NotionResult<ItemBody>> body(String pageId) async {
+    if (bodyException case final error?) throw error;
+    return .ok((text: bodyText, blockIds: ['p1']));
+  }
 
   @override
   Future<NotionResult<void>> replaceBody(String pageId, ItemBody old, String text) async {
@@ -136,7 +139,7 @@ void main() {
     final support = Directory.systemTemp.createTempSync('capture_library_refresh');
     addTearDown(() => support.deleteSync(recursive: true));
     final updated = _task.copyWith(title: 'Updated in Notion');
-    final notion = _Notion()..pages['page-1'] = LibraryEntryModel.fromEntity(updated);
+    final notion = _Notion()..pages['page-1'] = .fromEntity(updated);
     final container = ProviderContainer.test(
       overrides: [
         ...appOverrides(support: support, native: stubNative()),
@@ -145,7 +148,7 @@ void main() {
       ],
     );
     final local = container.read(libraryLocalDatasourceProvider);
-    local.put(LibraryEntryModel.fromEntity(_task));
+    local.put(.fromEntity(_task));
     final notifier = container.read(libraryProvider.notifier);
     final database = container.read(localDatabaseProvider);
     database.execute('''
@@ -172,6 +175,24 @@ void main() {
     expect(retried.refreshing, isFalse);
     expect(retried.cacheRefreshFailed, isFalse);
     expect(retried.refreshedAtUtc, equals(FakeSystem.now));
+  });
+
+  test('an unexpected body-read failure preserves the library and can be retried', () async {
+    final fixture = _Fixture();
+    fixture.notion.bodyException = Exception('synthetic body read failure');
+    final container = ProviderContainer.test(
+      overrides: [libraryRepositoryProvider.overrideWithValue(fixture.repo)],
+    );
+    final notifier = container.read(libraryProvider.notifier);
+    final previous = container.read(libraryProvider);
+
+    await expectLater(notifier.body(_task), completion(isNull));
+
+    expect(container.read(libraryProvider), same(previous));
+    expect(fixture.repo.cached(), equals([_task]));
+    fixture.notion.bodyException = null;
+
+    expect(await notifier.body(_task), equals('Old details'));
   });
 
   test('an edit reaches Notion and the mirror, and the reminder is rescheduled', () async {

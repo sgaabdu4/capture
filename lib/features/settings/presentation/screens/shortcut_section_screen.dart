@@ -8,9 +8,10 @@ import 'package:capture/features/settings/presentation/widgets/shortcut_actions.
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Modifiers alone are valid shortcuts; native changes wait until the recorded shortcut is saved.
-class ShortcutSectionScreen extends StatefulWidget {
+class ShortcutSectionScreen extends ConsumerStatefulWidget {
   const ShortcutSectionScreen({
     required this.label,
     required this.registered,
@@ -32,10 +33,10 @@ class ShortcutSectionScreen extends StatefulWidget {
   final ValueChanged<bool> onRecording;
 
   @override
-  State<ShortcutSectionScreen> createState() => _ShortcutSectionScreenState();
+  ConsumerState<ShortcutSectionScreen> createState() => _ShortcutSectionScreenState();
 }
 
-class _ShortcutSectionScreenState extends State<ShortcutSectionScreen> {
+class _ShortcutSectionScreenState extends ConsumerState<ShortcutSectionScreen> {
   final _focus = FocusNode();
   bool _recording = false;
 

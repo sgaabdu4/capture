@@ -10,13 +10,13 @@ import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/screens/setup_steps_screen.dart';
+import 'package:capture/features/settings/presentation/screens/shortcut_section_screen.dart';
 import 'package:capture/features/settings/presentation/widgets/auto_save_section.dart';
 import 'package:capture/features/settings/presentation/widgets/mic_section.dart';
 import 'package:capture/features/settings/presentation/widgets/privacy_section.dart';
 import 'package:capture/features/settings/presentation/widgets/quick_access_section.dart';
 import 'package:capture/features/settings/presentation/widgets/reset_dialog.dart';
 import 'package:capture/features/settings/presentation/widgets/reset_section.dart';
-import 'package:capture/features/settings/presentation/screens/shortcut_section_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,8 +25,12 @@ class SettingsScreen extends ConsumerWidget {
 
   static const _resetDialogRoute = 'reset-dialog';
 
+  Future<void> _allowMic(WidgetRef ref) async {
+    await ref.read(settingsProvider.notifier).ensureMic();
+  }
+
   Future<void> _confirmReset(BuildContext context, WidgetRef ref) async {
-    final flow = ref.read(captureFlowProvider.notifier);
+    final startOver = ref.read(captureFlowProvider.notifier).startOver;
     final confirmed = await showDialog<bool>(
       context: context,
       routeSettings: const .new(name: _resetDialogRoute),
@@ -36,7 +40,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     if (confirmed != true || !context.mounted) return;
-    await flow.startOver();
+    await startOver();
     if (!context.mounted) return;
     const HomeRoute().go(context);
   }
@@ -90,13 +94,7 @@ class SettingsScreen extends ConsumerWidget {
               .undetermined => l10n.micUndetermined,
             },
             onAllow: mic == .undetermined
-                ? () => unawaited(
-                    ref
-                        .read(settingsProvider.notifier)
-                        .ensureMic()
-                        .then<void>((_) {})
-                        .catchError(Crash.error),
-                  )
+                ? () => unawaited(_allowMic(ref).catchError(Crash.error))
                 : null,
           ),
         ),

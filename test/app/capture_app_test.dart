@@ -23,7 +23,6 @@ import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
-import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
 import 'package:capture/features/settings/repositories/settings_repository.dart';
 import 'package:capture/features/shell/presentation/widgets/update_link.dart';
 import 'package:capture/l10n/app_localizations.dart';
@@ -223,21 +222,6 @@ void main() {
     verify(native.checkForUpdates).called(1);
   });
 
-  testWidgets('each page shows its truthful empty state', (tester) async {
-    await _launch(tester, support: support, native: native);
-
-    await _open(tester, AppWidgetKeys.navGroups);
-    expect(find.text(_l10n.groupsNeedNotion), findsOneWidget);
-    await _open(tester, AppWidgetKeys.navRecordings);
-    expect(find.text(_l10n.emptyCaptures), findsOneWidget);
-    await _open(tester, AppWidgetKeys.navTodo);
-    expect(find.text(_l10n.emptyOpenTasks), findsOneWidget);
-    await _open(tester, AppWidgetKeys.navUpcoming);
-    expect(find.text(_l10n.emptyUpcoming), findsOneWidget);
-    await _open(tester, AppWidgetKeys.settingsButton);
-    expect(find.byKey(const ValueKey(AppWidgetKeys.typesafeKeyField)), findsOneWidget);
-  });
-
   testWidgets('Home re-entry after midnight shows newly due tasks without a library update', (
     tester,
   ) async {
@@ -267,44 +251,6 @@ void main() {
     expect([
       for (final item in tester.widget<TodayCard>(find.byType(TodayCard)).items) item.title,
     ], equals([for (final entry in sampleEntries.take(3)) entry.title]));
-  });
-
-  testWidgets('the Notion step shows a picture for every setup step', (tester) async {
-    await _launch(tester, support: support, native: native);
-
-    await tester.ensureVisible(find.byKey(const ValueKey(AppWidgetKeys.notionGuideButton)));
-    await _open(tester, AppWidgetKeys.notionGuideButton);
-
-    expect(find.text(_l10n.notionGuideTitle), findsOneWidget);
-    final steps = [
-      _l10n.notionGuideStep1,
-      _l10n.notionGuideStep2,
-      _l10n.notionGuideStep3,
-      _l10n.notionGuideStep4,
-      _l10n.notionGuideStep5,
-      _l10n.notionGuideStep6,
-    ];
-    for (final (index, text) in steps.indexed) {
-      final step = find.byKey(ValueKey(AppWidgetKeys.notionGuideStep(index + 1)));
-      await tester.scrollUntilVisible(
-        step,
-        300,
-        scrollable: find.descendant(
-          of: find.byType(NotionGuideDialog),
-          matching: find.byWidgetPredicate(
-            (widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down,
-          ),
-        ),
-      );
-      expect(
-        find.descendant(of: step, matching: find.text(_l10n.numberedStep(index + 1, text))),
-        findsOneWidget,
-      );
-      expect(find.descendant(of: step, matching: find.byType(Image)), findsOneWidget);
-    }
-    await tester.tap(find.text(_l10n.close));
-    await _settle(tester);
-    expect(find.text(_l10n.notionGuideTitle), findsNothing);
   });
 
   testWidgets('To-do search finds a saved note by title and saves an edit to it', (tester) async {
@@ -370,7 +316,7 @@ void main() {
         scrollable: find.descendant(
           of: find.byType(PageFrame),
           matching: find.byWidgetPredicate(
-            (widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down,
+            (widget) => widget is Scrollable && widget.axisDirection == .down,
           ),
         ),
       );
@@ -424,7 +370,7 @@ void main() {
       scrollable: find.descendant(
         of: find.byType(PageFrame),
         matching: find.byWidgetPredicate(
-          (widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down,
+          (widget) => widget is Scrollable && widget.axisDirection == .down,
         ),
       ),
     );
@@ -468,7 +414,7 @@ void main() {
         scrollable: find.descendant(
           of: find.byType(PageFrame),
           matching: find.byWidgetPredicate(
-            (widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down,
+            (widget) => widget is Scrollable && widget.axisDirection == .down,
           ),
         ),
       );

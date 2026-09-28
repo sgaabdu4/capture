@@ -262,7 +262,7 @@ void main() {
   test('a native reminder failure keeps owed work and continues later captures', () async {
     tzdata.initializeTimeZones();
     final previousPlatform = debugDefaultTargetPlatformOverride;
-    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    debugDefaultTargetPlatformOverride = .iOS;
     IOSFlutterLocalNotificationsPlugin.registerWith();
     const channel = MethodChannel('dexterous.com/flutter/local_notifications');
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
@@ -271,20 +271,21 @@ void main() {
       debugDefaultTargetPlatformOverride = previousPlatform;
     });
     final attempted = <String>[];
-    var refuseFirst = true;
-    var permissionGranted = true;
+    bool refuseFirst = true;
+    bool permissionGranted = true;
     messenger.setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'initialize') return true;
       if (call.method == 'requestPermissions') return permissionGranted;
       if (call.method != 'zonedSchedule') fail('Unexpected notification call: ${call.method}');
-      final item = switch (call.arguments) {
-        {'payload': final String id} => id,
-        _ => fail('A scheduled reminder must identify its item'),
+      final (id: item, :title) = switch (call.arguments) {
+        {'payload': final String id, 'title': final Object? title} => (id: id, title: title),
+        _ => fail('A scheduled reminder must identify its item and title'),
       };
-      if (item == 'later-reminder') expect((call.arguments as Map)['title'], isNull);
+      if (item == 'later-reminder') expect(title, isNull);
       attempted.add(item);
-      if (item == 'failed-reminder' && refuseFirst)
+      if (item == 'failed-reminder' && refuseFirst) {
         throw PlatformException(code: 'schedule_failed');
+      }
       return null;
     });
     final container = _container(
@@ -300,7 +301,7 @@ void main() {
       body: '',
       reminder: const .new(2100, 1, 1, hour: 9, minute: 0),
     );
-    final failed = _record('failed', .saved).copyWith(
+    final failedRecord = _record('failed', .saved).copyWith(
       capturedAtUtc: FakeSystem.now.add(const .new(minutes: 1)),
       progress: .new(remindersScheduled: {.new('confirmed')}),
       items: [
@@ -308,15 +309,15 @@ void main() {
         task.copyWith(id: .new('confirmed')),
       ],
     );
-    final later = failed.copyWith(
+    final laterRecord = failedRecord.copyWith(
       id: .new('later'),
       capturedAtUtc: FakeSystem.now,
       progress: const .new(),
       items: [task.copyWith(id: .new('later-reminder'), title: null)],
     );
     final captures = container.read(captureRepositoryProvider)
-      ..put(failed)
-      ..put(later);
+      ..put(failedRecord)
+      ..put(laterRecord);
     final notifier = container.read(captureFlowProvider.notifier);
 
     await expectLater(notifier.resumeReminders(), completes);

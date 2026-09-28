@@ -8,12 +8,13 @@ import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Completes with true once Notion is connected.
 typedef NotionConnect = Future<bool> Function({required String token, required String pageLink});
 
 /// Obscure and clear the connection token after storage; never show or log its text.
-class NotionStepScreen extends StatefulWidget {
+class NotionStepScreen extends ConsumerStatefulWidget {
   const NotionStepScreen({
     required this.connected,
     required this.workspaceName,
@@ -40,10 +41,10 @@ class NotionStepScreen extends StatefulWidget {
   final VoidCallback onShowGuide;
 
   @override
-  State<NotionStepScreen> createState() => _NotionStepScreenState();
+  ConsumerState<NotionStepScreen> createState() => _NotionStepScreenState();
 }
 
-class _NotionStepScreenState extends State<NotionStepScreen> {
+class _NotionStepScreenState extends ConsumerState<NotionStepScreen> {
   final _token = TextEditingController();
   final _page = TextEditingController();
   bool _tokenMissing = false;

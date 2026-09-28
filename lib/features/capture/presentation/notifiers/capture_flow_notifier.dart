@@ -125,7 +125,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   Future<void> resumeReminders() async {
     final captures = _ensureCaptures();
     final saver = _ensureSaver();
-    var failed = false;
+    bool failed = false;
     for (final record in captures.all().where((r) => r.stage == .saved)) {
       try {
         final outcome = await saver.scheduleReminders(record);

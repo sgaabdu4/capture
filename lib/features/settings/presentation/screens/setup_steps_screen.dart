@@ -9,10 +9,10 @@ import 'package:capture/features/settings/data/datasources/speech_model_datasour
 import 'package:capture/features/settings/presentation/extensions/settings_labels.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_state.dart';
-import 'package:capture/features/settings/presentation/widgets/model_step.dart';
-import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
 import 'package:capture/features/settings/presentation/screens/notion_step_screen.dart';
 import 'package:capture/features/settings/presentation/screens/typesafe_step_screen.dart';
+import 'package:capture/features/settings/presentation/widgets/model_step.dart';
+import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

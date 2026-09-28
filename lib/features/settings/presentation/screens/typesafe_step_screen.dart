@@ -7,9 +7,10 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Obscure and clear the API key after storage; never show or log its text.
-class TypesafeStepScreen extends StatefulWidget {
+class TypesafeStepScreen extends ConsumerStatefulWidget {
   const TypesafeStepScreen({
     required this.hasKey,
     required this.saving,
@@ -28,10 +29,10 @@ class TypesafeStepScreen extends StatefulWidget {
   final Future<bool> Function(String key) onSave;
 
   @override
-  State<TypesafeStepScreen> createState() => _TypesafeStepScreenState();
+  ConsumerState<TypesafeStepScreen> createState() => _TypesafeStepScreenState();
 }
 
-class _TypesafeStepScreenState extends State<TypesafeStepScreen> {
+class _TypesafeStepScreenState extends ConsumerState<TypesafeStepScreen> {
   final _key = TextEditingController();
   bool _missing = false;
 

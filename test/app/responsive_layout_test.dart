@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:capture/app/capture_app.dart';
 import 'package:capture/app/app_startup.dart';
+import 'package:capture/app/capture_app.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
@@ -11,6 +11,8 @@ import 'package:capture/features/capture/repositories/capture_repository.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
+import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
+import 'package:capture/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +22,8 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 import '../helpers/app_harness.dart';
 import '../helpers/sample_workspace.dart';
+
+final _l10n = lookupAppLocalizations(const .new('en'));
 
 /// Window widths from a small phone to a 4K display, in logical pixels.
 const _widths = [320.0, 375.0, 480.0, 600.0, 768.0, 1024.0, 1280.0, 1920.0, 2560.0, 3840.0];
@@ -91,7 +95,13 @@ Future<void> _tap(WidgetTester tester, Finder target) async {
   await _settle(tester);
 }
 
-Future<void> _launch(WidgetTester tester, Directory support, {required bool ready}) async {
+Future<void> _launch(
+  WidgetTester tester,
+  Directory support, {
+  required bool ready,
+  bool samples = true,
+  Size? viewport,
+}) async {
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final container = ProviderContainer.test(
@@ -101,8 +111,10 @@ Future<void> _launch(WidgetTester tester, Directory support, {required bool read
         settingsProvider.overrideWithBuild(readySettings),
         appStartupProvider.overrideWith((ref) async {}),
       ],
-      groupsRepositoryProvider.overrideWithValue(SampleGroups()),
-      libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
+      if (samples) ...[
+        groupsRepositoryProvider.overrideWithValue(SampleGroups()),
+        libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
+      ],
     ],
   );
   addTearDown(container.dispose);
@@ -111,7 +123,11 @@ Future<void> _launch(WidgetTester tester, Directory support, {required bool read
       ..put(sampleSavedCapture)
       ..put(sampleProposedCapture);
   }
-  await _resize(tester, _widest);
+  if (viewport case final size?) {
+    tester.view.physicalSize = size;
+  } else {
+    await _resize(tester, _widest);
+  }
   await tester.pumpWidget(
     UncontrolledProviderScope(container: container, child: const CaptureApp()),
   );
@@ -197,6 +213,59 @@ void main() {
 
     expect(words, findsWidgets);
     expect(failures, isEmpty);
+  });
+
+  testWidgets('each page shows its truthful empty state', (tester) async {
+    await _launch(tester, support, ready: false, samples: false, viewport: referenceWindow);
+
+    await _tap(tester, find.byKey(const ValueKey(AppWidgetKeys.navGroups)));
+    expect(find.text(_l10n.groupsNeedNotion), findsOneWidget);
+    await _tap(tester, find.byKey(const ValueKey(AppWidgetKeys.navRecordings)));
+    expect(find.text(_l10n.emptyCaptures), findsOneWidget);
+    await _tap(tester, find.byKey(const ValueKey(AppWidgetKeys.navTodo)));
+    expect(find.text(_l10n.emptyOpenTasks), findsOneWidget);
+    await _tap(tester, find.byKey(const ValueKey(AppWidgetKeys.navUpcoming)));
+    expect(find.text(_l10n.emptyUpcoming), findsOneWidget);
+    await _tap(tester, find.byKey(const ValueKey(AppWidgetKeys.settingsButton)));
+    expect(find.byKey(const ValueKey(AppWidgetKeys.typesafeKeyField)), findsOneWidget);
+  });
+
+  testWidgets('the Notion step shows a picture for every setup step', (tester) async {
+    await _launch(tester, support, ready: false, samples: false, viewport: referenceWindow);
+
+    await tester.ensureVisible(find.byKey(const ValueKey(AppWidgetKeys.notionGuideButton)));
+    await _tap(tester, find.byKey(const ValueKey(AppWidgetKeys.notionGuideButton)));
+
+    expect(find.text(_l10n.notionGuideTitle), findsOneWidget);
+    final steps = [
+      _l10n.notionGuideStep1,
+      _l10n.notionGuideStep2,
+      _l10n.notionGuideStep3,
+      _l10n.notionGuideStep4,
+      _l10n.notionGuideStep5,
+      _l10n.notionGuideStep6,
+    ];
+    for (final (index, text) in steps.indexed) {
+      final step = find.byKey(ValueKey(AppWidgetKeys.notionGuideStep(index + 1)));
+      await tester.scrollUntilVisible(
+        step,
+        300,
+        scrollable: find.descendant(
+          of: find.byType(NotionGuideDialog),
+          matching: find.byWidgetPredicate(
+            (widget) => widget is Scrollable && widget.axisDirection == .down,
+          ),
+        ),
+      );
+      expect(
+        find.descendant(of: step, matching: find.text(_l10n.numberedStep(index + 1, text))),
+        findsOneWidget,
+      );
+      expect(find.descendant(of: step, matching: find.byType(Image)), findsOneWidget);
+    }
+    await tester.tap(find.text(_l10n.close));
+    await _settle(tester);
+    expect(find.text(_l10n.notionGuideTitle), findsNothing);
   });
 
   testWidgets('setup lays out without overflow from a small phone to a 4K screen', (tester) async {
