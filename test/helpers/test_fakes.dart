@@ -36,7 +36,7 @@ class FakeReminders implements IReminderDatasource {
   @override
   Future<bool> schedule({
     required String itemId,
-    required String title,
+    required String? title,
     required tz.TZDateTime at,
   }) async => true;
 

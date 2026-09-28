@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'notion_id.freezed.dart';
 
-/// Id of a Notion page or data source.
+/// Id of a Notion page, data source or file upload.
 @Freezed(map: .none, when: .none, copyWith: false)
 sealed class NotionId with _$NotionId {
   const NotionId._();

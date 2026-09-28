@@ -1,4 +1,5 @@
 import 'package:capture/core/theme/overlay_tokens.dart';
+import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,7 @@ class ReviewCardButton extends StatelessWidget {
     required this.onTap,
     super.key,
     this.width,
-    this.fill = Colors.transparent,
+    this.fill = Palette.transparent,
   });
 
   final String label;

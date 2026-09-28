@@ -11,8 +11,8 @@ import 'package:capture/features/settings/presentation/notifiers/settings_notifi
 import 'package:capture/features/settings/presentation/notifiers/settings_state.dart';
 import 'package:capture/features/settings/presentation/widgets/model_step.dart';
 import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
-import 'package:capture/features/settings/presentation/widgets/notion_step.dart';
-import 'package:capture/features/settings/presentation/widgets/typesafe_step.dart';
+import 'package:capture/features/settings/presentation/screens/notion_step_screen.dart';
+import 'package:capture/features/settings/presentation/screens/typesafe_step_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -92,14 +92,14 @@ class SetupStepsScreen extends ConsumerWidget {
           onDownload: () => ref.read(settingsProvider.notifier).downloadModel(),
         ),
         const Divider(height: _dividerHeight),
-        TypesafeStep(
+        TypesafeStepScreen(
           hasKey: hasKey,
           saving: savingKey,
           error: keyFailure?.label(l10n),
           onSave: (key) => _saveKey(context, ref, key),
         ),
         const Divider(height: _dividerHeight),
-        NotionStep(
+        NotionStepScreen(
           connected: connected,
           workspaceName: switch (name) {
             final String n when n.isNotEmpty => n,

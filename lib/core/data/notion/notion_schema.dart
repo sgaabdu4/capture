@@ -1,5 +1,4 @@
 import 'package:capture/core/data/notion/notion_http_service.dart';
-import 'package:intl/intl.dart';
 
 /// The Notion structure Capture creates and reads: the marked "Capture"
 /// area page and its Groups, Captures and Library data sources.
@@ -7,10 +6,6 @@ const areaTitle = 'Capture';
 const areaMarkerPrefix = 'Managed by the Capture app';
 const areaMarker =
     'Managed by the Capture app. Rename pages freely, but keep the Groups, Captures and Library databases here.';
-
-/// Capture page titles, e.g. "Capture 18 Sep 2026, 09:30". One fixed,
-/// English format so they sort and read the same whatever the Mac's language.
-final captureTitleFormat = DateFormat("'Capture' d MMM y, HH:mm", 'en');
 
 /// Property names written by the app.
 abstract final class P {

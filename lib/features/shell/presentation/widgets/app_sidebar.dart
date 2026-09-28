@@ -36,6 +36,7 @@ class AppSidebar extends StatelessWidget {
         crossAxisAlignment: .start,
         children: [
           TapSurface(
+            key: const ValueKey(AppWidgetKeys.navHome),
             onTap: onHome,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),

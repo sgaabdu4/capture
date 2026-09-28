@@ -1,3 +1,4 @@
+import 'package:capture/core/extensions/num_extensions.dart';
 import 'package:capture/core/theme/overlay_tokens.dart';
 import 'package:capture/core/theme/palette.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class Waveform extends StatelessWidget {
         for (final level in levels)
           Container(
             width: OverlayTokens.barWidth,
-            height: (level * OverlayTokens.waveHeight).clamp(
+            height: (level * OverlayTokens.waveHeight).clamped(
               OverlayTokens.barMin,
               OverlayTokens.waveHeight,
             ),

@@ -12,8 +12,8 @@ import 'package:flutter/services.dart';
 /// Shows the global shortcut and records a new one: a key with modifiers,
 /// or modifiers alone pressed together and released. Nothing changes until
 /// the recorded shortcut is saved.
-class ShortcutSection extends StatefulWidget {
-  const ShortcutSection({
+class ShortcutSectionScreen extends StatefulWidget {
+  const ShortcutSectionScreen({
     required this.label,
     required this.registered,
     required this.problem,
@@ -34,10 +34,10 @@ class ShortcutSection extends StatefulWidget {
   final ValueChanged<bool> onRecording;
 
   @override
-  State<ShortcutSection> createState() => _ShortcutSectionState();
+  State<ShortcutSectionScreen> createState() => _ShortcutSectionScreenState();
 }
 
-class _ShortcutSectionState extends State<ShortcutSection> {
+class _ShortcutSectionScreenState extends State<ShortcutSectionScreen> {
   final _focus = FocusNode();
   bool _recording = false;
 
@@ -114,7 +114,7 @@ class _ShortcutSectionState extends State<ShortcutSection> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final ShortcutSection(:label, :registered, :problem) = widget;
+    final ShortcutSectionScreen(:label, :registered, :problem) = widget;
     final recorded = _recorded;
     final error = switch (recorded) {
       final Shortcut r => r.problem,

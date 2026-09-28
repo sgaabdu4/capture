@@ -49,7 +49,10 @@ class GroupCard extends StatelessWidget {
           color: group.archived ? context.colors.onSurfaceVariant : context.colors.onSurface,
         ),
       ),
-      subtitle: Text(group.description ?? '', style: labelMedium),
+      subtitle: switch (group.description) {
+        final String description => Text(description, style: labelMedium),
+        null => null,
+      },
       trailing: Row(
         mainAxisSize: .min,
         spacing: Spacing.xs,
@@ -86,7 +89,10 @@ class GroupCard extends StatelessWidget {
               LibraryEntry(done: true) => Icons.check_box_outlined,
               LibraryEntry() => Icons.check_box_outline_blank,
             }, color: context.colors.onSurface),
-            title: Text(entry.title ?? '', style: bodyMedium),
+            title: switch (entry.title) {
+              final String title => Text(title, style: bodyMedium),
+              null => null,
+            },
           ),
       ],
     );

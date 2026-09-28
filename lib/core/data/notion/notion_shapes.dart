@@ -25,7 +25,10 @@ List<Json> richText(String value) => [
     },
 ];
 
-Json titleValue(String text) => {NotionKeys.title: richText(text.isEmpty ? _untitled : text)};
+/// Missing and empty titles share the existing Notion-side placeholder.
+Json titleValue(String? text) => {
+  NotionKeys.title: richText(text == null || text.isEmpty ? _untitled : text),
+};
 
 Json textValue(String text) => {NotionKeys.richText: richText(text)};
 
@@ -157,10 +160,10 @@ const _uuidBounds = [0, 8, 12, 16, 20, 32];
 String? parseNotionId(String input) {
   final trimmed = input.trim();
   final segment = switch (Uri.tryParse(trimmed)) {
-    final Uri uri when uri.hasScheme =>
-      uri.pathSegments.where((s) => s.isNotEmpty).lastOrNull ?? '',
+    final Uri uri when uri.hasScheme => uri.pathSegments.where((s) => s.isNotEmpty).lastOrNull,
     _ => trimmed,
   };
+  if (segment == null) return null;
   final compact = _dashedId.hasMatch(segment) ? segment.replaceAll('-', '') : segment;
   if (_hexId.firstMatch(compact)?[1] case final String hex) {
     final id = hex.toLowerCase();

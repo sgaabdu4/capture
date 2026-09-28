@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:capture/app/app_startup.dart';
 import 'package:capture/app/capture_app.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/notion/notion_workspace_local_datasource.dart';
@@ -15,11 +16,14 @@ import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/capture/presentation/widgets/recorder.dart';
+import 'package:capture/features/capture/presentation/widgets/today_card.dart';
 import 'package:capture/features/capture/repositories/capture_repository.dart';
 import 'package:capture/features/capture/repositories/capture_save_repository.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
+import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
+import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
 import 'package:capture/features/settings/repositories/settings_repository.dart';
 import 'package:capture/features/shell/presentation/widgets/update_link.dart';
 import 'package:capture/l10n/app_localizations.dart';
@@ -128,6 +132,16 @@ class _Saver implements ICaptureSaveRepository {
       (record: record, notificationsOff: false);
 }
 
+/// The same system clock advanced while Home is absent.
+class _Clock extends FakeSystem {
+  _Clock(DateTime local) : atUtc = local.toUtc();
+
+  DateTime atUtc;
+
+  @override
+  DateTime nowUtc() => atUtc;
+}
+
 /// Saved entries as last synced; edits are recorded instead of sent.
 class _Library implements ILibraryRepository {
   final updates = <LibraryEntry>[];
@@ -225,6 +239,37 @@ void main() {
     expect(find.byKey(const ValueKey(AppWidgetKeys.typesafeKeyField)), findsOneWidget);
   });
 
+  testWidgets('Home re-entry after midnight shows newly due tasks without a library update', (
+    tester,
+  ) async {
+    final clock = _Clock(DateTime(2026, 9, 17, 23, 59));
+    await _pump(tester, [
+      ...appOverrides(
+        support: support,
+        native: native,
+        fakes: (secrets: null, reminders: null, system: clock),
+      ),
+      settingsProvider.overrideWithBuild(readySettings),
+      appStartupProvider.overrideWith((ref) async {}),
+      libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
+    ]);
+    final app = ProviderScope.containerOf(tester.element(find.byType(CaptureApp)));
+    final library = app.read(libraryProvider);
+    expect([
+      for (final item in tester.widget<TodayCard>(find.byType(TodayCard)).items) item.title,
+    ], equals([sampleTaskTitle]));
+
+    await _open(tester, AppWidgetKeys.settingsButton);
+    expect(find.byType(TodayCard), findsNothing);
+    clock.atUtc = DateTime(2026, 9, 18, 0, 1).toUtc();
+    await _open(tester, AppWidgetKeys.navHome);
+
+    expect(app.read(libraryProvider), same(library));
+    expect([
+      for (final item in tester.widget<TodayCard>(find.byType(TodayCard)).items) item.title,
+    ], equals([for (final entry in sampleEntries.take(3)) entry.title]));
+  });
+
   testWidgets('the Notion step shows a picture for every setup step', (tester) async {
     await _launch(tester, support: support, native: native);
 
@@ -232,8 +277,32 @@ void main() {
     await _open(tester, AppWidgetKeys.notionGuideButton);
 
     expect(find.text(_l10n.notionGuideTitle), findsOneWidget);
-    expect(find.textContaining(_l10n.notionGuideStep6), findsOneWidget);
-    expect(find.byType(Image), findsNWidgets(6));
+    final steps = [
+      _l10n.notionGuideStep1,
+      _l10n.notionGuideStep2,
+      _l10n.notionGuideStep3,
+      _l10n.notionGuideStep4,
+      _l10n.notionGuideStep5,
+      _l10n.notionGuideStep6,
+    ];
+    for (final (index, text) in steps.indexed) {
+      final step = find.byKey(ValueKey(AppWidgetKeys.notionGuideStep(index + 1)));
+      await tester.scrollUntilVisible(
+        step,
+        300,
+        scrollable: find.descendant(
+          of: find.byType(NotionGuideDialog),
+          matching: find.byWidgetPredicate(
+            (widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down,
+          ),
+        ),
+      );
+      expect(
+        find.descendant(of: step, matching: find.text(_l10n.numberedStep(index + 1, text))),
+        findsOneWidget,
+      );
+      expect(find.descendant(of: step, matching: find.byType(Image)), findsOneWidget);
+    }
     await tester.tap(find.text(_l10n.close));
     await _settle(tester);
     expect(find.text(_l10n.notionGuideTitle), findsNothing);
@@ -255,7 +324,7 @@ void main() {
     expect(find.text('Milk frother idea'), findsOneWidget);
     expect(find.text('Call the dentist'), findsNothing);
 
-    await tester.tap(find.text('Milk frother idea'));
+    await tester.tap(find.byKey(ValueKey(AppWidgetKeys.libraryEntry('i2'))));
     await _settle(tester);
     await tester.enterText(
       find.byKey(const ValueKey(AppWidgetKeys.entryTitleField)),
@@ -299,9 +368,12 @@ void main() {
       await tester.scrollUntilVisible(
         reset,
         300,
-        scrollable: find
-            .descendant(of: find.byType(PageFrame), matching: find.byType(Scrollable))
-            .first,
+        scrollable: find.descendant(
+          of: find.byType(PageFrame),
+          matching: find.byWidgetPredicate(
+            (widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down,
+          ),
+        ),
       );
       await tester.ensureVisible(reset);
       await _settle(tester);
@@ -350,9 +422,12 @@ void main() {
     await tester.scrollUntilVisible(
       autoSave,
       300,
-      scrollable: find
-          .descendant(of: find.byType(PageFrame), matching: find.byType(Scrollable))
-          .first,
+      scrollable: find.descendant(
+        of: find.byType(PageFrame),
+        matching: find.byWidgetPredicate(
+          (widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down,
+        ),
+      ),
     );
     await _settle(tester);
     expect(tester.widget<Checkbox>(autoSave).value, isFalse);
@@ -391,9 +466,12 @@ void main() {
       await tester.scrollUntilVisible(
         quickAccess,
         300,
-        scrollable: find
-            .descendant(of: find.byType(PageFrame), matching: find.byType(Scrollable))
-            .first,
+        scrollable: find.descendant(
+          of: find.byType(PageFrame),
+          matching: find.byWidgetPredicate(
+            (widget) => widget is Scrollable && widget.axisDirection == AxisDirection.down,
+          ),
+        ),
       );
 
       expect(quickAccess, findsOneWidget);
@@ -485,7 +563,7 @@ void main() {
       await _settle(tester);
       await _open(tester, AppWidgetKeys.reviewEditButton);
 
-      await tester.tap(find.textContaining('9:00'));
+      await tester.tap(find.byKey(const ValueKey(AppWidgetKeys.whenTimeButton)));
       await _settle(tester);
 
       // Digits squeezed into a shorter field are clipped.

@@ -8,7 +8,11 @@ part 'reminder_datasource.g.dart';
 /// without the review card.
 abstract interface class IReminderDatasource {
   /// False when notifications are not permitted.
-  Future<bool> schedule({required String itemId, required String title, required tz.TZDateTime at});
+  Future<bool> schedule({
+    required String itemId,
+    required String? title,
+    required tz.TZDateTime at,
+  });
   Future<void> cancel(String itemId);
 
   /// Shows a notification now; nothing when notifications are not permitted.
@@ -71,7 +75,7 @@ class LocalNotificationsReminderDatasource implements IReminderDatasource {
   @override
   Future<bool> schedule({
     required String itemId,
-    required String title,
+    required String? title,
     required tz.TZDateTime at,
   }) async {
     if (!await _ensure()) return false;

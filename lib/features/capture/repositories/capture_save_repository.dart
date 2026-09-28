@@ -60,7 +60,7 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
     switch (await _capturePage(record, ws)) {
       case Ok(:final value):
         pageId = value;
-        withPage = _persist(record, record.progress.copyWith(capturePageId: value));
+        withPage = _persist(record, record.progress.copyWith(capturePageId: .new(value)));
       case Err(:final failure):
         return .err(failure);
     }
@@ -86,7 +86,7 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
   }
 
   Future<Result<String, CaptureFailure>> _capturePage(CaptureRecord r, NotionWorkspace ws) async {
-    if (r.progress.capturePageId case final String id) return .ok(id);
+    if (r.progress.capturePageId case final id?) return .ok(id.value);
     return _mapped(switch (await _remote.findCapturePage(ws, r.id.value)) {
       Ok(value: final String id) => .ok(id),
       Ok() => await _remote.createCapturePage(ws, r),
@@ -98,11 +98,11 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
   /// rest, so a failure keeps every page already confirmed.
   Future<CaptureOutcome> _itemPages(CaptureRecord r, NotionWorkspace ws, String pageId) async {
     final itemPages = r.progress.itemPages;
-    final item = r.includedItems.where((i) => !itemPages.containsKey(i.id.value)).firstOrNull;
+    final item = r.includedItems.where((i) => !itemPages.containsKey(i.id)).firstOrNull;
     if (item == null) return .ok(r);
     return switch (await _itemPage(r, ws, item, pageId)) {
       Ok(:final value) => await _itemPages(
-        _persist(r, r.progress.copyWith(itemPages: {...itemPages, item.id.value: value})),
+        _persist(r, r.progress.copyWith(itemPages: {...itemPages, item.id: .new(value)})),
         ws,
         pageId,
       ),
@@ -137,7 +137,7 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
     }
     final bytes = await _files.read(path);
     return switch (await _remote.attachRecording(pageId, bytes, name: 'capture-${id.value}.m4a')) {
-      Ok(:final value) => .ok(progress.copyWith(audioUploadId: value, audioAttached: true)),
+      Ok(:final value) => .ok(progress.copyWith(audioUploadId: .new(value), audioAttached: true)),
       Err(:final failure) => .err(_captureFailure(failure)),
     };
   }
@@ -164,22 +164,18 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
     final due = [
       for (final item in includedItems)
         if (item case ProposalItem(isTask: true, reminder: final reminder?))
-          if (!progress.remindersScheduled.contains(item.id.value))
+          if (!progress.remindersScheduled.contains(item.id))
             if (reminderInstant(reminder, offsets) case final at? when at.isAfter(now))
               (item: item, at: tz.TZDateTime.from(at, location)),
     ];
     final scheduled = {...progress.remindersScheduled};
     bool refused = false;
     for (final (:item, :at) in due) {
-      final accepted = await _reminders.schedule(
-        itemId: item.id.value,
-        title: item.title ?? '',
-        at: at,
-      );
+      final accepted = await _reminders.schedule(itemId: item.id.value, title: item.title, at: at);
       refused = refused || !accepted;
       // A capture deleted while the prompt was open stays deleted.
       if (accepted && _local.get(id.value) != null) {
-        scheduled.add(item.id.value);
+        scheduled.add(item.id);
         _persist(record, progress.copyWith(remindersScheduled: {...scheduled}));
       }
     }

@@ -12,6 +12,7 @@ final _entries = [
   ),
   LibraryEntry(pageId: .new('p2'), itemId: .new('i2'), title: 'Milk frother idea', kind: .note),
   LibraryEntry(pageId: .new('p3'), itemId: .new('i3'), title: 'Call the dentist', kind: .task),
+  LibraryEntry(pageId: .new('p4'), itemId: .new('i4'), title: null, kind: .note),
 ];
 
 void main() {

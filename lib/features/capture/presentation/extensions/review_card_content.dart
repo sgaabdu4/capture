@@ -48,6 +48,6 @@ extension ReviewCardContent on CaptureRecord {
       (kind: .task, when: DueDate()) => _datedSymbol,
       (kind: .task, when: null) => _taskSymbol,
     };
-    return .new(id: id.value, icon: icon, title: title ?? '', detail: detail);
+    return .new(id: id.value, icon: icon, title: title, detail: detail);
   }
 }

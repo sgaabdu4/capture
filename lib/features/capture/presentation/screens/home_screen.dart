@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
@@ -10,7 +11,6 @@ import 'package:capture/features/capture/presentation/extensions/capture_labels.
 import 'package:capture/features/capture/presentation/extensions/menu_lines.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_phase.dart';
-import 'package:capture/features/capture/presentation/notifiers/due_today_entries_provider.dart';
 import 'package:capture/features/capture/presentation/widgets/home_cards.dart';
 import 'package:capture/features/capture/presentation/widgets/recent_card.dart';
 import 'package:capture/features/capture/presentation/widgets/recorder.dart';
@@ -66,7 +66,7 @@ class HomeScreen extends ConsumerWidget {
       captureFlowProvider.select((s) => (phase: s.phase, notice: s.notice, failure: s.failure)),
     );
     final now = ref.watch(systemDatasourceProvider.select((system) => system.nowUtc())).toLocal();
-    final today = ref.watch(dueTodayEntriesProvider);
+    final today = ref.watch(libraryProvider.select((state) => state.dueToday(now)));
     final recent = ref.watch(captureFlowProvider.select((s) => s.captures)).take(_recentLimit);
     final groups = ref.watch(groupsProvider.select((s) => s.active)).take(_groupsLimit);
     final canToggle = phase == .idle || phase == .recording;
@@ -88,7 +88,9 @@ class HomeScreen extends ConsumerWidget {
                 shortcutLabel: ref.read(systemDatasourceProvider).isPhone ? null : shortcut,
                 message: failure?.label(l10n) ?? notice?.label(l10n),
                 onPressed: canToggle
-                    ? () => unawaited(ref.read(captureFlowProvider.notifier).toggle())
+                    ? () => unawaited(
+                        ref.read(captureFlowProvider.notifier).toggle().catchError(Crash.error),
+                      )
                     : null,
               ),
               const SizedBox(height: Spacing.xxl),
@@ -98,10 +100,13 @@ class HomeScreen extends ConsumerWidget {
                   today: .new(
                     items: [
                       for (final (:entry, :due) in today)
-                        (title: entry.title ?? '', due: due.label(l10n, now), done: entry.done),
+                        (title: entry.title, due: due.label(l10n, now), done: entry.done),
                     ],
                     onDoneChanged: (index, {required done}) => unawaited(
-                      ref.read(libraryProvider.notifier).setDone(today[index].entry, done: done),
+                      ref
+                          .read(libraryProvider.notifier)
+                          .setDone(today[index].entry, done: done)
+                          .catchError(Crash.error),
                     ),
                     onViewAll: () => const TodoRoute().go(context),
                   ),

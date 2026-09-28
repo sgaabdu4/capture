@@ -21,6 +21,7 @@ extension CaptureNoticeLabel on CaptureNotice {
     .reviewLater => l10n.noticeReviewLater,
     .saved => l10n.noticeSaved,
     .savedNotificationsOff => l10n.noticeSavedNotificationsOff,
+    .remindersNotScheduled => l10n.noticeRemindersNotScheduled,
     .notionNotConnected => l10n.noticeNotionNotConnected,
   };
 }

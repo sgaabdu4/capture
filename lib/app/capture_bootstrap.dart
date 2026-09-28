@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:capture/app/app_startup.dart';
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
@@ -19,6 +20,7 @@ import 'package:capture/features/library/presentation/notifiers/library_notifier
 import 'package:capture/features/settings/presentation/extensions/settings_labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 /// Root side effects that need localizations, above the router: the native
 /// overlay, review card and menu, navigation requested by the capture flow,
@@ -36,19 +38,19 @@ class CaptureBootstrap extends ConsumerWidget {
         if (next.hasValue) _menu(context, ref);
       })
       ..listen(captureFlowProvider.select((s) => s.phase), (_, phase) {
-        unawaited(_overlay(context, ref, phase));
+        unawaited(_overlay(context, ref, phase).catchError(Crash.error));
       })
       ..listen(captureFlowProvider.select((s) => s.reviewing), (_, record) {
-        if (record != null) unawaited(_review(context, ref, record));
+        if (record != null) unawaited(_review(context, ref, record).catchError(Crash.error));
       })
       ..listen(captureFlowProvider.select((s) => s.autoSavedId), (_, id) {
         if (ref.read(captureFlowProvider).byId(id) case final CaptureRecord record) {
-          unawaited(_announceSaved(context, ref, record));
+          unawaited(_announceSaved(context, ref, record).catchError(Crash.error));
         }
       })
       ..listen(captureFlowProvider.select((s) => s.destinationSerial), (_, _) {
-        if (_destination(ref.read(captureFlowProvider)) case final String location) {
-          ref.read(appRouterProvider).go(location);
+        if (_destination(ref.read(captureFlowProvider)) case final GoRouteData route) {
+          ref.read(appRouterProvider).go(route.location);
         }
       })
       ..listen(groupsProvider.select((s) => s.failureSerial), (_, _) {
@@ -57,7 +59,10 @@ class CaptureBootstrap extends ConsumerWidget {
         }
       })
       ..listen(libraryProvider.select((s) => s.failureSerial), (_, _) {
-        if (ref.read(libraryProvider).failure case final failure?) {
+        final library = ref.read(libraryProvider);
+        if (library.cacheRefreshFailed) {
+          _snack(context, context.l10n.libraryRefreshFailed);
+        } else if (library.failure case final failure?) {
           _snack(context, failure.label(context.l10n));
         }
       })
@@ -65,7 +70,7 @@ class CaptureBootstrap extends ConsumerWidget {
       ..listen(captureFlowProvider.select((s) => s.captures.firstOrNull), (_, _) {
         _menu(context, ref);
       })
-      ..watch(appStartupProvider);
+      ..watch(appStartupProvider.select((startup) => startup.hasValue));
     return child;
   }
 
@@ -97,13 +102,11 @@ class CaptureBootstrap extends ConsumerWidget {
   }
 
   /// Where the capture flow asked to go, if anywhere.
-  String? _destination(CaptureFlowState state) => switch (state) {
-    CaptureFlowState(destination: .settings) => const SettingsRoute().location,
-    CaptureFlowState(destination: .upcoming) => const UpcomingRoute().location,
-    CaptureFlowState(destination: .recordings) => const RecordingsRoute().location,
-    CaptureFlowState(destination: .editor, editId: final String id) => EditorRoute(
-      recordId: id,
-    ).location,
+  GoRouteData? _destination(CaptureFlowState state) => switch (state) {
+    CaptureFlowState(destination: .settings) => const SettingsRoute(),
+    CaptureFlowState(destination: .upcoming) => const UpcomingRoute(),
+    CaptureFlowState(destination: .recordings) => const RecordingsRoute(),
+    CaptureFlowState(destination: .editor, editId: final String id) => EditorRoute(recordId: id),
     CaptureFlowState() => null,
   };
 
@@ -121,7 +124,8 @@ class CaptureBootstrap extends ConsumerWidget {
             latest: ref.read(captureFlowProvider).captures.firstOrNull.latestLine(l10n),
             // Recording needs only the microphone; setup can come later.
             canRecord: true,
-          ),
+          )
+          .catchError(Crash.error),
     );
   }
 }

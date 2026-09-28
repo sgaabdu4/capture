@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:capture/core/extensions/num_extensions.dart';
 import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -30,7 +31,7 @@ class RecordingMeterNotifier extends _$RecordingMeterNotifier {
 
   static double scaled(double rms) {
     final db = _dbPerDecade * log(max(rms, _floorRms)) / ln10;
-    return ((db + _silentDb) / _rangeDb).clamp(0, 1);
+    return ((db + _silentDb) / _rangeDb).clamped(0, 1);
   }
 
   @override

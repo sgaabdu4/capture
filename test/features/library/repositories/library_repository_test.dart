@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:capture/core/data/database/local_database_datasource.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/domain/values/result.dart';
@@ -5,11 +8,15 @@ import 'package:capture/features/library/data/datasources/library_local_datasour
 import 'package:capture/features/library/data/datasources/library_remote_datasource.dart';
 import 'package:capture/features/library/data/models/library_entry_model.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
+import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
+import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../../../helpers/app_harness.dart';
 import '../../../helpers/sample_workspace.dart';
 import '../../../helpers/test_fakes.dart';
 
@@ -87,7 +94,7 @@ class _Reminders implements IReminderDatasource {
   @override
   Future<bool> schedule({
     required String itemId,
-    required String title,
+    required String? title,
     required tz.TZDateTime at,
   }) async {
     calls.add('schedule $itemId ${at.toUtc().toIso8601String()}');
@@ -126,6 +133,48 @@ class _Fixture {
 
 void main() {
   setUpAll(tzdata.initializeTimeZones);
+
+  test('a failed SQLite refresh keeps prior entries and can be retried', () async {
+    final support = Directory.systemTemp.createTempSync('capture_library_refresh');
+    addTearDown(() => support.deleteSync(recursive: true));
+    final updated = _task.copyWith(title: 'Updated in Notion');
+    final notion = _Notion()..pages['page-1'] = LibraryEntryModel.fromEntity(updated);
+    final container = ProviderContainer.test(
+      overrides: [
+        ...appOverrides(support: support, native: stubNative()),
+        settingsProvider.overrideWithBuild(readySettings),
+        libraryRemoteDatasourceProvider.overrideWithValue(notion),
+      ],
+    );
+    final local = container.read(libraryLocalDatasourceProvider);
+    local.put(LibraryEntryModel.fromEntity(_task));
+    final notifier = container.read(libraryProvider.notifier);
+    final database = container.read(localDatabaseProvider);
+    database.execute('''
+      CREATE TRIGGER fail_refresh BEFORE INSERT ON library
+      BEGIN SELECT RAISE(ABORT, 'synthetic cache write failure'); END;
+    ''');
+
+    await expectLater(notifier.refresh(), completes);
+
+    final failed = container.read(libraryProvider);
+    expect(failed.entries, equals([_task]));
+    expect(failed.refreshing, isFalse);
+    expect(failed.cacheRefreshFailed, isTrue);
+    expect(failed.failure, isNull);
+    expect(failed.failureSerial, equals(1));
+    expect(failed.refreshedAtUtc, isNull);
+    expect(local.all().map((entry) => entry.toEntity()), equals([_task]));
+
+    database.execute('DROP TRIGGER fail_refresh');
+    await notifier.refresh();
+
+    final retried = container.read(libraryProvider);
+    expect(retried.entries, equals([updated]));
+    expect(retried.refreshing, isFalse);
+    expect(retried.cacheRefreshFailed, isFalse);
+    expect(retried.refreshedAtUtc, equals(FakeSystem.now));
+  });
 
   test('an edit reaches Notion and the mirror, and the reminder is rescheduled', () async {
     final _Fixture(:repo, :notion, :mirror, :reminders) = _Fixture();

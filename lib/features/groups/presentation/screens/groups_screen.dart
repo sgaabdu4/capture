@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
@@ -72,13 +73,18 @@ class GroupsScreen extends ConsumerWidget {
       actions: [
         LinkButton(
           l10n.refresh,
-          onPressed: busy ? null : () => unawaited(ref.read(groupsProvider.notifier).refresh()),
+          onPressed: busy
+              ? null
+              : () =>
+                    unawaited(ref.read(groupsProvider.notifier).refresh().catchError(Crash.error)),
         ),
         const SizedBox(width: Spacing.xs),
         InkButton(
           l10n.addGroup,
           key: const ValueKey(AppWidgetKeys.addGroupButton),
-          onPressed: busy ? null : () => unawaited(_edit(context, ref, null)),
+          onPressed: busy
+              ? null
+              : () => unawaited(_edit(context, ref, null).catchError(Crash.error)),
         ),
       ],
       children: [
@@ -87,10 +93,12 @@ class GroupsScreen extends ConsumerWidget {
           archivedGroups: archived,
           entries: entries,
           busy: busy,
-          onEdit: (group) => unawaited(_edit(context, ref, group)),
+          onEdit: (group) => unawaited(_edit(context, ref, group).catchError(Crash.error)),
           onOpenEntry: (entry) => unawaited(ref.editEntry(context, entry)),
-          onArchive: (group) => unawaited(_setArchived(ref, group, archived: true)),
-          onRestore: (group) => unawaited(_setArchived(ref, group, archived: false)),
+          onArchive: (group) =>
+              unawaited(_setArchived(ref, group, archived: true).catchError(Crash.error)),
+          onRestore: (group) =>
+              unawaited(_setArchived(ref, group, archived: false).catchError(Crash.error)),
         ),
       ],
     );

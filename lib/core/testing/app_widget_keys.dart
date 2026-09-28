@@ -29,6 +29,7 @@ abstract final class AppWidgetKeys {
   static const notionPageField = 'setup.notion.page';
   static const notionConnectButton = 'setup.notion.connect';
   static const notionGuideButton = 'setup.notion.guide';
+  static String notionGuideStep(int step) => 'setup.notion.guide.step.$step';
   static const notionDisconnectButton = 'setup.notion.disconnect';
   static const shortcutChangeButton = 'settings.shortcut.change';
   static const shortcutSaveButton = 'settings.shortcut.save';
@@ -41,6 +42,7 @@ abstract final class AppWidgetKeys {
   static const deleteConfirmButton = 'recordings.delete.confirm';
   static const editorSaveButton = 'editor.save';
   static const editorDontSaveButton = 'editor.dontSave';
+  static const whenTimeButton = 'editor.when.time';
 
   // Groups
   static const addGroupButton = 'groups.add';
@@ -57,4 +59,5 @@ abstract final class AppWidgetKeys {
   static const entryCancelButton = 'library.entry.cancel';
   static const entryDeleteButton = 'library.entry.delete';
   static const entryDeleteConfirmButton = 'library.entry.deleteConfirm';
+  static String libraryEntry(String itemId) => 'library.entry.$itemId';
 }

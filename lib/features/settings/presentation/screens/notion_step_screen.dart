@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
@@ -14,8 +15,8 @@ typedef NotionConnect = Future<bool> Function({required String token, required S
 /// Connects Notion with an internal connection token and a shared page. The
 /// token field is obscured and cleared once connected; its text is never
 /// shown or logged.
-class NotionStep extends StatefulWidget {
-  const NotionStep({
+class NotionStepScreen extends StatefulWidget {
+  const NotionStepScreen({
     required this.connected,
     required this.workspaceName,
     required this.hasToken,
@@ -41,10 +42,10 @@ class NotionStep extends StatefulWidget {
   final VoidCallback onShowGuide;
 
   @override
-  State<NotionStep> createState() => _NotionStepState();
+  State<NotionStepScreen> createState() => _NotionStepScreenState();
 }
 
-class _NotionStepState extends State<NotionStep> {
+class _NotionStepScreenState extends State<NotionStepScreen> {
   final _token = TextEditingController();
   final _page = TextEditingController();
   bool _tokenMissing = false;
@@ -68,7 +69,7 @@ class _NotionStepState extends State<NotionStep> {
     if (connected) _token.clear();
   }
 
-  void _onConnect() => unawaited(_connect());
+  void _onConnect() => unawaited(_connect().catchError(Crash.error));
 
   @override
   Widget build(BuildContext context) {

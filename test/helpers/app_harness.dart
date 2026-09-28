@@ -59,7 +59,7 @@ Future<void> loadAppFonts() async {
 
 /// Fakes that replace the defaults: a Keychain with keys, recorded
 /// reminders, or the iPhone.
-typedef AppFakes = ({FakeSecrets? secrets, FakeReminders? reminders, FakeSystem? system});
+typedef AppFakes = ({FakeSecrets? secrets, IReminderDatasource? reminders, FakeSystem? system});
 
 /// Fake Keychain (empty by default), reminders, clock (the Mac by default)
 /// and native side, and a fresh on-disk database under [support].

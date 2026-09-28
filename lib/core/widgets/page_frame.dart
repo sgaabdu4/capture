@@ -27,26 +27,28 @@ class PageFrame extends StatelessWidget {
     builder: (context, constraints) {
       final base = context.compact ? _compact : _wide;
       final spare = (constraints.maxWidth - base.horizontal - Breakpoints.content) / 2;
-      return ListView(
-        padding: base.add(.symmetric(horizontal: spare > 0 ? spare : 0)),
-        children: [
-          Wrap(
-            alignment: .spaceBetween,
-            crossAxisAlignment: .end,
-            spacing: Spacing.md,
-            runSpacing: Spacing.sm,
-            children: [
-              Underlined(title, style: context.textTheme.displayMedium),
-              Row(mainAxisSize: .min, children: actions),
-            ],
-          ),
-          if (subtitle case final String s) ...[
-            const SizedBox(height: Spacing.xs),
-            Text(s, style: context.textTheme.labelMedium),
+      final header = [
+        Wrap(
+          alignment: .spaceBetween,
+          crossAxisAlignment: .end,
+          spacing: Spacing.md,
+          runSpacing: Spacing.sm,
+          children: [
+            Underlined(title, style: context.textTheme.displayMedium),
+            Row(mainAxisSize: .min, children: actions),
           ],
-          const SizedBox(height: Spacing.lg),
-          ...children,
+        ),
+        if (subtitle case final String s) ...[
+          const SizedBox(height: Spacing.xs),
+          Text(s, style: context.textTheme.labelMedium),
         ],
+        const SizedBox(height: Spacing.lg),
+      ];
+      return ListView.builder(
+        padding: base.add(.symmetric(horizontal: spare > 0 ? spare : 0)),
+        itemCount: header.length + children.length,
+        itemBuilder: (context, index) =>
+            index < header.length ? header[index] : children[index - header.length],
       );
     },
   );

@@ -26,7 +26,7 @@ class _AllowedReminders implements IReminderDatasource {
   @override
   Future<bool> schedule({
     required String itemId,
-    required String title,
+    required String? title,
     required tz.TZDateTime at,
   }) async => true;
 
@@ -162,14 +162,23 @@ void main() {
       Err(:final failure) => fail('Retry failed: $failure'),
     };
     expect(created, equals(['capture', 'item-1', 'item-2', 'item-2']));
-    expect(progress.itemPages, equals({'item-1': 'page-item-1', 'item-2': 'page-item-2'}));
+    expect({
+      for (final MapEntry(:key, :value) in progress.itemPages.entries) key.value: value.value,
+    }, equals({'item-1': 'page-item-1', 'item-2': 'page-item-2'}));
+    expect(
+      writes.last.progress.toJson()['itemPages'],
+      equals({'item-1': 'page-item-1', 'item-2': 'page-item-2'}),
+    );
     expect(progress.markedSaved, isTrue);
   });
 
   test('a scheduled reminder is recorded on the stored capture', () async {
     final writes = await _schedule(stored: true);
     expect(
-      [for (final w in writes) w.toEntity().progress.remindersScheduled],
+      [
+        for (final w in writes)
+          w.toEntity().progress.remindersScheduled.map((id) => id.value).toSet(),
+      ],
       equals([
         {'item-1'},
       ]),

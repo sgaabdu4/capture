@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
@@ -18,8 +19,8 @@ typedef EntryEdit = ({LibraryEntry entry, String? body});
 
 /// Edits one saved note or task: title, details, group and, for a task, its
 /// date and reminder. Delete asks once more before calling [onDelete].
-class EntryDialog extends StatefulWidget {
-  const EntryDialog({
+class EntryDialogScreen extends StatefulWidget {
+  const EntryDialogScreen({
     required this.entry,
     required this.groups,
     required this.today,
@@ -43,10 +44,10 @@ class EntryDialog extends StatefulWidget {
   final VoidCallback onCancel;
 
   @override
-  State<EntryDialog> createState() => _EntryDialogState();
+  State<EntryDialogScreen> createState() => _EntryDialogScreenState();
 }
 
-class _EntryDialogState extends State<EntryDialog> {
+class _EntryDialogScreenState extends State<EntryDialogScreen> {
   static const _bodyMinLines = 3;
   static const _bodyMaxLines = 8;
 
@@ -70,13 +71,19 @@ class _EntryDialogState extends State<EntryDialog> {
 
   Future<void> _loadBody() async {
     final context = this.context;
-    final body = await widget.body;
-    if (!context.mounted) return;
-    setState(() {
-      _loading = false;
-      _loadedBody = body;
-      _body.text = body ?? '';
-    });
+    try {
+      final body = await widget.body;
+      if (!context.mounted) return;
+      setState(() {
+        _loading = false;
+        _loadedBody = body;
+        _body.text = body ?? '';
+      });
+    } on Exception catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+      if (!context.mounted) return;
+      setState(() => _loading = false);
+    }
   }
 
   @override

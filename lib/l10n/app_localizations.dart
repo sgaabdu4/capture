@@ -416,6 +416,12 @@ abstract class AppLocalizations {
   /// **'Saved, but macOS notifications are off for Capture.'**
   String get noticeSavedNotificationsOff;
 
+  /// No description provided for @noticeRemindersNotScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Some reminders could not be scheduled. Capture will try again when it next opens.'**
+  String get noticeRemindersNotScheduled;
+
   /// No description provided for @noticeNotionNotConnected.
   ///
   /// In en, this message translates to:
@@ -1285,6 +1291,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refreshing from Notion…'**
   String get syncRefreshing;
+
+  /// No description provided for @libraryRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not refresh the library. Your previous entries are still available; try again.'**
+  String get libraryRefreshFailed;
 
   /// No description provided for @syncNever.
   ///

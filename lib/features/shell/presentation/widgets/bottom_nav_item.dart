@@ -1,4 +1,5 @@
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/theme/radii.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
@@ -28,7 +29,7 @@ class BottomNavItem extends StatelessWidget {
       button: true,
       selected: selected,
       child: TapSurface(
-        color: selected ? context.paper.selected : Colors.transparent,
+        color: selected ? context.paper.selected : Palette.transparent,
         borderRadius: Radii.rounded12,
         onTap: onTap,
         child: Padding(

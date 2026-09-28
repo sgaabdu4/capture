@@ -15,8 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SaveProgress {
 
- String? get capturePageId;/// Proposal item id → Notion Library page id.
- Map<String, String> get itemPages; String? get audioUploadId; bool get audioAttached; bool get markedSaved; Set<String> get remindersScheduled;
+ NotionId? get capturePageId;/// Proposal item id → Notion Library page id.
+ Map<ItemId, NotionId> get itemPages; NotionId? get audioUploadId; bool get audioAttached; bool get markedSaved; Set<ItemId> get remindersScheduled;
 /// Create a copy of SaveProgress
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -52,7 +52,7 @@ abstract mixin class $SaveProgressCopyWith<$Res>  {
   factory $SaveProgressCopyWith(SaveProgress value, $Res Function(SaveProgress) _then) = _$SaveProgressCopyWithImpl;
 @useResult
 $Res call({
- String? capturePageId, Map<String, String> itemPages, String? audioUploadId, bool audioAttached, bool markedSaved, Set<String> remindersScheduled
+ NotionId? capturePageId, Map<ItemId, NotionId> itemPages, NotionId? audioUploadId, bool audioAttached, bool markedSaved, Set<ItemId> remindersScheduled
 });
 
 
@@ -72,12 +72,12 @@ class _$SaveProgressCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? capturePageId = freezed,Object? itemPages = null,Object? audioUploadId = freezed,Object? audioAttached = null,Object? markedSaved = null,Object? remindersScheduled = null,}) {
   return _then(SaveProgress(
 capturePageId: freezed == capturePageId ? _self.capturePageId : capturePageId // ignore: cast_nullable_to_non_nullable
-as String?,itemPages: null == itemPages ? _self.itemPages : itemPages // ignore: cast_nullable_to_non_nullable
-as Map<String, String>,audioUploadId: freezed == audioUploadId ? _self.audioUploadId : audioUploadId // ignore: cast_nullable_to_non_nullable
-as String?,audioAttached: null == audioAttached ? _self.audioAttached : audioAttached // ignore: cast_nullable_to_non_nullable
+as NotionId?,itemPages: null == itemPages ? _self.itemPages : itemPages // ignore: cast_nullable_to_non_nullable
+as Map<ItemId, NotionId>,audioUploadId: freezed == audioUploadId ? _self.audioUploadId : audioUploadId // ignore: cast_nullable_to_non_nullable
+as NotionId?,audioAttached: null == audioAttached ? _self.audioAttached : audioAttached // ignore: cast_nullable_to_non_nullable
 as bool,markedSaved: null == markedSaved ? _self.markedSaved : markedSaved // ignore: cast_nullable_to_non_nullable
 as bool,remindersScheduled: null == remindersScheduled ? _self.remindersScheduled : remindersScheduled // ignore: cast_nullable_to_non_nullable
-as Set<String>,
+as Set<ItemId>,
   ));
 }
 
@@ -159,7 +159,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? capturePageId,  Map<String, String> itemPages,  String? audioUploadId,  bool audioAttached,  bool markedSaved,  Set<String> remindersScheduled)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( NotionId? capturePageId,  Map<ItemId, NotionId> itemPages,  NotionId? audioUploadId,  bool audioAttached,  bool markedSaved,  Set<ItemId> remindersScheduled)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SaveProgress() when $default != null:
 return $default(_that.capturePageId,_that.itemPages,_that.audioUploadId,_that.audioAttached,_that.markedSaved,_that.remindersScheduled);case _:
@@ -180,7 +180,7 @@ return $default(_that.capturePageId,_that.itemPages,_that.audioUploadId,_that.au
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? capturePageId,  Map<String, String> itemPages,  String? audioUploadId,  bool audioAttached,  bool markedSaved,  Set<String> remindersScheduled)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( NotionId? capturePageId,  Map<ItemId, NotionId> itemPages,  NotionId? audioUploadId,  bool audioAttached,  bool markedSaved,  Set<ItemId> remindersScheduled)  $default,) {final _that = this;
 switch (_that) {
 case _SaveProgress():
 return $default(_that.capturePageId,_that.itemPages,_that.audioUploadId,_that.audioAttached,_that.markedSaved,_that.remindersScheduled);}
@@ -197,7 +197,7 @@ return $default(_that.capturePageId,_that.itemPages,_that.audioUploadId,_that.au
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? capturePageId,  Map<String, String> itemPages,  String? audioUploadId,  bool audioAttached,  bool markedSaved,  Set<String> remindersScheduled)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( NotionId? capturePageId,  Map<ItemId, NotionId> itemPages,  NotionId? audioUploadId,  bool audioAttached,  bool markedSaved,  Set<ItemId> remindersScheduled)?  $default,) {final _that = this;
 switch (_that) {
 case _SaveProgress() when $default != null:
 return $default(_that.capturePageId,_that.itemPages,_that.audioUploadId,_that.audioAttached,_that.markedSaved,_that.remindersScheduled);case _:
@@ -212,24 +212,24 @@ return $default(_that.capturePageId,_that.itemPages,_that.audioUploadId,_that.au
 
 
 class _SaveProgress implements SaveProgress {
-  const _SaveProgress({this.capturePageId,  Map<String, String> itemPages = const {}, this.audioUploadId, this.audioAttached = false, this.markedSaved = false,  Set<String> remindersScheduled = const {}}): _itemPages = itemPages,_remindersScheduled = remindersScheduled;
+  const _SaveProgress({this.capturePageId,  Map<ItemId, NotionId> itemPages = const {}, this.audioUploadId, this.audioAttached = false, this.markedSaved = false,  Set<ItemId> remindersScheduled = const {}}): _itemPages = itemPages,_remindersScheduled = remindersScheduled;
   
 
-@override final  String? capturePageId;
+@override final  NotionId? capturePageId;
 /// Proposal item id → Notion Library page id.
- final  Map<String, String> _itemPages;
+ final  Map<ItemId, NotionId> _itemPages;
 /// Proposal item id → Notion Library page id.
-@override@JsonKey() Map<String, String> get itemPages {
+@override@JsonKey() Map<ItemId, NotionId> get itemPages {
   if (_itemPages is EqualUnmodifiableMapView) return _itemPages;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(_itemPages);
 }
 
-@override final  String? audioUploadId;
+@override final  NotionId? audioUploadId;
 @override@JsonKey() final  bool audioAttached;
 @override@JsonKey() final  bool markedSaved;
- final  Set<String> _remindersScheduled;
-@override@JsonKey() Set<String> get remindersScheduled {
+ final  Set<ItemId> _remindersScheduled;
+@override@JsonKey() Set<ItemId> get remindersScheduled {
   if (_remindersScheduled is EqualUnmodifiableSetView) return _remindersScheduled;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableSetView(_remindersScheduled);
@@ -268,7 +268,7 @@ abstract mixin class _$SaveProgressCopyWith<$Res> implements $SaveProgressCopyWi
   factory _$SaveProgressCopyWith(_SaveProgress value, $Res Function(_SaveProgress) _then) = __$SaveProgressCopyWithImpl;
 @override @useResult
 $Res call({
- String? capturePageId, Map<String, String> itemPages, String? audioUploadId, bool audioAttached, bool markedSaved, Set<String> remindersScheduled
+ NotionId? capturePageId, Map<ItemId, NotionId> itemPages, NotionId? audioUploadId, bool audioAttached, bool markedSaved, Set<ItemId> remindersScheduled
 });
 
 
@@ -288,12 +288,12 @@ class __$SaveProgressCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? capturePageId = freezed,Object? itemPages = null,Object? audioUploadId = freezed,Object? audioAttached = null,Object? markedSaved = null,Object? remindersScheduled = null,}) {
   return _then(_SaveProgress(
 capturePageId: freezed == capturePageId ? _self.capturePageId : capturePageId // ignore: cast_nullable_to_non_nullable
-as String?,itemPages: null == itemPages ? _self._itemPages : itemPages // ignore: cast_nullable_to_non_nullable
-as Map<String, String>,audioUploadId: freezed == audioUploadId ? _self.audioUploadId : audioUploadId // ignore: cast_nullable_to_non_nullable
-as String?,audioAttached: null == audioAttached ? _self.audioAttached : audioAttached // ignore: cast_nullable_to_non_nullable
+as NotionId?,itemPages: null == itemPages ? _self._itemPages : itemPages // ignore: cast_nullable_to_non_nullable
+as Map<ItemId, NotionId>,audioUploadId: freezed == audioUploadId ? _self.audioUploadId : audioUploadId // ignore: cast_nullable_to_non_nullable
+as NotionId?,audioAttached: null == audioAttached ? _self.audioAttached : audioAttached // ignore: cast_nullable_to_non_nullable
 as bool,markedSaved: null == markedSaved ? _self.markedSaved : markedSaved // ignore: cast_nullable_to_non_nullable
 as bool,remindersScheduled: null == remindersScheduled ? _self._remindersScheduled : remindersScheduled // ignore: cast_nullable_to_non_nullable
-as Set<String>,
+as Set<ItemId>,
   ));
 }
 

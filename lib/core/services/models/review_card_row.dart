@@ -10,7 +10,7 @@ sealed class ReviewCardRow with _$ReviewCardRow {
 
     /// SF Symbol name.
     required String icon,
-    required String title,
+    required String? title,
     required String detail,
   }) = _ReviewCardRow;
 }

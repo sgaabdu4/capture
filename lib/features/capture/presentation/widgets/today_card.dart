@@ -5,7 +5,7 @@ import 'package:capture/features/capture/presentation/widgets/home_card_row.dart
 import 'package:flutter/material.dart';
 
 /// One open task due today or earlier, as the Today card shows it.
-typedef TodayItem = ({String title, String due, bool done});
+typedef TodayItem = ({String? title, String due, bool done});
 
 /// Called with the tapped row's index and its new done state.
 typedef TodayDoneChanged = void Function(int index, {required bool done});

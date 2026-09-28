@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$ReviewCardRow {
 
  String get id;/// SF Symbol name.
- String get icon; String get title; String get detail;
+ String get icon; String? get title; String get detail;
 /// Create a copy of ReviewCardRow
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -52,7 +52,7 @@ abstract mixin class $ReviewCardRowCopyWith<$Res>  {
   factory $ReviewCardRowCopyWith(ReviewCardRow value, $Res Function(ReviewCardRow) _then) = _$ReviewCardRowCopyWithImpl;
 @useResult
 $Res call({
- String id, String icon, String title, String detail
+ String id, String icon, String? title, String detail
 });
 
 
@@ -69,12 +69,12 @@ class _$ReviewCardRowCopyWithImpl<$Res>
 
 /// Create a copy of ReviewCardRow
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? icon = null,Object? title = null,Object? detail = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? icon = null,Object? title = freezed,Object? detail = null,}) {
   return _then(ReviewCardRow(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,detail: null == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
+as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,detail: null == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -157,7 +157,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String icon,  String title,  String detail)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String icon,  String? title,  String detail)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ReviewCardRow() when $default != null:
 return $default(_that.id,_that.icon,_that.title,_that.detail);case _:
@@ -178,7 +178,7 @@ return $default(_that.id,_that.icon,_that.title,_that.detail);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String icon,  String title,  String detail)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String icon,  String? title,  String detail)  $default,) {final _that = this;
 switch (_that) {
 case _ReviewCardRow():
 return $default(_that.id,_that.icon,_that.title,_that.detail);}
@@ -195,7 +195,7 @@ return $default(_that.id,_that.icon,_that.title,_that.detail);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String icon,  String title,  String detail)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String icon,  String? title,  String detail)?  $default,) {final _that = this;
 switch (_that) {
 case _ReviewCardRow() when $default != null:
 return $default(_that.id,_that.icon,_that.title,_that.detail);case _:
@@ -216,7 +216,7 @@ class _ReviewCardRow implements ReviewCardRow {
 @override final  String id;
 /// SF Symbol name.
 @override final  String icon;
-@override final  String title;
+@override final  String? title;
 @override final  String detail;
 
 /// Create a copy of ReviewCardRow
@@ -251,7 +251,7 @@ abstract mixin class _$ReviewCardRowCopyWith<$Res> implements $ReviewCardRowCopy
   factory _$ReviewCardRowCopyWith(_ReviewCardRow value, $Res Function(_ReviewCardRow) _then) = __$ReviewCardRowCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String icon, String title, String detail
+ String id, String icon, String? title, String detail
 });
 
 
@@ -268,12 +268,12 @@ class __$ReviewCardRowCopyWithImpl<$Res>
 
 /// Create a copy of ReviewCardRow
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? icon = null,Object? title = null,Object? detail = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? icon = null,Object? title = freezed,Object? detail = null,}) {
   return _then(_ReviewCardRow(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,detail: null == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
+as String,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,detail: null == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

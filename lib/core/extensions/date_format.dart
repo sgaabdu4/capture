@@ -15,9 +15,9 @@ extension DueDateFormat on DueDate {
       0 => l10n.dayToday,
       1 => l10n.dayTomorrow,
       -1 => l10n.dayYesterday,
-      > 1 && < _daysPerWeek => DateFormat.EEEE(l10n.localeName).format(date),
-      _ when year == today.year => DateFormat('d MMM', l10n.localeName).format(date),
-      _ => DateFormat('d MMM y', l10n.localeName).format(date),
+      > 1 && < _daysPerWeek => date.weekdayLabel(l10n),
+      _ when year == today.year => date.shortDayLabel(l10n),
+      _ => date.dayWithYearLabel(l10n),
     };
     return switch (timeLabel(l10n)) {
       final String time => l10n.dayWithTime(dayLabel, time),
@@ -33,10 +33,22 @@ extension DueDateFormat on DueDate {
   };
 
   String _clock(AppLocalizations l10n, int h, int m) =>
-      DateFormat.jm(l10n.localeName).format(.new(year, month, day, h, m));
+      DateTime(year, month, day, h, m).clockLabel(l10n);
 }
 
-extension DateTimeAgo on DateTime {
+extension DateTimeFormat on DateTime {
+  String weekdayLabel(AppLocalizations l10n) => DateFormat.EEEE(l10n.localeName).format(this);
+
+  String shortDayLabel(AppLocalizations l10n) => DateFormat('d MMM', l10n.localeName).format(this);
+
+  String dayWithYearLabel(AppLocalizations l10n) =>
+      DateFormat('d MMM y', l10n.localeName).format(this);
+
+  String clockLabel(AppLocalizations l10n) => DateFormat.jm(l10n.localeName).format(this);
+
+  /// One fixed English title for the persisted Notion capture page.
+  String get captureTitleLabel => DateFormat("'Capture' d MMM y, HH:mm", 'en').format(this);
+
   /// "Just now", "5 minutes ago", "2 hours ago", "Yesterday", "3 days ago".
   String agoLabel(AppLocalizations l10n, DateTime now) {
     final Duration(:inMinutes, :inHours, :inDays) = now.difference(this);

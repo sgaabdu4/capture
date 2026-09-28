@@ -1,4 +1,5 @@
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/line_button.dart';
@@ -53,10 +54,14 @@ class WhenRow extends StatelessWidget {
                 null => l10n.addDate,
               }, onPressed: enabled ? onPickDate : null),
               if (due case final DueDate d) ...[
-                LineButton(switch (d.timeLabel(l10n)) {
-                  final String time => time,
-                  null => l10n.addTime,
-                }, onPressed: enabled ? onPickTime : null),
+                LineButton(
+                  switch (d.timeLabel(l10n)) {
+                    final String time => time,
+                    null => l10n.addTime,
+                  },
+                  key: const ValueKey(AppWidgetKeys.whenTimeButton),
+                  onPressed: enabled ? onPickTime : null,
+                ),
                 Row(
                   mainAxisSize: .min,
                   children: [

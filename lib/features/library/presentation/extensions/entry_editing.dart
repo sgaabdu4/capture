@@ -4,7 +4,7 @@ import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
-import 'package:capture/features/library/presentation/widgets/entry_dialog.dart';
+import 'package:capture/features/library/presentation/screens/entry_dialog_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +17,7 @@ extension EntryEditing on WidgetRef {
     return showDialog<void>(
       context: context,
       routeSettings: const .new(name: _dialogRoute),
-      builder: (dialogContext) => EntryDialog(
+      builder: (dialogContext) => EntryDialogScreen(
         entry: entry,
         groups: read(groupsProvider).active,
         today: read(systemDatasourceProvider).nowUtc().toLocal(),

@@ -75,6 +75,14 @@ void main() {
     expect(card.blockedReason, equals('Needs a look: Choose a group'));
   });
 
+  test('an absent title stays absent and blocks approval with the existing reason', () {
+    final card = _record([_item('a').copyWith(title: null)]).reviewCard(l10n, groups);
+
+    expect(card.rows.single.title, isNull);
+    expect(card.canApprove, isFalse);
+    expect(card.blockedReason, equals(l10n.reviewNeedsLook(l10n.problemAddTitle)));
+  });
+
   test('a failed save is the reason shown on the card', () {
     final card = _record([_item('a')], failure: .notionAuth).reviewCard(l10n, groups);
 

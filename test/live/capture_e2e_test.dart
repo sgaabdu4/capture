@@ -71,12 +71,12 @@ const _pcmBytesPerSecond = 32000;
 
 /// Reminders the flow asked macOS to show.
 class _Reminders implements IReminderDatasource {
-  final titles = <String>[];
+  final titles = <String?>[];
 
   @override
   Future<bool> schedule({
     required String itemId,
-    required String title,
+    required String? title,
     required tz.TZDateTime at,
   }) async {
     titles.add(title);
@@ -278,7 +278,7 @@ void main() {
       expect(switch (found) {
         Ok(:final value) => value,
         Err() => null,
-      }, equals(capturePageId));
+      }, equals(capturePageId?.value));
 
       final again = await container
           .read(captureSaveRepositoryProvider)

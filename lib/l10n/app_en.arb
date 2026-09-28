@@ -133,6 +133,7 @@
   "noticeReviewLater": "Waiting for your review in Recordings.",
   "noticeSaved": "Saved to Notion.",
   "noticeSavedNotificationsOff": "Saved, but macOS notifications are off for Capture.",
+  "noticeRemindersNotScheduled": "Some reminders could not be scheduled. Capture will try again when it next opens.",
   "noticeNotionNotConnected": "Connect Notion in Settings to save.",
   "failureTranscription": "Transcription failed. Your recording is kept; try again.",
   "failureJevKey": "TypeSafe rejected the API key. Your capture is kept as one note to edit.",
@@ -361,6 +362,7 @@
   "emptyUpcoming": "Nothing scheduled.",
   "refresh": "Refresh",
   "syncRefreshing": "Refreshing from Notion…",
+  "libraryRefreshFailed": "Could not refresh the library. Your previous entries are still available; try again.",
   "syncNever": "From your last sync with Notion.",
   "syncedAgo": "Synced with Notion: {ago}.",
   "@syncedAgo": {

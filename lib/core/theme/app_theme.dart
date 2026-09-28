@@ -92,8 +92,8 @@ ThemeData buildAppTheme() => .new(
     // The default, displayLarge, is the hero wordmark and overflows the
     // picker's fixed fields.
     hourMinuteTextStyle: _textTheme.displayMedium,
-    // The default AM/PM uses the unset tertiary colours, grey on grey;
-    // selected matches the selected hour instead.
+    // The default AM/PM uses unset tertiary colours, grey on grey.
+    // Selected matches the selected hour instead.
     dayPeriodColor: WidgetStateColor.resolveWith(
       (s) => s.contains(WidgetState.selected) ? Palette.ink : Colors.transparent,
     ),

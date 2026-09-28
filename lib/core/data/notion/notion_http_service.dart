@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' show HttpHeaders, HttpStatus, SocketException;
 import 'dart:math';
 
 import 'package:capture/core/data/notion/notion_keys.dart';

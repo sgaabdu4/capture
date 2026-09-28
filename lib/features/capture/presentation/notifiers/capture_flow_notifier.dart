@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/data/system/zone_offsets.dart';
 import 'package:capture/core/domain/entities/notion_workspace.dart';
@@ -64,25 +65,25 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   void _onEvent(NativeEvent event) {
     switch (event) {
       case HotkeyPressed() || MenuCommand(action: .record):
-        unawaited(toggle());
+        unawaited(toggle().catchError(Crash.error));
       case RecordRequested():
-        unawaited(start());
+        unawaited(start().catchError(Crash.error));
       case StopRequested():
-        unawaited(stop());
+        unawaited(stop().catchError(Crash.error));
       case LimitReached():
-        unawaited(stop(notice: .limitReached));
+        unawaited(stop(notice: .limitReached).catchError(Crash.error));
       case RecordingFailed():
-        unawaited(stop(notice: .recordingInterrupted));
+        unawaited(stop(notice: .recordingInterrupted).catchError(Crash.error));
       case ReviewCardAction(:final action):
-        unawaited(onReviewAction(action));
+        unawaited(onReviewAction(action).catchError(Crash.error));
       case MenuCommand(action: .open):
-        unawaited(_ensureNative().showMainWindow());
+        unawaited(_ensureNative().showMainWindow().catchError(Crash.error));
       case MenuCommand(action: .settings):
-        unawaited(_open(.settings));
+        unawaited(_open(.settings).catchError(Crash.error));
       case MenuCommand(action: .upcoming):
-        unawaited(_open(.upcoming));
+        unawaited(_open(.upcoming).catchError(Crash.error));
       case MenuCommand(action: .recordings):
-        unawaited(_open(.recordings));
+        unawaited(_open(.recordings).catchError(Crash.error));
       // The shell's update link and the iPhone pill show these.
       case UpdateAvailable() || LevelChanged():
     }
@@ -130,10 +131,25 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   /// Schedules reminders a saved capture still owes, e.g. when the app quit
   /// before the notification prompt was answered.
   Future<void> resumeReminders() async {
-    for (final record in _ensureCaptures().all().where((r) => r.stage == .saved)) {
-      await _ensureSaver().scheduleReminders(record);
+    final captures = _ensureCaptures();
+    final saver = _ensureSaver();
+    var failed = false;
+    for (final record in captures.all().where((r) => r.stage == .saved)) {
+      try {
+        final outcome = await saver.scheduleReminders(record);
+        failed = failed || outcome.notificationsOff;
+      } on Exception catch (error, stackTrace) {
+        failed = true;
+        Crash.error(error, stackTrace);
+      }
+      if (!ref.mounted) return;
     }
-    if (ref.mounted) _reloadCaptures();
+    _reloadCaptures();
+    if (failed) {
+      _keepNotice(.remindersNotScheduled);
+    } else if (state.notice == .remindersNotScheduled) {
+      state = state.copyWith(notice: null);
+    }
   }
 
   /// Hotkey, menu and the Home mic button all land here.
@@ -277,18 +293,17 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   /// Jev failure never loses the capture: it becomes one editable note.
   Future<CaptureRecord> _analyse(CaptureRecord record) async {
     final CaptureRecord(:transcript, :capturedAtUtc, :timeZone, :copyWith) = record;
-    final text = transcript ?? '';
-    final groups = ref.read(groupsProvider).active;
-    if (text.trim().isEmpty) {
+    if (transcript == null || transcript.trim().isEmpty) {
       final empty = copyWith(stage: .proposed, items: const []);
       _put(empty);
       return empty;
     }
+    final groups = ref.read(groupsProvider).active;
     _enter(.analysing);
     final result = await ref
         .read(captureAnalysisRepositoryProvider)
         .analyze(
-          transcript: text,
+          transcript: transcript,
           groups: groups,
           moment: .new(capturedAtUtc: capturedAtUtc, offsetAt: zoneOffsets(timeZone.value)),
         );
@@ -298,7 +313,11 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
       Err(:final failure) => copyWith(
         stage: .proposed,
         items: [
-          manualProposal(wholeTranscript(text), groups, ref.read(systemDatasourceProvider).newId()),
+          manualProposal(
+            wholeTranscript(transcript),
+            groups,
+            ref.read(systemDatasourceProvider).newId(),
+          ),
         ],
         failure: _jevFailure(failure),
       ),
@@ -473,9 +492,13 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   /// Splits [item] before transcript offset [at].
   void split(String captureId, ProposalItem item, int at) {
-    if (_editable(captureId) case CaptureRecord(:final transcript, :final items, :final copyWith)) {
+    if (_editable(captureId) case CaptureRecord(
+      transcript: final String transcript,
+      :final items,
+      :final copyWith,
+    )) {
       final newId = ref.read(systemDatasourceProvider).newId();
-      if (splitItem(item, transcript ?? '', at, .new(newId)) case (:final left, :final right)) {
+      if (splitItem(item, transcript, at, .new(newId)) case (:final left, :final right)) {
         _put(
           copyWith(
             items: [

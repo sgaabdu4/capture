@@ -10,5 +10,6 @@ enum CaptureNotice {
   reviewLater,
   saved,
   savedNotificationsOff,
+  remindersNotScheduled,
   notionNotConnected,
 }

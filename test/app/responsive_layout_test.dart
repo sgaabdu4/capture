@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:capture/app/capture_app.dart';
+import 'package:capture/app/app_startup.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
@@ -101,7 +102,10 @@ Future<void> _launch(WidgetTester tester, Directory support, {required bool read
   final container = ProviderContainer.test(
     overrides: [
       ...appOverrides(support: support, native: stubNative()),
-      if (ready) settingsProvider.overrideWith(ReadySettings.new),
+      if (ready) ...[
+        settingsProvider.overrideWithBuild(readySettings),
+        appStartupProvider.overrideWith((ref) async {}),
+      ],
       groupsRepositoryProvider.overrideWithValue(SampleGroups()),
       libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
     ],

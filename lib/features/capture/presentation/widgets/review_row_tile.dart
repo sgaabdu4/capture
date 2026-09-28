@@ -3,7 +3,7 @@ import 'package:capture/core/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 /// One proposed item on the iPhone review card.
-typedef ReviewRowView = ({IconData icon, String title, String detail});
+typedef ReviewRowView = ({IconData icon, String? title, String detail});
 
 /// A proposed item's icon, title and detail, as `ReviewRowView` in
 /// `Overlay.swift`.
@@ -31,7 +31,8 @@ class ReviewRowTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                Text(row.title, maxLines: 2, style: OverlayTokens.rowTitle),
+                if (row.title case final String title)
+                  Text(title, maxLines: 2, style: OverlayTokens.rowTitle),
                 if (row.detail.isNotEmpty)
                   Text(
                     row.detail,

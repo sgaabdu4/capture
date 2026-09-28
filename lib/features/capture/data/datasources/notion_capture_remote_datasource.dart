@@ -5,6 +5,7 @@ import 'package:capture/core/data/notion/notion_schema.dart';
 import 'package:capture/core/data/notion/notion_shapes.dart';
 import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/domain/values/result.dart';
+import 'package:capture/core/extensions/date_format.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:http_parser/http_parser.dart';
@@ -89,7 +90,7 @@ class NotionCaptureRemoteDatasource implements INotionCaptureRemoteDatasource {
       },
       P.status: selectValue(NotionValues.incomplete),
     },
-    NotionKeys.children: transcriptBlocks(r.transcript ?? ''),
+    NotionKeys.children: transcriptBlocks(r.transcript),
   });
 
   @override
@@ -108,7 +109,7 @@ class NotionCaptureRemoteDatasource implements INotionCaptureRemoteDatasource {
       NotionKeys.dataSourceId: ws.library.value,
     },
     NotionKeys.properties: {
-      P.name: titleValue(item.title ?? ''),
+      P.name: titleValue(item.title),
       P.itemId: textValue(item.id.value),
       P.kind: selectValue(item.isTask ? NotionValues.task : NotionValues.note),
       P.group: relationValue([?item.groupId?.value]),
@@ -168,12 +169,13 @@ class NotionCaptureRemoteDatasource implements INotionCaptureRemoteDatasource {
 }
 
 /// "Capture 18 Sep 2026, 09:30" in the capture's own time zone.
-String captureTitle(CaptureRecord r) => captureTitleFormat.format(
-  tz.TZDateTime.from(r.capturedAtUtc, tz.getLocation(r.timeZone.value)),
-);
+String captureTitle(CaptureRecord r) =>
+    tz.TZDateTime.from(r.capturedAtUtc, tz.getLocation(r.timeZone.value)).captureTitleLabel;
 
-List<Json> transcriptBlocks(String transcript) =>
-    [block('heading_2', 'Transcript'), ...paragraphs(transcript)].take(maxChildren).toList();
+List<Json> transcriptBlocks(String? transcript) => [
+  block('heading_2', 'Transcript'),
+  if (transcript case final String text) ...paragraphs(text),
+].take(maxChildren).toList();
 
 List<Json> itemBlocks(ProposalItem item) => [
   if (item.body case final body?) ...paragraphs(body),

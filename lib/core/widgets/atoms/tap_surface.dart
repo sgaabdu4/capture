@@ -1,3 +1,4 @@
+import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/theme/radii.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ class TapSurface extends StatelessWidget {
     required this.child,
     required this.onTap,
     super.key,
-    this.color = Colors.transparent,
+    this.color = Palette.transparent,
     this.borderRadius = Radii.rounded10,
   });
 

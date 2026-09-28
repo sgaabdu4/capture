@@ -50,7 +50,8 @@ class GroupsNotifier extends _$GroupsNotifier {
 
   Future<void> update(Group group) async {
     final Group(:id, :name, :description) = group;
-    final GroupDraft draft = (name: name.value, description: description ?? '');
+    if (description == null) return;
+    final GroupDraft draft = (name: name.value, description: description);
     if (state.busy || groupProblem(draft, state.groups, editingId: id) != null) return;
     _markBusy();
     final result = await _ensureRepository().update(group);

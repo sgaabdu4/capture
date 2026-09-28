@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show FileSystemException, SocketException;
 
 import 'package:capture/core/data/notion/models/notion_workspace_model.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';

@@ -207,6 +207,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noticeSavedNotificationsOff => 'Saved, but macOS notifications are off for Capture.';
 
   @override
+  String get noticeRemindersNotScheduled =>
+      'Some reminders could not be scheduled. Capture will try again when it next opens.';
+
+  @override
   String get noticeNotionNotConnected => 'Connect Notion in Settings to save.';
 
   @override
@@ -703,6 +707,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncRefreshing => 'Refreshing from Notion…';
+
+  @override
+  String get libraryRefreshFailed =>
+      'Could not refresh the library. Your previous entries are still available; try again.';
 
   @override
   String get syncNever => 'From your last sync with Notion.';

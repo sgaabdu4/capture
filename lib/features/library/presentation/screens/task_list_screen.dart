@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
 import 'package:capture/core/widgets/page_frame.dart';
@@ -82,11 +84,16 @@ class TaskListScreen extends ConsumerWidget {
             ),
           for (final entry in entries)
             EntryRow(
+              key: ValueKey(AppWidgetKeys.libraryEntry(entry.itemId.value)),
               entry: entry,
               onOpen: () => unawaited(ref.editEntry(context, entry)),
               detail: entry.detail(l10n, today, groupById(entry.groupId)),
-              onChanged: (done) =>
-                  unawaited(ref.read(libraryProvider.notifier).setDone(entry, done: done)),
+              onChanged: (done) => unawaited(
+                ref
+                    .read(libraryProvider.notifier)
+                    .setDone(entry, done: done)
+                    .catchError(Crash.error),
+              ),
             ),
         ],
       ],

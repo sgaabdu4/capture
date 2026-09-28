@@ -46,6 +46,7 @@ void main() {
     );
 
     expect(entry.nextUpLine(l10n, .new(2026, 9, 18)), equals('Dentist · Tomorrow'));
+    expect(entry.copyWith(title: null).nextUpLine(l10n, .new(2026, 9, 18)), equals('Tomorrow'));
     expect(null.nextUpLine(l10n, .new(2026, 9, 18)), equals(l10n.menuNothingScheduled));
   });
 

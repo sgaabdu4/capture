@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
@@ -9,8 +10,8 @@ import 'package:flutter/material.dart';
 
 /// Saves the TypeSafe API key. The field is obscured and cleared once the
 /// key is stored; its text is never shown or logged.
-class TypesafeStep extends StatefulWidget {
-  const TypesafeStep({
+class TypesafeStepScreen extends StatefulWidget {
+  const TypesafeStepScreen({
     required this.hasKey,
     required this.saving,
     required this.error,
@@ -28,10 +29,10 @@ class TypesafeStep extends StatefulWidget {
   final Future<bool> Function(String key) onSave;
 
   @override
-  State<TypesafeStep> createState() => _TypesafeStepState();
+  State<TypesafeStepScreen> createState() => _TypesafeStepScreenState();
 }
 
-class _TypesafeStepState extends State<TypesafeStep> {
+class _TypesafeStepScreenState extends State<TypesafeStepScreen> {
   final _key = TextEditingController();
   bool _missing = false;
 
@@ -51,7 +52,7 @@ class _TypesafeStepState extends State<TypesafeStep> {
     if (saved) _key.clear();
   }
 
-  void _onSave() => unawaited(_save());
+  void _onSave() => unawaited(_save().catchError(Crash.error));
 
   @override
   Widget build(BuildContext context) {

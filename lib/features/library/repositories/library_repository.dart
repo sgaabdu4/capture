@@ -118,7 +118,7 @@ class LibraryRepository implements ILibraryRepository {
     if (at == null || !at.isAfter(_system.nowUtc())) return;
     await _reminders.schedule(
       itemId: entry.itemId.value,
-      title: entry.title ?? '',
+      title: entry.title,
       at: .from(at, tz.getLocation(timeZone)),
     );
   }

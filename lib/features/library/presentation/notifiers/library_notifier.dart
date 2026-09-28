@@ -1,3 +1,4 @@
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/domain/values/result.dart';
@@ -16,22 +17,34 @@ class LibraryNotifier extends _$LibraryNotifier {
 
   ILibraryRepository _ensureRepository() => ref.read(libraryRepositoryProvider);
 
-  void _markRefreshing() => state = state.copyWith(refreshing: true);
+  void _markRefreshing() => state = state.copyWith(refreshing: true, cacheRefreshFailed: false);
 
   Future<void> refresh() async {
     final ws = ref.read(settingsProvider).workspace;
     if (ws == null || state.refreshing) return;
+    final repository = _ensureRepository();
     _markRefreshing();
-    final result = await _ensureRepository().refresh(ws);
-    if (!ref.mounted) return;
-    state = switch (result) {
-      Ok(:final value) => state.copyWith(
+    try {
+      final result = await repository.refresh(ws);
+      if (!ref.mounted) return;
+      state = switch (result) {
+        Ok(:final value) => state.copyWith(
+          refreshing: false,
+          entries: value,
+          refreshedAtUtc: ref.read(systemDatasourceProvider).nowUtc(),
+        ),
+        Err(:final failure) => _failed(state.copyWith(refreshing: false), failure),
+      };
+    } on Exception catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+      if (!ref.mounted) return;
+      state = state.copyWith(
         refreshing: false,
-        entries: value,
-        refreshedAtUtc: ref.read(systemDatasourceProvider).nowUtc(),
-      ),
-      Err(:final failure) => _failed(state.copyWith(refreshing: false), failure),
-    };
+        cacheRefreshFailed: true,
+        failure: null,
+        failureSerial: state.failureSerial + 1,
+      );
+    }
   }
 
   Future<void> setDone(LibraryEntry entry, {required bool done}) async {
@@ -85,5 +98,5 @@ class LibraryNotifier extends _$LibraryNotifier {
   };
 
   static LibraryState _failed(LibraryState s, NotionFailure failure) =>
-      s.copyWith(failure: failure, failureSerial: s.failureSerial + 1);
+      s.copyWith(failure: failure, cacheRefreshFailed: false, failureSerial: s.failureSerial + 1);
 }
