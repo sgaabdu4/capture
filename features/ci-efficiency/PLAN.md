@@ -18,7 +18,7 @@ Authority: Autonomous — the user authorized released-source migration, pnpm wh
 
 ## Acceptance + steps
 
-- [ ] Released scaffold at `1a1f86094fb7ceb36fd7abb7a400d056354bc1f8` → supported updater succeeds; repeat changes nothing; repository CLAUDE aliases and retired tooling are absent while unique guidance remains.
+- [ ] Released scaffold at `d2085f745de39214aaaf6b34192378c9d1094a3d` → supported updater succeeds; repeat changes nothing; repository CLAUDE aliases and retired tooling are absent while unique guidance remains.
 - [ ] The release job starts only after the hard-eng job succeeds, without polling on a macOS runner. → native gates and workflow checks pass with the original assertions.
 - [ ] CI-only changes continue to build and publish no app; app-changing pull requests retain the DMG and public What's New checks. → existing native tests and configured checks pass.
 - [ ] Actual verification and runner timing → retain measured commands/results; make no unsupported percentage claim.
