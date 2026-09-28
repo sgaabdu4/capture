@@ -12,14 +12,14 @@ Owners: `.github/workflows/release.yml`, `.github/workflows/hard-eng.yml`, `hard
 
 ## Decisions + authorization
 
-Blockers: The prior released lint-profile migration reported 114 findings in existing app/test code. App repairs are prepared and independently reviewed; full candidate verification awaits the matching canonical lint release. The baseline repairs proceed under the Draft repair route.
+Blockers: The prior released lint-profile migration reported 114 findings in existing app/test code. App repairs are prepared and independently reviewed; the matching canonical lint is published and full candidate verification is next. The baseline repairs proceed under the Draft repair route.
 Handoff: Approval
 Authority: Autonomous — the user authorized released-source migration, pnpm wherever supported, Claude/Codex-only tooling, one combined pull request per repository, review, checks and merge.
 Expanded suites and lint profiles are required under the user's later explicit instruction; preserve the strict canonical profile while repairing meaningful findings.
 
 ## Acceptance + steps
 
-- [ ] Released scaffold at `96d5f9cbf00e0441e6225823f00d06990fa61068` → supported updater succeeds; repeat changes nothing; repository CLAUDE aliases and retired tooling are absent while unique guidance remains.
+- [ ] Released scaffold at `2e246601a5dab5148cd8c9b829acb416da869294` → supported updater succeeds; repeat changes nothing; repository CLAUDE aliases and retired tooling are absent while unique guidance remains.
 - [ ] The release job starts only after the hard-eng job succeeds, without polling on a macOS runner. → native gates and workflow checks pass with the original assertions.
 - [ ] CI-only changes continue to build and publish no app; app-changing pull requests retain the DMG and public What's New checks. → existing native tests and configured checks pass.
 - [ ] Actual verification and runner timing → retain measured commands/results; make no unsupported percentage claim.
