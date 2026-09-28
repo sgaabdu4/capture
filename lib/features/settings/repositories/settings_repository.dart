@@ -21,8 +21,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'settings_repository.g.dart';
 
-/// Credentials (Keychain only), the Notion connection, the shortcut,
-/// auto-save and the speech model.
+/// Credentials stay in Keychain; connection/settings metadata is cached separately.
 abstract interface class ISettingsRepository {
   Future<bool> hasTypesafeKey();
 
@@ -31,9 +30,7 @@ abstract interface class ISettingsRepository {
   Future<bool> hasNotionToken();
   NotionWorkspace? workspace();
 
-  /// Validates the token (the stored one when [token] is null), checks the
-  /// page is shared, finds or creates the Capture area and seeds groups.
-  /// The token is stored only after all of that works.
+  /// Store a token only after validation, shared-page checks, Capture setup and group seeding succeed.
   Future<NotionResult<NotionWorkspace>> connectNotion({
     required String parentPageId,
     String? token,
@@ -48,13 +45,10 @@ abstract interface class ISettingsRepository {
   bool isSpeechModelReady();
   Stream<SpeechModelEvent> downloadSpeechModel();
 
-  /// Forgets both keys, the Notion link, the shortcut, auto-save and every
-  /// local capture, recording and reminder. The speech model stays.
+  /// Reset local captures, reminders, credentials and settings while retaining the downloaded speech model.
   Future<void> reset();
 }
 
-/// The Notion connection: remote checks, the cached workspace and the
-/// groups seeded into it.
 typedef NotionConnectionSources = ({
   INotionWorkspaceRemoteDatasource remote,
   INotionWorkspaceLocalDatasource cache,
@@ -165,8 +159,7 @@ class SettingsRepository implements ISettingsRepository {
   @override
   bool isSpeechModelReady() => _speechModel.isReady();
 
-  /// Network and disk exceptions from the download end it as a failed
-  /// event; the next attempt resumes where it stopped.
+  /// Turn network/disk download exceptions into failed events so the next attempt can resume.
   @override
   Stream<SpeechModelEvent> downloadSpeechModel() async* {
     try {

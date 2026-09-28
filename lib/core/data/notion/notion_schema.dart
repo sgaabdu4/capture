@@ -1,7 +1,5 @@
 import 'package:capture/core/data/notion/notion_http_service.dart';
 
-/// The Notion structure Capture creates and reads: the marked "Capture"
-/// area page and its Groups, Captures and Library data sources.
 const areaTitle = 'Capture';
 const areaMarkerPrefix = 'Managed by the Capture app';
 const areaMarker =

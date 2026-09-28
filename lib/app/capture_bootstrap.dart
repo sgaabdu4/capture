@@ -22,10 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Root side effects that need localizations, above the router: the native
-/// overlay, review card and menu, navigation requested by the capture flow,
-/// the notification for an auto-saved capture, and snackbars for background
-/// Notion failures.
+/// Localized native overlay and navigation effects must remain above the router.
 class CaptureBootstrap extends ConsumerWidget {
   const CaptureBootstrap({required this.child, super.key});
 

@@ -21,10 +21,7 @@ part 'capture_save_repository.g.dart';
 /// Reminders that could be scheduled and whether macOS refused any.
 typedef ReminderOutcome = ({CaptureRecord record, bool notificationsOff});
 
-/// Saves an approved capture to Notion one confirmed step at a time:
-/// capture page → library items → audio → mark Saved. Each step's result is
-/// stored locally before the next begins, so a retry skips confirmed steps
-/// and never creates anything twice.
+/// Persist each confirmed Notion step before advancing so retries never repeat completed writes.
 abstract interface class ICaptureSaveRepository {
   Future<CaptureOutcome> save(CaptureRecord record, NotionWorkspace ws);
 
@@ -94,8 +91,7 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
     });
   }
 
-  /// Creates the next missing item page, stores it, then continues with the
-  /// rest, so a failure keeps every page already confirmed.
+  /// Persist each item page immediately so later failures retain every confirmed page.
   Future<CaptureOutcome> _itemPages(CaptureRecord r, NotionWorkspace ws, String pageId) async {
     final itemPages = r.progress.itemPages;
     final item = r.includedItems.where((i) => !itemPages.containsKey(i.id)).firstOrNull;

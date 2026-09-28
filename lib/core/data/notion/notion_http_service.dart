@@ -35,16 +35,13 @@ typedef NotionResult<T> = Result<T, NotionFailure>;
 
 final _random = Random();
 
-/// Notion API transport. Every call reads the Keychain token unless an
-/// explicit [token] is given (used to validate a new token before storing
-/// it). Status codes are classified once here.
+/// Explicit tokens validate new credentials without changing Keychain; never log request or response bodies.
 abstract interface class INotionHttpService {
   Future<NotionResult<Json>> get(String path, {String? token});
   Future<NotionResult<Json>> post(String path, Json body, {String? token});
   Future<NotionResult<Json>> patch(String path, Json body, {String? token});
 
-  /// Single-part upload (≤ 20 MiB): create, then send the bytes. Returns
-  /// the upload id.
+  /// Notion single-part uploads are limited to 20 MiB.
   Future<NotionResult<String>> uploadFile(
     List<int> bytes, {
     required String filename,
@@ -52,10 +49,7 @@ abstract interface class INotionHttpService {
   });
 }
 
-/// Retries 429/529 (honouring Retry-After) for every method and 5xx or
-/// transport failures only for GET, because a write may have landed.
-/// Never logs request or response bodies. Owns [_client]; call [close] when
-/// done.
+/// Only GET retries transport/5xx failures because writes may have landed; 429/529 honour Retry-After.
 class NotionHttpService implements INotionHttpService {
   NotionHttpService(this._secrets, {http.Client? client, Future<void> Function(Duration)? sleep})
     : _client = client ?? http.Client(),
@@ -79,6 +73,7 @@ class NotionHttpService implements INotionHttpService {
     HttpStatus.gatewayTimeout,
   };
 
+  /// Call close when finished because this service owns its HTTP client.
   void close() => _client.close();
 
   Future<NotionResult<Map<String, String>>> _headers(String? token) async =>

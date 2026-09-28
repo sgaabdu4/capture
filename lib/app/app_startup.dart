@@ -10,9 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_startup.g.dart';
 
-/// Once per launch: menu-bar item, saved settings and hotkey, crash
-/// recovery of unfinished recordings and owed reminders, an iPhone record
-/// request that launched the app, then a library sync when connected.
+/// Recovery and pending native requests complete before the connected library sync.
 @Riverpod(keepAlive: true)
 Future<void> appStartup(Ref ref) async {
   await ref.read(nativePlatformServiceProvider).installMenu();

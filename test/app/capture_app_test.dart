@@ -197,8 +197,7 @@ void main() {
     await _launch(tester, support: support, native: native);
 
     expect(find.text(_l10n.setupTitle), findsOneWidget);
-    // Real time, so the draft's folder is created on disk, until the
-    // recorder starts (at most 5 seconds, however slow the disk is).
+    // Use real time until the recorder starts so draft-folder disk creation can finish (at most five seconds).
     await tester.runAsync(() => tester.tap(find.byKey(const ValueKey(AppWidgetKeys.recordButton))));
     for (int waited = 0; !started && waited < 50; waited++) {
       await tester.runAsync(() => Future<void>.delayed(const .new(milliseconds: 100)));

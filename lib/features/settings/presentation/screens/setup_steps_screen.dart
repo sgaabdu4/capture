@@ -16,8 +16,6 @@ import 'package:capture/features/settings/presentation/screens/typesafe_step_scr
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Speech model, TypeSafe key and Notion steps, shared by the Home setup
-/// panel and Settings.
 class SetupStepsScreen extends ConsumerWidget {
   const SetupStepsScreen({super.key});
 

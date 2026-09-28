@@ -10,8 +10,7 @@ part 'recording_meter_notifier.g.dart';
 /// The iPhone pill's waveform bars (0 to 1, newest last) and timer.
 typedef RecordingMeter = ({List<double> levels, Duration elapsed});
 
-/// Follows the recorder's level events. A new recording (its time going
-/// back) starts from a silent waveform.
+/// A recording timestamp moving backwards resets the waveform to silence.
 @Riverpod(keepAlive: true)
 class RecordingMeterNotifier extends _$RecordingMeterNotifier {
   /// Bars in the waveform, as in the Mac overlay (`Overlay.swift`).
@@ -22,8 +21,7 @@ class RecordingMeterNotifier extends _$RecordingMeterNotifier {
     elapsed: Duration.zero,
   );
 
-  // The Mac overlay's curve: RMS (about 0.001 to 0.3) in dB, -50 to -10 dB
-  // mapped onto 0 to 1, so speech is visible.
+  // Match the Mac overlay: map RMS dB from -50..-10 onto 0..1 so speech is visible.
   static const _floorRms = 0.0001;
   static const _dbPerDecade = 20;
   static const _silentDb = 50;

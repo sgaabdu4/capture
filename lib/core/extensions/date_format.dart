@@ -6,8 +6,7 @@ const _daysPerWeek = 7;
 const _secondDigits = 2;
 
 extension DueDateFormat on DueDate {
-  /// Relative to [today] (a wall-clock date in the same zone): "Today 3:00 PM",
-  /// "Tomorrow", "Friday 10:00 AM", "21 Sep", "3 Jan 2027".
+  /// Interpret [today] as a wall-clock date in the same zone.
   String label(AppLocalizations l10n, DateTime today) {
     final date = DateTime.utc(year, month, day);
     final days = date.difference(.utc(today.year, today.month, today.day)).inDays;

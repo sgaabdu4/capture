@@ -8,8 +8,7 @@ import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter/material.dart';
 
-/// Saves the TypeSafe API key. The field is obscured and cleared once the
-/// key is stored; its text is never shown or logged.
+/// Obscure and clear the API key after storage; never show or log its text.
 class TypesafeStepScreen extends StatefulWidget {
   const TypesafeStepScreen({
     required this.hasKey,

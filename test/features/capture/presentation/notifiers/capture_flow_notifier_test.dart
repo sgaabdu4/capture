@@ -54,8 +54,7 @@ SettingsState _ready(Ref ref, SettingsNotifier notifier) => notifier.build().cop
   modelReady: true,
 );
 
-/// Notion confirms every step at once; reminders wait on [prompt], like an
-/// unanswered macOS notification prompt.
+/// Keep reminders waiting on [prompt] to reproduce an unanswered macOS notification prompt.
 class _Saver implements ICaptureSaveRepository {
   _Saver({this.failure});
 
@@ -82,8 +81,6 @@ class _Saver implements ICaptureSaveRepository {
 
 class _MockLibrary extends Mock implements ILibraryRepository {}
 
-/// The real flow and on-disk store, connected to Notion, with [saver]; with
-/// [native] as the Mac side and every setup step done when it is given.
 ProviderContainer _container(
   _Saver? saver, {
   INativePlatformService? native,
@@ -111,8 +108,7 @@ ProviderContainer _container(
   );
 }
 
-/// Completes once the flow reaches [phase]. A start writes its draft to disk,
-/// which draining the event queue does not wait for.
+/// Disk draft creation outlives event-queue draining, so wait for the actual phase.
 Future<void> _reach(ProviderContainer container, CapturePhase phase) async {
   final reached = Completer<void>();
   final subscription = container.listen(captureFlowProvider.select((state) => state.phase), (
@@ -476,8 +472,7 @@ void main() {
     when(() => native.events).thenAnswer((_) => events.stream);
     when(native.micPermission).thenAnswer((_) async => MicPermission.granted);
     when(() => native.startRecording(any(), limit: any(named: 'limit'))).thenAnswer((_) async {});
-    // The first stop answers once the recorder has finished; a later stop
-    // finds nothing to stop.
+    // The first stop waits for the recorder; a later stop must find nothing to stop.
     final firstStop = Completer<RecordingResult?>();
     final stops = [firstStop.future];
     when(native.stopRecording).thenAnswer((_) => stops.isEmpty ? .value(null) : stops.removeLast());

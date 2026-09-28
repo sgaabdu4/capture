@@ -20,9 +20,6 @@ import 'package:capture/features/settings/presentation/notifiers/settings_notifi
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Open tasks from the local Library mirror. To-do lists all of them and
-/// searches every saved note and task by title; Upcoming lists only dated
-/// ones under a heading per day, soonest first. Tapping an entry edits it.
 class TaskListScreen extends ConsumerWidget {
   const TaskListScreen.todo({super.key}) : _byDay = false;
   const TaskListScreen.upcoming({super.key}) : _byDay = true;

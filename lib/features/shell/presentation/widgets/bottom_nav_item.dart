@@ -6,8 +6,6 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
 import 'package:flutter/material.dart';
 
-/// One bottom-bar destination: icon over its label, highlighted like the
-/// selected sidebar item.
 class BottomNavItem extends StatelessWidget {
   const BottomNavItem({
     required this.icon,

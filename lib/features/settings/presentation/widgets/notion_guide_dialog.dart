@@ -6,8 +6,7 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:flutter/material.dart';
 
-/// Step-by-step pictures of creating the Notion connection and adding it to
-/// a page. Screenshots have names and the token masked out.
+/// Keep names and tokens masked in the setup screenshots.
 class NotionGuideDialog extends StatelessWidget {
   const NotionGuideDialog({required this.onClose, super.key});
 

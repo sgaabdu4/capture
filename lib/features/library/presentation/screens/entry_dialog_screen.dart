@@ -17,8 +17,6 @@ import 'package:flutter/material.dart';
 /// An edited entry and its new body, or null when the body is unchanged.
 typedef EntryEdit = ({LibraryEntry entry, String? body});
 
-/// Edits one saved note or task: title, details, group and, for a task, its
-/// date and reminder. Delete asks once more before calling [onDelete].
 class EntryDialogScreen extends StatefulWidget {
   const EntryDialogScreen({
     required this.entry,
@@ -95,8 +93,7 @@ class _EntryDialogScreenState extends State<EntryDialogScreen> {
 
   void _edit(LibraryEntry next) => setState(() => _entry = next);
 
-  /// Moves the date to [date]; an existing reminder follows when [date] has
-  /// a time.
+  /// An existing reminder follows the changed date only when the new date has a time.
   void _setWhen(DueDate date) => _edit(
     _entry.copyWith(due: date, reminder: _entry.reminder != null && date.hasTime ? date : null),
   );

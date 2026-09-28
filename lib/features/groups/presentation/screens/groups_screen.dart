@@ -20,9 +20,7 @@ import 'package:capture/features/settings/presentation/notifiers/settings_notifi
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Groups editor. Names and descriptions steer Jev's filing, so each group
-/// explains what belongs in it. Groups are archived, never deleted, so
-/// existing library relations stay valid.
+/// Group names and descriptions steer Jev's filing; archival preserves existing library relations.
 class GroupsScreen extends ConsumerWidget {
   const GroupsScreen({super.key});
 

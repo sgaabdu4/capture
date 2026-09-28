@@ -23,8 +23,6 @@ import 'package:capture/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Wordmark, the mic, and either first-run setup or the Today, Recent and
-/// Groups cards.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 

@@ -8,8 +8,7 @@ part 'library_state.freezed.dart';
 /// An open task with the date it is due or reminds.
 typedef DueEntry = ({LibraryEntry entry, DueDate due});
 
-/// Local mirror of the Notion Library for To-do and Upcoming. Notion is the
-/// source of truth; the cache keeps the views useful offline.
+/// Notion remains the source of truth; its local mirror keeps views useful offline.
 @freezed
 sealed class LibraryState with _$LibraryState {
   const LibraryState._();
@@ -30,8 +29,6 @@ sealed class LibraryState with _$LibraryState {
 
   bool get searching => query.trim().isNotEmpty;
 
-  /// Saved notes and tasks whose title contains [query], ignoring case,
-  /// newest first as Notion returns them.
   List<LibraryEntry> matches() {
     final needle = query.trim().toLowerCase();
     return [

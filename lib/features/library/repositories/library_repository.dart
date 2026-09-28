@@ -14,8 +14,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 part 'library_repository.g.dart';
 
-/// Saved notes and tasks. Notion is the source of truth; the local mirror
-/// keeps To-do and Upcoming useful offline.
+/// Notion remains the source of truth; the local mirror keeps To-do and Upcoming useful offline.
 abstract interface class ILibraryRepository {
   List<LibraryEntry> cached();
   Future<NotionResult<List<LibraryEntry>>> refresh(NotionWorkspace ws);
@@ -26,12 +25,10 @@ abstract interface class ILibraryRepository {
   /// The body text on the entry's Notion page.
   Future<NotionResult<String>> body(LibraryEntry entry);
 
-  /// Writes [entry] (and [body] when given) to Notion, then locally, and
-  /// reschedules its reminder in the Mac's current time zone.
+  /// Write to Notion before updating the mirror; reschedule reminders in the Mac's current time zone.
   Future<NotionResult<LibraryEntry>> update(LibraryEntry entry, {String? body});
 
-  /// Moves the entry's page to Notion's trash, drops it locally and cancels
-  /// its reminder.
+  /// Move the page to Notion trash, drop its local mirror and cancel its reminder.
   Future<NotionResult<void>> delete(LibraryEntry entry);
 }
 
@@ -45,8 +42,7 @@ class LibraryRepository implements ILibraryRepository {
   @override
   List<LibraryEntry> cached() => _entries(_local.all());
 
-  /// A page made directly in Notion has no Item ID, so Capture cannot track
-  /// it; it is skipped.
+  /// Skip pages made directly in Notion because they have no stable Capture Item ID.
   List<LibraryEntry> _entries(List<LibraryEntryModel> models) => [
     for (final m in models)
       if (m.itemId.trim().isNotEmpty) m.toEntity(),

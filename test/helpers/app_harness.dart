@@ -19,8 +19,7 @@ class _MockNative extends Mock implements INativePlatformService {}
 /// The approved reference window size.
 const referenceWindow = Size(1240, 860);
 
-/// The app's bundled fonts, so text lays out as it does in the app rather
-/// than in the wider test font.
+/// Load bundled fonts because the wider test font changes actual app text layout.
 const _fonts = {
   Fonts.title: 'assets/fonts/Caveat.ttf',
   Fonts.hand: 'assets/fonts/PatrickHand-Regular.ttf',
@@ -57,12 +56,9 @@ Future<void> loadAppFonts() async {
   }
 }
 
-/// Fakes that replace the defaults: a Keychain with keys, recorded
-/// reminders, or the iPhone.
 typedef AppFakes = ({FakeSecrets? secrets, IReminderDatasource? reminders, FakeSystem? system});
 
-/// Fake Keychain (empty by default), reminders, clock (the Mac by default)
-/// and native side, and a fresh on-disk database under [support].
+/// Use a fresh on-disk database and fake credentials, clock, reminders and native services.
 List<Override> appOverrides({
   required Directory support,
   required INativePlatformService native,

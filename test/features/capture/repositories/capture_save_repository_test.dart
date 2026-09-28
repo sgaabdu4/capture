@@ -70,9 +70,7 @@ final _record = CaptureRecord(
   items: [_dentist],
 );
 
-/// Schedules [_record]'s reminder; [stored] is whether the local store
-/// still holds it once the permission prompt is answered. Returns what was
-/// written to the store.
+/// Resolve permission after the local reminder may have been removed.
 Future<List<CaptureRecordModel>> _schedule({required bool stored}) async {
   final local = _MockLocal();
   final writes = <CaptureRecordModel>[];
@@ -101,9 +99,6 @@ final _workspace = NotionWorkspace(
 /// [_record] approved with a second item and no audio to upload.
 final _approved = _record.copyWith(stage: .approved, items: [_dentist, _tomatoes]);
 
-/// Notion with nothing saved yet, where creating [failingItem]'s page fails
-/// once and then works. Every page Notion is asked to make goes into
-/// [created].
 _MockRemote _notion({required String failingItem, required List<String> created}) {
   final remote = _MockRemote();
   bool failed = false;

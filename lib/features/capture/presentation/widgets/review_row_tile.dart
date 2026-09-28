@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 /// One proposed item on the iPhone review card.
 typedef ReviewRowView = ({IconData icon, String? title, String detail});
 
-/// A proposed item's icon, title and detail, as `ReviewRowView` in
-/// `Overlay.swift`.
+/// Keep the native ReviewRowView in Overlay.swift visually aligned.
 class ReviewRowTile extends StatelessWidget {
   const ReviewRowTile({required this.row, super.key});
 

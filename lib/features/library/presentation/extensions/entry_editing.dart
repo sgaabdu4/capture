@@ -29,8 +29,7 @@ extension EntryEditing on WidgetRef {
     );
   }
 
-  /// Closes the dialog while [change] reaches Notion; failures show as the
-  /// library's notice.
+  /// Close while the Notion change runs; failures surface through the library notice.
   void _close(BuildContext dialogContext, Future<void> change) {
     Navigator.of(dialogContext).pop();
     unawaited(change);

@@ -9,9 +9,7 @@ import 'package:capture/features/settings/presentation/widgets/step_header.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Shows the global shortcut and records a new one: a key with modifiers,
-/// or modifiers alone pressed together and released. Nothing changes until
-/// the recorded shortcut is saved.
+/// Modifiers alone are valid shortcuts; native changes wait until the recorded shortcut is saved.
 class ShortcutSectionScreen extends StatefulWidget {
   const ShortcutSectionScreen({
     required this.label,

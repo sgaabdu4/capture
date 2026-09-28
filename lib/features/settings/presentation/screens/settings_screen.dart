@@ -20,8 +20,6 @@ import 'package:capture/features/settings/presentation/screens/shortcut_section_
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Setup steps, shortcut (quick access on iPhone), microphone, auto-save,
-/// privacy and reset.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 

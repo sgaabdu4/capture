@@ -14,10 +14,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 part 'notion_capture_remote_datasource.g.dart';
 
-/// The individual, idempotent Notion writes of an approved save. Each
-/// `find*` looks up the stable Capture ID / Item ID so a retry after an
-/// unknown outcome (e.g. a timeout after the request was sent) never
-/// creates a second page.
+/// Look up stable Capture/Item IDs before writes so an unknown request outcome cannot create duplicates.
 abstract interface class INotionCaptureRemoteDatasource {
   Future<NotionResult<String?>> findCapturePage(NotionWorkspace ws, String captureId);
   Future<NotionResult<String>> createCapturePage(NotionWorkspace ws, CaptureRecord record);

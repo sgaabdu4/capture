@@ -9,8 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'groups_notifier.g.dart';
 
-/// Groups editor state. Groups are archived, never deleted, so existing
-/// library relations stay valid.
+/// Archive groups instead of deleting them so existing library relations stay valid.
 @Riverpod(keepAlive: true)
 class GroupsNotifier extends _$GroupsNotifier {
   @override

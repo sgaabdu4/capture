@@ -1,5 +1,3 @@
-/// Stable selectors for widget and E2E tests. Widgets use
-/// `ValueKey(AppWidgetKeys.x)`.
 abstract final class AppWidgetKeys {
   // Shell
   static const navHome = 'shell.nav.home';

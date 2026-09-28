@@ -13,8 +13,6 @@ import 'package:capture/features/capture/presentation/widgets/delete_capture_dia
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Every capture, newest first, with its true state and the one action that
-/// moves it on.
 class RecordingsScreen extends ConsumerWidget {
   const RecordingsScreen({super.key});
 

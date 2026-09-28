@@ -34,11 +34,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'capture_flow_notifier.g.dart';
 
-/// The capture state machine. Every milestone is persisted before the next
-/// step (see [CaptureStage]); approval, by the user or by auto-save, is the
-/// only path to Notion and to reminders. Native events (hotkey, pill, review
-/// card, menu, iPhone record requests) land here. Recording needs only the
-/// microphone; a capture made before setup waits, recorded, for a Retry.
+/// Persist milestones before advancing; approval is the only path to Notion writes and reminders.
 @Riverpod(keepAlive: true)
 class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   @override
@@ -54,12 +50,10 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   ICaptureSaveRepository _ensureSaver() => ref.read(captureSaveRepositoryProvider);
 
-  /// Set from a start's first line until the recorder has answered, so two
-  /// overlapping starts cannot create two drafts.
+  /// Guard through the recorder's answer so overlapping starts cannot create two drafts.
   bool _starting = false;
 
-  /// Set while a stop runs, so a second stop (an interruption or the limit
-  /// landing at the same moment) cannot drop the capture being processed.
+  /// Guard interruption/limit overlap so a second stop cannot drop the capture being processed.
   bool _stopping = false;
 
   void _onEvent(NativeEvent event) {
@@ -111,8 +105,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   void _idle({CaptureNotice? notice, CaptureFailure? failure}) =>
       state = state.copyWith(phase: .idle, activeId: null, notice: notice, failure: failure);
 
-  /// Settings' reset, then every list reread from the emptied disk. Ignored
-  /// while a capture is in progress.
+  /// Ignore reset while a capture is in progress; otherwise reread every list from the emptied disk.
   Future<void> startOver() async {
     if (state.busyWith) return;
     await ref.read(settingsProvider.notifier).reset();
@@ -128,8 +121,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     _reloadCaptures();
   }
 
-  /// Schedules reminders a saved capture still owes, e.g. when the app quit
-  /// before the notification prompt was answered.
+  /// An unanswered notification prompt can leave a saved capture owing reminders after relaunch.
   Future<void> resumeReminders() async {
     final captures = _ensureCaptures();
     final saver = _ensureSaver();
@@ -159,14 +151,11 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     if (state case CaptureFlowState(phase: .review, activeId: final String id)) showReview(id);
   }
 
-  /// A "Record with Capture" request that arrived before Dart was listening
-  /// (iPhone cold launch). Called once at startup, after recovery.
+  /// Recover the iPhone cold-launch record request once, after startup recovery.
   Future<void> takePendingRequest() async {
     if (await _ensureNative().takeRecordRequest()) await start();
   }
 
-  /// Starts only when nothing is in progress, so a second "Record with
-  /// Capture" during a capture leaves it as it is.
   Future<void> start() async {
     if (_starting || state.phase != .idle) return;
     _starting = true;
@@ -240,9 +229,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   void _keepNotice(CaptureNotice? notice) => state = state.copyWith(notice: notice);
 
-  /// Runs the pipeline from wherever [id] stopped. Safe to call again after
-  /// a failure or a relaunch. Before setup is finished a recorded capture
-  /// stays as it is.
+  /// A recorded capture waits for setup, then resumes from its last persisted milestone.
   Future<void> process(String id) async {
     final record = _ensureCaptures().get(id);
     if (record == null) return;
@@ -259,10 +246,6 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     if (proposed.stage == .approved) await approve(id);
   }
 
-  /// With auto-save on, approves and saves a proposal the card would have
-  /// nothing to ask about. False when the card is still needed: auto-save
-  /// is off, Notion is not connected, Jev failed, nothing was heard or an
-  /// item blocks approval.
   Future<bool> _autoSave(CaptureRecord record) async {
     final SettingsState(:autoSave, :workspace, :hasNotionToken) = ref.read(settingsProvider);
     if (!autoSave || workspace == null || !hasNotionToken || record.failure != null) {
@@ -384,8 +367,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     await _save(approved, ws, fromCard: state.phase == .review);
   }
 
-  /// Marks a proposal approved (persisted before any Notion call), or
-  /// returns an already-approved capture; null when approval is blocked.
+  /// Persist approval before any Notion call; blocked proposals cannot enter the save pipeline.
   CaptureRecord? _approved(CaptureRecord r) {
     if (r.stage == .approved) return r;
     final blocked = r.items.any((i) => i.approvalProblems.isNotEmpty);
@@ -422,8 +404,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   void _enterSaving(String id) =>
       state = state.copyWith(phase: .saving, activeId: id, failure: null);
 
-  /// Saved once every Notion step is confirmed. Reminders follow without
-  /// holding the save open: the first one waits on the macOS permission prompt.
+  /// Finish saving before waiting on the macOS notification prompt, which may remain unanswered.
   Future<void> _finish(CaptureRecord record, {required bool auto}) async {
     final saved = record.copyWith(stage: .saved, failure: null);
     _put(saved);
@@ -436,8 +417,7 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
     if (reminders.notificationsOff && state.notice == .saved) _keepNotice(.savedNotificationsOff);
   }
 
-  /// Removes audio and draft from this Mac. An approved capture mid-save is
-  /// kept so the retry cannot duplicate.
+  /// Keep an approved capture mid-save so deleting its checkpoint cannot create duplicates on retry.
   Future<void> delete(String id) async {
     final captures = _ensureCaptures();
     final r = captures.get(id);

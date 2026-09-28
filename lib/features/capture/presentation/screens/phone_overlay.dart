@@ -11,9 +11,6 @@ import 'package:capture/features/capture/presentation/widgets/working_pill.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// On iPhone, what the Mac shows in its floating overlay: the recording
-/// pill, the working pill, or the review card over its pill, just above the
-/// bottom bar. Nothing while idle.
 class PhoneOverlay extends ConsumerWidget {
   const PhoneOverlay({super.key});
 

@@ -42,8 +42,7 @@ Json relationValue(Iterable<String> ids) => {
   ],
 };
 
-/// A date property. Timed values carry the capture's IANA zone so Notion
-/// shows the wall time the user meant.
+/// Timed dates carry the capture's IANA zone so Notion shows the intended wall time.
 Json dateValue(DueDate? date, String timeZone) => {
   NotionKeys.date: switch (date) {
     final DueDate d => {NotionKeys.start: d.iso, if (d.hasTime) NotionKeys.timeZone: timeZone},
@@ -119,8 +118,7 @@ List<Object?> propFiles(Json page, String name) => switch (_prop(page, name)) {
 
 final _datePattern = RegExp(r'^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?');
 
-/// Reads a Notion date start (`2026-09-19` or `2026-09-19T14:00:00.000+01:00`)
-/// as the wall-clock date it names.
+/// Read the named wall-clock date without converting the Notion timestamp to another zone.
 DueDate? propDate(Json page, String name) => switch (_prop(page, name)) {
   {'date': {'start': final String start}} => _wallDate(start),
   _ => null,
@@ -154,9 +152,7 @@ final _hexId = RegExp(r'([0-9a-fA-F]{32})$');
 /// Group boundaries of a canonical UUID, as offsets into its 32 hex digits.
 const _uuidBounds = [0, 8, 12, 16, 20, 32];
 
-/// Accepts a Notion page URL or id and returns the dashed id. For URLs the
-/// id is the trailing 32 hex characters of the last path segment (query
-/// strings such as `?v=` view ids are ignored).
+/// A URL's page ID is the last path segment's trailing 32 hex characters, never its query view ID.
 String? parseNotionId(String input) {
   final trimmed = input.trim();
   final segment = switch (Uri.tryParse(trimmed)) {

@@ -21,8 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-/// Focused editor for one proposal. Edits are stored locally as you go;
-/// nothing reaches Notion until "Save to Notion".
+/// Edits stay local until the user approves Save to Notion.
 class EditorScreen extends ConsumerWidget {
   const EditorScreen({required this.captureId, super.key});
 

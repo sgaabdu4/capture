@@ -12,8 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'test_fakes.dart';
 
-/// A fully set-up, synthetic workspace: keys saved, Notion connected, model
-/// downloaded, with a few groups, saved entries and captures.
+/// All sample credentials and workspace content are synthetic.
 final sampleWorkspace = NotionWorkspace(
   parentPageId: .new('parent'),
   areaPageId: .new('area'),

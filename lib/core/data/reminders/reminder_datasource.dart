@@ -4,8 +4,6 @@ import 'package:timezone/timezone.dart' as tz;
 
 part 'reminder_datasource.g.dart';
 
-/// Mac and iPhone notifications for approved, saved tasks, and for captures saved
-/// without the review card.
 abstract interface class IReminderDatasource {
   /// False when notifications are not permitted.
   Future<bool> schedule({

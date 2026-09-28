@@ -1,18 +1,4 @@
-// Opt-in live end-to-end run: shortcut → record → local Parakeet transcript
-// → live Jev sorting → review card, nothing in Notion yet → Yes, save →
-// Notion (capture, items, audio) → reminder, then a re-save with lost local progress that must find the same
-// Notion pages instead of creating new ones. Skipped unless E2E_LIVE=1.
-//
-//   E2E_LIVE=1 TYPESAFE_API_KEY=… NOTION_TOKEN=… NOTION_PAGE=<test page link> \
-//     flutter test test/live/capture_e2e_test.dart
-//
-// Uses your own keys and only the dedicated test page in NOTION_PAGE; each
-// run adds one capture (a dentist task and a garden idea) with its items and
-// audio there. The speech is
-// synthetic (macOS `say`), and the microphone, overlay and notification
-// centre are stand-ins: the recorder writes that speech and reminders are
-// recorded instead of shown. PARAKEET_DIR defaults to the app's downloaded
-// model.
+// Live writes require the dedicated test page; see README Development for setup and stand-in limits.
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -97,8 +83,7 @@ String _required(String name) => switch (_env[name]) {
   _ => fail('Set $name for E2E_LIVE=1.'),
 };
 
-/// sherpa-onnx finds its C library in the app bundle; under `flutter test`
-/// it has to be loaded from the plugin package first.
+/// Under flutter test, load sherpa-onnx from its plugin package because no app-bundle C library exists.
 void _loadSherpa() {
   final config = File('.dart_tool/package_config.json').readAsStringSync();
   final packages = switch (jsonDecode(config)) {
@@ -128,8 +113,7 @@ Future<_Speech> _synthesize(Directory dir) async {
   return (wav: wav, pcm: bytes.sublist(data + _chunkHeader));
 }
 
-/// The native side as the app sees it: the recorder writes [pcm], the
-/// encoder is macOS `afconvert`, and [events] carries the shortcut.
+/// Use real macOS afconvert while supplying synthetic PCM and native shortcut events.
 INativePlatformService _native(StreamController<NativeEvent> events, _Speech speech) {
   final native = stubNative();
   final (:wav, :pcm) = speech;
@@ -167,8 +151,7 @@ INativePlatformService _native(StreamController<NativeEvent> events, _Speech spe
   return native;
 }
 
-/// The real app wiring on a fresh store under [support], with live Jev and
-/// Notion and the stand-ins above.
+/// Keep Jev and Notion live; native recording and notification edges are stand-ins.
 ProviderContainer _container(
   Directory support, {
   INativePlatformService? native,

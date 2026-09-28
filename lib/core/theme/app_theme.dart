@@ -6,11 +6,6 @@ import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:flutter/material.dart';
 
-/// Handwritten type scale from the references:
-/// displayLarge = hero wordmark, displayMedium = page title,
-/// headlineLarge = sidebar wordmark, headlineSmall = sidebar motto,
-/// titleLarge = tagline, titleMedium = card title, bodyLarge = large body,
-/// bodyMedium = body, labelLarge = label, bodySmall = small print.
 const _textTheme = TextTheme(
   displayLarge: .new(
     fontFamily: Fonts.title,
@@ -89,11 +84,9 @@ ThemeData buildAppTheme() => .new(
     linearMinHeight: Sizes.progressBar,
   ),
   timePickerTheme: .new(
-    // The default, displayLarge, is the hero wordmark and overflows the
-    // picker's fixed fields.
+    // The default hero wordmark style overflows the picker's fixed fields.
     hourMinuteTextStyle: _textTheme.displayMedium,
-    // The default AM/PM uses unset tertiary colours, grey on grey.
-    // Selected matches the selected hour instead.
+    // Match the selected hour colours because default AM/PM tertiary colours render grey on grey.
     dayPeriodColor: WidgetStateColor.resolveWith(
       (s) => s.contains(WidgetState.selected) ? Palette.ink : Colors.transparent,
     ),

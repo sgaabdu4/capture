@@ -45,10 +45,7 @@ final Set<String> _transcriptWords = {
     for (final span in item.sources) ...span.excerpt.value.split(' '),
 };
 
-/// Flutter's text contrast check, minus the review card's transcript words.
-/// Each word is its own tappable node, and a one-glyph word such as "9" has
-/// too few pixels to measure: Linux's lighter anti-aliasing reads its muted
-/// colour (5.2:1) as 2.14:1. Their colour is checked directly instead.
+/// One-glyph transcript nodes lack measurable pixels under Linux anti-aliasing; check their colours directly.
 class _TextContrast extends MinimumTextContrastGuideline {
   const _TextContrast();
 
@@ -94,8 +91,6 @@ Future<void> _tap(WidgetTester tester, Finder target) async {
   await _settle(tester);
 }
 
-/// The app at the widest size; [ready] adds keys, Notion, the model and
-/// sample groups, entries and captures.
 Future<void> _launch(WidgetTester tester, Directory support, {required bool ready}) async {
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);

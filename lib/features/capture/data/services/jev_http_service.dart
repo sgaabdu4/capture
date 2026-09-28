@@ -13,8 +13,7 @@ part 'jev_http_service.g.dart';
 /// A successful TypeSafe response: the decoded JSON body and the request id.
 typedef JevHttpReply = ({Object? json, String? requestId});
 
-/// Transport for the TypeSafe API (`https://api.typesafe.ai`). Classifies
-/// statuses into [JevFailure]s; never logs request or response bodies.
+/// Classify TypeSafe failures here without logging request or response bodies.
 abstract interface class IJevHttpService {
   Future<JevOutcome<JevHttpReply>> get(String path, {required String apiKey});
   Future<JevOutcome<JevHttpReply>> post(String path, String body, {required String apiKey});
@@ -23,9 +22,7 @@ abstract interface class IJevHttpService {
 /// Backoff jitter.
 final _random = Random();
 
-/// Bearer auth; retries are bounded (2 retries, 0.5 s doubling backoff
-/// capped at 5 s, honours Retry-After up to 60 s) and only for
-/// 408/429/5xx/529 and transport errors. Owns [_client]; call [close].
+/// Retry transient failures at most twice with bounded backoff/Retry-After; close the owned client.
 class JevHttpService implements IJevHttpService {
   JevHttpService({http.Client? client, this.maxRetries = 2, Future<void> Function(Duration)? sleep})
     : _client = client ?? http.Client(),

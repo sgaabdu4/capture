@@ -12,9 +12,7 @@ import 'package:flutter/material.dart';
 /// Completes with true once Notion is connected.
 typedef NotionConnect = Future<bool> Function({required String token, required String pageLink});
 
-/// Connects Notion with an internal connection token and a shared page. The
-/// token field is obscured and cleared once connected; its text is never
-/// shown or logged.
+/// Obscure and clear the connection token after storage; never show or log its text.
 class NotionStepScreen extends StatefulWidget {
   const NotionStepScreen({
     required this.connected,

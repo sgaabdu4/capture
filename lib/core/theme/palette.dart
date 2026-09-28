@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Colours measured from the approved references (docs/design/reference).
-/// Keep in sync with the native overlay's `Theme.swift`.
+/// Keep approved reference colours in sync with the native overlay's Theme.swift.
 abstract final class Palette {
   static const transparent = Colors.transparent;
   static const paper = Color(0xFFFBF9F3);

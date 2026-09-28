@@ -20,8 +20,6 @@ import '../../../helpers/app_harness.dart';
 import '../../../helpers/sample_workspace.dart';
 import '../../../helpers/test_fakes.dart';
 
-/// Notion's Library: [failure] makes every write fail; otherwise writes land
-/// in [pages] and the page body is [bodyText].
 class _Notion implements ILibraryRemoteDatasource {
   _Notion({this.failure});
   final NotionFailure? failure;

@@ -4,8 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'save_progress.freezed.dart';
 
-/// Which Notion save steps are confirmed. Retries skip confirmed steps and
-/// look up by stable IDs before creating anything, so nothing duplicates.
+/// Retries skip confirmed steps and look up stable IDs before creating anything.
 @freezed
 sealed class SaveProgress with _$SaveProgress {
   const factory SaveProgress({
