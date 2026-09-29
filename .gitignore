@@ -49,9 +49,8 @@ app.*.map.json
 .git/
 __pycache__/
 .hard-eng/
-.codebase-memory/
-.context-mode/
 coverage/
 .coverage
 .coverage.*
 test/eval/recorded/pending.b64
+.claude/worktrees/

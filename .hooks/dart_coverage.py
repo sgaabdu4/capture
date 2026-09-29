@@ -27,8 +27,19 @@ bool erased(CompilationUnitMember node) {
   }
   if (node is EnumDeclaration) {
     return node.withClause == null && node.implementsClause == null &&
-        !descendants(node).any((child) => child is ClassMember ||
-            child is ArgumentList || child is FormalParameterList);
+        node.body.members.every(erasedEnumMember);
+  }
+  return false;
+}
+
+// Enum values are const, so their constructors and final fields emit no counters.
+bool erasedEnumMember(ClassMember member) {
+  if (member is FieldDeclaration) {
+    return member.isStatic ? member.fields.isConst : member.fields.isFinal;
+  }
+  if (member is ConstructorDeclaration) {
+    return member.constKeyword != null && member.factoryKeyword == null &&
+        member.body is EmptyFunctionBody;
   }
   return false;
 }
@@ -71,14 +82,15 @@ def erased_dart(files: set[Path], directory: Path) -> set[Path]:
     with tempfile.TemporaryDirectory(prefix="hard-eng-dart-parser-") as temporary:
         script = Path(temporary) / "classify.dart"
         script.write_text(PARSER)
+        packages = f"--packages={registry.resolve()}"
         try:
             result = subprocess.run(
-                ["dart", f"--packages={registry.resolve()}", str(script)],
+                ["dart", packages, str(script)],
                 input=json.dumps([file.read_text() for file in candidates]) + "\n",
                 text=True,
                 capture_output=True,
                 check=True,
-                timeout=60,
+                timeout=300,
             )
             outputs = json.loads(result.stdout)
         except (OSError, subprocess.SubprocessError, ValueError):

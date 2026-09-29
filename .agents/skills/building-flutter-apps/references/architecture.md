@@ -29,7 +29,7 @@ HTTP service internals are covered at boundary level in
 ## Scale Rules
 
 - Small feature: one `widgets/` dir. Promote to atomic hierarchy when widgets span 2+ features.
-- Default providers: `@riverpod`. Use `keepAlive: true` only for repos, app-wide services, nav-surviving notifiers.
+- Default providers: `@riverpod`. Use `keepAlive: true` for repos, datasources, app-wide services, and feature notifiers ([riverpod-codegen.md](riverpod-codegen.md#keepalive-providers-long-lived)).
 - Define interfaces for repos/datasources in multi-feature code.
 
 ## Rules — NEVER Violate
@@ -43,7 +43,7 @@ HTTP service internals are covered at boundary level in
 7. **MUST** put feature widgets in `features/x/presentation/widgets/` — shared in `core/widgets/`.
 8. **MUST** keep persistence in data/repository layers by default (e.g. local datasource + repository).
 9. **MUST NEVER** run repository persistence and notifier persistence as dual SSOT for same state.
-10. **MUST NEVER** call a storage SDK (Hive, SharedPreferences, secure_storage, `dart:io`, `path_provider`) from a notifier, widget, or service. Storage lives in `Local<X>Datasource` only, exposed via `<X>Repository`. Imports of `package:hive_ce`, `package:hive_ce_flutter`, `package:shared_preferences`, `package:flutter_secure_storage`, `package:path_provider`, or `dart:io` are forbidden in `presentation/`, `*_notifier.dart`, `*_service.dart`, and `*_repository.dart` files. See [hive-persistence.md](hive-persistence.md).
+10. **MUST NEVER** call a storage SDK (Hive, SharedPreferences, secure_storage, `dart:io`, `path_provider`) from a notifier, widget, or service. Storage lives in `Local<X>Datasource` only, exposed via `<X>Repository`. Imports of `package:hive_ce`, `package:hive_ce_flutter`, `package:shared_preferences`, `package:flutter_secure_storage`, `package:path_provider`, or `dart:io` are forbidden in `presentation/`, `*_notifier.dart`, `*_service.dart`, and `*_repository.dart` files. Exception: one `dart:io` `show` combinator limited to `HttpHeaders`, `HttpStatus`, `SocketException` and `FileSystemException` may supply HTTP constants or boundary exception mapping; it exposes no I/O operations. Broad, `hide` or additional-symbol imports stay forbidden. See [hive-persistence.md](hive-persistence.md) and [exception ownership](state-management-lifecycle.md#exception-ownership).
 11. **MUST** bind providers in screens/subscreens, map domain state to immutable view data, and pass typed callbacks to reusable widgets. Widget dependencies MUST NOT include providers, notifiers, repositories, datasources, services, or routes. See [presentation-widgets.md](presentation-widgets.md).
 12. **MUST** keep typed GoRouter routes as the navigation SSOT. Route definitions live in the router package boundary, and app code navigates with generated route helpers such as `SomeRoute(...).go(context)` / `.push<T>(context)`. Local sheets/dialogs use local semantic helpers and `Navigator.pop` for dismissal.
 
@@ -64,6 +64,11 @@ lib/
 ├── core/
 │   ├── config/
 │   │   └── app_config.dart              # Environment variables, API URLs
+│   ├── constants/
+│   │   ├── api_paths.dart               # ApiPaths — request paths
+│   │   └── storage_keys.dart            # StorageKeys — persisted/storage keys
+│   ├── data/
+│   │   └── app_error_mapper.dart        # Exception → AppError mapping
 │   ├── domain/
 │   │   └── errors/
 │   │       └── app_error.dart           # Shared error types
@@ -84,8 +89,11 @@ lib/
 │   │   ├── http_service.dart            # HTTP client wrapper
 │   │   ├── storage_service.dart         # Local persistence
 │   │   └── database_service.dart
+│   ├── testing/
+│   │   └── app_widget_keys.dart         # AppWidgetKeys — widget/E2E keys
 │   ├── theme/
 │   │   ├── app_colors.dart
+│   │   ├── breakpoints.dart             # Window-size-class widths
 │   │   ├── spacing.dart                 # Spacing constants
 │   │   ├── radii.dart                   # BorderRadius constants
 │   │   └── icon_sizes.dart
@@ -149,6 +157,25 @@ lib/
 │           └── widgets/
 │               └── home_section.dart
 └── main.dart
+```
+
+### Key Registries
+
+**Rule.** Persisted/storage keys and API paths are contracts. Define each once in `lib/core/constants/`, never as inline strings or local `static const` in notifiers, repositories, or datasources. Widget/E2E keys follow the same rule in `AppWidgetKeys` ([testing.md](testing.md#widget-key-registry)).
+
+```dart
+// lib/core/constants/storage_keys.dart
+abstract final class StorageKeys {
+  static const todos = 'todos';
+  static const syncDateExercises = 'sync_date_exercises';
+}
+```
+
+```dart
+// lib/core/constants/api_paths.dart
+abstract final class ApiPaths {
+  static const products = '/products';
+}
 ```
 
 ## Layer Responsibilities
@@ -218,7 +245,7 @@ sealed class ProductModel with _$ProductModel {
   Product toEntity() => Product(
         id: ProductId(id),
         name: DisplayName(name),
-        price: Money.usd(price),
+        price: .usd(price),
         quantity: quantity,
         isActive: isActive,
       );
@@ -226,8 +253,8 @@ sealed class ProductModel with _$ProductModel {
   /// Map to API request body with only name (for example)
   Map<String, dynamic> toNameOnlyRequestBody() => {
         'id': id,
-        'name': name
-  }
+        'name': name,
+      };
 }
 ```
 
@@ -252,21 +279,25 @@ class ProductRemoteDatasource implements IProductRemoteDatasource {
 
   @override
   Future<List<ProductModel>> fetchAll() async {
-    final response = await _http.get('/products');
-    return (response as List<Object?>)
-        .map((json) => ProductModel.fromJson(json as Map<String, dynamic>))
-        .toList();
+    final response = await _http.get(ApiPaths.products);
+    return switch (response) {
+      List<Object?> items => [
+          for (final item in items)
+            ProductModel.fromJson(item as Map<String, dynamic>),
+        ],
+      _ => throw const FormatException('Expected product list payload'),
+    };
   }
 
   @override
   Future<ProductModel> fetchById(String id) async {
-    final json = await _http.get('/products/$id');
-    return ProductModel.fromJson(json as Map<String, dynamic>);
+    final json = await _http.get('${ApiPaths.products}/$id');
+    return .fromJson(json as Map<String, dynamic>);
   }
 
   @override
   Future<void> create(ProductModel model) async {
-    await _http.post('/products', body: model.toJson());
+    await _http.post(ApiPaths.products, body: model.toJson());
   }
 }
 ```
@@ -341,7 +372,7 @@ sealed class ProductState with _$ProductState {
 class ProductNotifier extends _$ProductNotifier {
   @override
   ProductState build() {
-    Future.microtask(_load); // Defer — see "Sync Notifier Initialization Trap"
+    unawaited(.microtask(_load)); // Defer — see notifier-structure.md "Sync notifier init trap"
     return const ProductState(isLoading: true);
   }
 
@@ -375,7 +406,10 @@ class ProductListScreen extends ConsumerWidget {
     );
   }
 }
+```
 
+```dart
+// features/products/presentation/widgets/product_list_view.dart
 class ProductListView extends StatelessWidget {
   const ProductListView({
     required this.items,
@@ -388,7 +422,6 @@ class ProductListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (context, index) => ProductCard(
@@ -435,8 +468,9 @@ NEVER hardcode spacing, colors, radii, icon sizes. See [atomic-design.md](atomic
 
 ```dart
 // Usage
+final l10n = context.l10n;
 Padding(padding: const EdgeInsets.all(Spacing.s16))
-Text('Title', style: Theme.of(context).textTheme.titleMedium)
+Text(l10n.productsTitle, style: Theme.of(context).textTheme.titleMedium)
 Container(color: Theme.of(context).colorScheme.primary)
 ```
 
