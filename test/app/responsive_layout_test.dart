@@ -49,13 +49,15 @@ final Set<String> _transcriptWords = {
     for (final span in item.sources) ...span.excerpt.value.split(' '),
 };
 
-/// One-glyph transcript nodes lack measurable pixels under Linux anti-aliasing; check their colours directly.
+/// Linux anti-aliasing leaves one-glyph transcript words and the tilted motto unmeasurable; check colours directly.
 class _TextContrast extends MinimumTextContrastGuideline {
   const _TextContrast();
 
   @override
   bool shouldSkipNode(SemanticsData data) =>
-      super.shouldSkipNode(data) || _transcriptWords.contains(data.label);
+      super.shouldSkipNode(data) ||
+      _transcriptWords.contains(data.label) ||
+      data.label == _l10n.sidebarMotto;
 }
 
 /// WCAG contrast of [text] on [background].
@@ -203,15 +205,23 @@ void main() {
     semantics.dispose();
     await _go(tester, const EditorRoute(recordId: 'proposed').go);
     final words = find.descendant(of: find.byType(SourceWord), matching: find.byType(Text));
-    for (final word in words.evaluate()) {
-      if (word.widget case Text(:final style)) {
-        final color = DefaultTextStyle.of(word).style.merge(style).color;
-        final ratio = _contrast(color ?? Colors.transparent, word.paper.card);
-        if (ratio < 4.5) failures.add('transcript word: ${ratio.toStringAsFixed(2)}');
+    final motto = find.text(_l10n.sidebarMotto);
+    final measured = [
+      for (final word in words.evaluate())
+        (what: 'transcript word', text: word, background: word.paper.card),
+      for (final text in motto.evaluate())
+        (what: 'sidebar motto', text: text, background: text.paper.sidebar),
+    ];
+    for (final (:what, :text, :background) in measured) {
+      if (text.widget case Text(:final style)) {
+        final color = DefaultTextStyle.of(text).style.merge(style).color;
+        final ratio = _contrast(color ?? Colors.transparent, background);
+        if (ratio < 4.5) failures.add('$what: ${ratio.toStringAsFixed(2)}');
       }
     }
 
     expect(words, findsWidgets);
+    expect(motto, findsOneWidget);
     expect(failures, isEmpty);
   });
 
