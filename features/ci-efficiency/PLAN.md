@@ -58,7 +58,7 @@ Review: Absent titles and descriptions are omitted, so dates move into the title
 ## Verification
 
 Result: Passed
-Evidence: `python3 .hooks/hard-eng.py check --base origin/main --plan-stage Draft` passed 12/12 gates in 108s with line coverage 78.84% (4032/5114; minimum 70%), 159 tests, analyzer clean and zero security, secret, vulnerability, actionlint and zizmor findings. The added connect journey passes (1/1, 9.2s) and the settings flow file passes 4/4; removing the Groups reload fails it with an empty group list, removing the Library refresh fails it with one refresh instead of two, and the source is restored byte-for-byte.
+Evidence: `python3 .hooks/hard-eng.py check --base origin/main` passed 12/12 gates in 62s with line coverage 78.84% (4032/5114; minimum 70%), `flutter test` passing 162 tests with the 2 live-credential cases skipped, analyzer clean and zero security, secret, vulnerability, actionlint and zizmor findings. The added connect journey passes (1/1, 9.2s) and the settings flow file passes 4/4; removing the Groups reload fails it with an empty group list, removing the Library refresh fails it with one refresh instead of two, and the source is restored byte-for-byte.
 E2E: Passed — real CaptureApp widget journeys cover startup, navigation, settings connect/replace/reset failure and retry, body editing, midnight Home and native recording/reminder channels; the live Notion/Typesafe suite needs real credentials and was not run.
 
 Delivery target: Merge
