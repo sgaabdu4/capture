@@ -177,7 +177,7 @@ void main() {
       await _tap(tester, find.byKey(const ValueKey(AppWidgetKeys.entryCancelButton)));
 
       await _go(tester, const GroupsRoute().go);
-      await _tap(tester, _within('ideas', find.text('Ideas')));
+      await _tap(tester, _within(AppWidgetKeys.groupCard('ideas'), find.text('Ideas')));
       errors.addAll(_layoutErrors(tester, 'opened group', width));
 
       await _go(tester, const RecordingsRoute().go);

@@ -312,9 +312,7 @@ void main() {
 
     library.pending = Completer();
     await _open(tester, AppWidgetKeys.navGroups);
-    await tester.tap(
-      find.descendant(of: find.byKey(const ValueKey('home')), matching: find.text('Home')),
-    );
+    await tester.tap(find.byKey(ValueKey(AppWidgetKeys.groupCard('home'))));
     await _settle(tester);
     await tester.tap(find.text(sampleTaskTitle));
     await _settle(tester);

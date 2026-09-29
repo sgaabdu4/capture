@@ -9,7 +9,6 @@ import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/capture/presentation/extensions/when_pickers.dart';
 import 'package:capture/features/capture/presentation/widgets/group_menu.dart';
 import 'package:capture/features/capture/presentation/widgets/when_row.dart';
-import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/widgets/entry_dialog_actions.dart';

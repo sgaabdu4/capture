@@ -47,6 +47,7 @@ abstract final class AppWidgetKeys {
   static const groupNameField = 'groups.dialog.name';
   static const groupDescriptionField = 'groups.dialog.description';
   static const groupDialogSaveButton = 'groups.dialog.save';
+  static String groupCard(String groupId) => 'groups.card.$groupId';
 
   // Library
   static const refreshButton = 'library.refresh';

@@ -56,7 +56,7 @@ class _Notion implements ILibraryRemoteDatasource {
 
   @override
   Future<NotionResult<ItemBody>> body(String pageId) async {
-    if (bodyException case final error?) throw error;
+    if (bodyException case final error?) return Future.error(error);
     if (pendingBody case final pending?) return pending.future;
     return .ok((text: bodyText, blockIds: ['p1']));
   }

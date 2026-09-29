@@ -1,4 +1,5 @@
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
@@ -52,7 +53,7 @@ class GroupList extends StatelessWidget {
             const SizedBox(height: Spacing.xs),
           ],
           GroupCard(
-            key: ValueKey(id.value),
+            key: ValueKey(AppWidgetKeys.groupCard(id.value)),
             group: group,
             items: entries.filedIn(id),
             busy: busy,

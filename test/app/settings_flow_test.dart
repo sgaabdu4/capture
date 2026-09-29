@@ -20,7 +20,6 @@ import 'package:capture/features/settings/presentation/screens/settings_screen.d
 import 'package:capture/features/settings/repositories/settings_repository.dart';
 import 'package:capture/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,7 +42,7 @@ class _ResetSecrets extends FakeSecrets {
 
   @override
   Future<void> delete(Secret secret) async {
-    if (failDeletion) throw Exception('synthetic credential deletion failure');
+    if (failDeletion) return Future.error(Exception('synthetic credential deletion failure'));
     await super.delete(secret);
   }
 }
@@ -87,7 +86,7 @@ void main() {
     await loadAppFonts();
   });
   setUp(() {
-    support = Directory.systemTemp.createTempSync('capture_settings_flow');
+    support = .systemTemp.createTempSync('capture_settings_flow');
     native = stubNative();
   });
   tearDown(() => support.deleteSync(recursive: true));
@@ -117,19 +116,15 @@ void main() {
 
     final rejected = (
       input: tester.widget<TextField>(field).controller?.text,
-      stored: await secrets.read(.typesafeKey),
-      serial: app.read(settingsProvider).keySavedSerial,
       busy: tester.widget<InkButton>(button).busy,
+      serial: app.read(settingsProvider).keySavedSerial,
     );
+    final rejectedStored = await secrets.read(.typesafeKey);
     expect(
       rejected,
-      equals((
-        input: 'replacement-key',
-        stored: 'configured-key',
-        serial: initial.keySavedSerial,
-        busy: false,
-      )),
+      equals((input: 'replacement-key', busy: false, serial: initial.keySavedSerial)),
     );
+    expect(rejectedStored, equals('configured-key'));
     expect(app.read(settingsProvider).keyFailure, JevFailure.invalidKey);
     when(() => jev.validateKey('replacement-key'))
         .thenThrow(Exception('synthetic validation failure'));
@@ -138,25 +133,24 @@ void main() {
 
     final interrupted = (
       input: tester.widget<TextField>(field).controller?.text,
-      stored: await secrets.read(.typesafeKey),
-      serial: app.read(settingsProvider).keySavedSerial,
       busy: tester.widget<InkButton>(button).busy,
+      serial: app.read(settingsProvider).keySavedSerial,
     );
+    final interruptedStored = await secrets.read(.typesafeKey);
     expect(interrupted, equals(rejected));
+    expect(interruptedStored, equals(rejectedStored));
     when(() => jev.validateKey('replacement-key')).thenAnswer((_) async => const .ok(null));
 
     await _open(tester, AppWidgetKeys.typesafeSaveButton);
 
     final saved = (
       input: tester.widget<TextField>(field).controller?.text,
-      stored: await secrets.read(.typesafeKey),
-      serial: app.read(settingsProvider).keySavedSerial,
       busy: tester.widget<InkButton>(button).busy,
+      serial: app.read(settingsProvider).keySavedSerial,
     );
-    expect(
-      saved,
-      equals((input: '', stored: 'replacement-key', serial: rejected.serial + 1, busy: false)),
-    );
+    final savedStored = await secrets.read(.typesafeKey);
+    expect(saved, equals((input: '', busy: false, serial: rejected.serial + 1)));
+    expect(savedStored, equals('replacement-key'));
   });
 
   testWidgets('failed reconnect retains input until the new connection is persisted', (
@@ -193,22 +187,21 @@ void main() {
 
     final rejected = (
       input: tester.widget<TextField>(field).controller?.text,
+      busy: tester.widget<InkButton>(button).busy,
+      serial: app.read(settingsProvider).notionConnectedSerial,
+    );
+    final rejectedPersisted = (
       stored: await secrets.read(.notionToken),
       workspace: app.read(settingsProvider).workspace,
       cached: app.read(notionWorkspaceLocalDatasourceProvider).read(),
-      serial: app.read(settingsProvider).notionConnectedSerial,
-      busy: tester.widget<InkButton>(button).busy,
     );
     expect(
       rejected,
-      equals((
-        input: 'replacement-token',
-        stored: 'configured-token',
-        workspace: sampleWorkspace,
-        cached: model,
-        serial: initial.notionConnectedSerial,
-        busy: false,
-      )),
+      equals((input: 'replacement-token', busy: false, serial: initial.notionConnectedSerial)),
+    );
+    expect(
+      rejectedPersisted,
+      equals((stored: 'configured-token', workspace: sampleWorkspace, cached: model)),
     );
     expect(app.read(settingsProvider).notionFailure, NotionFailure.notShared);
     when(() => notion.connect(token: 'replacement-token', parentPageId: 'parent', known: model))
@@ -218,13 +211,16 @@ void main() {
 
     final interrupted = (
       input: tester.widget<TextField>(field).controller?.text,
+      busy: tester.widget<InkButton>(button).busy,
+      serial: app.read(settingsProvider).notionConnectedSerial,
+    );
+    final interruptedPersisted = (
       stored: await secrets.read(.notionToken),
       workspace: app.read(settingsProvider).workspace,
       cached: app.read(notionWorkspaceLocalDatasourceProvider).read(),
-      serial: app.read(settingsProvider).notionConnectedSerial,
-      busy: tester.widget<InkButton>(button).busy,
     );
     expect(interrupted, equals(rejected));
+    expect(interruptedPersisted, equals(rejectedPersisted));
     when(() => notion.connect(token: 'replacement-token', parentPageId: 'parent', known: model))
         .thenAnswer((_) async => .ok(model));
 
@@ -232,22 +228,18 @@ void main() {
 
     final connected = (
       input: tester.widget<TextField>(field).controller?.text,
+      busy: tester.widget<InkButton>(button).busy,
+      serial: app.read(settingsProvider).notionConnectedSerial,
+    );
+    final connectedPersisted = (
       stored: await secrets.read(.notionToken),
       workspace: app.read(settingsProvider).workspace,
       cached: app.read(notionWorkspaceLocalDatasourceProvider).read(),
-      serial: app.read(settingsProvider).notionConnectedSerial,
-      busy: tester.widget<InkButton>(button).busy,
     );
+    expect(connected, equals((input: '', busy: false, serial: rejected.serial + 1)));
     expect(
-      connected,
-      equals((
-        input: '',
-        stored: 'replacement-token',
-        workspace: sampleWorkspace,
-        cached: model,
-        serial: rejected.serial + 1,
-        busy: false,
-      )),
+      connectedPersisted,
+      equals((stored: 'replacement-token', workspace: sampleWorkspace, cached: model)),
     );
   });
 
@@ -311,17 +303,12 @@ void main() {
         recording: recording.existsSync(),
         model: model.existsSync(),
         remindersCancelled: reminders.cancelledAll,
-        capture: app.read(captureRepositoryProvider).get(sampleProposedCapture.id.value),
       );
-      expect(
-        retained,
-        equals((
-          recording: true,
-          model: true,
-          remindersCancelled: false,
-          capture: captureBeforeFailure,
-        )),
-      );
+      final retainedCapture = app
+          .read(captureRepositoryProvider)
+          .get(sampleProposedCapture.id.value);
+      expect(retained, equals((recording: true, model: true, remindersCancelled: false)));
+      expect(retainedCapture, equals(captureBeforeFailure));
       secrets.failDeletion = false;
       await _open(tester, AppWidgetKeys.resetButton);
       await _open(tester, AppWidgetKeys.resetConfirmButton);
