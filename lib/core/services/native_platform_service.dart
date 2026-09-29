@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/services/models/review_card_payload.dart';
+import 'package:capture/core/services/models/review_card_row.dart';
 import 'package:capture/core/services/native_channel_keys.dart';
 import 'package:capture/core/services/native_event.dart';
 import 'package:flutter/services.dart';
@@ -164,17 +165,18 @@ class NativePlatformService implements INativePlatformService {
   @override
   Future<void> showReview(ReviewCardPayload payload) async {
     try {
+      final ReviewCardPayload(:countLine, :canApprove, :blockedReason, :rows) = payload;
       await _channel.invokeMethod<void>('showReview', {
-        NativeChannelKeys.countLine: payload.countLine,
-        NativeChannelKeys.canApprove: payload.canApprove,
-        NativeChannelKeys.blockedReason: payload.blockedReason,
+        NativeChannelKeys.countLine: countLine,
+        NativeChannelKeys.canApprove: canApprove,
+        NativeChannelKeys.blockedReason: blockedReason,
         NativeChannelKeys.rows: [
-          for (final r in payload.rows)
+          for (final ReviewCardRow(:id, :icon, :title, :detail) in rows)
             {
-              NativeChannelKeys.id: r.id,
-              NativeChannelKeys.icon: r.icon,
-              NativeChannelKeys.title: r.title,
-              NativeChannelKeys.detail: r.detail,
+              NativeChannelKeys.id: id,
+              NativeChannelKeys.icon: icon,
+              NativeChannelKeys.title: title,
+              NativeChannelKeys.detail: detail,
             },
         ],
       });

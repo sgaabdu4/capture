@@ -85,7 +85,8 @@ class TaskListScreen extends ConsumerWidget {
             EntryRow(
               key: ValueKey(AppWidgetKeys.libraryEntry(entry.itemId.value)),
               entry: entry,
-              onOpen: () => unawaited(ref.editEntry(entry, origin: origin)),
+              onOpen: () =>
+                  unawaited(ref.read(libraryProvider.notifier).body(entry, origin: origin)),
               detail: entry.detail(l10n, today, groupById(entry.groupId)),
               onChanged: (done) =>
                   unawaited(ref.read(libraryProvider.notifier).setDone(entry, done: done)),

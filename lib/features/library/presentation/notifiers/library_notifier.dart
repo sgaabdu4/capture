@@ -69,14 +69,16 @@ class LibraryNotifier extends _$LibraryNotifier {
     );
     try {
       final result = await _ensureRepository().body(entry);
-      if (!ref.mounted || state.bodyLoadSerial != serial) return;
+      if (!ref.mounted) return;
+      if (state.bodyLoadSerial != serial) return;
       state = switch (result) {
         Ok(:final value) => state.copyWith(bodyLoading: false, bodyText: value),
         Err(:final failure) => _failed(state.copyWith(bodyLoading: false), failure),
       };
     } catch (error, stackTrace) {
       Crash.error(error, stackTrace);
-      if (!ref.mounted || state.bodyLoadSerial != serial) return;
+      if (!ref.mounted) return;
+      if (state.bodyLoadSerial != serial) return;
       state = state.copyWith(bodyLoading: false);
     }
   }

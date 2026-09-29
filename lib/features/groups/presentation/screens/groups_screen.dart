@@ -86,7 +86,8 @@ class GroupsScreen extends ConsumerWidget {
           entries: entries,
           busy: busy,
           onEdit: (group) => unawaited(_edit(context, ref, group)),
-          onOpenEntry: (entry) => unawaited(ref.editEntry(entry, origin: origin)),
+          onOpenEntry: (entry) =>
+              unawaited(ref.read(libraryProvider.notifier).body(entry, origin: origin)),
           onArchive: (group) =>
               unawaited(ref.read(groupsProvider.notifier).update(group.copyWith(archived: true))),
           onRestore: (group) =>

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
@@ -9,38 +10,30 @@ import 'package:capture/features/capture/presentation/extensions/when_pickers.da
 import 'package:capture/features/capture/presentation/widgets/group_menu.dart';
 import 'package:capture/features/capture/presentation/widgets/when_row.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
+import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/widgets/entry_dialog_actions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum EntryEditAction { save, delete }
 
 /// A dismissed editor's intent; null body leaves the page details unchanged.
 typedef EntryEdit = ({EntryEditAction action, LibraryEntry entry, String? body});
 
-class EntryDialogScreen extends StatefulWidget {
-  const EntryDialogScreen({
-    required this.entry,
-    required this.groups,
-    required this.today,
-    required this.body,
-    super.key,
-  });
+class EntryDialogScreen extends ConsumerStatefulWidget {
+  const EntryDialogScreen({required this.entry, required this.body, super.key});
 
   final LibraryEntry entry;
-  final List<Group> groups;
-
-  /// Wall-clock now on this Mac.
-  final DateTime today;
 
   /// The details on the Notion page; null when they could not be read.
   final String? body;
 
   @override
-  State<EntryDialogScreen> createState() => _EntryDialogScreenState();
+  ConsumerState<EntryDialogScreen> createState() => _EntryDialogScreenState();
 }
 
-class _EntryDialogScreenState extends State<EntryDialogScreen> {
+class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
   static const _bodyMinLines = 3;
   static const _bodyMaxLines = 8;
 
@@ -94,8 +87,10 @@ class _EntryDialogScreenState extends State<EntryDialogScreen> {
     }
   }
 
-  Future<void> _pickDate() =>
-      context.pickDay(_entry.due ?? _entry.reminder, widget.today, _setWhen);
+  /// Wall-clock now on this Mac.
+  DateTime _today() => ref.read(systemDatasourceProvider).nowUtc().toLocal();
+
+  Future<void> _pickDate() => context.pickDay(_entry.due ?? _entry.reminder, _today(), _setWhen);
 
   Future<void> _pickTime() async {
     if (_entry.due ?? _entry.reminder case final DueDate base) {
@@ -148,7 +143,7 @@ class _EntryDialogScreenState extends State<EntryDialogScreen> {
               ),
             ),
             GroupMenu(
-              groups: widget.groups,
+              groups: ref.watch(groupsProvider.select((s) => s.active)),
               value: groupId,
               onChanged: (id) => _edit(_entry.copyWith(groupId: id)),
             ),
@@ -156,7 +151,7 @@ class _EntryDialogScreenState extends State<EntryDialogScreen> {
               WhenRow(
                 due: due ?? reminder,
                 hasReminder: reminder != null,
-                today: widget.today,
+                today: _today(),
                 enabled: true,
                 onPickDate: () => unawaited(_pickDate()),
                 onPickTime: () => unawaited(_pickTime()),
