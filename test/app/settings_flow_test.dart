@@ -5,6 +5,7 @@ import 'package:capture/core/data/notion/models/notion_workspace_model.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/notion/notion_workspace_local_datasource.dart';
 import 'package:capture/core/data/secrets/secrets_local_datasource.dart';
+import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
@@ -12,7 +13,10 @@ import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/capture/repositories/capture_repository.dart';
+import 'package:capture/features/groups/domain/entities/group.dart';
+import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
+import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/settings/data/datasources/notion_workspace_remote_datasource.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
@@ -44,6 +48,32 @@ class _ResetSecrets extends FakeSecrets {
   Future<void> delete(Secret secret) async {
     if (failDeletion) return Future.error(Exception('synthetic credential deletion failure'));
     await super.delete(secret);
+  }
+}
+
+/// Groups whose local cache is empty until connection seeds it.
+class _SeededGroups extends SampleGroups {
+  List<Group> _cache = const [];
+
+  @override
+  List<Group> cached() => _cache;
+
+  @override
+  Future<NotionResult<List<Group>>> refresh(NotionWorkspace ws) async => .ok(_cache);
+
+  @override
+  Future<NotionResult<List<Group>>> seedIfEmpty(NotionWorkspace ws) async =>
+      .ok(_cache = sampleGroups);
+}
+
+/// Library that counts remote refreshes.
+class _CountedLibrary extends SampleLibrary {
+  int refreshes = 0;
+
+  @override
+  Future<NotionResult<List<LibraryEntry>>> refresh(NotionWorkspace ws) async {
+    refreshes++;
+    return super.refresh(ws);
   }
 }
 
@@ -241,6 +271,49 @@ void main() {
       connectedPersisted,
       equals((stored: 'replacement-token', workspace: sampleWorkspace, cached: model)),
     );
+  });
+
+  testWidgets('completed Notion connection reloads seeded Groups and refreshes Library', (
+    tester,
+  ) async {
+    final model = NotionWorkspaceModel.fromEntity(sampleWorkspace);
+    final seed = ProviderContainer.test(
+      overrides: appOverrides(support: support, native: native),
+    );
+    seed.read(notionWorkspaceLocalDatasourceProvider).write(model);
+    seed.dispose();
+    final notion = _Notion();
+    when(() => notion.connect(token: 'replacement-token', parentPageId: 'parent', known: model))
+        .thenAnswer((_) async => .ok(model));
+    final groups = _SeededGroups();
+    final library = _CountedLibrary();
+    final app = await _launch(tester, [
+      ...appOverrides(
+        support: support,
+        native: native,
+        fakes: (
+          secrets: FakeSecrets({.typesafeKey: 'key', .notionToken: 'configured-token'}),
+          reminders: null,
+          system: null,
+        ),
+      ),
+      notionWorkspaceRemoteDatasourceProvider.overrideWithValue(notion),
+      groupsRepositoryProvider.overrideWithValue(groups),
+      libraryRepositoryProvider.overrideWithValue(library),
+    ]);
+    await _open(tester, AppWidgetKeys.settingsButton);
+    final before = (groups: app.read(groupsProvider).groups, refreshes: library.refreshes);
+    await tester.enterText(
+      find.byKey(const ValueKey(AppWidgetKeys.notionTokenField)),
+      'replacement-token',
+    );
+
+    await _open(tester, AppWidgetKeys.notionConnectButton);
+
+    final after = (groups: app.read(groupsProvider).groups, refreshes: library.refreshes);
+    expect(before.groups, isEmpty);
+    expect(after.groups, orderedEquals(sampleGroups));
+    expect(after.refreshes, before.refreshes + 1);
   });
 
   testWidgets(
