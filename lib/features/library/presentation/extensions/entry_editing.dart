@@ -12,8 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 extension EntryEditing on WidgetRef {
   static const _dialogRoute = 'entry-dialog';
 
-  /// Only the originating visible screen presents a completed immutable snapshot.
-  /// Returns whether that screen's body request is still loading.
+  /// Only the originating visible screen presents a completed snapshot; true while it loads.
   bool watchEntryEditing(BuildContext context, {required String origin}) {
     listen(
       libraryProvider.select(

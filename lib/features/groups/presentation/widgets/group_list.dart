@@ -7,9 +7,6 @@ import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/extensions/library_labels.dart';
 import 'package:flutter/material.dart';
 
-/// [GroupCard]s for the active groups, then any archived ones under their
-/// own header. Active groups offer Archive (except Unsorted); archived groups
-/// offer Restore.
 class GroupList extends StatelessWidget {
   const GroupList({
     required this.activeGroups,
