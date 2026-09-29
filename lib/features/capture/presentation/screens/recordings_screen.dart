@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
@@ -34,7 +33,7 @@ class RecordingsScreen extends ConsumerWidget {
   }
 
   void _delete(WidgetRef ref, String id) =>
-      unawaited(ref.read(captureFlowProvider.notifier).delete(id).catchError(Crash.error));
+      unawaited(ref.read(captureFlowProvider.notifier).delete(id));
 
   void _reviewAgain(BuildContext context, WidgetRef ref, String id) {
     ref.read(captureFlowProvider.notifier).reopen(id);
@@ -60,19 +59,11 @@ class RecordingsScreen extends ConsumerWidget {
             nowUtc: nowUtc,
             busy: activeId == record.id.value && phase != .idle,
             idle: phase == .idle,
-            onRetry: () => unawaited(
-              ref
-                  .read(captureFlowProvider.notifier)
-                  .process(record.id.value)
-                  .catchError(Crash.error),
-            ),
+            onRetry: () =>
+                unawaited(ref.read(captureFlowProvider.notifier).process(record.id.value)),
             onReview: () => EditorRoute(recordId: record.id.value).go(context),
-            onRetrySave: () => unawaited(
-              ref
-                  .read(captureFlowProvider.notifier)
-                  .approve(record.id.value)
-                  .catchError(Crash.error),
-            ),
+            onRetrySave: () =>
+                unawaited(ref.read(captureFlowProvider.notifier).approve(record.id.value)),
             onReviewAgain: () => _reviewAgain(context, ref, record.id.value),
             onDelete: () => unawaited(_confirmDelete(context, ref, record)),
           ),

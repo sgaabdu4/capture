@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/services/models/review_card_payload.dart';
 import 'package:capture/core/services/native_channel_keys.dart';
 import 'package:capture/core/services/native_event.dart';
@@ -11,16 +12,12 @@ part 'native_platform_service.g.dart';
 /// A finished recording on disk.
 typedef RecordingResult = ({String path, Duration duration});
 
-/// What the app needs from the native side (`macos/Runner/Native`): global hotkey,
-/// recorder, overlay panel, menu-bar popover, M4A encoding and Sparkle updates.
-/// On iPhone (`ios/Runner/Native`) the recorder, encoder, record requests and
-/// Core ML transcription; the Mac-only calls do nothing there.
+/// Native hotkey/recording, overlay/menu, M4A and Sparkle; iPhone adds requests/Core ML and ignores Mac-only calls.
 abstract interface class INativePlatformService {
   Stream<NativeEvent> get events;
   Future<void> installMenu();
 
-  /// False when another app already owns the combination. A null [keyCode]
-  /// fires when [modifiers] alone are pressed together and released.
+  /// False when another app owns the hotkey; null [keyCode] fires [modifiers] alone on release.
   Future<bool> setHotKey({required int? keyCode, required int modifiers, required String label});
 
   /// Ignores the global shortcut while a new one is being recorded.
@@ -44,25 +41,20 @@ abstract interface class INativePlatformService {
   Future<int> encodeM4a({required String input, required String output});
   Future<void> showMainWindow();
 
-  /// Opens Sparkle's check, which offers to download and install a newer
-  /// release.
+  /// Opens Sparkle's download/install offer for a newer release.
   Future<void> checkForUpdates();
 
-  /// iPhone only. True once when a record request arrived before Dart was
-  /// listening (a cold launch from a shortcut or control); later requests
-  /// arrive as [RecordRequested].
+  /// iPhone cold-launch request, consumed once; later requests arrive as [RecordRequested].
   Future<bool> takeRecordRequest();
 
-  /// iPhone only. Transcript of a PCM16 16 kHz mono file with the Core ML
-  /// model in [modelDir]; the model is loaded, used and freed.
+  /// iPhone Core ML transcribes PCM16 mono 16 kHz, loading and freeing the model in [modelDir].
   Future<String> transcribe({required String pcmPath, required String modelDir});
 }
 
 class NativePlatformService implements INativePlatformService {
   static const _channel = MethodChannel(NativeChannelKeys.channel);
 
-  /// Voice-quality AAC; keeps 5 minutes around 1.2 MB, under Notion's free
-  /// upload limit.
+  /// Voice-quality AAC keeps five minutes near 1.2 MB, below Notion's free upload limit.
   static const _m4aBitRate = 32000;
 
   final _events = StreamController<NativeEvent>.broadcast();
@@ -161,38 +153,61 @@ class NativePlatformService implements INativePlatformService {
   }
 
   @override
-  Future<void> showWorking(String status) =>
-      _channel.invokeMethod<void>('showWorking', {NativeChannelKeys.status: status});
+  Future<void> showWorking(String status) async {
+    try {
+      await _channel.invokeMethod<void>('showWorking', {NativeChannelKeys.status: status});
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
+  }
 
   @override
-  Future<void> showReview(ReviewCardPayload payload) => _channel.invokeMethod<void>('showReview', {
-    NativeChannelKeys.countLine: payload.countLine,
-    NativeChannelKeys.canApprove: payload.canApprove,
-    NativeChannelKeys.blockedReason: payload.blockedReason,
-    NativeChannelKeys.rows: [
-      for (final r in payload.rows)
-        {
-          NativeChannelKeys.id: r.id,
-          NativeChannelKeys.icon: r.icon,
-          NativeChannelKeys.title: r.title,
-          NativeChannelKeys.detail: r.detail,
-        },
-    ],
-  });
+  Future<void> showReview(ReviewCardPayload payload) async {
+    try {
+      await _channel.invokeMethod<void>('showReview', {
+        NativeChannelKeys.countLine: payload.countLine,
+        NativeChannelKeys.canApprove: payload.canApprove,
+        NativeChannelKeys.blockedReason: payload.blockedReason,
+        NativeChannelKeys.rows: [
+          for (final r in payload.rows)
+            {
+              NativeChannelKeys.id: r.id,
+              NativeChannelKeys.icon: r.icon,
+              NativeChannelKeys.title: r.title,
+              NativeChannelKeys.detail: r.detail,
+            },
+        ],
+      });
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
+  }
 
   @override
-  Future<void> hideOverlay() => _channel.invokeMethod<void>('hideOverlay');
+  Future<void> hideOverlay() async {
+    try {
+      await _channel.invokeMethod<void>('hideOverlay');
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
+  }
 
   @override
   Future<void> setMenuState({
     required String nextUp,
     required String latest,
     required bool canRecord,
-  }) => _channel.invokeMethod<void>('setMenuState', {
-    NativeChannelKeys.nextUp: nextUp,
-    NativeChannelKeys.latest: latest,
-    NativeChannelKeys.canRecord: canRecord,
-  });
+  }) async {
+    try {
+      await _channel.invokeMethod<void>('setMenuState', {
+        NativeChannelKeys.nextUp: nextUp,
+        NativeChannelKeys.latest: latest,
+        NativeChannelKeys.canRecord: canRecord,
+      });
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
+  }
 
   @override
   Future<int> encodeM4a({required String input, required String output}) async {
@@ -211,7 +226,13 @@ class NativePlatformService implements INativePlatformService {
   Future<void> showMainWindow() => _channel.invokeMethod<void>('showMainWindow');
 
   @override
-  Future<void> checkForUpdates() => _channel.invokeMethod<void>('checkForUpdates');
+  Future<void> checkForUpdates() async {
+    try {
+      await _channel.invokeMethod<void>('checkForUpdates');
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
+  }
 
   @override
   Future<bool> takeRecordRequest() async =>

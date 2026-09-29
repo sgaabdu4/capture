@@ -12,8 +12,7 @@ import 'package:capture/features/capture/presentation/widgets/when_row.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:flutter/material.dart';
 
-/// Editor card for one proposal item. Owns the title/body text controllers
-/// and keeps them in sync with [item].
+/// Editor card owns the title/body controllers and keeps them in sync with [item].
 class ProposalItemEditor extends StatefulWidget {
   const ProposalItemEditor({
     required this.item,
@@ -64,16 +63,36 @@ class _ProposalItemEditorState extends State<ProposalItemEditor> {
   void initState() {
     super.initState();
     final ProposalItem(:title, :body) = widget.item;
-    _title.text = title ?? '';
-    _body.text = body ?? '';
+    if (title == null) {
+      _title.clear();
+    } else {
+      _title.text = title;
+    }
+    if (body == null) {
+      _body.clear();
+    } else {
+      _body.text = body;
+    }
   }
 
   @override
   void didUpdateWidget(covariant ProposalItemEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
     final ProposalItem(:title, :body) = widget.item;
-    if (title != optionalText(_title.text)) _title.text = title ?? '';
-    if (body != optionalText(_body.text)) _body.text = body ?? '';
+    if (title != optionalText(_title.text)) {
+      if (title == null) {
+        _title.clear();
+      } else {
+        _title.text = title;
+      }
+    }
+    if (body != optionalText(_body.text)) {
+      if (body == null) {
+        _body.clear();
+      } else {
+        _body.text = body;
+      }
+    }
   }
 
   @override

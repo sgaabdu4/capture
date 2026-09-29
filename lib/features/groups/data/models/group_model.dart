@@ -21,7 +21,10 @@ sealed class GroupModel with _$GroupModel {
   factory GroupModel.fromEntity(Group g) => GroupModel(
     id: g.id.value,
     name: g.name.value,
-    description: g.description ?? '',
+    description: switch (g.description) {
+      final description? => description,
+      null => '',
+    },
     archived: g.archived,
   );
 

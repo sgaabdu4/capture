@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
@@ -13,20 +12,18 @@ import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/widgets/entry_dialog_actions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// An edited entry and its new body, or null when the body is unchanged.
-typedef EntryEdit = ({LibraryEntry entry, String? body});
+enum EntryEditAction { save, delete }
 
-class EntryDialogScreen extends ConsumerStatefulWidget {
+/// A dismissed editor's intent; null body leaves the page details unchanged.
+typedef EntryEdit = ({EntryEditAction action, LibraryEntry entry, String? body});
+
+class EntryDialogScreen extends StatefulWidget {
   const EntryDialogScreen({
     required this.entry,
     required this.groups,
     required this.today,
     required this.body,
-    required this.onSave,
-    required this.onDelete,
-    required this.onCancel,
     super.key,
   });
 
@@ -37,16 +34,13 @@ class EntryDialogScreen extends ConsumerStatefulWidget {
   final DateTime today;
 
   /// The details on the Notion page; null when they could not be read.
-  final Future<String?> body;
-  final ValueChanged<EntryEdit> onSave;
-  final VoidCallback onDelete;
-  final VoidCallback onCancel;
+  final String? body;
 
   @override
-  ConsumerState<EntryDialogScreen> createState() => _EntryDialogScreenState();
+  State<EntryDialogScreen> createState() => _EntryDialogScreenState();
 }
 
-class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
+class _EntryDialogScreenState extends State<EntryDialogScreen> {
   static const _bodyMinLines = 3;
   static const _bodyMaxLines = 8;
 
@@ -54,29 +48,25 @@ class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
   final _body = TextEditingController();
   late LibraryEntry _entry = widget.entry;
 
-  /// The details as loaded; null while loading or when Notion failed.
-  String? _loadedBody;
-  bool _loading = true;
   bool _confirmDelete = false;
   bool _titleEmpty = false;
 
   @override
   void initState() {
     super.initState();
-    _title.text = widget.entry.title ?? '';
-    _titleEmpty = widget.entry.title == null;
-    unawaited(_loadBody().catchError(Crash.error));
-  }
-
-  Future<void> _loadBody() async {
-    final context = this.context;
-    final body = await widget.body;
-    if (!context.mounted) return;
-    setState(() {
-      _loading = false;
-      _loadedBody = body;
-      _body.text = body ?? '';
-    });
+    final title = widget.entry.title;
+    if (title == null) {
+      _title.clear();
+    } else {
+      _title.text = title;
+    }
+    _titleEmpty = title == null;
+    final body = widget.body;
+    if (body == null) {
+      _body.clear();
+    } else {
+      _body.text = body;
+    }
   }
 
   @override
@@ -115,9 +105,10 @@ class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
 
   void _save() {
     final body = _body.text.trim();
-    widget.onSave((
+    Navigator.of(context).pop<EntryEdit>((
+      action: .save,
       entry: _entry.copyWith(title: _title.text.trim()),
-      body: _loadedBody != null && body != _loadedBody ? body : null,
+      body: widget.body != null && body != widget.body ? body : null,
     ));
   }
 
@@ -148,16 +139,12 @@ class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
             TextField(
               key: const ValueKey(AppWidgetKeys.entryBodyField),
               controller: _body,
-              enabled: _loadedBody != null,
+              enabled: widget.body != null,
               minLines: _bodyMinLines,
               maxLines: _bodyMaxLines,
               decoration: .new(
                 labelText: l10n.detailsHint,
-                helperText: switch ((loading: _loading, body: _loadedBody)) {
-                  (loading: true, body: _) => l10n.entryBodyLoading,
-                  (loading: false, body: null) => l10n.entryBodyUnavailable,
-                  _ => null,
-                },
+                helperText: widget.body == null ? l10n.entryBodyUnavailable : null,
               ),
             ),
             GroupMenu(
@@ -179,9 +166,11 @@ class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
             EntryDialogActions(
               confirmingDelete: _confirmDelete,
               onAskDelete: () => setState(() => _confirmDelete = true),
-              onDelete: widget.onDelete,
-              onCancel: widget.onCancel,
-              onSave: _titleEmpty || _loading ? null : _save,
+              onDelete: () =>
+                  Navigator.of(context)
+                      .pop<EntryEdit>((action: .delete, entry: widget.entry, body: null)),
+              onCancel: () => Navigator.of(context).pop(),
+              onSave: _titleEmpty ? null : _save,
             ),
           ],
         ),

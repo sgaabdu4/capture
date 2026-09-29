@@ -39,7 +39,7 @@ part 'capture_flow_notifier.g.dart';
 class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   @override
   CaptureFlowState build() {
-    final events = _ensureNative().events.listen(_onEvent);
+    final events = _ensureNative().events.listen((event) => unawaited(_onEvent(event)));
     ref.onDispose(events.cancel);
     return .new(captures: _ensureCaptures().all());
   }
@@ -56,30 +56,34 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   /// Guard interruption/limit overlap so a second stop cannot drop the capture being processed.
   bool _stopping = false;
 
-  void _onEvent(NativeEvent event) {
-    switch (event) {
-      case HotkeyPressed() || MenuCommand(action: .record):
-        unawaited(toggle().catchError(Crash.error));
-      case RecordRequested():
-        unawaited(start().catchError(Crash.error));
-      case StopRequested():
-        unawaited(stop().catchError(Crash.error));
-      case LimitReached():
-        unawaited(stop(notice: .limitReached).catchError(Crash.error));
-      case RecordingFailed():
-        unawaited(stop(notice: .recordingInterrupted).catchError(Crash.error));
-      case ReviewCardAction(:final action):
-        unawaited(onReviewAction(action).catchError(Crash.error));
-      case MenuCommand(action: .open):
-        unawaited(_ensureNative().showMainWindow().catchError(Crash.error));
-      case MenuCommand(action: .settings):
-        unawaited(_open(.settings).catchError(Crash.error));
-      case MenuCommand(action: .upcoming):
-        unawaited(_open(.upcoming).catchError(Crash.error));
-      case MenuCommand(action: .recordings):
-        unawaited(_open(.recordings).catchError(Crash.error));
-      // The shell's update link and the iPhone pill show these.
-      case UpdateAvailable() || LevelChanged():
+  Future<void> _onEvent(NativeEvent event) async {
+    try {
+      switch (event) {
+        case HotkeyPressed() || MenuCommand(action: .record):
+          await toggle();
+        case RecordRequested():
+          await start();
+        case StopRequested():
+          await stop();
+        case LimitReached():
+          await stop(notice: .limitReached);
+        case RecordingFailed():
+          await stop(notice: .recordingInterrupted);
+        case ReviewCardAction(:final action):
+          await onReviewAction(action);
+        case MenuCommand(action: .open):
+          await _ensureNative().showMainWindow();
+        case MenuCommand(action: .settings):
+          await _open(.settings);
+        case MenuCommand(action: .upcoming):
+          await _open(.upcoming);
+        case MenuCommand(action: .recordings):
+          await _open(.recordings);
+        // The shell's update link and the iPhone pill show these.
+        case UpdateAvailable() || LevelChanged():
+      }
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
     }
   }
 
@@ -107,12 +111,21 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   /// Ignore reset while a capture is in progress; otherwise reread every list from the emptied disk.
   Future<void> startOver() async {
-    if (state.busyWith) return;
-    await ref.read(settingsProvider.notifier).reset();
-    if (!ref.mounted) return;
-    _reloadCaptures();
-    ref.read(groupsProvider.notifier).reload();
-    ref.invalidate(libraryProvider);
+    try {
+      if (state.busyWith) return;
+      if (!await ref.read(settingsProvider.notifier).reset()) return;
+      if (!ref.mounted) return;
+      _reloadCaptures();
+      ref.read(groupsProvider.notifier).reload();
+      ref.invalidate(libraryProvider);
+      state = state.copyWith(
+        destination: .home,
+        editId: null,
+        destinationSerial: state.destinationSerial + 1,
+      );
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
   }
 
   /// Drops captures cut off by a crash before they had any audio.
@@ -146,21 +159,38 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   /// Hotkey, menu and the Home mic button all land here.
   Future<void> toggle() async {
-    if (state.phase == .recording) return stop();
-    if (state.phase == .idle) return start();
-    if (state case CaptureFlowState(phase: .review, activeId: final String id)) showReview(id);
+    try {
+      if (state.phase == .recording) {
+        await stop();
+        return;
+      }
+      if (state.phase == .idle) {
+        await start();
+        return;
+      }
+      if (state case CaptureFlowState(phase: .review, activeId: final String id)) showReview(id);
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
   }
 
   /// Recover the iPhone cold-launch record request once, after startup recovery.
   Future<void> takePendingRequest() async {
-    if (await _ensureNative().takeRecordRequest()) await start();
+    try {
+      if (await _ensureNative().takeRecordRequest()) await start();
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
   }
 
   Future<void> start() async {
-    if (_starting || state.phase != .idle) return;
-    _starting = true;
+    if (_starting) return;
     try {
+      if (state.phase != .idle) return;
+      _starting = true;
       await _start();
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
     } finally {
       _starting = false;
     }
@@ -204,10 +234,13 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   }
 
   Future<void> stop({CaptureNotice? notice}) async {
-    if (_stopping || state.phase != .recording) return;
-    _stopping = true;
+    if (_stopping) return;
     try {
+      if (state.phase != .recording) return;
+      _stopping = true;
       await _stop(notice);
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
     } finally {
       _stopping = false;
     }
@@ -231,19 +264,25 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   /// A recorded capture waits for setup, then resumes from its last persisted milestone.
   Future<void> process(String id) async {
-    final record = _ensureCaptures().get(id);
-    if (record == null) return;
-    if (record.stage == .recorded && !ref.read(settingsProvider).ready) {
-      _idle(notice: .setupIncomplete);
-      return;
+    try {
+      final record = _ensureCaptures().get(id);
+      if (record == null) return;
+      if (record.stage == .recorded && !ref.read(settingsProvider).ready) {
+        _idle(notice: .setupIncomplete);
+        return;
+      }
+      _enter(state.phase, activeId: id);
+      final transcribed = record.stage == .recorded ? await _transcribe(record) : record;
+      if (!ref.mounted || transcribed == null) return;
+      final proposed = transcribed.stage == .transcribed
+          ? await _analyse(transcribed)
+          : transcribed;
+      if (!ref.mounted) return;
+      if (proposed.stage == .proposed && !await _autoSave(proposed)) showReview(id);
+      if (proposed.stage == .approved) await approve(id);
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
     }
-    _enter(state.phase, activeId: id);
-    final transcribed = record.stage == .recorded ? await _transcribe(record) : record;
-    if (!ref.mounted || transcribed == null) return;
-    final proposed = transcribed.stage == .transcribed ? await _analyse(transcribed) : transcribed;
-    if (!ref.mounted) return;
-    if (proposed.stage == .proposed && !await _autoSave(proposed)) showReview(id);
-    if (proposed.stage == .approved) await approve(id);
   }
 
   Future<bool> _autoSave(CaptureRecord record) async {
@@ -323,18 +362,22 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
   }
 
   Future<void> onReviewAction(ReviewAction action) async {
-    if (state case CaptureFlowState(phase: .review, activeId: final String id)) {
-      switch (action) {
-        case .yes:
-          await approve(id);
-        case .no:
-          dismiss(id);
-        case .edit:
-          _idle();
-          await _open(.editor, editId: id);
-        case .later:
-          _idle(notice: .reviewLater);
+    try {
+      if (state case CaptureFlowState(phase: .review, activeId: final String id)) {
+        switch (action) {
+          case .yes:
+            await approve(id);
+          case .no:
+            dismiss(id);
+          case .edit:
+            _idle();
+            await _open(.editor, editId: id);
+          case .later:
+            _idle(notice: .reviewLater);
+        }
       }
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
     }
   }
 
@@ -354,17 +397,21 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   /// The execution boundary: only an explicit approval reaches Notion.
   Future<void> approve(String id) async {
-    final settings = ref.read(settingsProvider);
-    final record = _ensureCaptures().get(id);
-    if (record == null || state.phase == .saving) return;
-    final ws = settings.workspace;
-    if (ws == null || !settings.hasNotionToken) {
-      _keepNotice(.notionNotConnected);
-      return;
+    try {
+      final settings = ref.read(settingsProvider);
+      final record = _ensureCaptures().get(id);
+      if (record == null || state.phase == .saving) return;
+      final ws = settings.workspace;
+      if (ws == null || !settings.hasNotionToken) {
+        _keepNotice(.notionNotConnected);
+        return;
+      }
+      final approved = _approved(record);
+      if (approved == null) return;
+      await _save(approved, ws, fromCard: state.phase == .review);
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
     }
-    final approved = _approved(record);
-    if (approved == null) return;
-    await _save(approved, ws, fromCard: state.phase == .review);
   }
 
   /// Persist approval before any Notion call; blocked proposals cannot enter the save pipeline.
@@ -419,12 +466,16 @@ class CaptureFlowNotifier extends _$CaptureFlowNotifier {
 
   /// Keep an approved capture mid-save so deleting its checkpoint cannot create duplicates on retry.
   Future<void> delete(String id) async {
-    final captures = _ensureCaptures();
-    final r = captures.get(id);
-    if (r == null || r.stage == .approved || state.activeId == id) return;
-    await captures.delete(r);
-    if (!ref.mounted) return;
-    _reloadCaptures();
+    try {
+      final captures = _ensureCaptures();
+      final r = captures.get(id);
+      if (r == null || r.stage == .approved || state.activeId == id) return;
+      await captures.delete(r);
+      if (!ref.mounted) return;
+      _reloadCaptures();
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
   }
 
   /// Applies an editor change to a proposal still waiting for review.

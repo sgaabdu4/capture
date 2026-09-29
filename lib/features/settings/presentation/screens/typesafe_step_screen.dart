@@ -1,10 +1,8 @@
-import 'dart:async';
-
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
+import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,8 +23,7 @@ class TypesafeStepScreen extends ConsumerStatefulWidget {
   /// Why the last save failed, if it did.
   final String? error;
 
-  /// Completes with true once the key is stored.
-  final Future<bool> Function(String key) onSave;
+  final ValueChanged<String> onSave;
 
   @override
   ConsumerState<TypesafeStepScreen> createState() => _TypesafeStepScreenState();
@@ -42,20 +39,16 @@ class _TypesafeStepScreenState extends ConsumerState<TypesafeStepScreen> {
     super.dispose();
   }
 
-  Future<void> _save() async {
-    final context = this.context;
+  void _onSave() {
     final empty = _key.text.trim().isEmpty;
     setState(() => _missing = empty);
     if (empty) return;
-    final saved = await widget.onSave(_key.text);
-    if (!context.mounted) return;
-    if (saved) _key.clear();
+    widget.onSave(_key.text);
   }
-
-  void _onSave() => unawaited(_save().catchError(Crash.error));
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(settingsProvider.select((s) => s.keySavedSerial), (_, _) => _key.clear());
     final l10n = context.l10n;
     final has = widget.hasKey;
     return Column(

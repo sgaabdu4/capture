@@ -333,16 +333,16 @@ void main() {
     );
     expect(container.read(captureFlowProvider).notice, equals(CaptureNotice.remindersNotScheduled));
 
+    final attemptsBeforeDeniedRetry = List<String>.unmodifiable(attempted);
+    final progressBeforeDeniedRetry = captures.get('failed')?.progress;
+    final noticeBeforeDeniedRetry = container.read(captureFlowProvider).notice;
     refuseFirst = false;
     permissionGranted = false;
     await notifier.resumeReminders();
 
-    expect(attempted, equals(['failed-reminder', 'later-reminder']));
-    expect(
-      captures.get('failed')?.progress.remindersScheduled.map((id) => id.value),
-      equals(['confirmed']),
-    );
-    expect(container.read(captureFlowProvider).notice, equals(CaptureNotice.remindersNotScheduled));
+    expect(attempted, equals(attemptsBeforeDeniedRetry));
+    expect(captures.get('failed')?.progress, equals(progressBeforeDeniedRetry));
+    expect(container.read(captureFlowProvider).notice, equals(noticeBeforeDeniedRetry));
 
     permissionGranted = true;
     await notifier.resumeReminders();

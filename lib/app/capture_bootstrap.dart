@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:capture/app/app_startup.dart';
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
-import 'package:capture/core/router/app_router.dart';
 import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
@@ -22,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Localized native overlay and navigation effects must remain above the router.
+/// Native effects and typed navigation share the shell router context and listener ordering.
 class CaptureBootstrap extends ConsumerWidget {
   const CaptureBootstrap({required this.child, super.key});
 
@@ -36,19 +34,19 @@ class CaptureBootstrap extends ConsumerWidget {
         if (next.hasValue) _menu(context, ref);
       })
       ..listen(captureFlowProvider.select((s) => s.phase), (_, phase) {
-        unawaited(_overlay(context, ref, phase).catchError(Crash.error));
+        _overlay(context, ref, phase);
       })
       ..listen(captureFlowProvider.select((s) => s.reviewing), (_, record) {
-        if (record != null) unawaited(_review(context, ref, record).catchError(Crash.error));
+        if (record != null) _review(context, ref, record);
       })
       ..listen(captureFlowProvider.select((s) => s.autoSavedId), (_, id) {
         if (ref.read(captureFlowProvider).byId(id) case final CaptureRecord record) {
-          unawaited(_announceSaved(context, ref, record).catchError(Crash.error));
+          _announceSaved(context, ref, record);
         }
       })
       ..listen(captureFlowProvider.select((s) => s.destinationSerial), (_, _) {
         if (_destination(ref.read(captureFlowProvider)) case final GoRouteData route) {
-          ref.read(appRouterProvider).go(route.location);
+          route.go(context);
         }
       })
       ..listen(groupsProvider.select((s) => s.failureSerial), (_, _) {
@@ -72,35 +70,44 @@ class CaptureBootstrap extends ConsumerWidget {
     return child;
   }
 
-  Future<void> _overlay(BuildContext context, WidgetRef ref, CapturePhase phase) {
+  void _overlay(BuildContext context, WidgetRef ref, CapturePhase phase) {
     final native = ref.read(nativePlatformServiceProvider);
     final l10n = context.l10n;
-    return switch (phase) {
-      .idle => native.hideOverlay(),
-      .transcribing => native.showWorking(l10n.overlayTranscribing),
-      .analysing => native.showWorking(l10n.overlaySorting),
-      .saving => native.showWorking(l10n.overlaySaving),
-      .recording || .review => .value(),
-    };
+    switch (phase) {
+      case .idle:
+        unawaited(native.hideOverlay());
+      case .transcribing:
+        unawaited(native.showWorking(l10n.overlayTranscribing));
+      case .analysing:
+        unawaited(native.showWorking(l10n.overlaySorting));
+      case .saving:
+        unawaited(native.showWorking(l10n.overlaySaving));
+      case .recording || .review:
+    }
   }
 
-  Future<void> _review(BuildContext context, WidgetRef ref, CaptureRecord record) => ref
-      .read(nativePlatformServiceProvider)
-      .showReview(record.reviewCard(context.l10n, ref.read(groupsProvider)));
+  void _review(BuildContext context, WidgetRef ref, CaptureRecord record) => unawaited(
+    ref
+        .read(nativePlatformServiceProvider)
+        .showReview(record.reviewCard(context.l10n, ref.read(groupsProvider))),
+  );
 
-  Future<void> _announceSaved(BuildContext context, WidgetRef ref, CaptureRecord record) {
+  void _announceSaved(BuildContext context, WidgetRef ref, CaptureRecord record) {
     final l10n = context.l10n;
-    return ref
-        .read(reminderDatasourceProvider)
-        .show(
-          id: record.id.value,
-          title: l10n.statusSaved,
-          body: record.includedItems.summary(l10n),
-        );
+    unawaited(
+      ref
+          .read(reminderDatasourceProvider)
+          .show(
+            id: record.id.value,
+            title: l10n.statusSaved,
+            body: record.includedItems.summary(l10n),
+          ),
+    );
   }
 
   /// Where the capture flow asked to go, if anywhere.
   GoRouteData? _destination(CaptureFlowState state) => switch (state) {
+    CaptureFlowState(destination: .home) => const HomeRoute(),
     CaptureFlowState(destination: .settings) => const SettingsRoute(),
     CaptureFlowState(destination: .upcoming) => const UpcomingRoute(),
     CaptureFlowState(destination: .recordings) => const RecordingsRoute(),
@@ -122,8 +129,7 @@ class CaptureBootstrap extends ConsumerWidget {
             latest: ref.read(captureFlowProvider).captures.firstOrNull.latestLine(l10n),
             // Recording needs only the microphone; setup can come later.
             canRecord: true,
-          )
-          .catchError(Crash.error),
+          ),
     );
   }
 }

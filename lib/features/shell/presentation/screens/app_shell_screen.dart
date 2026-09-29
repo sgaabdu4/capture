@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
@@ -18,8 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Sidebar, settings gear, the current page and, once Sparkle finds a newer
-/// release, the update link. On iPhone, the capture pills and review card.
+/// Shell sidebar, Settings and discovered update link; iPhone adds capture pills/review.
 class AppShellScreen extends ConsumerWidget {
   const AppShellScreen({required this.location, required this.child, super.key});
 
@@ -98,7 +99,7 @@ class AppShellScreen extends ConsumerWidget {
             bottom: Spacing.xs,
             end: Spacing.xs,
             child: UpdateLink(
-              onTap: () => ref.read(nativePlatformServiceProvider).checkForUpdates(),
+              onTap: () => unawaited(ref.read(nativePlatformServiceProvider).checkForUpdates()),
             ),
           ),
       ],

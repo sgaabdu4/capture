@@ -16,10 +16,9 @@ T _$identity<T>(T value) => value;
 mixin _$SettingsState {
 
  Shortcut get shortcut; bool get modelReady; NotionWorkspace? get workspace;/// False until Keychain, microphone and hotkey state have been read.
- bool get loaded; bool get hasTypesafeKey; bool get hasNotionToken; bool get shortcutRegistered; ShortcutProblem? get shortcutProblem; MicPermission get mic;/// Save a finished recording to Notion without the review card when
-/// nothing on it needs a decision.
+ bool get loaded; bool get hasTypesafeKey; bool get hasNotionToken; bool get shortcutRegistered; ShortcutProblem? get shortcutProblem; MicPermission get mic;/// Save a finished recording without the review card when nothing needs a decision.
  bool get autoSave;/// Latest download event while the model downloads or after it failed.
- SpeechModelEvent? get modelDownload; bool get savingKey; JevFailure? get keyFailure; bool get connecting; NotionFailure? get notionFailure; bool get pageLinkInvalid;
+ SpeechModelEvent? get modelDownload; bool get savingKey; JevFailure? get keyFailure; int get keySavedSerial; bool get connecting; NotionFailure? get notionFailure; bool get pageLinkInvalid; int get notionConnectedSerial;
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -31,20 +30,20 @@ $SettingsStateCopyWith<SettingsState> get copyWith => _$SettingsStateCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as SettingsState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsState&&(identical(other.shortcut, _this.shortcut) || other.shortcut == _this.shortcut)&&(identical(other.modelReady, _this.modelReady) || other.modelReady == _this.modelReady)&&(identical(other.workspace, _this.workspace) || other.workspace == _this.workspace)&&(identical(other.loaded, _this.loaded) || other.loaded == _this.loaded)&&(identical(other.hasTypesafeKey, _this.hasTypesafeKey) || other.hasTypesafeKey == _this.hasTypesafeKey)&&(identical(other.hasNotionToken, _this.hasNotionToken) || other.hasNotionToken == _this.hasNotionToken)&&(identical(other.shortcutRegistered, _this.shortcutRegistered) || other.shortcutRegistered == _this.shortcutRegistered)&&(identical(other.shortcutProblem, _this.shortcutProblem) || other.shortcutProblem == _this.shortcutProblem)&&(identical(other.mic, _this.mic) || other.mic == _this.mic)&&(identical(other.autoSave, _this.autoSave) || other.autoSave == _this.autoSave)&&(identical(other.modelDownload, _this.modelDownload) || other.modelDownload == _this.modelDownload)&&(identical(other.savingKey, _this.savingKey) || other.savingKey == _this.savingKey)&&(identical(other.keyFailure, _this.keyFailure) || other.keyFailure == _this.keyFailure)&&(identical(other.connecting, _this.connecting) || other.connecting == _this.connecting)&&(identical(other.notionFailure, _this.notionFailure) || other.notionFailure == _this.notionFailure)&&(identical(other.pageLinkInvalid, _this.pageLinkInvalid) || other.pageLinkInvalid == _this.pageLinkInvalid));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SettingsState&&(identical(other.shortcut, _this.shortcut) || other.shortcut == _this.shortcut)&&(identical(other.modelReady, _this.modelReady) || other.modelReady == _this.modelReady)&&(identical(other.workspace, _this.workspace) || other.workspace == _this.workspace)&&(identical(other.loaded, _this.loaded) || other.loaded == _this.loaded)&&(identical(other.hasTypesafeKey, _this.hasTypesafeKey) || other.hasTypesafeKey == _this.hasTypesafeKey)&&(identical(other.hasNotionToken, _this.hasNotionToken) || other.hasNotionToken == _this.hasNotionToken)&&(identical(other.shortcutRegistered, _this.shortcutRegistered) || other.shortcutRegistered == _this.shortcutRegistered)&&(identical(other.shortcutProblem, _this.shortcutProblem) || other.shortcutProblem == _this.shortcutProblem)&&(identical(other.mic, _this.mic) || other.mic == _this.mic)&&(identical(other.autoSave, _this.autoSave) || other.autoSave == _this.autoSave)&&(identical(other.modelDownload, _this.modelDownload) || other.modelDownload == _this.modelDownload)&&(identical(other.savingKey, _this.savingKey) || other.savingKey == _this.savingKey)&&(identical(other.keyFailure, _this.keyFailure) || other.keyFailure == _this.keyFailure)&&(identical(other.keySavedSerial, _this.keySavedSerial) || other.keySavedSerial == _this.keySavedSerial)&&(identical(other.connecting, _this.connecting) || other.connecting == _this.connecting)&&(identical(other.notionFailure, _this.notionFailure) || other.notionFailure == _this.notionFailure)&&(identical(other.pageLinkInvalid, _this.pageLinkInvalid) || other.pageLinkInvalid == _this.pageLinkInvalid)&&(identical(other.notionConnectedSerial, _this.notionConnectedSerial) || other.notionConnectedSerial == _this.notionConnectedSerial));
 }
 
 
 @override
 int get hashCode {
   final _this = this as SettingsState;
-  return Object.hash(runtimeType,_this.shortcut,_this.modelReady,_this.workspace,_this.loaded,_this.hasTypesafeKey,_this.hasNotionToken,_this.shortcutRegistered,_this.shortcutProblem,_this.mic,_this.autoSave,_this.modelDownload,_this.savingKey,_this.keyFailure,_this.connecting,_this.notionFailure,_this.pageLinkInvalid);
+  return Object.hash(runtimeType,_this.shortcut,_this.modelReady,_this.workspace,_this.loaded,_this.hasTypesafeKey,_this.hasNotionToken,_this.shortcutRegistered,_this.shortcutProblem,_this.mic,_this.autoSave,_this.modelDownload,_this.savingKey,_this.keyFailure,_this.keySavedSerial,_this.connecting,_this.notionFailure,_this.pageLinkInvalid,_this.notionConnectedSerial);
 }
 
 @override
 String toString() {
   final _this = this as SettingsState;
-  return 'SettingsState(shortcut: ${_this.shortcut}, modelReady: ${_this.modelReady}, workspace: ${_this.workspace}, loaded: ${_this.loaded}, hasTypesafeKey: ${_this.hasTypesafeKey}, hasNotionToken: ${_this.hasNotionToken}, shortcutRegistered: ${_this.shortcutRegistered}, shortcutProblem: ${_this.shortcutProblem}, mic: ${_this.mic}, autoSave: ${_this.autoSave}, modelDownload: ${_this.modelDownload}, savingKey: ${_this.savingKey}, keyFailure: ${_this.keyFailure}, connecting: ${_this.connecting}, notionFailure: ${_this.notionFailure}, pageLinkInvalid: ${_this.pageLinkInvalid})';
+  return 'SettingsState(shortcut: ${_this.shortcut}, modelReady: ${_this.modelReady}, workspace: ${_this.workspace}, loaded: ${_this.loaded}, hasTypesafeKey: ${_this.hasTypesafeKey}, hasNotionToken: ${_this.hasNotionToken}, shortcutRegistered: ${_this.shortcutRegistered}, shortcutProblem: ${_this.shortcutProblem}, mic: ${_this.mic}, autoSave: ${_this.autoSave}, modelDownload: ${_this.modelDownload}, savingKey: ${_this.savingKey}, keyFailure: ${_this.keyFailure}, keySavedSerial: ${_this.keySavedSerial}, connecting: ${_this.connecting}, notionFailure: ${_this.notionFailure}, pageLinkInvalid: ${_this.pageLinkInvalid}, notionConnectedSerial: ${_this.notionConnectedSerial})';
 }
 
 
@@ -55,7 +54,7 @@ abstract mixin class $SettingsStateCopyWith<$Res>  {
   factory $SettingsStateCopyWith(SettingsState value, $Res Function(SettingsState) _then) = _$SettingsStateCopyWithImpl;
 @useResult
 $Res call({
- Shortcut shortcut, bool modelReady, NotionWorkspace? workspace, bool loaded, bool hasTypesafeKey, bool hasNotionToken, bool shortcutRegistered, ShortcutProblem? shortcutProblem, MicPermission mic, bool autoSave, SpeechModelEvent? modelDownload, bool savingKey, JevFailure? keyFailure, bool connecting, NotionFailure? notionFailure, bool pageLinkInvalid
+ Shortcut shortcut, bool modelReady, NotionWorkspace? workspace, bool loaded, bool hasTypesafeKey, bool hasNotionToken, bool shortcutRegistered, ShortcutProblem? shortcutProblem, MicPermission mic, bool autoSave, SpeechModelEvent? modelDownload, bool savingKey, JevFailure? keyFailure, int keySavedSerial, bool connecting, NotionFailure? notionFailure, bool pageLinkInvalid, int notionConnectedSerial
 });
 
 
@@ -72,7 +71,7 @@ class _$SettingsStateCopyWithImpl<$Res>
 
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? shortcut = null,Object? modelReady = null,Object? workspace = freezed,Object? loaded = null,Object? hasTypesafeKey = null,Object? hasNotionToken = null,Object? shortcutRegistered = null,Object? shortcutProblem = freezed,Object? mic = null,Object? autoSave = null,Object? modelDownload = freezed,Object? savingKey = null,Object? keyFailure = freezed,Object? connecting = null,Object? notionFailure = freezed,Object? pageLinkInvalid = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? shortcut = null,Object? modelReady = null,Object? workspace = freezed,Object? loaded = null,Object? hasTypesafeKey = null,Object? hasNotionToken = null,Object? shortcutRegistered = null,Object? shortcutProblem = freezed,Object? mic = null,Object? autoSave = null,Object? modelDownload = freezed,Object? savingKey = null,Object? keyFailure = freezed,Object? keySavedSerial = null,Object? connecting = null,Object? notionFailure = freezed,Object? pageLinkInvalid = null,Object? notionConnectedSerial = null,}) {
   return _then(SettingsState(
 shortcut: null == shortcut ? _self.shortcut : shortcut // ignore: cast_nullable_to_non_nullable
 as Shortcut,modelReady: null == modelReady ? _self.modelReady : modelReady // ignore: cast_nullable_to_non_nullable
@@ -87,10 +86,12 @@ as MicPermission,autoSave: null == autoSave ? _self.autoSave : autoSave // ignor
 as bool,modelDownload: freezed == modelDownload ? _self.modelDownload : modelDownload // ignore: cast_nullable_to_non_nullable
 as SpeechModelEvent?,savingKey: null == savingKey ? _self.savingKey : savingKey // ignore: cast_nullable_to_non_nullable
 as bool,keyFailure: freezed == keyFailure ? _self.keyFailure : keyFailure // ignore: cast_nullable_to_non_nullable
-as JevFailure?,connecting: null == connecting ? _self.connecting : connecting // ignore: cast_nullable_to_non_nullable
+as JevFailure?,keySavedSerial: null == keySavedSerial ? _self.keySavedSerial : keySavedSerial // ignore: cast_nullable_to_non_nullable
+as int,connecting: null == connecting ? _self.connecting : connecting // ignore: cast_nullable_to_non_nullable
 as bool,notionFailure: freezed == notionFailure ? _self.notionFailure : notionFailure // ignore: cast_nullable_to_non_nullable
 as NotionFailure?,pageLinkInvalid: null == pageLinkInvalid ? _self.pageLinkInvalid : pageLinkInvalid // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,notionConnectedSerial: null == notionConnectedSerial ? _self.notionConnectedSerial : notionConnectedSerial // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 /// Create a copy of SettingsState
@@ -205,10 +206,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Shortcut shortcut,  bool modelReady,  NotionWorkspace? workspace,  bool loaded,  bool hasTypesafeKey,  bool hasNotionToken,  bool shortcutRegistered,  ShortcutProblem? shortcutProblem,  MicPermission mic,  bool autoSave,  SpeechModelEvent? modelDownload,  bool savingKey,  JevFailure? keyFailure,  bool connecting,  NotionFailure? notionFailure,  bool pageLinkInvalid)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Shortcut shortcut,  bool modelReady,  NotionWorkspace? workspace,  bool loaded,  bool hasTypesafeKey,  bool hasNotionToken,  bool shortcutRegistered,  ShortcutProblem? shortcutProblem,  MicPermission mic,  bool autoSave,  SpeechModelEvent? modelDownload,  bool savingKey,  JevFailure? keyFailure,  int keySavedSerial,  bool connecting,  NotionFailure? notionFailure,  bool pageLinkInvalid,  int notionConnectedSerial)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SettingsState() when $default != null:
-return $default(_that.shortcut,_that.modelReady,_that.workspace,_that.loaded,_that.hasTypesafeKey,_that.hasNotionToken,_that.shortcutRegistered,_that.shortcutProblem,_that.mic,_that.autoSave,_that.modelDownload,_that.savingKey,_that.keyFailure,_that.connecting,_that.notionFailure,_that.pageLinkInvalid);case _:
+return $default(_that.shortcut,_that.modelReady,_that.workspace,_that.loaded,_that.hasTypesafeKey,_that.hasNotionToken,_that.shortcutRegistered,_that.shortcutProblem,_that.mic,_that.autoSave,_that.modelDownload,_that.savingKey,_that.keyFailure,_that.keySavedSerial,_that.connecting,_that.notionFailure,_that.pageLinkInvalid,_that.notionConnectedSerial);case _:
   return orElse();
 
 }
@@ -226,10 +227,10 @@ return $default(_that.shortcut,_that.modelReady,_that.workspace,_that.loaded,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Shortcut shortcut,  bool modelReady,  NotionWorkspace? workspace,  bool loaded,  bool hasTypesafeKey,  bool hasNotionToken,  bool shortcutRegistered,  ShortcutProblem? shortcutProblem,  MicPermission mic,  bool autoSave,  SpeechModelEvent? modelDownload,  bool savingKey,  JevFailure? keyFailure,  bool connecting,  NotionFailure? notionFailure,  bool pageLinkInvalid)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Shortcut shortcut,  bool modelReady,  NotionWorkspace? workspace,  bool loaded,  bool hasTypesafeKey,  bool hasNotionToken,  bool shortcutRegistered,  ShortcutProblem? shortcutProblem,  MicPermission mic,  bool autoSave,  SpeechModelEvent? modelDownload,  bool savingKey,  JevFailure? keyFailure,  int keySavedSerial,  bool connecting,  NotionFailure? notionFailure,  bool pageLinkInvalid,  int notionConnectedSerial)  $default,) {final _that = this;
 switch (_that) {
 case _SettingsState():
-return $default(_that.shortcut,_that.modelReady,_that.workspace,_that.loaded,_that.hasTypesafeKey,_that.hasNotionToken,_that.shortcutRegistered,_that.shortcutProblem,_that.mic,_that.autoSave,_that.modelDownload,_that.savingKey,_that.keyFailure,_that.connecting,_that.notionFailure,_that.pageLinkInvalid);}
+return $default(_that.shortcut,_that.modelReady,_that.workspace,_that.loaded,_that.hasTypesafeKey,_that.hasNotionToken,_that.shortcutRegistered,_that.shortcutProblem,_that.mic,_that.autoSave,_that.modelDownload,_that.savingKey,_that.keyFailure,_that.keySavedSerial,_that.connecting,_that.notionFailure,_that.pageLinkInvalid,_that.notionConnectedSerial);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -243,10 +244,10 @@ return $default(_that.shortcut,_that.modelReady,_that.workspace,_that.loaded,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Shortcut shortcut,  bool modelReady,  NotionWorkspace? workspace,  bool loaded,  bool hasTypesafeKey,  bool hasNotionToken,  bool shortcutRegistered,  ShortcutProblem? shortcutProblem,  MicPermission mic,  bool autoSave,  SpeechModelEvent? modelDownload,  bool savingKey,  JevFailure? keyFailure,  bool connecting,  NotionFailure? notionFailure,  bool pageLinkInvalid)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Shortcut shortcut,  bool modelReady,  NotionWorkspace? workspace,  bool loaded,  bool hasTypesafeKey,  bool hasNotionToken,  bool shortcutRegistered,  ShortcutProblem? shortcutProblem,  MicPermission mic,  bool autoSave,  SpeechModelEvent? modelDownload,  bool savingKey,  JevFailure? keyFailure,  int keySavedSerial,  bool connecting,  NotionFailure? notionFailure,  bool pageLinkInvalid,  int notionConnectedSerial)?  $default,) {final _that = this;
 switch (_that) {
 case _SettingsState() when $default != null:
-return $default(_that.shortcut,_that.modelReady,_that.workspace,_that.loaded,_that.hasTypesafeKey,_that.hasNotionToken,_that.shortcutRegistered,_that.shortcutProblem,_that.mic,_that.autoSave,_that.modelDownload,_that.savingKey,_that.keyFailure,_that.connecting,_that.notionFailure,_that.pageLinkInvalid);case _:
+return $default(_that.shortcut,_that.modelReady,_that.workspace,_that.loaded,_that.hasTypesafeKey,_that.hasNotionToken,_that.shortcutRegistered,_that.shortcutProblem,_that.mic,_that.autoSave,_that.modelDownload,_that.savingKey,_that.keyFailure,_that.keySavedSerial,_that.connecting,_that.notionFailure,_that.pageLinkInvalid,_that.notionConnectedSerial);case _:
   return null;
 
 }
@@ -258,7 +259,7 @@ return $default(_that.shortcut,_that.modelReady,_that.workspace,_that.loaded,_th
 
 
 class _SettingsState extends SettingsState {
-  const _SettingsState({required this.shortcut, required this.modelReady, this.workspace, this.loaded = false, this.hasTypesafeKey = false, this.hasNotionToken = false, this.shortcutRegistered = false, this.shortcutProblem, this.mic = MicPermission.undetermined, this.autoSave = false, this.modelDownload, this.savingKey = false, this.keyFailure, this.connecting = false, this.notionFailure, this.pageLinkInvalid = false}): super._();
+  const _SettingsState({required this.shortcut, required this.modelReady, this.workspace, this.loaded = false, this.hasTypesafeKey = false, this.hasNotionToken = false, this.shortcutRegistered = false, this.shortcutProblem, this.mic = MicPermission.undetermined, this.autoSave = false, this.modelDownload, this.savingKey = false, this.keyFailure, this.keySavedSerial = 0, this.connecting = false, this.notionFailure, this.pageLinkInvalid = false, this.notionConnectedSerial = 0}): super._();
   
 
 @override final  Shortcut shortcut;
@@ -271,16 +272,17 @@ class _SettingsState extends SettingsState {
 @override@JsonKey() final  bool shortcutRegistered;
 @override final  ShortcutProblem? shortcutProblem;
 @override@JsonKey() final  MicPermission mic;
-/// Save a finished recording to Notion without the review card when
-/// nothing on it needs a decision.
+/// Save a finished recording without the review card when nothing needs a decision.
 @override@JsonKey() final  bool autoSave;
 /// Latest download event while the model downloads or after it failed.
 @override final  SpeechModelEvent? modelDownload;
 @override@JsonKey() final  bool savingKey;
 @override final  JevFailure? keyFailure;
+@override@JsonKey() final  int keySavedSerial;
 @override@JsonKey() final  bool connecting;
 @override final  NotionFailure? notionFailure;
 @override@JsonKey() final  bool pageLinkInvalid;
+@override@JsonKey() final  int notionConnectedSerial;
 
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
@@ -292,18 +294,18 @@ _$SettingsStateCopyWith<_SettingsState> get copyWith => __$SettingsStateCopyWith
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SettingsState&&(identical(other.shortcut, shortcut) || other.shortcut == shortcut)&&(identical(other.modelReady, modelReady) || other.modelReady == modelReady)&&(identical(other.workspace, workspace) || other.workspace == workspace)&&(identical(other.loaded, loaded) || other.loaded == loaded)&&(identical(other.hasTypesafeKey, hasTypesafeKey) || other.hasTypesafeKey == hasTypesafeKey)&&(identical(other.hasNotionToken, hasNotionToken) || other.hasNotionToken == hasNotionToken)&&(identical(other.shortcutRegistered, shortcutRegistered) || other.shortcutRegistered == shortcutRegistered)&&(identical(other.shortcutProblem, shortcutProblem) || other.shortcutProblem == shortcutProblem)&&(identical(other.mic, mic) || other.mic == mic)&&(identical(other.autoSave, autoSave) || other.autoSave == autoSave)&&(identical(other.modelDownload, modelDownload) || other.modelDownload == modelDownload)&&(identical(other.savingKey, savingKey) || other.savingKey == savingKey)&&(identical(other.keyFailure, keyFailure) || other.keyFailure == keyFailure)&&(identical(other.connecting, connecting) || other.connecting == connecting)&&(identical(other.notionFailure, notionFailure) || other.notionFailure == notionFailure)&&(identical(other.pageLinkInvalid, pageLinkInvalid) || other.pageLinkInvalid == pageLinkInvalid));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SettingsState&&(identical(other.shortcut, shortcut) || other.shortcut == shortcut)&&(identical(other.modelReady, modelReady) || other.modelReady == modelReady)&&(identical(other.workspace, workspace) || other.workspace == workspace)&&(identical(other.loaded, loaded) || other.loaded == loaded)&&(identical(other.hasTypesafeKey, hasTypesafeKey) || other.hasTypesafeKey == hasTypesafeKey)&&(identical(other.hasNotionToken, hasNotionToken) || other.hasNotionToken == hasNotionToken)&&(identical(other.shortcutRegistered, shortcutRegistered) || other.shortcutRegistered == shortcutRegistered)&&(identical(other.shortcutProblem, shortcutProblem) || other.shortcutProblem == shortcutProblem)&&(identical(other.mic, mic) || other.mic == mic)&&(identical(other.autoSave, autoSave) || other.autoSave == autoSave)&&(identical(other.modelDownload, modelDownload) || other.modelDownload == modelDownload)&&(identical(other.savingKey, savingKey) || other.savingKey == savingKey)&&(identical(other.keyFailure, keyFailure) || other.keyFailure == keyFailure)&&(identical(other.keySavedSerial, keySavedSerial) || other.keySavedSerial == keySavedSerial)&&(identical(other.connecting, connecting) || other.connecting == connecting)&&(identical(other.notionFailure, notionFailure) || other.notionFailure == notionFailure)&&(identical(other.pageLinkInvalid, pageLinkInvalid) || other.pageLinkInvalid == pageLinkInvalid)&&(identical(other.notionConnectedSerial, notionConnectedSerial) || other.notionConnectedSerial == notionConnectedSerial));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,shortcut,modelReady,workspace,loaded,hasTypesafeKey,hasNotionToken,shortcutRegistered,shortcutProblem,mic,autoSave,modelDownload,savingKey,keyFailure,connecting,notionFailure,pageLinkInvalid);
+    return Object.hash(runtimeType,shortcut,modelReady,workspace,loaded,hasTypesafeKey,hasNotionToken,shortcutRegistered,shortcutProblem,mic,autoSave,modelDownload,savingKey,keyFailure,keySavedSerial,connecting,notionFailure,pageLinkInvalid,notionConnectedSerial);
 }
 
 @override
 String toString() {
-    return 'SettingsState(shortcut: $shortcut, modelReady: $modelReady, workspace: $workspace, loaded: $loaded, hasTypesafeKey: $hasTypesafeKey, hasNotionToken: $hasNotionToken, shortcutRegistered: $shortcutRegistered, shortcutProblem: $shortcutProblem, mic: $mic, autoSave: $autoSave, modelDownload: $modelDownload, savingKey: $savingKey, keyFailure: $keyFailure, connecting: $connecting, notionFailure: $notionFailure, pageLinkInvalid: $pageLinkInvalid)';
+    return 'SettingsState(shortcut: $shortcut, modelReady: $modelReady, workspace: $workspace, loaded: $loaded, hasTypesafeKey: $hasTypesafeKey, hasNotionToken: $hasNotionToken, shortcutRegistered: $shortcutRegistered, shortcutProblem: $shortcutProblem, mic: $mic, autoSave: $autoSave, modelDownload: $modelDownload, savingKey: $savingKey, keyFailure: $keyFailure, keySavedSerial: $keySavedSerial, connecting: $connecting, notionFailure: $notionFailure, pageLinkInvalid: $pageLinkInvalid, notionConnectedSerial: $notionConnectedSerial)';
 }
 
 
@@ -314,7 +316,7 @@ abstract mixin class _$SettingsStateCopyWith<$Res> implements $SettingsStateCopy
   factory _$SettingsStateCopyWith(_SettingsState value, $Res Function(_SettingsState) _then) = __$SettingsStateCopyWithImpl;
 @override @useResult
 $Res call({
- Shortcut shortcut, bool modelReady, NotionWorkspace? workspace, bool loaded, bool hasTypesafeKey, bool hasNotionToken, bool shortcutRegistered, ShortcutProblem? shortcutProblem, MicPermission mic, bool autoSave, SpeechModelEvent? modelDownload, bool savingKey, JevFailure? keyFailure, bool connecting, NotionFailure? notionFailure, bool pageLinkInvalid
+ Shortcut shortcut, bool modelReady, NotionWorkspace? workspace, bool loaded, bool hasTypesafeKey, bool hasNotionToken, bool shortcutRegistered, ShortcutProblem? shortcutProblem, MicPermission mic, bool autoSave, SpeechModelEvent? modelDownload, bool savingKey, JevFailure? keyFailure, int keySavedSerial, bool connecting, NotionFailure? notionFailure, bool pageLinkInvalid, int notionConnectedSerial
 });
 
 
@@ -331,7 +333,7 @@ class __$SettingsStateCopyWithImpl<$Res>
 
 /// Create a copy of SettingsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? shortcut = null,Object? modelReady = null,Object? workspace = freezed,Object? loaded = null,Object? hasTypesafeKey = null,Object? hasNotionToken = null,Object? shortcutRegistered = null,Object? shortcutProblem = freezed,Object? mic = null,Object? autoSave = null,Object? modelDownload = freezed,Object? savingKey = null,Object? keyFailure = freezed,Object? connecting = null,Object? notionFailure = freezed,Object? pageLinkInvalid = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? shortcut = null,Object? modelReady = null,Object? workspace = freezed,Object? loaded = null,Object? hasTypesafeKey = null,Object? hasNotionToken = null,Object? shortcutRegistered = null,Object? shortcutProblem = freezed,Object? mic = null,Object? autoSave = null,Object? modelDownload = freezed,Object? savingKey = null,Object? keyFailure = freezed,Object? keySavedSerial = null,Object? connecting = null,Object? notionFailure = freezed,Object? pageLinkInvalid = null,Object? notionConnectedSerial = null,}) {
   return _then(_SettingsState(
 shortcut: null == shortcut ? _self.shortcut : shortcut // ignore: cast_nullable_to_non_nullable
 as Shortcut,modelReady: null == modelReady ? _self.modelReady : modelReady // ignore: cast_nullable_to_non_nullable
@@ -346,10 +348,12 @@ as MicPermission,autoSave: null == autoSave ? _self.autoSave : autoSave // ignor
 as bool,modelDownload: freezed == modelDownload ? _self.modelDownload : modelDownload // ignore: cast_nullable_to_non_nullable
 as SpeechModelEvent?,savingKey: null == savingKey ? _self.savingKey : savingKey // ignore: cast_nullable_to_non_nullable
 as bool,keyFailure: freezed == keyFailure ? _self.keyFailure : keyFailure // ignore: cast_nullable_to_non_nullable
-as JevFailure?,connecting: null == connecting ? _self.connecting : connecting // ignore: cast_nullable_to_non_nullable
+as JevFailure?,keySavedSerial: null == keySavedSerial ? _self.keySavedSerial : keySavedSerial // ignore: cast_nullable_to_non_nullable
+as int,connecting: null == connecting ? _self.connecting : connecting // ignore: cast_nullable_to_non_nullable
 as bool,notionFailure: freezed == notionFailure ? _self.notionFailure : notionFailure // ignore: cast_nullable_to_non_nullable
 as NotionFailure?,pageLinkInvalid: null == pageLinkInvalid ? _self.pageLinkInvalid : pageLinkInvalid // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,notionConnectedSerial: null == notionConnectedSerial ? _self.notionConnectedSerial : notionConnectedSerial // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

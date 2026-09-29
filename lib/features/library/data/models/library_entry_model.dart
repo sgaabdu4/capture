@@ -29,7 +29,10 @@ sealed class LibraryEntryModel with _$LibraryEntryModel {
   factory LibraryEntryModel.fromEntity(LibraryEntry e) => LibraryEntryModel(
     pageId: e.pageId.value,
     itemId: e.itemId.value,
-    title: e.title ?? '',
+    title: switch (e.title) {
+      final title? => title,
+      null => '',
+    },
     kind: e.kind,
     groupId: e.groupId?.value,
     due: switch (e.due) {

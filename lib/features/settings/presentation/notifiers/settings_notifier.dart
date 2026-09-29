@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/notion/notion_shapes.dart';
 import 'package:capture/core/domain/values/result.dart';
 import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
+import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
+import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/domain/entities/shortcut.dart';
 import 'package:capture/features/settings/domain/entities/shortcut_problem.dart';
 import 'package:capture/features/settings/domain/values/speech_model_event.dart';
@@ -59,15 +62,25 @@ class SettingsNotifier extends _$SettingsNotifier {
 
   /// Validates with a harmless model listing, then stores in Keychain.
   Future<void> saveTypesafeKey(String key) async {
-    final trimmed = key.trim();
-    if (trimmed.isEmpty || state.savingKey) return;
-    _startSavingKey();
-    final result = await _ensureRepository().saveTypesafeKey(trimmed);
-    if (!ref.mounted) return;
-    state = switch (result) {
-      Ok() => state.copyWith(savingKey: false, hasTypesafeKey: true),
-      Err(:final failure) => state.copyWith(savingKey: false, keyFailure: failure),
-    };
+    try {
+      final trimmed = key.trim();
+      if (trimmed.isEmpty || state.savingKey) return;
+      _startSavingKey();
+      final result = await _ensureRepository().saveTypesafeKey(trimmed);
+      if (!ref.mounted) return;
+      state = switch (result) {
+        Ok() => state.copyWith(
+          savingKey: false,
+          hasTypesafeKey: true,
+          keySavedSerial: state.keySavedSerial + 1,
+        ),
+        Err(:final failure) => state.copyWith(savingKey: false, keyFailure: failure),
+      };
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+      if (!ref.mounted) return;
+      state = state.copyWith(savingKey: false);
+    }
   }
 
   void _startSavingKey() => state = state.copyWith(savingKey: true, keyFailure: null);
@@ -77,25 +90,38 @@ class SettingsNotifier extends _$SettingsNotifier {
 
   /// Empty fields reuse the stored token / current page (reconnect).
   Future<void> connectNotion({required String token, required String pageLink}) async {
-    if (state.connecting) return;
-    final link = pageLink.trim();
-    final pageId = link.isEmpty ? state.workspace?.parentPageId.value : parseNotionId(link);
-    if (pageId == null) {
-      _rejectPageLink();
-      return;
-    }
-    _startConnecting();
-    final trimmed = token.trim();
-    final result = await _ensureRepository().connectNotion(
-      parentPageId: pageId,
-      token: trimmed.isEmpty ? null : trimmed,
-    );
-    if (!ref.mounted) return;
-    switch (result) {
-      case Ok(:final value):
-        state = state.copyWith(connecting: false, workspace: value, hasNotionToken: true);
-      case Err(:final failure):
-        state = state.copyWith(connecting: false, notionFailure: failure);
+    try {
+      if (state.connecting) return;
+      final link = pageLink.trim();
+      final pageId = link.isEmpty ? state.workspace?.parentPageId.value : parseNotionId(link);
+      if (pageId == null) {
+        _rejectPageLink();
+        return;
+      }
+      _startConnecting();
+      final trimmed = token.trim();
+      final result = await _ensureRepository().connectNotion(
+        parentPageId: pageId,
+        token: trimmed.isEmpty ? null : trimmed,
+      );
+      if (!ref.mounted) return;
+      switch (result) {
+        case Ok(:final value):
+          state = state.copyWith(
+            connecting: false,
+            workspace: value,
+            hasNotionToken: true,
+            notionConnectedSerial: state.notionConnectedSerial + 1,
+          );
+          ref.read(groupsProvider.notifier).reload();
+          unawaited(ref.read(libraryProvider.notifier).refresh());
+        case Err(:final failure):
+          state = state.copyWith(connecting: false, notionFailure: failure);
+      }
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+      if (!ref.mounted) return;
+      state = state.copyWith(connecting: false);
     }
   }
 
@@ -105,22 +131,29 @@ class SettingsNotifier extends _$SettingsNotifier {
     state = state.copyWith(workspace: null, hasNotionToken: false);
   }
 
-  /// Back to first launch with the speech model kept: no keys, no Notion
-  /// link and the standard shortcut.
-  Future<void> reset() async {
-    final repo = _ensureRepository();
-    await repo.reset();
-    if (!ref.mounted) return;
-    final registered = await _register(.standard);
-    if (!ref.mounted) return;
-    state = .new(
-      shortcut: .standard,
-      modelReady: repo.isSpeechModelReady(),
-      modelDownload: state.modelDownload,
-      loaded: true,
-      shortcutRegistered: registered,
-      mic: state.mic,
-    );
+  /// Reset keeps the speech model, removes keys/Notion, and restores the standard shortcut.
+  Future<bool> reset() async {
+    try {
+      final repo = _ensureRepository();
+      await repo.reset();
+      if (!ref.mounted) return false;
+      final registered = await _register(.standard);
+      if (!ref.mounted) return false;
+      state = .new(
+        shortcut: .standard,
+        modelReady: repo.isSpeechModelReady(),
+        modelDownload: state.modelDownload,
+        loaded: true,
+        shortcutRegistered: registered,
+        mic: state.mic,
+        keySavedSerial: state.keySavedSerial,
+        notionConnectedSerial: state.notionConnectedSerial,
+      );
+      return true;
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+      return false;
+    }
   }
 
   void setAutoSave({required bool on}) {
@@ -149,27 +182,44 @@ class SettingsNotifier extends _$SettingsNotifier {
     });
   }
 
-  /// Registers [next] globally; keeps the previous shortcut when macOS says
-  /// another app owns it.
+  /// Registers [next] globally and keeps the previous shortcut when another app owns it.
   Future<void> setShortcut(Shortcut next) async {
-    if (next.problem case final ShortcutProblem problem) {
-      _rejectShortcut(problem);
-      return;
+    try {
+      if (next.problem case final ShortcutProblem problem) {
+        _rejectShortcut(problem);
+        return;
+      }
+      final registered = await _register(next);
+      if (!ref.mounted) return;
+      if (registered) {
+        _ensureRepository().saveShortcut(next);
+        state = state.copyWith(shortcut: next, shortcutRegistered: true, shortcutProblem: null);
+        return;
+      }
+      final restored = await _register(state.shortcut);
+      if (!ref.mounted) return;
+      state = state.copyWith(shortcutRegistered: restored, shortcutProblem: .taken);
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
     }
-    final registered = await _register(next);
-    if (!ref.mounted) return;
-    if (registered) {
-      _ensureRepository().saveShortcut(next);
-      state = state.copyWith(shortcut: next, shortcutRegistered: true, shortcutProblem: null);
-      return;
-    }
-    final restored = await _register(state.shortcut);
-    if (!ref.mounted) return;
-    state = state.copyWith(shortcutRegistered: restored, shortcutProblem: .taken);
   }
 
   /// While a new shortcut is recorded the current one must not start a capture.
-  Future<void> pauseShortcut({required bool paused}) => _ensureNative().pauseHotKey(paused: paused);
+  Future<void> pauseShortcut({required bool paused}) async {
+    try {
+      await _ensureNative().pauseHotKey(paused: paused);
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
+  }
+
+  Future<void> allowMic() async {
+    try {
+      await ensureMic();
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
+  }
 
   void _rejectShortcut(ShortcutProblem problem) => state = state.copyWith(shortcutProblem: problem);
 

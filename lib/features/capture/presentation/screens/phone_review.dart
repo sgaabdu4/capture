@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/services/models/review_card_payload.dart';
 import 'package:capture/core/services/models/review_card_row.dart';
@@ -25,9 +24,8 @@ class PhoneReview extends ConsumerWidget {
     _ => Icons.description_outlined,
   };
 
-  static void _act(WidgetRef ref, ReviewAction action) => unawaited(
-    ref.read(captureFlowProvider.notifier).onReviewAction(action).catchError(Crash.error),
-  );
+  static void _act(WidgetRef ref, ReviewAction action) =>
+      unawaited(ref.read(captureFlowProvider.notifier).onReviewAction(action));
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

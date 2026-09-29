@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
@@ -86,9 +85,7 @@ class HomeScreen extends ConsumerWidget {
                 shortcutLabel: ref.read(systemDatasourceProvider).isPhone ? null : shortcut,
                 message: failure?.label(l10n) ?? notice?.label(l10n),
                 onPressed: canToggle
-                    ? () => unawaited(
-                        ref.read(captureFlowProvider.notifier).toggle().catchError(Crash.error),
-                      )
+                    ? () => unawaited(ref.read(captureFlowProvider.notifier).toggle())
                     : null,
               ),
               const SizedBox(height: Spacing.xxl),
@@ -101,10 +98,7 @@ class HomeScreen extends ConsumerWidget {
                         (title: entry.title, due: due.label(l10n, now), done: entry.done),
                     ],
                     onDoneChanged: (index, {required done}) => unawaited(
-                      ref
-                          .read(libraryProvider.notifier)
-                          .setDone(today[index].entry, done: done)
-                          .catchError(Crash.error),
+                      ref.read(libraryProvider.notifier).setDone(today[index].entry, done: done),
                     ),
                     onViewAll: () => const TodoRoute().go(context),
                   ),

@@ -48,48 +48,66 @@ class LibraryNotifier extends _$LibraryNotifier {
   }
 
   Future<void> setDone(LibraryEntry entry, {required bool done}) async {
-    final result = await _ensureRepository().setDone(entry, done: done);
-    if (!ref.mounted) return;
-    state = _replaced(result);
+    try {
+      final result = await _ensureRepository().setDone(entry, done: done);
+      if (!ref.mounted) return;
+      state = _replaced(result);
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
   }
 
-  /// The body on the entry's Notion page, or null when it cannot be read.
-  Future<String?> body(LibraryEntry entry) async {
+  /// Prepares one editor snapshot; a later request owns any subsequent completion.
+  Future<void> body(LibraryEntry entry, {required String origin}) async {
+    final serial = state.bodyLoadSerial + 1;
+    state = state.copyWith(
+      bodyEntry: entry,
+      bodyOrigin: origin,
+      bodyLoading: true,
+      bodyText: null,
+      bodyLoadSerial: serial,
+    );
     try {
       final result = await _ensureRepository().body(entry);
-      if (!ref.mounted) return null;
-      switch (result) {
-        case Ok(:final value):
-          return value;
-        case Err(:final failure):
-          state = _failed(state, failure);
-          return null;
-      }
-    } on Exception catch (error, stackTrace) {
+      if (!ref.mounted || state.bodyLoadSerial != serial) return;
+      state = switch (result) {
+        Ok(:final value) => state.copyWith(bodyLoading: false, bodyText: value),
+        Err(:final failure) => _failed(state.copyWith(bodyLoading: false), failure),
+      };
+    } catch (error, stackTrace) {
       Crash.error(error, stackTrace);
-      return null;
+      if (!ref.mounted || state.bodyLoadSerial != serial) return;
+      state = state.copyWith(bodyLoading: false);
     }
   }
 
   /// Saves an edited entry; [body] only when it should be rewritten.
   Future<void> update(LibraryEntry entry, {String? body}) async {
-    final result = await _ensureRepository().update(entry, body: body);
-    if (!ref.mounted) return;
-    state = _replaced(result);
+    try {
+      final result = await _ensureRepository().update(entry, body: body);
+      if (!ref.mounted) return;
+      state = _replaced(result);
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
   }
 
   Future<void> delete(LibraryEntry entry) async {
-    final result = await _ensureRepository().delete(entry);
-    if (!ref.mounted) return;
-    state = switch (result) {
-      Ok() => state.copyWith(
-        entries: [
-          for (final e in state.entries)
-            if (e.itemId != entry.itemId) e,
-        ],
-      ),
-      Err(:final failure) => _failed(state, failure),
-    };
+    try {
+      final result = await _ensureRepository().delete(entry);
+      if (!ref.mounted) return;
+      state = switch (result) {
+        Ok() => state.copyWith(
+          entries: [
+            for (final e in state.entries)
+              if (e.itemId != entry.itemId) e,
+          ],
+        ),
+        Err(:final failure) => _failed(state, failure),
+      };
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
   }
 
   void search(String query) => state = state.copyWith(query: query);

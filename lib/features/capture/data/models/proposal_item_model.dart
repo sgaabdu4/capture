@@ -36,8 +36,14 @@ sealed class ProposalItemModel with _$ProposalItemModel {
     sources: [for (final s in i.sources) SourceSpanModel.fromEntity(s)],
     kind: i.kind,
     groupId: i.groupId?.value,
-    title: i.title ?? '',
-    body: i.body ?? '',
+    title: switch (i.title) {
+      final title? => title,
+      null => '',
+    },
+    body: switch (i.body) {
+      final body? => body,
+      null => '',
+    },
     due: switch (i.due) {
       final d? => .fromEntity(d),
       null => null,

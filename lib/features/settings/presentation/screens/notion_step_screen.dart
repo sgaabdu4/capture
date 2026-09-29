@@ -1,17 +1,14 @@
-import 'dart:async';
-
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
+import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Completes with true once Notion is connected.
-typedef NotionConnect = Future<bool> Function({required String token, required String pageLink});
+typedef NotionConnect = void Function({required String token, required String pageLink});
 
 /// Obscure and clear the connection token after storage; never show or log its text.
 class NotionStepScreen extends ConsumerStatefulWidget {
@@ -58,20 +55,16 @@ class _NotionStepScreenState extends ConsumerState<NotionStepScreen> {
     super.dispose();
   }
 
-  Future<void> _connect() async {
-    final context = this.context;
+  void _onConnect() {
     final missing = _token.text.trim().isEmpty && !widget.hasToken;
     setState(() => _tokenMissing = missing);
     if (missing) return;
-    final connected = await widget.onConnect(token: _token.text, pageLink: _page.text);
-    if (!context.mounted) return;
-    if (connected) _token.clear();
+    widget.onConnect(token: _token.text, pageLink: _page.text);
   }
-
-  void _onConnect() => unawaited(_connect().catchError(Crash.error));
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(settingsProvider.select((s) => s.notionConnectedSerial), (_, _) => _token.clear());
     final l10n = context.l10n;
     final connected = widget.connected;
     return Column(

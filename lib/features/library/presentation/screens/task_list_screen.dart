@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
@@ -29,6 +29,11 @@ class TaskListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final origin = _byDay ? const UpcomingRoute().location : const TodoRoute().location;
+    ref.listenForEntryEditing(context, origin: origin);
+    final preparing = ref.watch(
+      libraryProvider.select((s) => s.bodyOrigin == origin && s.bodyLoading),
+    );
     final nowUtc = ref.watch(systemDatasourceProvider.select((s) => s.nowUtc()));
     final today = nowUtc.toLocal();
     final query = ref.watch(libraryProvider.select((s) => _byDay ? '' : s.query));
@@ -50,7 +55,7 @@ class TaskListScreen extends ConsumerWidget {
     final groupById = ref.watch(groupsProvider.select((s) => s.byId));
     return PageFrame(
       title: _byDay ? l10n.navUpcoming : l10n.navTodo,
-      subtitle: sync,
+      subtitle: preparing ? l10n.entryBodyLoading : sync,
       actions: [
         RefreshButton(
           onPressed: connected && !refreshing
@@ -83,14 +88,10 @@ class TaskListScreen extends ConsumerWidget {
             EntryRow(
               key: ValueKey(AppWidgetKeys.libraryEntry(entry.itemId.value)),
               entry: entry,
-              onOpen: () => unawaited(ref.editEntry(context, entry)),
+              onOpen: () => unawaited(ref.editEntry(entry, origin: origin)),
               detail: entry.detail(l10n, today, groupById(entry.groupId)),
-              onChanged: (done) => unawaited(
-                ref
-                    .read(libraryProvider.notifier)
-                    .setDone(entry, done: done)
-                    .catchError(Crash.error),
-              ),
+              onChanged: (done) =>
+                  unawaited(ref.read(libraryProvider.notifier).setDone(entry, done: done)),
             ),
         ],
       ],

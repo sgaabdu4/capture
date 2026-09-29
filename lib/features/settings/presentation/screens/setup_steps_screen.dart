@@ -3,12 +3,9 @@ import 'dart:async';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
-import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
-import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/data/datasources/speech_model_datasource.dart';
 import 'package:capture/features/settings/presentation/extensions/settings_labels.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
-import 'package:capture/features/settings/presentation/notifiers/settings_state.dart';
 import 'package:capture/features/settings/presentation/screens/notion_step_screen.dart';
 import 'package:capture/features/settings/presentation/screens/typesafe_step_screen.dart';
 import 'package:capture/features/settings/presentation/widgets/model_step.dart';
@@ -27,33 +24,6 @@ class SetupStepsScreen extends ConsumerWidget {
     routeSettings: const .new(name: _notionGuideRoute),
     builder: (dialogContext) => NotionGuideDialog(onClose: () => Navigator.of(dialogContext).pop()),
   );
-
-  Future<bool> _saveKey(BuildContext context, WidgetRef ref, String key) async {
-    await ref.read(settingsProvider.notifier).saveTypesafeKey(key);
-    if (!context.mounted) return false;
-    final SettingsState(:hasTypesafeKey, :keyFailure) = ref.read(settingsProvider);
-    return hasTypesafeKey && keyFailure == null;
-  }
-
-  Future<bool> _connect(
-    BuildContext context,
-    WidgetRef ref, {
-    required String token,
-    required String pageLink,
-  }) async {
-    await ref.read(settingsProvider.notifier).connectNotion(token: token, pageLink: pageLink);
-    if (!context.mounted) return false;
-    final SettingsState(:notionConnected, :notionFailure, :pageLinkInvalid) = ref.read(
-      settingsProvider,
-    );
-    final ok = notionConnected && notionFailure == null && !pageLinkInvalid;
-    if (ok) {
-      // Setup seeded the Groups cache and the Library now has a source.
-      ref.read(groupsProvider.notifier).reload();
-      unawaited(ref.read(libraryProvider.notifier).refresh());
-    }
-    return ok;
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -94,7 +64,7 @@ class SetupStepsScreen extends ConsumerWidget {
           hasKey: hasKey,
           saving: savingKey,
           error: keyFailure?.label(l10n),
-          onSave: (key) => _saveKey(context, ref, key),
+          onSave: (key) => unawaited(ref.read(settingsProvider.notifier).saveTypesafeKey(key)),
         ),
         const Divider(height: _dividerHeight),
         NotionStepScreen(
@@ -106,8 +76,9 @@ class SetupStepsScreen extends ConsumerWidget {
           hasToken: hasToken,
           connecting: connecting,
           error: linkInvalid ? l10n.notionPageMissing : failure?.label(l10n),
-          onConnect: ({required token, required pageLink}) =>
-              _connect(context, ref, token: token, pageLink: pageLink),
+          onConnect: ({required token, required pageLink}) => unawaited(
+            ref.read(settingsProvider.notifier).connectNotion(token: token, pageLink: pageLink),
+          ),
           onShowGuide: () => unawaited(_showNotionGuide(context)),
         ),
       ],

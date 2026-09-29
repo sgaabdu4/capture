@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
-import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/paper_card.dart';
 import 'package:capture/core/widgets/page_frame.dart';
@@ -25,10 +23,6 @@ class SettingsScreen extends ConsumerWidget {
 
   static const _resetDialogRoute = 'reset-dialog';
 
-  Future<void> _allowMic(WidgetRef ref) async {
-    await ref.read(settingsProvider.notifier).ensureMic();
-  }
-
   Future<void> _confirmReset(BuildContext context, WidgetRef ref) async {
     final startOver = ref.read(captureFlowProvider.notifier).startOver;
     final confirmed = await showDialog<bool>(
@@ -40,9 +34,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     if (confirmed != true || !context.mounted) return;
-    await startOver();
-    if (!context.mounted) return;
-    const HomeRoute().go(context);
+    unawaited(startOver());
   }
 
   @override
@@ -70,17 +62,10 @@ class SettingsScreen extends ConsumerWidget {
                   label: label,
                   registered: registered,
                   problem: problem,
-                  onShortcut: (shortcut) => unawaited(
-                    ref
-                        .read(settingsProvider.notifier)
-                        .setShortcut(shortcut)
-                        .catchError(Crash.error),
-                  ),
+                  onShortcut: (shortcut) =>
+                      unawaited(ref.read(settingsProvider.notifier).setShortcut(shortcut)),
                   onRecording: (recording) => unawaited(
-                    ref
-                        .read(settingsProvider.notifier)
-                        .pauseShortcut(paused: recording)
-                        .catchError(Crash.error),
+                    ref.read(settingsProvider.notifier).pauseShortcut(paused: recording),
                   ),
                 ),
         ),
@@ -94,7 +79,7 @@ class SettingsScreen extends ConsumerWidget {
               .undetermined => l10n.micUndetermined,
             },
             onAllow: mic == .undetermined
-                ? () => unawaited(_allowMic(ref).catchError(Crash.error))
+                ? () => unawaited(ref.read(settingsProvider.notifier).allowMic())
                 : null,
           ),
         ),
@@ -110,9 +95,7 @@ class SettingsScreen extends ConsumerWidget {
         const SizedBox(height: Spacing.lg),
         PaperCard(
           child: ResetSection(
-            onReset: capturing
-                ? null
-                : () => unawaited(_confirmReset(context, ref).catchError(Crash.error)),
+            onReset: capturing ? null : () => unawaited(_confirmReset(context, ref)),
           ),
         ),
       ],

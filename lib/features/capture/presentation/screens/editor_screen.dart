@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/router/app_routes.dart';
@@ -113,9 +112,7 @@ class EditorScreen extends ConsumerWidget {
           saving: phase == .saving && activeId == captureId,
           onDontSave: () => _dontSave(context, ref),
           onSave: canSave
-              ? () => unawaited(
-                  ref.read(captureFlowProvider.notifier).approve(captureId).catchError(Crash.error),
-                )
+              ? () => unawaited(ref.read(captureFlowProvider.notifier).approve(captureId))
               : null,
         ),
       ],

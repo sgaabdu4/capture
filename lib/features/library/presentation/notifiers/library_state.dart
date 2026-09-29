@@ -22,6 +22,11 @@ sealed class LibraryState with _$LibraryState {
     NotionFailure? failure,
     @Default(0) int failureSerial,
     DateTime? refreshedAtUtc,
+    LibraryEntry? bodyEntry,
+    String? bodyOrigin,
+    @Default(false) bool bodyLoading,
+    String? bodyText,
+    @Default(0) int bodyLoadSerial,
 
     /// Text typed into search; empty when not searching.
     @Default('') String query,

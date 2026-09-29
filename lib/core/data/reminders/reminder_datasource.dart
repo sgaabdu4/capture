@@ -1,3 +1,4 @@
+import 'package:capture/core/crash/crash.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -90,13 +91,17 @@ class LocalNotificationsReminderDatasource implements IReminderDatasource {
 
   @override
   Future<void> show({required String id, required String title, required String body}) async {
-    if (!await _ensure()) return;
-    await _plugin.show(
-      id: notificationId(id),
-      title: title,
-      body: body,
-      notificationDetails: const .new(macOS: .new(), iOS: .new()),
-    );
+    try {
+      if (!await _ensure()) return;
+      await _plugin.show(
+        id: notificationId(id),
+        title: title,
+        body: body,
+        notificationDetails: const .new(macOS: .new(), iOS: .new()),
+      );
+    } catch (error, stackTrace) {
+      Crash.error(error, stackTrace);
+    }
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:capture/app/capture_bootstrap.dart';
 import 'package:capture/features/capture/presentation/screens/editor_screen.dart';
 import 'package:capture/features/capture/presentation/screens/home_screen.dart';
 import 'package:capture/features/capture/presentation/screens/recordings_screen.dart';
@@ -27,8 +28,9 @@ class AppShellRoute extends ShellRouteData {
   const AppShellRoute();
 
   @override
-  Widget builder(BuildContext context, GoRouterState state, Widget navigator) =>
-      AppShellScreen(location: state.uri.path, child: navigator);
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) => CaptureBootstrap(
+    child: AppShellScreen(location: state.uri.path, child: navigator),
+  );
 }
 
 class HomeRoute extends GoRouteData with $HomeRoute {

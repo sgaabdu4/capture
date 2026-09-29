@@ -9,8 +9,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'settings_state.freezed.dart';
 
-/// Credentials, Notion connection, speech model, shortcut, microphone and
-/// auto-save.
+/// Credentials, connection, speech model, shortcut, microphone and auto-save state.
 @freezed
 sealed class SettingsState with _$SettingsState {
   const SettingsState._();
@@ -28,17 +27,18 @@ sealed class SettingsState with _$SettingsState {
     ShortcutProblem? shortcutProblem,
     @Default(MicPermission.undetermined) MicPermission mic,
 
-    /// Save a finished recording to Notion without the review card when
-    /// nothing on it needs a decision.
+    /// Save a finished recording without the review card when nothing needs a decision.
     @Default(false) bool autoSave,
 
     /// Latest download event while the model downloads or after it failed.
     SpeechModelEvent? modelDownload,
     @Default(false) bool savingKey,
     JevFailure? keyFailure,
+    @Default(0) int keySavedSerial,
     @Default(false) bool connecting,
     NotionFailure? notionFailure,
     @Default(false) bool pageLinkInvalid,
+    @Default(0) int notionConnectedSerial,
   }) = _SettingsState;
 
   bool get notionConnected => workspace != null && hasNotionToken;

@@ -10,8 +10,7 @@ import 'package:capture/features/groups/domain/group_rules.dart';
 import 'package:capture/features/groups/presentation/extensions/group_labels.dart';
 import 'package:flutter/material.dart';
 
-/// New/edit group form over a snapshot of [groups]. Emits the trimmed
-/// [GroupDraft] through [onSave] only when it is valid.
+/// Form uses a [groups] snapshot and emits a valid trimmed [GroupDraft] through [onSave].
 class GroupDialog extends StatefulWidget {
   const GroupDialog({
     required this.groups,
@@ -53,7 +52,11 @@ class _GroupDialogState extends State<GroupDialog> {
     super.initState();
     if (widget.editing case Group(:final name, :final description)) {
       _name.text = name.value;
-      _description.text = description ?? '';
+      if (description == null) {
+        _description.clear();
+      } else {
+        _description.text = description;
+      }
     }
   }
 

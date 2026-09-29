@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
@@ -51,12 +51,14 @@ class GroupsScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _setArchived(WidgetRef ref, Group group, {required bool archived}) =>
-      ref.read(groupsProvider.notifier).update(group.copyWith(archived: archived));
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final origin = const GroupsRoute().location;
+    ref.listenForEntryEditing(context, origin: origin);
+    final preparing = ref.watch(
+      libraryProvider.select((s) => s.bodyOrigin == origin && s.bodyLoading),
+    );
     final connected = ref.watch(settingsProvider.select((s) => s.notionConnected));
     if (!connected) {
       return PageFrame(title: l10n.navGroups, children: [EmptyNote(l10n.groupsNeedNotion)]);
@@ -67,22 +69,17 @@ class GroupsScreen extends ConsumerWidget {
     final entries = ref.watch(libraryProvider.select((s) => s.entries));
     return PageFrame(
       title: l10n.navGroups,
-      subtitle: l10n.groupsSubtitle,
+      subtitle: preparing ? l10n.entryBodyLoading : l10n.groupsSubtitle,
       actions: [
         LinkButton(
           l10n.refresh,
-          onPressed: busy
-              ? null
-              : () =>
-                    unawaited(ref.read(groupsProvider.notifier).refresh().catchError(Crash.error)),
+          onPressed: busy ? null : () => unawaited(ref.read(groupsProvider.notifier).refresh()),
         ),
         const SizedBox(width: Spacing.xs),
         InkButton(
           l10n.addGroup,
           key: const ValueKey(AppWidgetKeys.addGroupButton),
-          onPressed: busy
-              ? null
-              : () => unawaited(_edit(context, ref, null).catchError(Crash.error)),
+          onPressed: busy ? null : () => unawaited(_edit(context, ref, null)),
         ),
       ],
       children: [
@@ -91,12 +88,12 @@ class GroupsScreen extends ConsumerWidget {
           archivedGroups: archived,
           entries: entries,
           busy: busy,
-          onEdit: (group) => unawaited(_edit(context, ref, group).catchError(Crash.error)),
-          onOpenEntry: (entry) => unawaited(ref.editEntry(context, entry)),
+          onEdit: (group) => unawaited(_edit(context, ref, group)),
+          onOpenEntry: (entry) => unawaited(ref.editEntry(entry, origin: origin)),
           onArchive: (group) =>
-              unawaited(_setArchived(ref, group, archived: true).catchError(Crash.error)),
+              unawaited(ref.read(groupsProvider.notifier).update(group.copyWith(archived: true))),
           onRestore: (group) =>
-              unawaited(_setArchived(ref, group, archived: false).catchError(Crash.error)),
+              unawaited(ref.read(groupsProvider.notifier).update(group.copyWith(archived: false))),
         ),
       ],
     );

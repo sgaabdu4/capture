@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:capture/core/crash/crash.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
@@ -27,8 +26,7 @@ class PhoneOverlay extends ConsumerWidget {
       .recording => RecordingPill(
         levels: levels,
         elapsed: elapsed,
-        onStop: () =>
-            unawaited(ref.read(captureFlowProvider.notifier).stop().catchError(Crash.error)),
+        onStop: () => unawaited(ref.read(captureFlowProvider.notifier).stop()),
       ),
       .transcribing => WorkingPill(status: l10n.overlayTranscribing),
       .analysing => WorkingPill(status: l10n.overlaySorting),
