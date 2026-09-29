@@ -17,7 +17,8 @@ extension EntryEditing on WidgetRef {
       read(libraryProvider.notifier).body(entry, origin: origin);
 
   /// Only the originating visible screen presents a completed immutable snapshot.
-  void listenForEntryEditing(BuildContext context, {required String origin}) {
+  /// Returns whether that screen's body request is still loading.
+  bool watchEntryEditing(BuildContext context, {required String origin}) {
     listen(
       libraryProvider.select(
         (s) => (serial: s.bodyLoadSerial, loading: s.bodyLoading, origin: s.bodyOrigin),
@@ -33,6 +34,7 @@ extension EntryEditing on WidgetRef {
         }
       },
     );
+    return watch(libraryProvider.select((s) => s.bodyOrigin == origin && s.bodyLoading));
   }
 
   Future<void> _showEntry(

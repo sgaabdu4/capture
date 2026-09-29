@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:capture/core/domain/values/required_text.dart';
 import 'package:capture/core/extensions/extensions.dart';
-import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
@@ -19,6 +18,7 @@ import 'package:capture/features/library/presentation/notifiers/library_notifier
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 /// Group names and descriptions steer Jev's filing; archival preserves existing library relations.
 class GroupsScreen extends ConsumerWidget {
@@ -54,11 +54,8 @@ class GroupsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final origin = const GroupsRoute().location;
-    ref.listenForEntryEditing(context, origin: origin);
-    final preparing = ref.watch(
-      libraryProvider.select((s) => s.bodyOrigin == origin && s.bodyLoading),
-    );
+    final origin = GoRouterState.of(context).uri.path;
+    final preparing = ref.watchEntryEditing(context, origin: origin);
     final connected = ref.watch(settingsProvider.select((s) => s.notionConnected));
     if (!connected) {
       return PageFrame(title: l10n.navGroups, children: [EmptyNote(l10n.groupsNeedNotion)]);

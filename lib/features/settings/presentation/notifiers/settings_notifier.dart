@@ -5,8 +5,6 @@ import 'package:capture/core/data/notion/notion_shapes.dart';
 import 'package:capture/core/domain/values/result.dart';
 import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
-import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
-import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/domain/entities/shortcut.dart';
 import 'package:capture/features/settings/domain/entities/shortcut_problem.dart';
 import 'package:capture/features/settings/domain/values/speech_model_event.dart';
@@ -113,8 +111,6 @@ class SettingsNotifier extends _$SettingsNotifier {
             hasNotionToken: true,
             notionConnectedSerial: state.notionConnectedSerial + 1,
           );
-          ref.read(groupsProvider.notifier).reload();
-          unawaited(ref.read(libraryProvider.notifier).refresh());
         case Err(:final failure):
           state = state.copyWith(connecting: false, notionFailure: failure);
       }

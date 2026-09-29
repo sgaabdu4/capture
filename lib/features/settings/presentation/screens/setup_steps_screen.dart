@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
+import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
+import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/data/datasources/speech_model_datasource.dart';
 import 'package:capture/features/settings/presentation/extensions/settings_labels.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
@@ -36,6 +38,10 @@ class SetupStepsScreen extends ConsumerWidget {
         (s) => (hasKey: s.hasTypesafeKey, savingKey: s.savingKey, keyFailure: s.keyFailure),
       ),
     );
+    ref.listen(settingsProvider.select((s) => s.notionConnectedSerial), (_, _) {
+      ref.read(groupsProvider.notifier).reload();
+      unawaited(ref.read(libraryProvider.notifier).refresh());
+    });
     final (:connected, :name, :hasToken) = ref.watch(
       settingsProvider.select(
         (s) => (

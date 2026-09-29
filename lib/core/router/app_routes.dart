@@ -1,4 +1,5 @@
 import 'package:capture/app/capture_bootstrap.dart';
+import 'package:capture/features/capture/presentation/notifiers/capture_flow_state.dart';
 import 'package:capture/features/capture/presentation/screens/editor_screen.dart';
 import 'package:capture/features/capture/presentation/screens/home_screen.dart';
 import 'package:capture/features/capture/presentation/screens/recordings_screen.dart';
@@ -29,8 +30,19 @@ class AppShellRoute extends ShellRouteData {
 
   @override
   Widget builder(BuildContext context, GoRouterState state, Widget navigator) => CaptureBootstrap(
+    destination: _destination,
     child: AppShellScreen(location: state.uri.path, child: navigator),
   );
+
+  /// Where the capture flow asked to go, if anywhere.
+  static GoRouteData? _destination(CaptureFlowState state) => switch (state) {
+    CaptureFlowState(destination: .home) => const HomeRoute(),
+    CaptureFlowState(destination: .settings) => const SettingsRoute(),
+    CaptureFlowState(destination: .upcoming) => const UpcomingRoute(),
+    CaptureFlowState(destination: .recordings) => const RecordingsRoute(),
+    CaptureFlowState(destination: .editor, editId: final String id) => EditorRoute(recordId: id),
+    CaptureFlowState() => null,
+  };
 }
 
 class HomeRoute extends GoRouteData with $HomeRoute {

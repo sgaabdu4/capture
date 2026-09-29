@@ -35,9 +35,7 @@ class GroupsNotifier extends _$GroupsNotifier {
         Err(:final failure) => _failed(failure),
       };
     } catch (error, stackTrace) {
-      Crash.error(error, stackTrace);
-      if (!ref.mounted) return;
-      state = state.copyWith(busy: false);
+      _crashed(error, stackTrace);
     }
   }
 
@@ -54,9 +52,7 @@ class GroupsNotifier extends _$GroupsNotifier {
         Err(:final failure) => _failed(failure),
       };
     } catch (error, stackTrace) {
-      Crash.error(error, stackTrace);
-      if (!ref.mounted) return;
-      state = state.copyWith(busy: false);
+      _crashed(error, stackTrace);
     }
   }
 
@@ -77,10 +73,14 @@ class GroupsNotifier extends _$GroupsNotifier {
         Err(:final failure) => _failed(failure),
       };
     } catch (error, stackTrace) {
-      Crash.error(error, stackTrace);
-      if (!ref.mounted) return;
-      state = state.copyWith(busy: false);
+      _crashed(error, stackTrace);
     }
+  }
+
+  void _crashed(Object error, StackTrace stackTrace) {
+    Crash.error(error, stackTrace);
+    if (!ref.mounted) return;
+    state = state.copyWith(busy: false);
   }
 
   GroupsState _failed(NotionFailure failure) =>

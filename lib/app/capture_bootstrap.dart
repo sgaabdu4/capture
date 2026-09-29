@@ -4,7 +4,6 @@ import 'package:capture/app/app_startup.dart';
 import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
-import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
@@ -22,9 +21,10 @@ import 'package:go_router/go_router.dart';
 
 /// Native effects and typed navigation share the shell router context and listener ordering.
 class CaptureBootstrap extends ConsumerWidget {
-  const CaptureBootstrap({required this.child, super.key});
+  const CaptureBootstrap({required this.child, required this.destination, super.key});
 
   final Widget child;
+  final GoRouteData? Function(CaptureFlowState state) destination;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,7 +45,7 @@ class CaptureBootstrap extends ConsumerWidget {
         }
       })
       ..listen(captureFlowProvider.select((s) => s.destinationSerial), (_, _) {
-        if (_destination(ref.read(captureFlowProvider)) case final GoRouteData route) {
+        if (destination(ref.read(captureFlowProvider)) case final GoRouteData route) {
           route.go(context);
         }
       })
@@ -104,16 +104,6 @@ class CaptureBootstrap extends ConsumerWidget {
           ),
     );
   }
-
-  /// Where the capture flow asked to go, if anywhere.
-  GoRouteData? _destination(CaptureFlowState state) => switch (state) {
-    CaptureFlowState(destination: .home) => const HomeRoute(),
-    CaptureFlowState(destination: .settings) => const SettingsRoute(),
-    CaptureFlowState(destination: .upcoming) => const UpcomingRoute(),
-    CaptureFlowState(destination: .recordings) => const RecordingsRoute(),
-    CaptureFlowState(destination: .editor, editId: final String id) => EditorRoute(recordId: id),
-    CaptureFlowState() => null,
-  };
 
   void _snack(BuildContext context, String message) =>
       ScaffoldMessenger.of(context).showSnackBar(.new(content: Text(message)));

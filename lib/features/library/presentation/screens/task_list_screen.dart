@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/extensions/extensions.dart';
-import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
@@ -19,6 +18,7 @@ import 'package:capture/features/library/presentation/widgets/search_field.dart'
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class TaskListScreen extends ConsumerWidget {
   const TaskListScreen.todo({super.key}) : _byDay = false;
@@ -29,11 +29,8 @@ class TaskListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final origin = _byDay ? const UpcomingRoute().location : const TodoRoute().location;
-    ref.listenForEntryEditing(context, origin: origin);
-    final preparing = ref.watch(
-      libraryProvider.select((s) => s.bodyOrigin == origin && s.bodyLoading),
-    );
+    final origin = GoRouterState.of(context).uri.path;
+    final preparing = ref.watchEntryEditing(context, origin: origin);
     final nowUtc = ref.watch(systemDatasourceProvider.select((s) => s.nowUtc()));
     final today = nowUtc.toLocal();
     final query = ref.watch(libraryProvider.select((s) => _byDay ? '' : s.query));
