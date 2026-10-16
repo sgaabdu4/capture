@@ -23,6 +23,10 @@
 /* Begin PBXBuildFile section */
 		0D1DEF72FA51F1FE563B743B /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBBC0F1EDD41E1DB8F2191 /* Recorder.swift */; };
 		331C80D8294CF71000263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C80D7294CF71000263BE5 /* RunnerTests.swift */; };
+		457D8B176218DF7F54F36D67 /* HotKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2790B2A630DB4A653FD5C981 /* HotKeyTests.swift */; };
+		9E95C52152A0A605CA04ED78 /* MenuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEB4036270E20FBCEA4BF94 /* MenuTests.swift */; };
+		DF8B6BE701D5A9D2BA6EF8DB /* OverlayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E58D8CC64775BF63BE35F389 /* OverlayTests.swift */; };
+		D128C4821AB636506E2D7AAE /* AudioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BC73906FA9C6804DE244CD /* AudioTests.swift */; };
 		335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */; };
 		33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC10F02044A3C60003C045 /* AppDelegate.swift */; };
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
@@ -71,6 +75,10 @@
 /* Begin PBXFileReference section */
 		331C80D5294CF71000263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		331C80D7294CF71000263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
+		2790B2A630DB4A653FD5C981 /* HotKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyTests.swift; sourceTree = "<group>"; };
+		9AEB4036270E20FBCEA4BF94 /* MenuTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuTests.swift; sourceTree = "<group>"; };
+		E58D8CC64775BF63BE35F389 /* OverlayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayTests.swift; sourceTree = "<group>"; };
+		71BC73906FA9C6804DE244CD /* AudioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTests.swift; sourceTree = "<group>"; };
 		333000ED22D3DE5D00554162 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneratedPluginRegistrant.swift; sourceTree = "<group>"; };
 		33CC10ED2044A3C60003C045 /* Capture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Capture.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,6 +143,10 @@
 			isa = PBXGroup;
 			children = (
 				331C80D7294CF71000263BE5 /* RunnerTests.swift */,
+				2790B2A630DB4A653FD5C981 /* HotKeyTests.swift */,
+				9AEB4036270E20FBCEA4BF94 /* MenuTests.swift */,
+				E58D8CC64775BF63BE35F389 /* OverlayTests.swift */,
+				71BC73906FA9C6804DE244CD /* AudioTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -380,6 +392,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				331C80D8294CF71000263BE5 /* RunnerTests.swift in Sources */,
+				D128C4821AB636506E2D7AAE /* AudioTests.swift in Sources */,
+				DF8B6BE701D5A9D2BA6EF8DB /* OverlayTests.swift in Sources */,
+				9E95C52152A0A605CA04ED78 /* MenuTests.swift in Sources */,
+				457D8B176218DF7F54F36D67 /* HotKeyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,7 +454,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.afenso.capture.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/capture.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/capture";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Capture.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Capture";
 			};
 			name = Debug;
 		};
@@ -452,7 +468,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.afenso.capture.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/capture.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/capture";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Capture.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Capture";
 			};
 			name = Release;
 		};
@@ -466,7 +482,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.afenso.capture.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/capture.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/capture";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Capture.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Capture";
 			};
 			name = Profile;
 		};

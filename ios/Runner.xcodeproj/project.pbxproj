@@ -11,6 +11,9 @@
 		15A189B3C6D924072AE2E033 /* Transcriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73CDDE162E72261252483EF /* Transcriber.swift */; };
 		20A2EA7FC24B272E00EA77D2 /* CaptureShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95AAD9C80279A9813F25F17D /* CaptureShortcuts.swift */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
+		F30F002437B9ED8A1EB9B865 /* CaptureControlsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CF2E107A9D7375F6E6DF17 /* CaptureControlsTests.swift */; };
+		7990F212ADF23F7A62DB26EA /* CaptureControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43A6A45AFE143623FB3E8C9 /* CaptureControls.swift */; };
+		73839DB1BAFCFE189EC6B075 /* RecordWithCaptureIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAB26AC47A3B66C55335FF8 /* RecordWithCaptureIntent.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		5348C2555A89A169ADB955CB /* FluidAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B192A7185F5812A060CF4F58 /* FluidAudio */; };
 		6E9191187CB4DEAE33F7F992 /* RecordWithCaptureIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAB26AC47A3B66C55335FF8 /* RecordWithCaptureIntent.swift */; };
@@ -74,6 +77,8 @@
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		1D902B8DA304E539D893B937 /* Recorder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
+		80CF2E107A9D7375F6E6DF17 /* CaptureControlsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureControlsTests.swift; sourceTree = "<group>"; };
+		3CAF20104D2DD0019994A438 /* CaptureControlsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaptureControlsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		6C3473EE6F455B53762E0404 /* M4AEncoder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = M4AEncoder.swift; sourceTree = "<group>"; };
@@ -99,6 +104,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		52B86F6214AF0FBCDEC4AC2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2C1C9FE056A564AA9ECB7094 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -142,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				331C807B294A618700263BE5 /* RunnerTests.swift */,
+				80CF2E107A9D7375F6E6DF17 /* CaptureControlsTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -182,6 +195,7 @@
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
+				3CAF20104D2DD0019994A438 /* CaptureControlsTests.xctest */,
 				9B499BA096449ACABD4DE7EF /* CaptureControls.appex */,
 			);
 			name = Products;
@@ -220,6 +234,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D8A4BE75BC6676E40EB75985 /* CaptureControlsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B0092953EEF009543942933B /* Build configuration list for PBXNativeTarget "CaptureControlsTests" */;
+			buildPhases = (
+				7971BA9C703B217D001A5DD9 /* Sources */,
+				52B86F6214AF0FBCDEC4AC2B /* Frameworks */,
+				FCB4BA02CA85A09EDF9E6FE4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CaptureControlsTests;
+			productName = CaptureControlsTests;
+			productReference = 3CAF20104D2DD0019994A438 /* CaptureControlsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		331C8080294A63A400263BE5 /* RunnerTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 331C8087294A63A400263BE5 /* Build configuration list for PBXNativeTarget "RunnerTests" */;
@@ -320,11 +351,19 @@
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
 				5D0D1AA97884EAF51B627B48 /* CaptureControls */,
+				D8A4BE75BC6676E40EB75985 /* CaptureControlsTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		FCB4BA02CA85A09EDF9E6FE4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		331C807F294A63A400263BE5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -387,6 +426,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7971BA9C703B217D001A5DD9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F30F002437B9ED8A1EB9B865 /* CaptureControlsTests.swift in Sources */,
+				7990F212ADF23F7A62DB26EA /* CaptureControls.swift in Sources */,
+				73839DB1BAFCFE189EC6B075 /* RecordWithCaptureIntent.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		331C807D294A63A400263BE5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -456,6 +505,47 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0A95D8E786BB4017C341BDE6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.afenso.capture.CaptureControlsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		85FA166931646948A888DED7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.afenso.capture.CaptureControlsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		E77F352C84FCF32A7310BA67 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.afenso.capture.CaptureControlsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Profile;
+		};
 		249021D3217E4FDB00AE95B9 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -813,6 +903,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B0092953EEF009543942933B /* Build configuration list for PBXNativeTarget "CaptureControlsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A95D8E786BB4017C341BDE6 /* Debug */,
+				85FA166931646948A888DED7 /* Release */,
+				E77F352C84FCF32A7310BA67 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		331C8087294A63A400263BE5 /* Build configuration list for PBXNativeTarget "RunnerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
