@@ -129,6 +129,7 @@
       "name": "ios",
       "path": "ios",
       "language": "swift",
+      "performance_exception": "Hard Eng reads no Swift performance report. The native recorder, encoder and transcriber run once per capture, and the Dart performance suite in the app group measures the Flutter work around them. Revisit when Hard Eng reads an XCTest performance report.",
       "sources": ["CaptureControls", "Runner"],
       "checks": [
         {
@@ -220,6 +221,7 @@
       "name": "macos",
       "path": "macos",
       "language": "swift",
+      "performance_exception": "Hard Eng reads no Swift performance report. The native recorder, encoder and transcriber run once per capture, and the Dart performance suite in the app group measures the Flutter work around them. Revisit when Hard Eng reads an XCTest performance report.",
       "sources": ["Runner"],
       "checks": [
         {

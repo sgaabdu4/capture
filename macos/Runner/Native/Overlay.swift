@@ -50,9 +50,7 @@ final class OverlayModel: ObservableObject {
   }
 }
 
-/// Non-activating floating panel, bottom-centre of the display under the
-/// pointer, clear of the Dock. It never becomes key, so typing or pressing
-/// Enter in another app can't trigger its buttons.
+/// Non-activating panel that never becomes key, so typing in another app cannot press its buttons.
 final class OverlayController {
   let model = OverlayModel()
   private lazy var panel: NSPanel = makePanel()

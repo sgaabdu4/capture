@@ -6,9 +6,7 @@ struct EncoderError: LocalizedError {
   var errorDescription: String? { "Audio encoding failed (\(status))." }
 }
 
-/// Encodes the recorder's raw PCM16 16 kHz mono file to AAC in an M4A
-/// container at an explicit bit rate (32 kbps keeps five minutes near
-/// 1.2 MB, inside Notion's 5 MiB free-plan upload limit).
+/// PCM16 16 kHz mono to M4A at an explicit bit rate; 32 kbps keeps five minutes under Notion's 5 MiB limit.
 enum M4AEncoder {
   static func encode(pcm: URL, to output: URL, bitRate: UInt32) throws -> Int {
     var aac = AudioStreamBasicDescription(

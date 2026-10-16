@@ -2,14 +2,7 @@ import AVFoundation
 import Flutter
 import UIKit
 
-/// Bridge between the Dart app (which owns all capture state) and what
-/// Flutter can't provide on iPhone: microphone capture, AAC encoding, local
-/// Parakeet transcription and "Record with Capture" requests. The Mac's
-/// shortcut, overlay, menu and updater calls are answered and ignored; the
-/// app draws its own pill and review card.
-///
-/// Dart → native: methods below. Native → Dart: `level`, `limitReached`,
-/// `recordingFailed` and `recordRequested` calls.
+/// Dart-to-native bridge for the microphone, AAC, Parakeet and record requests; Mac-only calls are ignored.
 public class CaptureNativePlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycleDelegate {
   static let recordShortcut = "com.afenso.capture.record"
 
@@ -195,8 +188,7 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycle
 
   // MARK: Helpers
 
-  /// The 480 MB speech model can be downloaded again, so it stays out of
-  /// iCloud backups.
+  /// The 480 MB speech model can be downloaded again, so it stays out of backups.
   private static func excludeModelsFromBackup() {
     guard
       let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)

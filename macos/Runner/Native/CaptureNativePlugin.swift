@@ -3,14 +3,7 @@ import Cocoa
 import FlutterMacOS
 import Sparkle
 
-/// Bridge between the Dart app (which owns all capture state) and the
-/// native pieces Flutter can't provide: the global shortcut, microphone
-/// capture, the floating overlay, the menu-bar popover, AAC encoding and
-/// Sparkle updates.
-///
-/// Dart → native: methods below. Native → Dart: `hotkey`, `stopRequested`,
-/// `limitReached`, `recordingFailed`, `review`, `menu` and `updateAvailable`
-/// calls.
+/// Dart-to-native bridge for the shortcut, microphone, overlay, menu bar, AAC and Sparkle.
 public class CaptureNativePlugin: NSObject, FlutterPlugin, SPUUpdaterDelegate {
   private let channel: FlutterMethodChannel
   private let hotKey = HotKey()
@@ -187,8 +180,7 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin, SPUUpdaterDelegate {
     }
   }
 
-  // `flutter run` builds are build 1, so every release would look newer and
-  // offer to replace the development app.
+  // `flutter run` builds are build 1, so every release would offer to replace them.
   public func updater(_ updater: SPUUpdater, mayPerform updateCheck: SPUUpdateCheck) throws {
     #if DEBUG
       throw NSError(
