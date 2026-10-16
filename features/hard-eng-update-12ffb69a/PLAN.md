@@ -27,8 +27,8 @@ Authority: Agent-loop under the owner's Hard Eng update request: update to `12ff
 
 ## Baseline + execution
 
-Result: Pending
-Evidence: Starting point `5a1ac78` on Hard Eng `1c855849`. The updater added `ios` and `macos` groups with no `performance_exception`; `check` stopped at that rule. swift-format reported 33 findings in 7 files.
+Result: Passed
+Evidence: Starting point `5a1ac78` on Hard Eng `1c855849` passed the required `hard-eng` check in CI when PR #34 merged. After the updater commit, `check` stopped at the missing `performance_exception` on the new Swift groups, and swift-format reported 33 findings in 7 files.
 Execution: Single builder; updater commit, format commit, workflow edit, tests.
 
 ## Risks + recovery
