@@ -2,20 +2,31 @@ import AVFoundation
 import Flutter
 import UIKit
 
+protocol AudioRecording: AnyObject {
+  var onLevel: ((Float) -> Void)? { get set }
+  var onFailure: ((String) -> Void)? { get set }
+  var seconds: Double { get }
+  func start(url: URL) throws
+  func stop() -> (URL, Double)?
+}
+
+extension Recorder: AudioRecording {}
+
 /// Dart-to-native bridge for the microphone, AAC, Parakeet and record requests; Mac-only calls are ignored.
 public class CaptureNativePlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycleDelegate {
   static let recordShortcut = "com.afenso.capture.record"
 
   private let channel: FlutterMethodChannel
-  private let recorder = Recorder()
+  private let recorder: AudioRecording
   private var ticker: Timer?
   private var maxSeconds = 300.0
   private var limitSent = false
   private var level: Float = 0
   private var interruption: NSObjectProtocol?
 
-  init(channel: FlutterMethodChannel) {
+  init(channel: FlutterMethodChannel, recorder: AudioRecording = Recorder()) {
     self.channel = channel
+    self.recorder = recorder
     super.init()
     recorder.onLevel = { [weak self] level in
       DispatchQueue.main.async { self?.level = level }
