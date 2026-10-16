@@ -2,8 +2,7 @@ import AppKit
 import CoreText
 import SwiftUI
 
-/// Tokens measured from the approved references (docs/design/reference).
-/// Keep in sync with `lib/ui/theme.dart`.
+/// Design tokens; keep in sync with `lib/ui/theme.dart`.
 enum Theme {
   static let paper = Color(hex: 0xFBF9F3)
   static let card = Color(hex: 0xFDFBF7)
@@ -22,8 +21,7 @@ enum Theme {
   static func title(_ size: CGFloat) -> Font { .custom("Caveat", size: size).weight(.bold) }
   static func hand(_ size: CGFloat) -> Font { .custom("Patrick Hand", size: size) }
 
-  /// Registers the app's bundled OFL fonts (shipped as Flutter assets) for
-  /// the native overlay and menu-bar views. Safe to call more than once.
+  /// Registers the bundled fonts for the native views; safe to call more than once.
   static func registerFonts() {
     let base = Bundle.main.bundleURL
       .appendingPathComponent(
@@ -46,8 +44,7 @@ extension Color {
   }
 }
 
-/// Hosting view that reacts to the first click even when the panel is not
-/// key, so overlay buttons work without activating Capture.
+/// Hosting view that takes the first click even when the panel is not key.
 final class ClickThroughHostingView<Content: View>: NSHostingView<Content> {
   override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }
