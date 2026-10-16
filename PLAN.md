@@ -94,3 +94,5 @@ Delivery: Pending — the alpha (A1 to A19) merged to `main` by the owner throug
 Dependabot update https://github.com/sgaabdu4/capture/pull/30 (Bump the "weekly" group with 1 update across multiple ecosystems), recorded 2026-10-02; it merges itself once hard-eng and dmg pass.
 
 Dependabot update https://github.com/sgaabdu4/capture/pull/32 (Bump the "weekly" group with 1 update across multiple ecosystems), recorded 2026-10-09; it merges itself once hard-eng and dmg pass.
+
+Dependabot update https://github.com/sgaabdu4/capture/pull/34 (Bump the "weekly" group with 1 update across multiple ecosystems), recorded 2026-10-16; it merges itself once hard-eng and dmg pass.
