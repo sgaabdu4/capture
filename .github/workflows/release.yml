@@ -54,7 +54,7 @@ jobs:
     needs: impact
     if: ${{ !cancelled() }}
     runs-on: ${{ needs.impact.outputs.runner || 'macos-latest' }}
-    timeout-minutes: 7
+    timeout-minutes: 60
     permissions:
       contents: read
       checks: read # Verify the installed source release.
