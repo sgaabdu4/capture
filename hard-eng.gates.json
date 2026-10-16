@@ -215,7 +215,12 @@
         }
       ],
       "depends_on": [],
-      "impact_inputs": ["pubspec.yaml", "pubspec.lock"]
+      "impact_inputs": [
+        "pubspec.yaml",
+        "pubspec.lock",
+        "macos/Runner/Native/Recorder.swift",
+        "macos/Runner/Native/M4AEncoder.swift"
+      ]
     },
     {
       "name": "macos",
