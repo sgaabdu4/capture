@@ -64,7 +64,9 @@ struct MenuPopoverView: View {
     VStack(spacing: 0) {
       HStack {
         Spacer()
-        Button { act("settings") } label: {
+        Button {
+          act("settings")
+        } label: {
           Image(systemName: "gearshape").font(.system(size: 17)).foregroundColor(Theme.ink)
         }
         .buttonStyle(.plain)
@@ -84,11 +86,17 @@ struct MenuPopoverView: View {
       .padding(.top, 18)
       Rectangle().fill(Theme.line).frame(height: 1).padding(.top, 16)
       HStack {
-        Button { act("open") } label: {
+        Button {
+          act("open")
+        } label: {
           Label("Open app", systemImage: "arrow.up.forward.square").font(Theme.hand(16))
         }
         Spacer()
-        Button { act("quit") } label: { Text("Quit").font(Theme.hand(16)) }
+        Button {
+          act("quit")
+        } label: {
+          Text("Quit").font(Theme.hand(16))
+        }
       }
       .buttonStyle(.plain)
       .foregroundColor(Theme.ink)

@@ -57,7 +57,8 @@ enum M4AEncoder {
   private static func setBitRate(_ file: ExtAudioFileRef, _ bitRate: UInt32) throws {
     var converter: AudioConverterRef?
     var size = UInt32(MemoryLayout<AudioConverterRef?>.size)
-    try check(ExtAudioFileGetProperty(file, kExtAudioFileProperty_AudioConverter, &size, &converter))
+    try check(
+      ExtAudioFileGetProperty(file, kExtAudioFileProperty_AudioConverter, &size, &converter))
     guard let converter else { return }
     var rate = bitRate
     try check(

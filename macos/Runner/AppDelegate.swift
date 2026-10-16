@@ -17,7 +17,9 @@ class AppDelegate: FlutterAppDelegate {
     return false
   }
 
-  override func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+  override func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool)
+    -> Bool
+  {
     if !flag { mainFlutterWindow?.makeKeyAndOrderFront(nil) }
     return true
   }

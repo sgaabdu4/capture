@@ -34,7 +34,8 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycle
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "capture_native", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(
+      name: "capture_native", binaryMessenger: registrar.messenger())
     let instance = CaptureNativePlugin(channel: channel)
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addSceneDelegate(instance)
@@ -59,11 +60,12 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycle
       transcribe(args, result)
     case "takeRecordRequest":
       // Flutter calls plugins on the main thread.
-      result(MainActor.assumeIsolated {
-        RecordRequests.shared.take { [weak self] in
-          self?.channel.invokeMethod("recordRequested", arguments: nil)
-        }
-      })
+      result(
+        MainActor.assumeIsolated {
+          RecordRequests.shared.take { [weak self] in
+            self?.channel.invokeMethod("recordRequested", arguments: nil)
+          }
+        })
     case "setHotKey":
       result(true)
     case "installMenu", "pauseHotKey", "showWorking", "showReview", "hideOverlay", "setMenuState",
@@ -179,11 +181,13 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycle
     Task.detached(priority: .userInitiated) {
       do {
         let text = try await Transcriber.transcribe(
-          pcm: URL(fileURLWithPath: path), models: URL(fileURLWithPath: modelDir, isDirectory: true))
+          pcm: URL(fileURLWithPath: path), models: URL(fileURLWithPath: modelDir, isDirectory: true)
+        )
         await MainActor.run { result(text) }
       } catch {
         await MainActor.run {
-          result(FlutterError(code: "transcribe", message: error.localizedDescription, details: nil))
+          result(
+            FlutterError(code: "transcribe", message: error.localizedDescription, details: nil))
         }
       }
     }

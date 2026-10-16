@@ -26,7 +26,8 @@ enum Theme {
   /// the native overlay and menu-bar views. Safe to call more than once.
   static func registerFonts() {
     let base = Bundle.main.bundleURL
-      .appendingPathComponent("Contents/Frameworks/App.framework/Resources/flutter_assets/assets/fonts")
+      .appendingPathComponent(
+        "Contents/Frameworks/App.framework/Resources/flutter_assets/assets/fonts")
     for name in ["Caveat.ttf", "PatrickHand-Regular.ttf"] {
       let url = base.appendingPathComponent(name)
       CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
