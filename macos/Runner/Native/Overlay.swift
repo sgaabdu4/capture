@@ -71,7 +71,8 @@ final class OverlayController {
   func layout() {
     host.layoutSubtreeIfNeeded()
     let size = host.fittingSize
-    let screen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? NSScreen.main
+    let screen =
+      NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) } ?? NSScreen.main
     guard let visible = screen?.visibleFrame else { return }
     let origin = NSPoint(x: visible.midX - size.width / 2, y: visible.minY + 20)
     panel.setFrame(NSRect(origin: origin, size: size), display: true)
@@ -239,7 +240,9 @@ struct ReviewCard: View {
           }
         }
         Spacer()
-        Button { onAction("later") } label: {
+        Button {
+          onAction("later")
+        } label: {
           Image(systemName: "xmark").font(.system(size: 13, weight: .regular))
             .foregroundColor(Theme.creamMuted).frame(width: 24, height: 24)
         }
@@ -260,13 +263,17 @@ struct ReviewCard: View {
       }
       Rectangle().fill(Color.black.opacity(0.18)).frame(height: 1).padding(.vertical, 14)
       HStack(spacing: 14) {
-        Button { onAction("no") } label: {
+        Button {
+          onAction("no")
+        } label: {
           Text("No").font(Theme.hand(18)).foregroundColor(Theme.cream)
             .frame(width: 92, height: 46)
             .background(RoundedRectangle(cornerRadius: 12).fill(Theme.charcoalButton))
         }
         .buttonStyle(.plain)
-        Button { onAction("yes") } label: {
+        Button {
+          onAction("yes")
+        } label: {
           Text("Yes, save").font(Theme.hand(18)).foregroundColor(Theme.ink)
             .frame(width: 150, height: 46)
             .background(RoundedRectangle(cornerRadius: 12).fill(Theme.cream))
@@ -274,7 +281,9 @@ struct ReviewCard: View {
         .buttonStyle(.plain)
         .disabled(!review.canApprove)
         .opacity(review.canApprove ? 1 : 0.45)
-        Button { onAction("edit") } label: {
+        Button {
+          onAction("edit")
+        } label: {
           Text("Edit").font(Theme.hand(18)).foregroundColor(Theme.cream)
             .frame(width: 70, height: 46)
         }

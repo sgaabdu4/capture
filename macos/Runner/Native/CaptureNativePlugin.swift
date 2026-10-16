@@ -173,7 +173,9 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin, SPUUpdaterDelegate {
 
   private func showMainWindow() {
     NSApp.activate(ignoringOtherApps: true)
-    let main = NSApp.windows.first { !($0 is NSPanel) && $0.contentViewController is FlutterViewController }
+    let main = NSApp.windows.first {
+      !($0 is NSPanel) && $0.contentViewController is FlutterViewController
+    }
     main?.makeKeyAndOrderFront(nil)
   }
 
@@ -189,9 +191,9 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin, SPUUpdaterDelegate {
   // offer to replace the development app.
   public func updater(_ updater: SPUUpdater, mayPerform updateCheck: SPUUpdateCheck) throws {
     #if DEBUG
-    throw NSError(
-      domain: SUSparkleErrorDomain, code: Int(SUError.noUpdateError.rawValue),
-      userInfo: [NSLocalizedDescriptionKey: "Debug builds do not update."])
+      throw NSError(
+        domain: SUSparkleErrorDomain, code: Int(SUError.noUpdateError.rawValue),
+        userInfo: [NSLocalizedDescriptionKey: "Debug builds do not update."])
     #endif
   }
 
