@@ -42,7 +42,7 @@ N/A — tooling and tests only; no app screens change.
 ## Verification
 
 Result: Passed
-Evidence: A full `python3 .hooks/hard-eng.py check` passed all 20 checks in a throwaway copy of this branch: root line coverage 78.84%, iOS 83.04%, macOS 82.96%. The copy used a different macOS bundle id (an installed Capture app makes macOS prompt before a test build may use its data) and an iOS 18.5 simulator with the deployment target and one iOS 26 API line lowered, because this Mac has no iOS 26 simulator. The exact branch runs the iPhone and Mac suites on the pull request's macOS runner.
+Evidence: A full `python3 .hooks/hard-eng.py check` passed all 20 checks in a throwaway copy of this branch: root line coverage 78.84%, iOS 83.04%, macOS 82.96%. The copy used a different macOS bundle id (an installed Capture app makes macOS prompt before a test build may use its data) and an iOS 18.5 simulator with the deployment target and one iOS 26 API line lowered, because this Mac has no iOS 26 simulator. The exact branch also passed on the pull request's macOS runner (iPhone 83.04%, Mac 83.16%, check job 17 minutes with cold caches), which set `ci_seconds` to 1500 and the job timeout to 30 minutes.
 E2E: N/A — no user journey changes; Swift behaviour is verified by the native XCTest suites.
 
 Delivery target: Merge

@@ -383,7 +383,7 @@
       "macos/Runner/*",
       "assets/*"
     ],
-    "ci_seconds": 3600,
+    "ci_seconds": 1500,
     "pre_push_seconds": 240,
     "delivery": []
   }
