@@ -2,8 +2,9 @@ name: Dependabot merge
 
 # Dependabot's pull requests merge themselves once the required hard-eng and
 # dmg checks pass, and that merge publishes a release. Hard Eng needs every
-# change to touch PLAN.md, so each update is recorded there first. The push
-# and the merge use the owner's DEPENDABOT_TOKEN: GitHub starts no workflows
+# change to touch a plan, so each update first gets its own plan under
+# features/, written from .github/dependabot-plan.md. The push and the merge
+# use the owner's DEPENDABOT_TOKEN: GitHub starts no workflows
 # for GITHUB_TOKEN pushes, so neither the checks nor the release would run.
 # Runs that Dependabot triggers cannot read environment secrets, so this looks
 # for its pull requests every hour instead.
@@ -39,16 +40,24 @@ jobs:
             exit 1
           fi
           gh auth setup-git
+          template="$RUNNER_TEMP/dependabot-plan.md"
+          cp .github/dependabot-plan.md "$template"
           for pr in $(gh pr list --author app/dependabot --state open --json number --jq '.[].number'); do
-            if ! gh pr diff "$pr" --name-only | grep -qx PLAN.md; then
+            plan="features/dependabot-pr-$pr/PLAN.md"
+            if ! gh pr diff "$pr" --name-only | grep -qx "$plan"; then
               branch="$(gh pr view "$pr" --json headRefName --jq .headRefName)"
-              title="$(gh pr view "$pr" --json title --jq .title)"
               git fetch -q origin "$branch"
               git checkout -q -B "$branch" FETCH_HEAD
-              printf '\nDependabot update https://github.com/%s/pull/%s (%s), recorded %s; it merges itself once hard-eng and dmg pass.\n' \
-                "$GITHUB_REPOSITORY" "$pr" "$title" "$(date -u +%F)" >> PLAN.md
+              mkdir -p "$(dirname "$plan")"
+              PR="$pr" URL="https://github.com/$GITHUB_REPOSITORY/pull/$pr" DAY="$(date -u +%F)" \
+                TITLE="$(gh pr view "$pr" --json title --jq .title)" TEMPLATE="$template" \
+                python3 -c 'import os, sys; text = open(os.environ["TEMPLATE"]).read()
+          for key, name in (("@PR@", "PR"), ("@URL@", "URL"), ("@DATE@", "DAY"), ("@TITLE@", "TITLE")):
+              text = text.replace(key, os.environ[name])
+          open(sys.argv[1], "w").write(text)' "$plan"
+              git add "$plan"
               git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
-                commit -qam "Record Dependabot update #$pr in the plan"
+                commit -qm "Record Dependabot update #$pr in its own plan"
               git push -q origin "HEAD:$branch"
             fi
             gh pr merge "$pr" --auto --merge
