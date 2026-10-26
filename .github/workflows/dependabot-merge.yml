@@ -40,6 +40,8 @@ jobs:
             exit 1
           fi
           gh auth setup-git
+          template="$RUNNER_TEMP/dependabot-plan.md"
+          cp .github/dependabot-plan.md "$template"
           for pr in $(gh pr list --author app/dependabot --state open --json number --jq '.[].number'); do
             plan="features/dependabot-pr-$pr/PLAN.md"
             if ! gh pr diff "$pr" --name-only | grep -qx "$plan"; then
@@ -48,8 +50,8 @@ jobs:
               git checkout -q -B "$branch" FETCH_HEAD
               mkdir -p "$(dirname "$plan")"
               PR="$pr" URL="https://github.com/$GITHUB_REPOSITORY/pull/$pr" DAY="$(date -u +%F)" \
-                TITLE="$(gh pr view "$pr" --json title --jq .title)" \
-                python3 -c 'import os, sys; text = open(".github/dependabot-plan.md").read()
+                TITLE="$(gh pr view "$pr" --json title --jq .title)" TEMPLATE="$template" \
+                python3 -c 'import os, sys; text = open(os.environ["TEMPLATE"]).read()
           for key, name in (("@PR@", "PR"), ("@URL@", "URL"), ("@DATE@", "DAY"), ("@TITLE@", "TITLE")):
               text = text.replace(key, os.environ[name])
           open(sys.argv[1], "w").write(text)' "$plan"
