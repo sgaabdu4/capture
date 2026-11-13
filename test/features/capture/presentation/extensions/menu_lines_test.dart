@@ -3,7 +3,7 @@ import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_status.dart';
 import 'package:capture/features/capture/presentation/extensions/menu_lines.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 

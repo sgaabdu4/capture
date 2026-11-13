@@ -1,7 +1,7 @@
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/features/settings/domain/entities/shortcut_problem.dart';
 import 'package:capture/features/settings/domain/entities/speech_model_failure.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 
 extension NotionFailureLabel on NotionFailure {
   String label(AppLocalizations l10n) => switch (this) {

@@ -4,7 +4,7 @@ import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/notifiers/library_state.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 
 extension LibrarySyncLabel on LibraryState {
   /// "Refreshing from Notion…", "Synced with Notion: 5 minutes ago." or the

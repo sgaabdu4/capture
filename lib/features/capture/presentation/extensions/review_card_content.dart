@@ -8,7 +8,7 @@ import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_state.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 /// SF Symbols shown on the native review card.

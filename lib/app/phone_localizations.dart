@@ -1,5 +1,5 @@
-import 'package:capture/l10n/app_localizations.dart';
-import 'package:capture/l10n/app_localizations_en.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
+import 'package:capture/l10n/app_localizations_en.g.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 

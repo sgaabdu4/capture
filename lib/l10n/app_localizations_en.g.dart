@@ -1,7 +1,9 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 
-import 'app_localizations.dart';
+import 'app_localizations.g.dart';
 
 // ignore_for_file: type=lint
 
