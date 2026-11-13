@@ -7,8 +7,7 @@ import 'package:capture/features/settings/domain/entities/shortcut.dart';
 import 'package:capture/features/settings/presentation/widgets/shortcut_keys.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Recording → a prompt and Cancel; recorded → the keys, Save and Cancel;
-/// otherwise the current keys and Record.
+/// Recording shows a prompt and Cancel; recorded shows the keys, Save and Cancel; else the keys and Record.
 class ShortcutActions extends StatelessWidget {
   const ShortcutActions({
     required this.recording,

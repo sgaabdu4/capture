@@ -5,8 +5,7 @@ import 'package:capture/features/capture/domain/entities/source_span.dart';
 import 'package:capture/features/capture/presentation/widgets/source_word.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// The exact words an item came from. When [onSplit] is set, tapping a word
-/// splits the item before it (at that word's transcript offset).
+/// The exact words an item came from; with [onSplit], tapping a word splits the item before it.
 class SourceWords extends StatelessWidget {
   const SourceWords({required this.sources, required this.onSplit, super.key});
 

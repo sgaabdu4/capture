@@ -7,8 +7,7 @@ import 'package:capture/features/library/presentation/notifiers/library_state.da
 import 'package:capture/l10n/app_localizations.g.dart';
 
 extension LibrarySyncLabel on LibraryState {
-  /// "Refreshing from Notion…", "Synced with Notion: 5 minutes ago." or the
-  /// never-synced note. [nowUtc] comes from the system clock.
+  /// The sync line: refreshing, "Synced with Notion: 5 minutes ago." or the never-synced note.
   String syncLabel(AppLocalizations l10n, DateTime nowUtc) {
     if (refreshing) return l10n.syncRefreshing;
     return switch (refreshedAtUtc) {
@@ -38,8 +37,7 @@ extension LibraryEntriesInGroup on Iterable<LibraryEntry> {
 }
 
 extension LibraryEntryDetail on LibraryEntry {
-  /// "Tomorrow 9:00 AM · Work · Reminder", or null when there is nothing to
-  /// show. [today] is the local wall-clock date.
+  /// "Tomorrow 9:00 AM · Work · Reminder", or null when empty; [today] is the local wall-clock date.
   String? detail(AppLocalizations l10n, DateTime today, Group? group) {
     final parts = [
       if (when case final DueDate day) day.label(l10n, today),

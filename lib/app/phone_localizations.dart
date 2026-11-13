@@ -3,8 +3,7 @@ import 'package:capture/l10n/app_localizations_en.g.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-/// The iPhone's wording for the strings that name the Mac or macOS; every
-/// other string is shared. The texts live in `app_en.arb` as `phone…` keys.
+/// The iPhone's wording for the strings that name the Mac or macOS; the texts are `phone…` keys in `app_en.arb`.
 class PhoneLocalizations extends AppLocalizationsEn {
   PhoneLocalizations();
 

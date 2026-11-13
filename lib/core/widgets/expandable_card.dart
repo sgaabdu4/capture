@@ -3,8 +3,7 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/paper_card.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// A list row on paper that expands to show [children]: the shared shell of
-/// capture and group cards.
+/// A list row on paper that expands to show [children], shared by capture and group cards.
 class ExpandableCard extends StatelessWidget {
   const ExpandableCard({
     required this.title,
@@ -23,8 +22,7 @@ class ExpandableCard extends StatelessWidget {
   final CrossAxisAlignment? expandedCrossAxisAlignment;
   final EdgeInsetsGeometry? childrenPadding;
 
-  /// Inset of the header and children inside the card; the header's hover
-  /// fills the card edge to edge.
+  /// Inset of the header and children inside the card; the header's hover fills edge to edge.
   static const _headerPadding = EdgeInsets.fromLTRB(Spacing.lg, Spacing.sm, Spacing.md, Spacing.sm);
   static const _bodyPadding = EdgeInsets.only(
     left: Spacing.lg,

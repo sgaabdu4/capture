@@ -8,8 +8,7 @@ extension ContextExtensions on BuildContext {
   TextTheme get textTheme => Theme.of(this).textTheme;
   ColorScheme get colors => Theme.of(this).colorScheme;
 
-  /// A phone-sized window: bottom bar instead of the sidebar, tighter
-  /// margins.
+  /// A phone-sized window: bottom bar instead of the sidebar, tighter margins.
   bool get compact => MediaQuery.sizeOf(this).width < Breakpoints.sidebar;
 
   CaptureColors get paper => Theme.of(this).extension<CaptureColors>() ?? const .new();
