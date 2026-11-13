@@ -20,14 +20,14 @@ Authority: The owner approved the move to Flutter 3.50.0 and the package updates
 
 ## Acceptance + steps
 
-- [x] The app and tests use `material_ui` and no code imports `package:flutter/material.dart` → `dart fix --apply --code=migrate_design_widgets` changed 95 files; `dart analyze --fatal-infos .` reports no issues.
-- [x] The generated localizations come out of the generator in final form → `l10n.yaml` writes `app_localizations.g.dart` with the generated header; `flutter pub get` and `flutter gen-l10n` leave `git status` clean.
-- [x] Page changes keep the standard page of Flutter 3.50.0 → measured with a temporary widget test on the real router and removed after; the numbers are in Risks.
-- [x] The speed rules pass → `test/core/async/in_order_test.dart::starts each step only after the step before it has finished` and `::stops at the first failure and rethrows that error`.
-- [x] A reset deletes the secrets one by one and stops at a refused delete → `test/features/settings/repositories/settings_repository_test.dart::a reset deletes the secrets one after another, then erases the local data` and `::a reset stops at the first refused delete and keeps the local data`.
-- [x] Reminder scheduling keeps its order and saved progress → `test/features/capture/repositories/capture_save_repository_test.dart` (existing cases).
-- [x] The macOS tests gate loads the coverage archive → a sandboxed test host writes no coverage data, so the gate builds the macOS tests with `DebugCoverage.entitlements`; `xcrun xccov view --report` succeeds on the result.
-- [x] Freshness is clean → `crypto`, `sqlite3`, `flutter_local_notifications`, `sherpa_onnx`, `flutter_riverpod`, `riverpod_annotation`, `riverpod_generator`, `go_router`, `go_router_builder`, `build_runner` and `freezed` updated; the freshness gate passes.
+- [x] The app and tests use `material_ui` and no code imports `package:flutter/material.dart` → `test/app/capture_app_test.dart::first launch shows the setup steps and still records` runs the real app on `material_ui`; `dart fix --apply --code=migrate_design_widgets` changed 95 files and `dart analyze --fatal-infos .` reports no issues.
+- [x] The generated localizations come out of the generator in final form → N/A — a generated file has no test; `l10n.yaml` writes `app_localizations.g.dart` with the generated header, and `flutter pub get` plus `flutter gen-l10n` leave `git status` clean.
+- [x] Page changes keep the standard page of Flutter 3.50.0 → N/A — a temporary widget test on the real router measured it and was removed; the numbers are in Risks.
+- [x] Ordered work keeps its order and stops at the first failure → `test/core/async/in_order_test.dart::starts each step only after the step before it has finished` and `test/core/async/in_order_test.dart::stops at the first failure and rethrows that error`.
+- [x] A reset deletes the secrets one by one and stops at a refused delete → `test/features/settings/repositories/settings_repository_test.dart::a reset deletes the secrets one after another, then erases the local data` and `test/features/settings/repositories/settings_repository_test.dart::a reset stops at the first refused delete and keeps the local data`.
+- [x] Reminder scheduling keeps its order and saved progress → `test/features/capture/repositories/capture_save_repository_test.dart::a scheduled reminder is recorded on the stored capture` and `test/features/capture/repositories/capture_save_repository_test.dart::a capture deleted while the reminder prompt was open is not written back`.
+- [x] The macOS tests gate loads the coverage archive → N/A — the gate command is the proof: a sandboxed test host writes no coverage data, so the gate builds the macOS tests with `DebugCoverage.entitlements`, and `xccov` then succeeds.
+- [x] Freshness is clean → N/A — the freshness gate is the proof; `crypto`, `sqlite3`, `flutter_local_notifications`, `sherpa_onnx`, `flutter_riverpod`, `riverpod_annotation`, `riverpod_generator`, `go_router`, `go_router_builder`, `build_runner` and `freezed` are updated.
 
 ## Baseline + execution
 
