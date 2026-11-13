@@ -8,27 +8,15 @@ part of 'capture_flow_notifier.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The capture state machine. Every milestone is persisted before the next
-/// step (see [CaptureStage]); approval, by the user or by auto-save, is the
-/// only path to Notion and to reminders. Native events (hotkey, pill, review
-/// card, menu, iPhone record requests) land here. Recording needs only the
-/// microphone; a capture made before setup waits, recorded, for a Retry.
+/// Persist milestones before advancing; approval is the only path to Notion writes and reminders.
 
 @ProviderFor(CaptureFlowNotifier)
 final captureFlowProvider = CaptureFlowNotifierProvider._();
 
-/// The capture state machine. Every milestone is persisted before the next
-/// step (see [CaptureStage]); approval, by the user or by auto-save, is the
-/// only path to Notion and to reminders. Native events (hotkey, pill, review
-/// card, menu, iPhone record requests) land here. Recording needs only the
-/// microphone; a capture made before setup waits, recorded, for a Retry.
+/// Persist milestones before advancing; approval is the only path to Notion writes and reminders.
 final class CaptureFlowNotifierProvider
     extends $NotifierProvider<CaptureFlowNotifier, CaptureFlowState> {
-  /// The capture state machine. Every milestone is persisted before the next
-  /// step (see [CaptureStage]); approval, by the user or by auto-save, is the
-  /// only path to Notion and to reminders. Native events (hotkey, pill, review
-  /// card, menu, iPhone record requests) land here. Recording needs only the
-  /// microphone; a capture made before setup waits, recorded, for a Retry.
+  /// Persist milestones before advancing; approval is the only path to Notion writes and reminders.
   CaptureFlowNotifierProvider._()
     : super(
         from: null,
@@ -56,13 +44,9 @@ final class CaptureFlowNotifierProvider
   }
 }
 
-String _$captureFlowNotifierHash() => r'5f604ecb2bab8ea1d2a52700beb39819e89b4cf1';
+String _$captureFlowNotifierHash() => r'93e8a14d636ee44d93a6228d010709371b4fc43b';
 
-/// The capture state machine. Every milestone is persisted before the next
-/// step (see [CaptureStage]); approval, by the user or by auto-save, is the
-/// only path to Notion and to reminders. Native events (hotkey, pill, review
-/// card, menu, iPhone record requests) land here. Recording needs only the
-/// microphone; a capture made before setup waits, recorded, for a Retry.
+/// Persist milestones before advancing; approval is the only path to Notion writes and reminders.
 
 abstract class _$CaptureFlowNotifier extends $Notifier<CaptureFlowState> {
   CaptureFlowState build();

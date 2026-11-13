@@ -8,22 +8,16 @@ part of 'app_startup.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Once per launch: menu-bar item, saved settings and hotkey, crash
-/// recovery of unfinished recordings and owed reminders, an iPhone record
-/// request that launched the app, then a library sync when connected.
+/// Recovery and pending native requests complete before the connected library sync.
 
 @ProviderFor(appStartup)
 final appStartupProvider = AppStartupProvider._();
 
-/// Once per launch: menu-bar item, saved settings and hotkey, crash
-/// recovery of unfinished recordings and owed reminders, an iPhone record
-/// request that launched the app, then a library sync when connected.
+/// Recovery and pending native requests complete before the connected library sync.
 
 final class AppStartupProvider extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  /// Once per launch: menu-bar item, saved settings and hotkey, crash
-  /// recovery of unfinished recordings and owed reminders, an iPhone record
-  /// request that launched the app, then a library sync when connected.
+  /// Recovery and pending native requests complete before the connected library sync.
   AppStartupProvider._()
     : super(
         from: null,

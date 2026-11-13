@@ -8,18 +8,15 @@ part of 'recording_meter_notifier.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Follows the recorder's level events. A new recording (its time going
-/// back) starts from a silent waveform.
+/// A recording timestamp moving backwards resets the waveform to silence.
 
 @ProviderFor(RecordingMeterNotifier)
 final recordingMeterProvider = RecordingMeterNotifierProvider._();
 
-/// Follows the recorder's level events. A new recording (its time going
-/// back) starts from a silent waveform.
+/// A recording timestamp moving backwards resets the waveform to silence.
 final class RecordingMeterNotifierProvider
     extends $NotifierProvider<RecordingMeterNotifier, RecordingMeter> {
-  /// Follows the recorder's level events. A new recording (its time going
-  /// back) starts from a silent waveform.
+  /// A recording timestamp moving backwards resets the waveform to silence.
   RecordingMeterNotifierProvider._()
     : super(
         from: null,
@@ -47,10 +44,9 @@ final class RecordingMeterNotifierProvider
   }
 }
 
-String _$recordingMeterNotifierHash() => r'3e093a6eed5afea227b0eea4a5d36274e03c18ae';
+String _$recordingMeterNotifierHash() => r'c7287641209edef4f9d511ccba38c7e878e6fa32';
 
-/// Follows the recorder's level events. A new recording (its time going
-/// back) starts from a silent waveform.
+/// A recording timestamp moving backwards resets the waveform to silence.
 
 abstract class _$RecordingMeterNotifier extends $Notifier<RecordingMeter> {
   RecordingMeter build();

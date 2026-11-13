@@ -8,17 +8,14 @@ part of 'groups_notifier.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Groups editor state. Groups are archived, never deleted, so existing
-/// library relations stay valid.
+/// Archive groups instead of deleting them so existing library relations stay valid.
 
 @ProviderFor(GroupsNotifier)
 final groupsProvider = GroupsNotifierProvider._();
 
-/// Groups editor state. Groups are archived, never deleted, so existing
-/// library relations stay valid.
+/// Archive groups instead of deleting them so existing library relations stay valid.
 final class GroupsNotifierProvider extends $NotifierProvider<GroupsNotifier, GroupsState> {
-  /// Groups editor state. Groups are archived, never deleted, so existing
-  /// library relations stay valid.
+  /// Archive groups instead of deleting them so existing library relations stay valid.
   GroupsNotifierProvider._()
     : super(
         from: null,
@@ -46,10 +43,9 @@ final class GroupsNotifierProvider extends $NotifierProvider<GroupsNotifier, Gro
   }
 }
 
-String _$groupsNotifierHash() => r'97b473c8647706867cdbcab30fc3fa10f32aebb1';
+String _$groupsNotifierHash() => r'fcf74b00e68424c9069cc4bd3c1ff32477b62d8a';
 
-/// Groups editor state. Groups are archived, never deleted, so existing
-/// library relations stay valid.
+/// Archive groups instead of deleting them so existing library relations stay valid.
 
 abstract class _$GroupsNotifier extends $Notifier<GroupsState> {
   GroupsState build();
