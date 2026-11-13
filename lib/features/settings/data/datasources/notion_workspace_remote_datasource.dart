@@ -12,9 +12,7 @@ part 'notion_workspace_remote_datasource.g.dart';
 /// Workspace name and upload limit of the token's workspace.
 typedef NotionAccount = ({String? workspaceName, int maxUploadBytes});
 
-/// Finds or creates the Capture area and its three data sources inside the
-/// page the user shared. Idempotent: an existing marked area is adopted,
-/// never duplicated; nothing outside the area is modified.
+/// Adopts an existing marked area and never changes anything outside the area.
 abstract interface class INotionWorkspaceRemoteDatasource {
   Future<NotionResult<NotionWorkspaceModel>> connect({
     required String token,
@@ -193,8 +191,7 @@ class NotionWorkspaceRemoteDatasource implements INotionWorkspaceRemoteDatasourc
     return .ok(byTitle);
   }
 
-  /// Creates whichever databases are missing (a previous setup may have
-  /// stopped part-way).
+  /// An earlier setup can have stopped part way, so this creates only the missing databases.
   Future<NotionResult<_DataSources>> _ensureDataSources(String areaId, String token) async {
     final Map<String, String> found;
     switch (await _findDataSources(areaId, token)) {
