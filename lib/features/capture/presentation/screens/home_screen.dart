@@ -18,7 +18,7 @@ import 'package:capture/features/library/presentation/notifiers/library_notifier
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/screens/setup_steps_screen.dart';
 import 'package:capture/features/settings/presentation/widgets/setup_panel.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 

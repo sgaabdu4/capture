@@ -12,7 +12,7 @@ import 'package:capture/features/groups/repositories/groups_repository.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

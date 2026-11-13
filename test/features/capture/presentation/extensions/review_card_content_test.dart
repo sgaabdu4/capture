@@ -4,7 +4,7 @@ import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/presentation/extensions/review_card_content.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_state.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:timezone/data/latest.dart' as tzdata;

@@ -2,7 +2,7 @@ import 'package:capture/core/extensions/date_format.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 
 extension MenuNextUp on LibraryEntry? {
   /// "Call the dentist · Tomorrow 9:00 AM", or the empty line.

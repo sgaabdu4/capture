@@ -1,5 +1,5 @@
 import 'package:capture/features/capture/domain/entities/due_date.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:intl/intl.dart';
 
 const _daysPerWeek = 7;

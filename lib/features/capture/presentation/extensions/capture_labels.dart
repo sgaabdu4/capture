@@ -7,7 +7,7 @@ import 'package:capture/features/capture/domain/entities/review_flag.dart';
 import 'package:capture/features/capture/domain/proposal/proposal_counts.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_status.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_notice.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 
 extension CaptureNoticeLabel on CaptureNotice {
   String label(AppLocalizations l10n) => switch (this) {

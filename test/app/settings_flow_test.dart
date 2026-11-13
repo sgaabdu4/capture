@@ -22,7 +22,7 @@ import 'package:capture/features/settings/data/datasources/notion_workspace_remo
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/screens/settings_screen.dart';
 import 'package:capture/features/settings/repositories/settings_repository.dart';
-import 'package:capture/l10n/app_localizations.dart';
+import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
