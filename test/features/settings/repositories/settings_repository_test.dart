@@ -1,6 +1,7 @@
 import 'package:capture/core/data/notion/models/notion_workspace_model.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/notion/notion_workspace_local_datasource.dart';
+import 'package:capture/core/data/secrets/secrets_local_datasource.dart';
 import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/domain/values/result.dart';
 import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
@@ -87,6 +88,42 @@ final class _Fixture {
   ).thenAnswer((_) async => answer);
 }
 
+/// Records each secret delete and local erase, refusing the delete of [failing].
+class _LoggedSecrets extends FakeSecrets {
+  _LoggedSecrets(this.log, {this.failing});
+  final List<String> log;
+  final Secret? failing;
+
+  @override
+  Future<void> delete(Secret secret) {
+    log.add('delete ${secret.name}');
+    return secret == failing ? .error(StateError('refused')) : super.delete(secret);
+  }
+}
+
+Future<List<String>> _reset({Secret? failing}) async {
+  final log = <String>[];
+  final localData = _MockLocalData();
+  when(localData.erase).thenAnswer((_) async => log.add('erase'));
+  final repository = SettingsRepository(
+    secrets: _LoggedSecrets(log, failing: failing),
+    jev: _MockJev(),
+    notion: (remote: _MockNotion(), cache: _Cache(), groups: _seededGroups()),
+    device: .new(
+      shortcuts: _MockShortcuts(),
+      autoSave: _MockAutoSave(),
+      speechModel: _MockSpeechModel(),
+      localData: localData,
+    ),
+  );
+  try {
+    await repository.reset();
+  } on StateError {
+    log.add('failed');
+  }
+  return log;
+}
+
 void main() {
   setUpAll(() => registerFallbackValue(_model.toEntity()));
 
@@ -116,5 +153,19 @@ void main() {
 
     expect(await f.secrets.read(.notionToken), equals('token'));
     expect(f.cache.value, equals(_model));
+  });
+
+  test('a reset deletes the secrets one after another, then erases the local data', () async {
+    final log = await _reset();
+
+    expect(log, [for (final secret in Secret.values) 'delete ${secret.name}', 'erase']);
+  });
+
+  test('a reset stops at the first refused delete and keeps the local data', () async {
+    final first = Secret.values.first;
+
+    final log = await _reset(failing: first);
+
+    expect(log, ['delete ${first.name}', 'failed']);
   });
 }

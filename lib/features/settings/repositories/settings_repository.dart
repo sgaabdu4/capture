@@ -1,5 +1,6 @@
 import 'dart:io' show FileSystemException, SocketException;
 
+import 'package:capture/core/async/in_order.dart';
 import 'package:capture/core/data/notion/models/notion_workspace_model.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/notion/notion_workspace_local_datasource.dart';
@@ -173,9 +174,11 @@ class SettingsRepository implements ISettingsRepository {
 
   @override
   Future<void> reset() async {
-    for (final secret in Secret.values) {
-      await _secrets.delete(secret);
-    }
+    await inOrder(
+      Secret.values,
+      _secrets.delete,
+      reason: 'A failed delete stops the reset before the local data is erased.',
+    );
     await _localData.erase();
   }
 

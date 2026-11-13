@@ -1,12 +1,12 @@
 import 'dart:io';
 
+import 'package:capture/core/async/in_order.dart';
 import 'package:capture/core/data/system/local_app_directories_datasource.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'audio_files_local_datasource.g.dart';
 
-/// Recording files in the captures folder: raw PCM written while recording
-/// and the compressed M4A uploaded to Notion.
+/// Recording files in the captures folder: raw PCM while recording, the M4A uploaded to Notion.
 abstract interface class IAudioFilesLocalDatasource {
   /// Creates the folder and returns where a capture's PCM goes.
   Future<String> pcmPathFor(String captureId);
@@ -48,12 +48,10 @@ class AudioFilesLocalDatasource implements IAudioFilesLocalDatasource {
   Future<List<int>> read(String path) => File(path).readAsBytes();
 
   @override
-  Future<void> delete(Iterable<String> paths) async {
-    for (final path in paths) {
-      final file = File(path);
-      if (file.existsSync()) await file.delete();
-    }
-  }
+  Future<void> delete(Iterable<String> paths) => inOrder(paths, (path) async {
+    final file = File(path);
+    if (file.existsSync()) await file.delete();
+  }, reason: 'A failed delete stops the rest so the files left on disk stay known.');
 
   @override
   void deleteAll() {

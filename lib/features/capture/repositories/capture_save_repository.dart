@@ -1,3 +1,4 @@
+import 'package:capture/core/async/in_order.dart';
 import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/data/system/system_datasource.dart';
@@ -166,7 +167,8 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
     ];
     final scheduled = {...progress.remindersScheduled};
     bool refused = false;
-    for (final (:item, :at) in due) {
+    await inOrder(due, (reminder) async {
+      final (:item, :at) = reminder;
       final accepted = await _reminders.schedule(itemId: item.id.value, title: item.title, at: at);
       refused = refused || !accepted;
       // A capture deleted while the prompt was open stays deleted.
@@ -174,7 +176,7 @@ class CaptureSaveRepository implements ICaptureSaveRepository {
         scheduled.add(item.id);
         _persist(record, progress.copyWith(remindersScheduled: {...scheduled}));
       }
-    }
+    }, reason: 'Each reminder is saved after the one before so the saved progress only grows.');
     return (
       record: copyWith(progress: progress.copyWith(remindersScheduled: scheduled)),
       notificationsOff: refused,
