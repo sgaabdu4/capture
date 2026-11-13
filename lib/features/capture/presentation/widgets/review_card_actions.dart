@@ -3,7 +3,7 @@ import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/overlay_tokens.dart';
 import 'package:capture/core/theme/palette.dart';
 import 'package:capture/features/capture/presentation/widgets/review_card_button.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// No / Yes, save / Edit along the bottom of the iPhone review card.
 class ReviewCardActions extends StatelessWidget {

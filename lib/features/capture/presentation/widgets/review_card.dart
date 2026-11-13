@@ -6,7 +6,7 @@ import 'package:capture/core/theme/overlay_tokens.dart';
 import 'package:capture/core/theme/palette.dart';
 import 'package:capture/features/capture/presentation/widgets/review_card_actions.dart';
 import 'package:capture/features/capture/presentation/widgets/review_row_tile.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// "Ready to save?" with the proposal's rows and No / Yes, save / Edit, as
 /// `ReviewCard` in `Overlay.swift`, at the phone's width. Opaque, because

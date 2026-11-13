@@ -1,5 +1,5 @@
 import 'package:capture/core/theme/sizes.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class StatusDot extends StatelessWidget {
   const StatusDot(this.color, {super.key});

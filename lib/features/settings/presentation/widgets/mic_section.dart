@@ -2,7 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/widgets/atoms/line_button.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Microphone permission, with a button while macOS hasn't asked yet.
 class MicSection extends StatelessWidget {

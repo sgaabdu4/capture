@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Keep approved reference colours in sync with the native overlay's Theme.swift.
 abstract final class Palette {

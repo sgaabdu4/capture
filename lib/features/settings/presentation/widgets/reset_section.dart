@@ -3,7 +3,7 @@ import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/line_button.dart';
 import 'package:capture/core/widgets/atoms/underlined.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Starts Capture over, keeping the speech model.
 class ResetSection extends StatelessWidget {

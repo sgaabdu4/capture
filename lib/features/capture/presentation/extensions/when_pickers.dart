@@ -1,5 +1,5 @@
 import 'package:capture/features/capture/domain/entities/due_date.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Date and time pickers for a task's date, shared by the capture editor and
 /// the saved-item editor.

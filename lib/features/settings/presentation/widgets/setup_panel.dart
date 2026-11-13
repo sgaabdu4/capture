@@ -3,7 +3,7 @@ import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/paper_card.dart';
 import 'package:capture/core/widgets/atoms/underlined.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// First-run setup on Home until everything a capture needs is in place.
 /// [steps] are the same steps Settings shows.

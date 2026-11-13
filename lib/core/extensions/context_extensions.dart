@@ -1,7 +1,7 @@
 import 'package:capture/core/theme/breakpoints.dart';
 import 'package:capture/core/theme/capture_colors.dart';
 import 'package:capture/l10n/app_localizations.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 extension ContextExtensions on BuildContext {
   AppLocalizations get l10n => .of(this);

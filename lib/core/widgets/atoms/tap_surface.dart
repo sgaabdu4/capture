@@ -1,6 +1,6 @@
 import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/theme/radii.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The one ink/tap surface for clickable rows, chips and nav items.
 class TapSurface extends StatelessWidget {

@@ -15,8 +15,8 @@ import 'package:capture/features/settings/presentation/widgets/privacy_section.d
 import 'package:capture/features/settings/presentation/widgets/quick_access_section.dart';
 import 'package:capture/features/settings/presentation/widgets/reset_dialog.dart';
 import 'package:capture/features/settings/presentation/widgets/reset_section.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});

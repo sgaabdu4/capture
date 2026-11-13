@@ -1,7 +1,7 @@
 import 'package:capture/core/theme/radii.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/paper_card.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A list row on paper that expands to show [children]: the shared shell of
 /// capture and group cards.

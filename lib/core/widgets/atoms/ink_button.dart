@@ -1,5 +1,5 @@
 import 'package:capture/core/theme/sizes.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Filled ink button for primary actions; shows a spinner while [busy].
 class InkButton extends StatelessWidget {

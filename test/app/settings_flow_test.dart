@@ -23,10 +23,10 @@ import 'package:capture/features/settings/presentation/notifiers/settings_notifi
 import 'package:capture/features/settings/presentation/screens/settings_screen.dart';
 import 'package:capture/features/settings/repositories/settings_repository.dart';
 import 'package:capture/l10n/app_localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 

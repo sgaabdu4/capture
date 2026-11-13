@@ -3,7 +3,7 @@ import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/domain/entities/source_span.dart';
 import 'package:capture/features/capture/presentation/widgets/source_word.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The exact words an item came from. When [onSplit] is set, tapping a word
 /// splits the item before it (at that word's transcript offset).

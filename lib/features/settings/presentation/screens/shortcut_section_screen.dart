@@ -6,9 +6,9 @@ import 'package:capture/features/settings/domain/entities/shortcut_problem.dart'
 import 'package:capture/features/settings/presentation/extensions/settings_labels.dart';
 import 'package:capture/features/settings/presentation/widgets/shortcut_actions.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Modifiers alone are valid shortcuts; native changes wait until the recorded shortcut is saved.
 class ShortcutSectionScreen extends ConsumerStatefulWidget {

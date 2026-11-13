@@ -4,7 +4,7 @@ import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/line_button.dart';
 import 'package:capture/features/capture/domain/entities/due_date.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Date, time and reminder of one task.
 class WhenRow extends StatelessWidget {

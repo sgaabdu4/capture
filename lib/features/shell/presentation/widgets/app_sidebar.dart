@@ -5,7 +5,7 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
 import 'package:capture/core/widgets/atoms/underlined.dart';
 import 'package:capture/features/shell/presentation/widgets/notion_chip.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Wordmark, destinations, Notion state and the motto.
 class AppSidebar extends StatelessWidget {

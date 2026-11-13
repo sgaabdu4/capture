@@ -16,8 +16,8 @@ import 'package:capture/features/capture/presentation/widgets/editor_bottom_bar.
 import 'package:capture/features/capture/presentation/widgets/proposal_item_editor.dart';
 import 'package:capture/features/capture/presentation/widgets/transcript_panel.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 /// Edits stay local until the user approves Save to Notion.

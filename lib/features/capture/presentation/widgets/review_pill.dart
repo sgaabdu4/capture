@@ -3,7 +3,7 @@ import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/overlay_tokens.dart';
 import 'package:capture/core/theme/palette.dart';
 import 'package:capture/features/capture/presentation/widgets/pill_surface.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Idle pill under the review card (the mic is off), as `ReviewPill` in
 /// `Overlay.swift`; its close button leaves the capture for later.

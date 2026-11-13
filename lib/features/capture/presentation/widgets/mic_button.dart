@@ -4,7 +4,7 @@ import 'package:capture/core/theme/capture_colors.dart';
 import 'package:capture/core/theme/radii.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/features/capture/presentation/widgets/mic_rays_painter.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The large black microphone with the six pencil rays.
 class MicButton extends StatelessWidget {

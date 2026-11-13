@@ -2,7 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/domain/entities/review_flag.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Review reasons on one proposal item.
 class FlagChips extends StatelessWidget {

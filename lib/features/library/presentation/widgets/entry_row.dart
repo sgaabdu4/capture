@@ -4,7 +4,7 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/paper_card.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class EntryRow extends StatelessWidget {
   const EntryRow({

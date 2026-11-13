@@ -2,7 +2,7 @@ import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Picks the group of one proposal item; read-only when [onChanged] is null.
 class GroupMenu extends StatelessWidget {

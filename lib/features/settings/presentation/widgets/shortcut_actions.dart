@@ -5,7 +5,7 @@ import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/line_button.dart';
 import 'package:capture/features/settings/domain/entities/shortcut.dart';
 import 'package:capture/features/settings/presentation/widgets/shortcut_keys.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Recording → a prompt and Cancel; recorded → the keys, Save and Cancel;
 /// otherwise the current keys and Record.

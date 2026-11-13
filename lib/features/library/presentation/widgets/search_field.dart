@@ -1,7 +1,7 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Search box over saved titles; starts from [query] and reports each edit.
 class SearchField extends StatefulWidget {

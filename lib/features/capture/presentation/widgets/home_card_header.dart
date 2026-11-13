@@ -1,7 +1,7 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/core/widgets/atoms/underlined.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Underlined card title with an optional "View all ›" link.
 class HomeCardHeader extends StatelessWidget {

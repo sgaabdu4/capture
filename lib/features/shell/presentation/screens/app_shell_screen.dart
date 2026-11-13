@@ -16,9 +16,9 @@ import 'package:capture/features/shell/presentation/widgets/bottom_nav_bar.dart'
 import 'package:capture/features/shell/presentation/widgets/nav_item.dart';
 import 'package:capture/features/shell/presentation/widgets/update_link.dart';
 import 'package:capture/l10n/app_localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Shell sidebar, Settings and discovered update link; iPhone adds capture pills/review.
 class AppShellScreen extends ConsumerWidget {

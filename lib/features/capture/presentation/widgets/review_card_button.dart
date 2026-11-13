@@ -1,7 +1,7 @@
 import 'package:capture/core/theme/overlay_tokens.dart';
 import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A No / Yes, save / Edit button on the iPhone review card.
 class ReviewCardButton extends StatelessWidget {

@@ -12,8 +12,8 @@ import 'package:capture/features/settings/presentation/screens/notion_step_scree
 import 'package:capture/features/settings/presentation/screens/typesafe_step_screen.dart';
 import 'package:capture/features/settings/presentation/widgets/model_step.dart';
 import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SetupStepsScreen extends ConsumerWidget {
   const SetupStepsScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/paper_card.dart';
 import 'package:capture/features/capture/presentation/widgets/home_card_header.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// One of the Home cards: header, then its rows or empty note.
 class HomeCard extends StatelessWidget {
