@@ -133,10 +133,10 @@ packages:
     dependency: transitive
     description:
       name: code_assets
-      sha256: "828110d598123b5ea96c00c9f3c72105bf79f8ee36c20a39b26209ade421ec57"
+      sha256: "1ef22a0be3af9370bd9481ac76db114db92bfe75d5ca2b2d7bc911764478a4d9"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.2.0"
   code_builder:
     dependency: transitive
     description:
@@ -173,10 +173,10 @@ packages:
     dependency: "direct main"
     description:
       name: crypto
-      sha256: c8ea0233063ba03258fbcf2ca4d6dadfefe14f02fab57702265467a19f27fadf
+      sha256: e3626ae6270383c9e3a549f34c9e4cd26c09ae6a9adaab2bf4737a00340efdc4
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.7"
+    version: "3.0.8"
   cupertino_ui:
     dependency: transitive
     description:
@@ -643,10 +643,10 @@ packages:
     dependency: transitive
     description:
       name: native_toolchain_c
-      sha256: "90eaad8059ebc2004a63810a4696ea9acdb02473e47ed3b6b3bafb100ac77e31"
+      sha256: "120b6fc66acd8a5ddeaeb1e59b78836bb3ec9919bd9d9dfb1e2401985710c2c0"
       url: "https://pub.dev"
     source: hosted
-    version: "0.19.5"
+    version: "0.19.6"
   node_preamble:
     dependency: transitive
     description:
@@ -984,10 +984,10 @@ packages:
     dependency: "direct main"
     description:
       name: sqlite3
-      sha256: "5340531ad17f386ae444873f643f281060b6238cc702edeee6b1e90bc4c6874e"
+      sha256: "8765980411f9b6733534efe9d014fad0750fa649590598772c04692deb34886b"
       url: "https://pub.dev"
     source: hosted
-    version: "3.8.0"
+    version: "3.9.1"
   stack_trace:
     dependency: transitive
     description:
@@ -1120,10 +1120,10 @@ packages:
     dependency: transitive
     description:
       name: web
-      sha256: "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"
+      sha256: e119e82ac4795c7925103b7cf3768191f33941b99e7ccffbd6c645201d9f606b
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.2"
   web_socket:
     dependency: transitive
     description:
