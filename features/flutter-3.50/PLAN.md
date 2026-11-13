@@ -10,6 +10,7 @@ Capture builds, analyzes and tests with Flutter 3.50.0, and the packages the fre
 
 Owners: `pubspec.yaml`, `pubspec.lock`, `l10n.yaml`, `analysis_options.yaml`, `codemagic.yaml`, `hard-eng.gates.json`, `macos/Runner.xcodeproj`, `lib/`, `test/`. Flutter's guide: https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui
 Same cause: N/A — first move to this Flutter release.
+Compiler fault: the Dart 3.14.0 compiler (`gen_snapshot`) stopped the macOS release build at `linearscan.cc` line 3013 (`UNREACHABLE()` in `FindCover`) while it compiled `NotionHttpService.uploadFile`; the same file is on the default branch. Moving the send step into `_sendFile` fixed it, and the next stop, `NotionWorkspaceRemoteDatasource._ensureDataSources`, ended once the library schema was built before its closure.
 Single source: The Flutter version is pinned in `codemagic.yaml` (two places, both changed); the Mac release workflow floats on stable by design and stays. The comment rule and the speed rules own the other edits; no copy of a value was added.
 
 ## Decisions + authorization
@@ -28,6 +29,7 @@ Authority: The owner approved the move to Flutter 3.50.0 and the package updates
 - [x] Reminder scheduling keeps its order and saved progress → `test/features/capture/repositories/capture_save_repository_test.dart::a scheduled reminder is recorded on the stored capture` and `test/features/capture/repositories/capture_save_repository_test.dart::a capture deleted while the reminder prompt was open is not written back`.
 - [x] The macOS tests gate loads the coverage archive → N/A — the gate command is the proof: a sandboxed test host writes no coverage data, so the gate builds the macOS tests with `DebugCoverage.entitlements`, and `xccov` then succeeds.
 - [x] Freshness is clean → N/A — the freshness gate is the proof; `crypto`, `sqlite3`, `flutter_local_notifications`, `sherpa_onnx`, `flutter_riverpod`, `riverpod_annotation`, `riverpod_generator`, `go_router`, `go_router_builder`, `build_runner` and `freezed` are updated.
+- [x] The macOS release build compiles with the Dart 3.14.0 compiler, and the Notion file upload keeps its behaviour → N/A — no test runs the release compiler; `gen_snapshot_arm64` and `gen_snapshot_x64` on the `--tfa` kernel of `package:capture/main.dart` end with exit 0 (the same step `flutter build macos --release` runs), and the upload behaviour is proven by `test/core/data/notion/notion_http_service_test.dart::uploadFile creates a single part upload, sends the file and returns the id`, `uploadFile with a create answer without an id is an invalid request and sends nothing`, `uploadFile with a rejected create call returns that failure and sends nothing`, `uploadFile without a stored token is an invalid token and makes no request` and `uploadFile with a rejected send call returns that failure`.
 
 ## Baseline + execution
 
@@ -57,7 +59,7 @@ N/A — no screen is redrawn; only imports, packages and tests change. The one v
 Result: Passed
 Evidence: `python3 .hooks/hard-eng.py check --plan-stage Complete --base origin/main` with Flutter 3.50.0 in a clean tree; `flutter test` passes; the iPhone gate and macOS gate are part of the check. Not checked: a Windows build, a real device, a release build.
 E2E: N/A — no journey changes; the `CaptureApp` widget journeys in `test/app/capture_app_test.dart` pass on Flutter 3.50.0.
-Retro: macOS coverage failed on a sandboxed test host → the macOS tests gate; the comment rule failed on files the move touched → the comment rule itself; the first iPhone gate run timed out under load → None — it passes alone.
+Retro: macOS coverage failed on a sandboxed test host → the macOS tests gate; the comment rule failed on files the move touched → the comment rule itself; the first iPhone gate run timed out under load → None — it passes alone; the macOS release build stopped in the Dart compiler and ran first in CI, not before the push → run `flutter build macos --release` before the push.
 
 Delivery target: Merge
 Delivery: Pending — a merge to `main` publishes the next release; the owner opens the pull request.
