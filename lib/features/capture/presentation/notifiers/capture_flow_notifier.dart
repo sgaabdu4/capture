@@ -12,7 +12,6 @@ import 'package:capture/features/capture/domain/capture_limits.dart';
 import 'package:capture/features/capture/domain/dates/date_resolver.dart';
 import 'package:capture/features/capture/domain/entities/capture_failure.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
-import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/domain/entities/review_flag.dart';
