@@ -2,8 +2,7 @@ import 'package:capture/core/theme/fonts.dart';
 import 'package:capture/core/theme/palette.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Measurements of the Mac's recording pill and review card
-/// (`macos/Runner/Native/Overlay.swift`), for the same pieces on iPhone.
+/// Measurements of the Mac's recording pill and review card (`Overlay.swift`) for iPhone.
 abstract final class OverlayTokens {
   // Pills.
   static const pillOpacity = 0.96;

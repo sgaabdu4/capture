@@ -4,8 +4,7 @@ import 'package:capture/core/widgets/atoms/status_dot.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Small print in the page's bottom corner offering a newer release. Backed by
-/// the page colour so scrolled content never shows through it.
+/// Small print offering a newer release, backed by the page colour so scrolled content never shows through.
 class UpdateLink extends StatelessWidget {
   const UpdateLink({required this.onTap, super.key});
 

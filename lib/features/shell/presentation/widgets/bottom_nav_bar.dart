@@ -4,8 +4,7 @@ import 'package:capture/features/shell/presentation/models/nav_destination.dart'
 import 'package:capture/features/shell/presentation/widgets/bottom_nav_item.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// The shell's destinations along the bottom of a narrow window, on the
-/// sidebar's paper with every label shown.
+/// The shell's destinations along the bottom of a narrow window, with every label shown.
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({
     required this.destinations,

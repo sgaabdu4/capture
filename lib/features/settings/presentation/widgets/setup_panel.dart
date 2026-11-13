@@ -5,8 +5,7 @@ import 'package:capture/core/widgets/atoms/paper_card.dart';
 import 'package:capture/core/widgets/atoms/underlined.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// First-run setup on Home until everything a capture needs is in place.
-/// [steps] are the same steps Settings shows.
+/// First-run setup on Home until everything a capture needs is in place; [steps] match Settings.
 class SetupPanel extends StatelessWidget {
   const SetupPanel({required this.steps, super.key});
 

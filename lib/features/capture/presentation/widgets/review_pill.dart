@@ -5,8 +5,7 @@ import 'package:capture/core/theme/palette.dart';
 import 'package:capture/features/capture/presentation/widgets/pill_surface.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Idle pill under the review card (the mic is off), as `ReviewPill` in
-/// `Overlay.swift`; its close button leaves the capture for later.
+/// Idle pill under the review card, as `ReviewPill` in `Overlay.swift`; close leaves the capture for later.
 class ReviewPill extends StatelessWidget {
   const ReviewPill({required this.onLater, super.key});
 

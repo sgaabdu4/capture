@@ -1,8 +1,7 @@
 import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Date and time pickers for a task's date, shared by the capture editor and
-/// the saved-item editor.
+/// Date and time pickers for a task's date, shared by the capture and saved-item editors.
 extension WhenPickers on BuildContext {
   static const _datePickerRoute = 'when-date-picker';
   static const _timePickerRoute = 'when-time-picker';
@@ -11,8 +10,7 @@ extension WhenPickers on BuildContext {
   static const _defaultHour = 9;
   static const _defaultMinute = 0;
 
-  /// Asks for a new day for [base], keeping its time; [onPicked] is not
-  /// called when cancelled.
+  /// Asks for a new day for [base], keeping its time; [onPicked] is not called when cancelled.
   Future<void> pickDay(DueDate? base, DateTime today, ValueChanged<DueDate> onPicked) async {
     final picked = await showDatePicker(
       context: this,

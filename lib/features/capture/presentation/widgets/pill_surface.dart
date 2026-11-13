@@ -2,8 +2,7 @@ import 'package:capture/core/theme/overlay_tokens.dart';
 import 'package:capture/core/theme/palette.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// The charcoal capsule behind every iPhone pill, as `PillBackground` in
-/// `Overlay.swift`.
+/// The charcoal capsule behind every iPhone pill, as `PillBackground` in `Overlay.swift`.
 class PillSurface extends StatelessWidget {
   const PillSurface({required this.padding, required this.child, super.key});
 

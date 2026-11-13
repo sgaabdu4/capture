@@ -3,8 +3,7 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/presentation/widgets/mic_button.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Mic button, what it will do, the Mac's shortcut hint and the latest flow
-/// line.
+/// Mic button, what it will do, the Mac's shortcut hint and the latest flow line.
 class Recorder extends StatelessWidget {
   const Recorder({
     required this.recording,

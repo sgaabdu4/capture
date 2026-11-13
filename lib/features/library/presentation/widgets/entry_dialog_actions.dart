@@ -5,8 +5,7 @@ import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Delete on the left (a second press confirms), Cancel and Save on the
-/// right. A null [onSave] disables Save.
+/// Delete on the left (a second press confirms), Cancel and Save on the right; null [onSave] disables Save.
 class EntryDialogActions extends StatelessWidget {
   const EntryDialogActions({
     required this.confirmingDelete,

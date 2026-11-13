@@ -8,9 +8,7 @@ import 'package:capture/features/capture/presentation/widgets/review_card_action
 import 'package:capture/features/capture/presentation/widgets/review_row_tile.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// "Ready to save?" with the proposal's rows and No / Yes, save / Edit, as
-/// `ReviewCard` in `Overlay.swift`, at the phone's width. Opaque, because
-/// the app's own page is behind it.
+/// "Ready to save?" card as `ReviewCard` in `Overlay.swift` at phone width; opaque over the page.
 class ReviewCard extends StatelessWidget {
   const ReviewCard({
     required this.countLine,

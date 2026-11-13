@@ -3,8 +3,7 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/underlined.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// iPhone: where "Record with Capture" lives and how to add it, using
-/// Apple's own settings. Capture cannot place these itself.
+/// iPhone: where "Record with Capture" lives and how to add it; Capture cannot place these itself.
 class QuickAccessSection extends StatelessWidget {
   const QuickAccessSection({super.key});
 

@@ -6,8 +6,7 @@ import 'package:capture/features/capture/presentation/widgets/recent_card.dart';
 import 'package:capture/features/capture/presentation/widgets/today_card.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Today, Recent capture and Quick groups side by side, or stacked when
-/// narrow.
+/// Today, Recent capture and Quick groups side by side, or stacked when narrow.
 class HomeCards extends StatelessWidget {
   const HomeCards({required this.today, required this.recent, required this.groups, super.key});
 
