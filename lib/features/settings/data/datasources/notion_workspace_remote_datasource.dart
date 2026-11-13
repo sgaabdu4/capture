@@ -223,9 +223,11 @@ class NotionWorkspaceRemoteDatasource implements INotionWorkspaceRemoteDatasourc
       case Err(:final failure):
         return .err(failure);
     }
+    // Built before the closure: the Dart 3.14.0 compiler stops on the old shape in a macOS release build.
+    final schema = librarySchema(groups, captures);
     return switch (await _ensure(
       found[NotionValues.libraryDatabase],
-      () => _database(areaId, NotionValues.libraryDatabase, librarySchema(groups, captures), token),
+      () => _database(areaId, NotionValues.libraryDatabase, schema, token),
     )) {
       Ok(:final value) => .ok((groups: groups, captures: captures, library: value)),
       Err(:final failure) => .err(failure),
