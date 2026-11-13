@@ -1,5 +1,4 @@
-/// Extractive titles and bodies. Deliberately a few plain string rules, not a
-/// language model: the full source text is always kept in the body.
+/// Extractive titles and bodies from a few plain string rules, not a language model.
 library;
 
 const _connectives = [
@@ -15,21 +14,25 @@ const _actionPrefixes = [
 
 const _dangling = {'at', 'on', 'by', 'for', 'around', 'about', 'until', 'from'};
 
+final _runOfSpaces = RegExp(r'[ \t]{2,}');
+final _spaceBeforePunctuation = RegExp(r' (?=[,.;!?])');
+final _leadingSeparators = RegExp(r'^[,\s]+');
+final _clauseEnd = RegExp(r'[.!?;…]|\s[—–-]\s');
+final _whitespace = RegExp(r'\s+');
+final _trailingSeparators = RegExp(r'[,\s]+$');
+
 const maxTitleLength = 60;
 
-/// A truncated title is cut at its last word boundary unless that would
-/// leave fewer characters than this; then it is cut mid-word.
+/// A truncated title is cut mid-word when a word cut would leave fewer characters than this.
 const _minWordCutLength = 20;
 
 /// A half-open `[start, end)` range of offsets into an excerpt.
 typedef ExcerptRange = ({int start, int end});
 
-/// Body text proposed for an item: the source excerpt without a leading
-/// connective ("and thought of…" → "Thought of…").
+/// Body text proposed for an item: the excerpt without a leading connective.
 String proposedBody(String excerpt) => _capitalise(_stripPrefix(excerpt.trim(), _connectives));
 
-/// Title from the first clause, with date/time phrases (offsets relative to
-/// [excerpt]) removed and common action prefixes stripped.
+/// Title from the first clause, with the [remove] ranges of [excerpt] cut out and action prefixes stripped.
 String proposedTitle(String excerpt, {List<ExcerptRange> remove = const []}) {
   String text = _removeRanges(excerpt, remove);
   text = _stripPrefix(text.trim(), _connectives);
@@ -45,12 +48,11 @@ String _removeRanges(String text, List<ExcerptRange> ranges) {
     ..sort((a, b) => b.start.compareTo(a.start));
   return sorted
       .fold(text, _blank)
-      .replaceAll(RegExp(r'[ \t]{2,}'), ' ')
-      .replaceAll(RegExp(r' (?=[,.;!?])'), '');
+      .replaceAll(_runOfSpaces, ' ')
+      .replaceAll(_spaceBeforePunctuation, '');
 }
 
-/// A preposition directly before a date phrase goes with it
-/// ("the dentist at [9 tomorrow] to book" → "the dentist to book").
+/// A preposition directly before a date phrase goes with it ("dentist at [9 tomorrow]" → "dentist").
 final _prepositionBefore = RegExp('\\b(?:${_dangling.join('|')})\\s+\$', caseSensitive: false);
 
 ExcerptRange _withPreposition(String text, ExcerptRange range) {
@@ -60,8 +62,7 @@ ExcerptRange _withPreposition(String text, ExcerptRange range) {
   return m == null ? range : (start: m.start, end: end);
 }
 
-/// [text] with [range] replaced by one space; out-of-bounds or empty ranges
-/// are ignored.
+/// [text] with [range] replaced by one space; out-of-bounds or empty ranges are ignored.
 String _blank(String text, ExcerptRange range) {
   final (:start, :end) = range;
   if (start < 0 || end > text.length || start >= end) return text;
@@ -72,24 +73,23 @@ String _stripPrefix(String text, List<String> prefixes) {
   final lower = text.toLowerCase();
   for (final p in prefixes) {
     if (lower.startsWith('$p ') || lower.startsWith('$p,')) {
-      return text.substring(p.length).replaceFirst(RegExp(r'^[,\s]+'), '');
+      return text.substring(p.length).replaceFirst(_leadingSeparators, '');
     }
   }
   return text;
 }
 
 String _firstClause(String text) {
-  final m = RegExp(r'[.!?;…]|\s[—–-]\s').firstMatch(text);
+  final m = _clauseEnd.firstMatch(text);
   return (m == null ? text : text.substring(0, m.start)).trim();
 }
 
 String _trimDangling(String text) {
-  List<String> words = text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
-  while (words.isNotEmpty &&
-      _dangling.contains(words.last.toLowerCase().replaceAll(RegExp(r'[,]'), ''))) {
+  List<String> words = text.split(_whitespace).where((w) => w.isNotEmpty).toList();
+  while (words.isNotEmpty && _dangling.contains(words.last.toLowerCase().replaceAll(',', ''))) {
     words = words.sublist(0, words.length - 1);
   }
-  return words.join(' ').replaceAll(RegExp(r'[,\s]+$'), '');
+  return words.join(' ').replaceAll(_trailingSeparators, '');
 }
 
 String _capitalise(String text) => text.isEmpty ? text : text[0].toUpperCase() + text.substring(1);
