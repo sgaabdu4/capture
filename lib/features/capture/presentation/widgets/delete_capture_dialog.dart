@@ -2,7 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Confirms deleting a capture from this Mac.
 class DeleteCaptureDialog extends StatelessWidget {

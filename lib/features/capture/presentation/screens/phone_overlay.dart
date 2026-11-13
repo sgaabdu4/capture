@@ -7,8 +7,8 @@ import 'package:capture/features/capture/presentation/notifiers/recording_meter_
 import 'package:capture/features/capture/presentation/screens/phone_review.dart';
 import 'package:capture/features/capture/presentation/widgets/recording_pill.dart';
 import 'package:capture/features/capture/presentation/widgets/working_pill.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PhoneOverlay extends ConsumerWidget {
   const PhoneOverlay({super.key});

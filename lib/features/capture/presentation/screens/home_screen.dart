@@ -19,8 +19,8 @@ import 'package:capture/features/settings/presentation/notifiers/settings_notifi
 import 'package:capture/features/settings/presentation/screens/setup_steps_screen.dart';
 import 'package:capture/features/settings/presentation/widgets/setup_panel.dart';
 import 'package:capture/l10n/app_localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});

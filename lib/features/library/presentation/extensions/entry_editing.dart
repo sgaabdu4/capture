@@ -5,8 +5,8 @@ import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/library/presentation/notifiers/library_state.dart';
 import 'package:capture/features/library/presentation/screens/entry_dialog_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Opens the editor for a saved note or task from any list.
 extension EntryEditing on WidgetRef {

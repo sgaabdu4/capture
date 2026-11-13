@@ -1,6 +1,6 @@
 import 'package:capture/core/theme/overlay_tokens.dart';
 import 'package:capture/core/theme/palette.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// One proposed item on the iPhone review card.
 typedef ReviewRowView = ({IconData icon, String? title, String detail});

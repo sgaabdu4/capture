@@ -4,7 +4,7 @@ import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/presentation/widgets/groups_card.dart';
 import 'package:capture/features/capture/presentation/widgets/recent_card.dart';
 import 'package:capture/features/capture/presentation/widgets/today_card.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Today, Recent capture and Quick groups side by side, or stacked when
 /// narrow.

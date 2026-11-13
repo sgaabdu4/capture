@@ -4,7 +4,7 @@ import 'package:capture/core/theme/radii.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// One sidebar destination.
 class NavItem extends StatelessWidget {

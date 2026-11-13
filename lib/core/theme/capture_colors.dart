@@ -1,5 +1,5 @@
 import 'package:capture/core/theme/palette.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Paper-look colours with no Material [ColorScheme] slot.
 class CaptureColors extends ThemeExtension<CaptureColors> {

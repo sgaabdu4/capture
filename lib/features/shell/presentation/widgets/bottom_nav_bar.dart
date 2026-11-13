@@ -2,7 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/shell/presentation/models/nav_destination.dart';
 import 'package:capture/features/shell/presentation/widgets/bottom_nav_item.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The shell's destinations along the bottom of a narrow window, on the
 /// sidebar's paper with every label shown.

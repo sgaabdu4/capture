@@ -5,7 +5,7 @@ import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/extensions/library_labels.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class GroupList extends StatelessWidget {
   const GroupList({

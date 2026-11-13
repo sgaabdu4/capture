@@ -16,9 +16,9 @@ import 'package:capture/features/library/presentation/widgets/entry_row.dart';
 import 'package:capture/features/library/presentation/widgets/refresh_button.dart';
 import 'package:capture/features/library/presentation/widgets/search_field.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 class TaskListScreen extends ConsumerWidget {
   const TaskListScreen.todo({super.key}) : _byDay = false;

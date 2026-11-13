@@ -9,8 +9,8 @@ import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/capture/presentation/widgets/capture_card.dart';
 import 'package:capture/features/capture/presentation/widgets/delete_capture_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 class RecordingsScreen extends ConsumerWidget {
   const RecordingsScreen({super.key});

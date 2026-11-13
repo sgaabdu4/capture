@@ -1,6 +1,6 @@
 import 'package:capture/core/theme/fonts.dart';
 import 'package:capture/core/theme/palette.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Measurements of the Mac's recording pill and review card
 /// (`macos/Runner/Native/Overlay.swift`), for the same pieces on iPhone.

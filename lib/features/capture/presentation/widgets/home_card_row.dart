@@ -1,7 +1,7 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Leading control or badge, a title and a muted subtitle.
 class HomeCardRow extends StatelessWidget {

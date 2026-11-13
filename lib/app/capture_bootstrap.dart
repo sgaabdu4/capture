@@ -15,9 +15,9 @@ import 'package:capture/features/capture/presentation/notifiers/capture_phase.da
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/presentation/extensions/settings_labels.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Native effects and typed navigation share the shell router context and listener ordering.
 class CaptureBootstrap extends ConsumerWidget {

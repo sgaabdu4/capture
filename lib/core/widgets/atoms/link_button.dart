@@ -1,7 +1,7 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Quiet text button (e.g. "View all ›").
 class LinkButton extends StatelessWidget {

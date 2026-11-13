@@ -2,7 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The one action that moves a capture on, plus delete; a spinner while
 /// the pipeline works on it.

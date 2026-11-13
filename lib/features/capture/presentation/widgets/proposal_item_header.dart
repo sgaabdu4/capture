@@ -4,7 +4,7 @@ import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/presentation/widgets/group_menu.dart';
 import 'package:capture/features/capture/presentation/widgets/kind_toggle.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Include checkbox, title, kind and group of one proposal item.
 class ProposalItemHeader extends StatelessWidget {

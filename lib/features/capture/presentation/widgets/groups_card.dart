@@ -5,7 +5,7 @@ import 'package:capture/core/widgets/atoms/empty_note.dart';
 import 'package:capture/core/widgets/atoms/icon_badge.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
 import 'package:capture/features/capture/presentation/widgets/home_card.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A few active groups; each row opens Groups.
 class GroupsCard extends StatelessWidget {

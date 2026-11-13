@@ -7,7 +7,7 @@ import 'package:capture/features/capture/domain/entities/approval_problem.dart';
 import 'package:capture/features/capture/domain/entities/capture_failure.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// What blocks the save (or the last failure), with Don't save / Save.
 class EditorBottomBar extends StatelessWidget {

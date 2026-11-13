@@ -16,9 +16,9 @@ import 'package:capture/features/groups/presentation/widgets/group_list.dart';
 import 'package:capture/features/library/presentation/extensions/entry_editing.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Group names and descriptions steer Jev's filing; archival preserves existing library relations.
 class GroupsScreen extends ConsumerWidget {

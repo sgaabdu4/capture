@@ -1,6 +1,6 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Truthful empty state.
 class EmptyNote extends StatelessWidget {

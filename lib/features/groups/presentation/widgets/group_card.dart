@@ -6,7 +6,7 @@ import 'package:capture/core/widgets/atoms/empty_note.dart';
 import 'package:capture/core/widgets/expandable_card.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Null actions are hidden; [busy] disables every action.
 class GroupCard extends StatelessWidget {

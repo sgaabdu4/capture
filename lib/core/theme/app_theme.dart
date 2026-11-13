@@ -4,7 +4,7 @@ import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/theme/radii.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 const _textTheme = TextTheme(
   displayLarge: .new(

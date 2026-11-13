@@ -10,7 +10,7 @@ import 'package:capture/features/capture/presentation/widgets/proposal_item_head
 import 'package:capture/features/capture/presentation/widgets/source_words.dart';
 import 'package:capture/features/capture/presentation/widgets/when_row.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Editor card owns the title/body controllers and keeps them in sync with [item].
 class ProposalItemEditor extends StatefulWidget {

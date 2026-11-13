@@ -2,7 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/status_dot.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Small print in the page's bottom corner offering a newer release. Backed by
 /// the page colour so scrolled content never shows through it.

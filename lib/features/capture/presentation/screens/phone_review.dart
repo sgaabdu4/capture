@@ -10,8 +10,8 @@ import 'package:capture/features/capture/presentation/notifiers/capture_flow_not
 import 'package:capture/features/capture/presentation/widgets/review_card.dart';
 import 'package:capture/features/capture/presentation/widgets/review_pill.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The review card over its "Not saved yet" pill, with the Mac's actions.
 class PhoneReview extends ConsumerWidget {

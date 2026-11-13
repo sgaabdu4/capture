@@ -3,7 +3,7 @@ import 'package:capture/core/widgets/atoms/empty_note.dart';
 import 'package:capture/core/widgets/atoms/icon_badge.dart';
 import 'package:capture/features/capture/presentation/widgets/home_card.dart';
 import 'package:capture/features/capture/presentation/widgets/home_card_row.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// One recent capture: what happened to it and how long ago.
 typedef RecentItem = ({String title, String ago, bool saved});

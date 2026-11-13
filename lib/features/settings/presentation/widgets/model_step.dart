@@ -6,7 +6,7 @@ import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/features/settings/domain/values/speech_model_event.dart';
 import 'package:capture/features/settings/presentation/extensions/settings_labels.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Download, progress, failure and ready states of the local speech model.
 class ModelStep extends StatelessWidget {

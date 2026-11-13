@@ -4,7 +4,7 @@ import 'package:capture/core/theme/overlay_tokens.dart';
 import 'package:capture/core/theme/palette.dart';
 import 'package:capture/features/capture/presentation/widgets/pill_surface.dart';
 import 'package:capture/features/capture/presentation/widgets/waveform.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Mic, live waveform, timer and stop, as `RecordingPill` in `Overlay.swift`.
 class RecordingPill extends StatelessWidget {

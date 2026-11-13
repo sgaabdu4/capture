@@ -8,7 +8,7 @@ import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_status.dart';
 import 'package:capture/features/capture/presentation/widgets/capture_actions.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// One capture on the Recordings page: its true state, and the transcript
 /// when expanded.

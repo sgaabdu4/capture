@@ -12,8 +12,8 @@ import 'package:capture/features/capture/presentation/widgets/when_row.dart';
 import 'package:capture/features/groups/presentation/notifiers/groups_notifier.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:capture/features/library/presentation/widgets/entry_dialog_actions.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum EntryEditAction { save, delete }
 

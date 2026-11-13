@@ -8,7 +8,7 @@ import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/domain/entities/group_problem.dart';
 import 'package:capture/features/groups/domain/group_rules.dart';
 import 'package:capture/features/groups/presentation/extensions/group_labels.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Form uses a [groups] snapshot and emits a valid trimmed [GroupDraft] through [onSave].
 class GroupDialog extends StatefulWidget {

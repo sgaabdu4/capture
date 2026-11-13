@@ -2,7 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
 import 'package:capture/features/capture/presentation/widgets/home_card.dart';
 import 'package:capture/features/capture/presentation/widgets/home_card_row.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// One open task due today or earlier, as the Today card shows it.
 typedef TodayItem = ({String? title, String due, bool done});
