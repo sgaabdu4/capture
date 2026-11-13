@@ -476,7 +476,7 @@ void main() {
     // The first stop waits for the recorder; a later stop must find nothing to stop.
     final firstStop = Completer<RecordingResult?>();
     final stops = [firstStop.future];
-    when(native.stopRecording).thenAnswer((_) => stops.isEmpty ? .value(null) : stops.removeLast());
+    when(native.stopRecording).thenAnswer((_) => stops.isEmpty ? .value() : stops.removeLast());
     final transcript = Completer<String>();
     final container = _container(
       .new(),
