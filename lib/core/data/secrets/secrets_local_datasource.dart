@@ -7,8 +7,7 @@ part 'secrets_local_datasource.g.dart';
 
 enum Secret { typesafeKey, notionToken }
 
-/// Credential storage. Values never touch preferences, SQLite, logs or
-/// Notion.
+/// Secret values never go to preferences, SQLite, logs or Notion.
 abstract interface class ISecretsLocalDatasource {
   Future<String?> read(Secret secret);
   Future<void> write(Secret secret, String value);
@@ -40,9 +39,7 @@ class MemorySecretsLocalDatasource implements ISecretsLocalDatasource {
   Future<void> delete(Secret secret) async => _values.remove(secret);
 }
 
-/// macOS login keychain (legacy file-based keychain: the data-protection
-/// keychain needs a provisioning profile for a sandboxed, ad-hoc-signed
-/// build).
+/// The data protection keychain needs a provisioning profile, so this uses the login keychain.
 class KeychainSecretsLocalDatasource implements ISecretsLocalDatasource {
   const KeychainSecretsLocalDatasource();
 
