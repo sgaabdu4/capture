@@ -116,6 +116,19 @@ class NotionHttpService implements INotionHttpService {
       case Err(:final failure):
         return .err(failure);
     }
+    return switch (await _sendFile(id, bytes, filename, type)) {
+      Ok() => .ok(id),
+      Err(:final failure) => .err(failure),
+    };
+  }
+
+  // Own method: the Dart 3.14.0 compiler stops on the joined shape in a macOS release build.
+  Future<NotionResult<Json>> _sendFile(
+    String id,
+    List<int> bytes,
+    String filename,
+    MediaType type,
+  ) async {
     final Map<String, String> headers;
     switch (await _headers(null)) {
       case Ok(:final value):
@@ -123,15 +136,11 @@ class NotionHttpService implements INotionHttpService {
       case Err(:final failure):
         return .err(failure);
     }
-    final sent = await _send('POST', () {
+    return _send('POST', () {
       return http.MultipartRequest('POST', .parse('$baseUrl/v1/file_uploads/$id/send'))
         ..headers.addAll(headers)
         ..files.add(.fromBytes('file', bytes, filename: filename, contentType: type));
     });
-    return switch (sent) {
-      Ok() => .ok(id),
-      Err(:final failure) => .err(failure),
-    };
   }
 
   Future<NotionResult<Json>> _json(String method, String path, {Json? body, String? token}) async {
