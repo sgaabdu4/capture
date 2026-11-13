@@ -58,8 +58,7 @@ _MockGroups _seededGroups() {
   return groups;
 }
 
-/// The repository over [secrets] and [cache], with Jev and Notion answering
-/// through the returned mocks.
+/// The repository over [secrets] and [cache], with Jev and Notion answering through mocks.
 final class _Fixture {
   final secrets = FakeSecrets();
   final cache = _Cache();
