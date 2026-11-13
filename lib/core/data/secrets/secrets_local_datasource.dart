@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -13,8 +15,30 @@ abstract interface class ISecretsLocalDatasource {
   Future<void> delete(Secret secret);
 }
 
+const testHostVariable = 'CAPTURE_TEST_HOST';
+
 @Riverpod(keepAlive: true)
-ISecretsLocalDatasource secretsLocalDatasource(Ref ref) => const KeychainSecretsLocalDatasource();
+ISecretsLocalDatasource secretsLocalDatasource(Ref ref) =>
+    secretsDatasourceFor(Platform.environment);
+
+// The host app of the native tests is a new debug build each time, so macOS asks the user before each keychain read.
+ISecretsLocalDatasource secretsDatasourceFor(Map<String, String> environment) =>
+    environment.containsKey(testHostVariable)
+    ? MemorySecretsLocalDatasource()
+    : const KeychainSecretsLocalDatasource();
+
+class MemorySecretsLocalDatasource implements ISecretsLocalDatasource {
+  final _values = <Secret, String>{};
+
+  @override
+  Future<String?> read(Secret secret) async => _values[secret];
+
+  @override
+  Future<void> write(Secret secret, String value) async => _values[secret] = value;
+
+  @override
+  Future<void> delete(Secret secret) async => _values.remove(secret);
+}
 
 /// macOS login keychain (legacy file-based keychain: the data-protection
 /// keychain needs a provisioning profile for a sandboxed, ad-hoc-signed

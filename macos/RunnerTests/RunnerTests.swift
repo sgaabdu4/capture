@@ -153,4 +153,8 @@ final class CaptureNativePluginTests: XCTestCase {
     XCTAssertTrue(delegate.applicationShouldHandleReopen(NSApp, hasVisibleWindows: false))
     XCTAssertTrue(delegate.applicationSupportsSecureRestorableState(NSApp))
   }
+
+  func testHostAppCarriesTheVariableThatKeepsSecretsOutOfTheKeychain() {
+    XCTAssertEqual(ProcessInfo.processInfo.environment["CAPTURE_TEST_HOST"], "1")
+  }
 }
