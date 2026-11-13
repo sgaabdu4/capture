@@ -16,7 +16,7 @@ dependencies:
   sherpa_onnx: ^1.13.8
   flutter_secure_storage: ^11.2.0
   sqlite3: ^3.8.0
-  flutter_local_notifications: ^22.3.2
+  flutter_local_notifications: ^23.0.0
   flutter_timezone: ^5.1.1
   http_parser: ^4.1.2
   crypto: ^3.0.7
