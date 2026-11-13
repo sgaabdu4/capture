@@ -22,7 +22,7 @@ Authority: The owner approved the move to Flutter 3.50.0 and the package updates
 
 - [x] The app and tests use `material_ui` and no code imports `package:flutter/material.dart` → `dart fix --apply --code=migrate_design_widgets` changed 95 files; `dart analyze --fatal-infos .` reports no issues.
 - [x] The generated localizations come out of the generator in final form → `l10n.yaml` writes `app_localizations.g.dart` with the generated header; `flutter pub get` and `flutter gen-l10n` leave `git status` clean.
-- [x] Page changes keep the standard page of Flutter 3.50.0 → N/A as a test; measured with a temporary widget test and the real router (see Risks).
+- [x] Page changes keep the standard page of Flutter 3.50.0 → measured with a temporary widget test on the real router and removed after; the numbers are in Risks.
 - [x] The speed rules pass → `test/core/async/in_order_test.dart::starts each step only after the step before it has finished` and `::stops at the first failure and rethrows that error`.
 - [x] A reset deletes the secrets one by one and stops at a refused delete → `test/features/settings/repositories/settings_repository_test.dart::a reset deletes the secrets one after another, then erases the local data` and `::a reset stops at the first refused delete and keeps the local data`.
 - [x] Reminder scheduling keeps its order and saved progress → `test/features/capture/repositories/capture_save_repository_test.dart` (existing cases).
