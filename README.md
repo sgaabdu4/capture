@@ -51,7 +51,7 @@ Releases are signed with a Developer ID and notarised by Apple once the signing 
 
 ## Setup
 
-You need macOS 12 or later, a [TypeSafe](https://console.typesafe.ai) API key, and a Notion workspace. To build from source you also need Flutter 3.47 or later:
+You need macOS 12 or later, a [TypeSafe](https://console.typesafe.ai) API key, and a Notion workspace. To build from source you also need Flutter 3.50 or later:
 
 ```bash
 git clone <this repo> && cd capture

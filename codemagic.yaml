@@ -16,7 +16,7 @@ workflows:
           - 'macos/**'
           - '**/*.md'
     environment:
-      flutter: 3.47.5
+      flutter: 3.50.0
       xcode: latest
     triggering:
       events:
@@ -46,7 +46,7 @@ workflows:
     integrations:
       app_store_connect: codemagic
     environment:
-      flutter: 3.47.5
+      flutter: 3.50.0
       xcode: latest
       ios_signing:
         distribution_type: app_store
