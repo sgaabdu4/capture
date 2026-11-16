@@ -20,8 +20,8 @@ Authority: Autonomous. The owner asked for the strict-rules repair across all pr
 
 ## Acceptance + steps
 
-- [x] Every flagged comment block is removed, Swift files included → N/A — a deleted comment has no behaviour; the HE-COMMENT-LINES pass of the check is the proof.
-- [x] The live Notion journey is not skipped by an environment flag; it lives in `integration_test/`, which `flutter test` does not run → N/A — the journey needs real keys; the HE-NO-SWITCH-OFF pass and a `flutter test` run with no skipped test are the proof.
+- [x] Every flagged comment block is removed, Swift files included → N/A — a deleted comment has no behaviour; the comment pass of the check is the proof.
+- [x] The live Notion journey is not skipped by an environment flag; it lives in `integration_test/`, which `flutter test` does not run → N/A — the journey needs real keys; the switch-off pass of the check and a `flutter test` run with no skipped test are the proof.
 - [x] A transcript is analysed into the items Jev proposed → `test/features/capture/presentation/notifiers/capture_flow_editing_test.dart::a transcript becomes the items Jev proposed`.
 - [x] A reminder follows the due date and time in the review flow → `test/features/capture/presentation/notifiers/capture_flow_editing_test.dart::turning it on sets the reminder at the due date and time`.
 - [x] A group needs a name → `test/features/groups/domain/group_rules_test.dart::a blank name is missing`.
