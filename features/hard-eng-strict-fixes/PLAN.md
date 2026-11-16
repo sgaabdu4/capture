@@ -39,6 +39,10 @@ Result: Passed
 Evidence: Before the work, a sealed scan of main (8c4c8fd) reported 2 HE-NO-SWITCH-OFF hits (the two live-test `skip:` lines), 139 HE-COMMENT-LINES blocks, 22 functions over CRAP 30 (dart-decimate 0.0.76), 1 unused class member (`AppWidgetKeys.notionDisconnectButton`) and a failing freshness gate (flutter_local_notifications 23.0.1 to 23.0.2). The Flutter SDK is the Mac's 3.50.0; CI floats on stable, so no pinned SDK applies.
 Execution: One builder on `fix/hard-eng-strict-rules`, one commit for each rule or package, a draft PR from the first commit.
 
+## Sources + coverage
+
+Sources: N/A — the request is the only source: repair this project against Hard Eng's strict rules.
+
 ## Risks + recovery
 
 The removed comment blocks held narration, contracts and sources of facts (for example the Jev request contract). Names, types and the README carry the rest; only the thresholds' provisional note stays, as one line. The README Privacy section keeps the statement about what leaves the Mac.
@@ -58,5 +62,6 @@ Evidence: three runs and the regression check, listed below.
 - Run 2, a scratch copy with Hard Eng develop `.hooks` and `.agents` (80756642, without `.agents/starters`, which no project install holds): exit 0, the same gates PASS. Log `P6-fix-run2-develop.log`.
 - Run 3, `npx -y dart-decimate@0.0.76 check . --threshold 0 --strict --format json` (version printed first): exit 0, verdict pass, 0 findings. Log `P6-fix-run3-dd076.log`.
 - Findings judged false: none.
+Real service: N/A — no new call to an outside service; the live Notion journey only moved folders and its calls are unchanged.
 Retro: None — nothing failed twice; the first iPhone tests run timed out at 240 s on a cold build and passed on the next run, and the plan check named each missing field once.
 E2E: N/A — no user journey changed; the existing widget journeys in `test/app/` still pass, and the live Notion journey needs real keys.
