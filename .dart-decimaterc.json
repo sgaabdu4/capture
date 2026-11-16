@@ -2,6 +2,9 @@
   "ignore_patterns": [
     ".agents/**"
   ],
+  "health": {
+    "max_crap": 30
+  },
   "boundaries": [
     {
       "from": "lib/features/capture/domain",
