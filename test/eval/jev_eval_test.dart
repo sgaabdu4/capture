@@ -1,5 +1,3 @@
-// the TypeSafe playground) and merged with EVAL_MERGE. Synthetic fixtures
-// only; nothing personal is recorded.
 import 'dart:convert';
 import 'dart:io';
 
