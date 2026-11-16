@@ -9,6 +9,7 @@ The project passes Hard Eng's strict checks with no regression: no comment block
 ## Repository context
 
 Owners: `lib/`, `test/`, `integration_test/`, `ios/`, `macos/`, `analysis_options.yaml`, `.dart-decimaterc.json`, `pubspec.yaml`.
+Single source: the comment, skip and CRAP rules live in Hard Eng's checks and `.dart-decimaterc.json`; the shared flow test setup lives once in `test/helpers/capture_flow_harness.dart`.
 Same cause: the old rules allowed doc comments and an env-gated skip; the new ones refuse both.
 
 ## Decisions + authorization
