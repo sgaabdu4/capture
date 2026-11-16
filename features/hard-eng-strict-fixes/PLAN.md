@@ -57,4 +57,5 @@ Evidence:
 - Run 2, a scratch copy with Hard Eng develop `.hooks` and `.agents` (80756642, without `.agents/starters`, which no project install holds): exit 0, the same gates PASS. Log `P6-fix-run2-develop.log`.
 - Run 3, `npx -y dart-decimate@0.0.76 check . --threshold 0 --strict --format json` (version printed first): exit 0, verdict pass, 0 findings. Log `P6-fix-run3-dd076.log`.
 - Findings judged false: none.
+Retro: None — nothing failed twice; the first iPhone tests run timed out at 240 s on a cold build and passed on the next run, and the plan check named each missing field once.
 E2E: N/A — no user journey changed; the existing widget journeys in `test/app/` still pass, and the live Notion journey needs real keys.
