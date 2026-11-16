@@ -37,7 +37,7 @@ A comment held a reason the code does not show: the reason is kept as one terse 
 
 ## ux_reference
 
-N/A: no visible change.
+N/A — no visible change.
 
 ## Verification
 
