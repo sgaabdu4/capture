@@ -40,6 +40,8 @@ abstract final class AppWidgetKeys {
   static const editorSaveButton = 'editor.save';
   static const editorDontSaveButton = 'editor.dontSave';
   static const whenTimeButton = 'editor.when.time';
+  static const whenDateButton = 'when.date';
+  static const whenReminderSwitch = 'when.reminder';
 
   // Groups
   static const addGroupButton = 'groups.add';

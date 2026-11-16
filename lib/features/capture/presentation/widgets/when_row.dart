@@ -49,10 +49,14 @@ class WhenRow extends StatelessWidget {
             runSpacing: Spacing.xs,
             crossAxisAlignment: .center,
             children: [
-              LineButton(switch (due) {
-                final DueDate d => d.dateOnly.label(l10n, today),
-                null => l10n.addDate,
-              }, onPressed: enabled ? onPickDate : null),
+              LineButton(
+                switch (due) {
+                  final DueDate d => d.dateOnly.label(l10n, today),
+                  null => l10n.addDate,
+                },
+                key: const ValueKey(AppWidgetKeys.whenDateButton),
+                onPressed: enabled ? onPickDate : null,
+              ),
               if (due case final DueDate d) ...[
                 LineButton(
                   switch (d.timeLabel(l10n)) {
@@ -66,6 +70,7 @@ class WhenRow extends StatelessWidget {
                   mainAxisSize: .min,
                   children: [
                     Switch(
+                      key: const ValueKey(AppWidgetKeys.whenReminderSwitch),
                       padding: const EdgeInsetsDirectional.only(
                         start: Spacing.sm,
                         end: Spacing.xxs,
