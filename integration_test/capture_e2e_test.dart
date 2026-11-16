@@ -24,11 +24,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-import '../helpers/app_harness.dart';
-import '../helpers/test_fakes.dart';
+import '../test/helpers/app_harness.dart';
+import '../test/helpers/test_fakes.dart';
 
 final _env = Platform.environment;
-final _live = _env['E2E_LIVE'] == '1';
 
 const _task = 'Remind me tomorrow at 9 am to call the dentist.';
 const _idea = 'Also, an idea for the garden: plant tomatoes along the south fence.';
@@ -80,7 +79,7 @@ class _Reminders implements IReminderDatasource {
 
 String _required(String name) => switch (_env[name]) {
   final String value when value.isNotEmpty => value,
-  _ => fail('Set $name for E2E_LIVE=1.'),
+  _ => fail('Set $name to run the live test.'),
 };
 
 /// Under flutter test, load sherpa-onnx from its plugin package because no app-bundle C library exists.
@@ -158,21 +157,18 @@ ProviderContainer _container(
   IReminderDatasource? reminders,
 }) {
   final home = _env['HOME'] ?? '';
-  final container = ProviderContainer.test(
-    overrides: [
-      appDirectoriesProvider.overrideWithValue((
-        captures: '${support.path}/captures',
-        model: _env['PARAKEET_DIR'] ?? '$home/$_appModel',
-        database: '${support.path}/capture.sqlite',
-      )),
-      secretsLocalDatasourceProvider.overrideWithValue(
-        FakeSecrets({.typesafeKey: _required('TYPESAFE_API_KEY')}),
-      ),
-      nativePlatformServiceProvider.overrideWithValue(native ?? stubNative()),
-      if (reminders != null) reminderDatasourceProvider.overrideWithValue(reminders),
-    ],
-  );
-  return container;
+  return testContainer([
+    appDirectoriesProvider.overrideWithValue((
+      captures: '${support.path}/captures',
+      model: _env['PARAKEET_DIR'] ?? '$home/$_appModel',
+      database: '${support.path}/capture.sqlite',
+    )),
+    secretsLocalDatasourceProvider.overrideWithValue(
+      FakeSecrets({.typesafeKey: _required('TYPESAFE_API_KEY')}),
+    ),
+    nativePlatformServiceProvider.overrideWithValue(native ?? stubNative()),
+    if (reminders != null) reminderDatasourceProvider.overrideWithValue(reminders),
+  ]);
 }
 
 Future<void> _connect(ProviderContainer container) async {
@@ -204,93 +200,87 @@ NotionWorkspace _workspace(ProviderContainer container) =>
       null => fail('Notion is not connected.'),
     };
 
-void main() {
-  late Directory support;
+Directory _supportFolder() {
+  final support = Directory.systemTemp.createTempSync('capture_e2e');
+  addTearDown(() => support.deleteSync(recursive: true));
+  return support;
+}
 
+void main() {
   setUpAll(() {
     registerFallbackValue(Duration.zero);
-    if (_live) _loadSherpa();
+    _loadSherpa();
   });
-  setUp(() => support = .systemTemp.createTempSync('capture_e2e'));
-  tearDown(() => support.deleteSync(recursive: true));
 
-  test(
-    'a spoken capture waits for Yes, then reaches Notion with its audio and reminder, and a re-save duplicates nothing',
-    () async {
-      final events = StreamController<NativeEvent>();
-      addTearDown(events.close);
-      final reminders = _Reminders();
-      final speech = await _synthesize(support);
-      final container = _container(support, native: _native(events, speech), reminders: reminders);
-      await _connect(container);
-      // Builds the flow so it listens for the shortcut.
-      container.read(captureFlowProvider);
+  test('a spoken capture waits for Yes, then reaches Notion with its audio and reminder, and a re-save duplicates nothing', () async {
+    final support = _supportFolder();
+    final events = StreamController<NativeEvent>();
+    addTearDown(events.close);
+    final reminders = _Reminders();
+    final speech = await _synthesize(support);
+    final container = _container(support, native: _native(events, speech), reminders: reminders);
+    await _connect(container);
+    // Builds the flow so it listens for the shortcut.
+    container.read(captureFlowProvider);
 
-      events.add(const HotkeyPressed());
-      await _until(container, (_) => container.read(captureFlowProvider).phase == .recording);
-      events.add(const HotkeyPressed());
-      await _until(container, (r) => r?.stage == .proposed || r?.failure != null);
-      expect(container.read(captureFlowProvider).phase, equals(CapturePhase.review));
-      expect(
-        container.read(captureFlowProvider).captures.firstOrNull?.progress.capturePageId,
-        isNull,
-      );
+    events.add(const HotkeyPressed());
+    await _until(container, (_) => container.read(captureFlowProvider).phase == .recording);
+    events.add(const HotkeyPressed());
+    await _until(container, (r) => r?.stage == .proposed || r?.failure != null);
+    expect(container.read(captureFlowProvider).phase, equals(CapturePhase.review));
+    expect(
+      container.read(captureFlowProvider).captures.firstOrNull?.progress.capturePageId,
+      isNull,
+    );
 
-      events.add(const ReviewCardAction(.yes));
-      await _until(container, (r) => r?.stage == .saved || r?.failure != null);
+    events.add(const ReviewCardAction(.yes));
+    await _until(container, (r) => r?.stage == .saved || r?.failure != null);
 
-      final saved = switch (container.read(captureFlowProvider).captures.firstOrNull) {
-        final CaptureRecord r => r,
-        null => fail('The capture was not kept.'),
-      };
-      expect(saved.failure, isNull);
-      expect(saved.stage, equals(CaptureStage.saved));
-      expect(container.read(captureFlowProvider).phase, equals(CapturePhase.idle));
-      expect(saved.transcript?.toLowerCase(), allOf(contains('dentist'), contains('tomato')));
-      final SaveProgress(:capturePageId, :itemPages, :audioAttached, :markedSaved) = saved.progress;
-      expect(capturePageId, isNotNull);
-      expect(itemPages.keys, unorderedEquals([for (final i in saved.includedItems) i.id]));
-      expect(audioAttached, isTrue);
-      expect(markedSaved, isTrue);
-      expect(reminders.titles.join(' ').toLowerCase(), contains('dentist'));
+    final saved = switch (container.read(captureFlowProvider).captures.firstOrNull) {
+      final CaptureRecord r => r,
+      null => fail('The capture was not kept.'),
+    };
+    expect(saved.failure, isNull);
+    expect(saved.stage, equals(CaptureStage.saved));
+    expect(container.read(captureFlowProvider).phase, equals(CapturePhase.idle));
+    expect(saved.transcript?.toLowerCase(), allOf(contains('dentist'), contains('tomato')));
+    final SaveProgress(:capturePageId, :itemPages, :audioAttached, :markedSaved) = saved.progress;
+    expect(capturePageId, isNotNull);
+    expect(itemPages.keys, unorderedEquals([for (final i in saved.includedItems) i.id]));
+    expect(audioAttached, isTrue);
+    expect(markedSaved, isTrue);
+    expect(reminders.titles.join(' ').toLowerCase(), contains('dentist'));
 
-      final ws = _workspace(container);
-      final found = await container
-          .read(notionCaptureRemoteDatasourceProvider)
-          .findCapturePage(ws, saved.id.value);
-      expect(switch (found) {
-        Ok(:final value) => value,
-        Err() => null,
-      }, equals(capturePageId?.value));
+    final ws = _workspace(container);
+    final found = await container
+        .read(notionCaptureRemoteDatasourceProvider)
+        .findCapturePage(ws, saved.id.value);
+    expect(switch (found) {
+      Ok(:final value) => value,
+      Err() => null,
+    }, equals(capturePageId?.value));
 
-      final again = await container
-          .read(captureSaveRepositoryProvider)
-          .save(saved.copyWith(stage: .approved, progress: const .new()), ws);
-      final resaved = switch (again) {
-        Ok(:final value) => value.progress,
-        Err(:final failure) => fail('Re-save failed: $failure'),
-      };
-      expect(resaved.capturePageId, equals(capturePageId));
-      expect(resaved.itemPages, equals(itemPages));
-      expect(resaved.audioAttached, isTrue);
-    },
-    skip: _live ? false : 'Set E2E_LIVE=1 with your keys to run live.',
-    timeout: .none,
-  );
+    final again = await container
+        .read(captureSaveRepositoryProvider)
+        .save(saved.copyWith(stage: .approved, progress: const .new()), ws);
+    final resaved = switch (again) {
+      Ok(:final value) => value.progress,
+      Err(:final failure) => fail('Re-save failed: $failure'),
+    };
+    expect(resaved.capturePageId, equals(capturePageId));
+    expect(resaved.itemPages, equals(itemPages));
+    expect(resaved.audioAttached, isTrue);
+  }, timeout: .none);
 
-  test(
-    'connecting from a fresh Mac finds the Notion setup instead of creating another',
-    () async {
-      final first = _container(support);
-      await _connect(first);
-      final fresh = Directory.systemTemp.createTempSync('capture_e2e_fresh');
-      addTearDown(() => fresh.deleteSync(recursive: true));
-      final second = _container(fresh);
-      await _connect(second);
+  test('connecting from a fresh Mac finds the Notion setup instead of creating another', () async {
+    final support = _supportFolder();
+    final first = _container(support);
+    await _connect(first);
+    final fresh = Directory.systemTemp.createTempSync('capture_e2e_fresh');
+    addTearDown(() => fresh.deleteSync(recursive: true));
+    final second = _container(fresh);
+    await _connect(second);
 
-      expect(_workspace(second), equals(_workspace(first)));
-    },
-    skip: _live ? false : 'Set E2E_LIVE=1 with your keys to run live.',
-    timeout: .none,
-  );
+    expect(_workspace(second), equals(_workspace(first)));
+  }, timeout: .none);
 }

@@ -8,6 +8,7 @@ import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/theme/fonts.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -55,6 +56,8 @@ Future<void> loadAppFonts() async {
     await (FontLoader(family)..addFont(rootBundle.load(asset))).load();
   }
 }
+
+ProviderContainer testContainer(List<Override> overrides) => .test(overrides: overrides);
 
 typedef AppFakes = ({FakeSecrets? secrets, IReminderDatasource? reminders, FakeSystem? system});
 
