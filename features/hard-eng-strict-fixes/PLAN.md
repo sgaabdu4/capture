@@ -50,7 +50,7 @@ N/A — no visible change.
 ## Verification
 
 Result: Passed
-Evidence:
+Evidence: three runs and the regression check, listed below.
 - No regression: no test deleted or weakened and no gate or rule removed. The live Notion journey moved from `test/live/` to `integration_test/` and no longer skips on `E2E_LIVE`; it still runs on request with the command in the README. It needs real keys, so it was not run here (not checked). `flutter test`: 269 passed, none skipped (177 before, 2 skipped).
 - New tests: native events, Notion page shapes and dates, label texts, group rules, groups notifier and seeding, capture analysis, delete and reminder in the flow notifier, recording upload, Notion workspace connect, entry editor reminder and day picker, speech model download.
 - Run 1, the branch with its own `.hooks`, `python3 .hooks/hard-eng.py check --plan-stage Draft`: exit 0, 21 gate results PASS (lockfile, performance, actionlint, format-lint ios and macos, secrets-history, vulnerabilities, format, freshness, zizmor, secrets-files, security for ios, macos and the app, types-lint, tests for the app, macos and ios, dead-code-duplicates, duplicates for macos and ios). 
