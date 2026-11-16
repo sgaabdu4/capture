@@ -203,13 +203,16 @@ Directory _supportFolder() {
 
 void main() {
   setUpAll(() {
+    for (final name in const ['TYPESAFE_API_KEY', 'NOTION_TOKEN', 'NOTION_PAGE']) {
+      _required(name);
+    }
     registerFallbackValue(Duration.zero);
     _loadSherpa();
   });
 
   test('a spoken capture waits for Yes, then reaches Notion with its audio and reminder, and a re-save duplicates nothing', () async {
     final support = _supportFolder();
-    final events = StreamController<NativeEvent>();
+    final events = StreamController<NativeEvent>.broadcast();
     addTearDown(events.close);
     final reminders = _Reminders();
     final speech = await _synthesize(support);
