@@ -25,6 +25,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../test/helpers/app_harness.dart';
+import '../test/helpers/macos_audio_tools.dart';
 import '../test/helpers/test_fakes.dart';
 
 final _env = Platform.environment;
@@ -99,14 +100,8 @@ void _loadSherpa() {
 /// [_speech] spoken by `say` as a 16 kHz mono WAV file.
 Future<_Speech> _synthesize(Directory dir) async {
   final wav = File('${dir.path}/speech.wav');
-  final said = await Process.run('say', [
-    '-o',
-    wav.path,
-    '--file-format=WAVE',
-    '--data-format=LEI16@16000',
-    _speech,
-  ]);
-  if (said.exitCode != 0) fail('say failed: ${said.stderr}');
+  final failure = await speakToWav(_speech, wav);
+  if (failure != null) fail('say failed: $failure');
   final bytes = wav.readAsBytesSync();
   final data = latin1.decode(bytes).indexOf('data');
   return (wav: wav, pcm: bytes.sublist(data + _chunkHeader));
@@ -141,7 +136,7 @@ INativePlatformService _native(StreamController<NativeEvent> events, _Speech spe
   ).thenAnswer((call) async {
     final Object? requested = call.namedArguments[#output];
     if (requested case final String output) {
-      await Process.run('afconvert', ['-f', 'm4af', '-d', 'aac', wav.path, output]);
+      await compressToAac(wav, output);
       return File(output).lengthSync();
     }
     return 0;

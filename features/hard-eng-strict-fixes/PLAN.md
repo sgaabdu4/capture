@@ -8,7 +8,7 @@ The project passes Hard Eng's strict checks with no regression: no comment block
 
 ## Repository context
 
-Owners: `lib/`, `test/`, `integration_test/`, `ios/`, `macos/`, `analysis_options.yaml`, `.dart-decimaterc.json`, `pubspec.yaml`.
+Owners: `lib/`, `test/`, `tool/`, `ios/`, `macos/`, `analysis_options.yaml`, `.dart-decimaterc.json`, `pubspec.yaml`.
 Single source: the comment, skip and CRAP rules live in Hard Eng's checks and `.dart-decimaterc.json`; the shared flow test setup lives once in `test/helpers/capture_flow_harness.dart`.
 Same cause: the old rules allowed doc comments and an env-gated skip; the new ones refuse both.
 
@@ -21,7 +21,7 @@ Authority: Autonomous. The owner asked for the strict-rules repair across all pr
 ## Acceptance + steps
 
 - [x] Every flagged comment block is removed, Swift files included → N/A — a deleted comment has no behaviour; the comment pass of the check is the proof.
-- [x] The live Notion journey is not skipped by an environment flag; it lives in `integration_test/`, which `flutter test` does not run → N/A — the journey needs real keys; the switch-off pass of the check and a `flutter test` run with no skipped test are the proof.
+- [x] The live Notion journey is not skipped by an environment flag; it lives in `tool/`, which `flutter test` does not collect → N/A — the journey needs real keys; the switch-off pass of the check and a `flutter test` run with no skipped test are the proof.
 - [x] A transcript is analysed into the items Jev proposed → `test/features/capture/presentation/notifiers/capture_flow_editing_test.dart::a transcript becomes the items Jev proposed`.
 - [x] A reminder follows the due date and time in the review flow → `test/features/capture/presentation/notifiers/capture_flow_editing_test.dart::turning it on sets the reminder at the due date and time`.
 - [x] A group needs a name → `test/features/groups/domain/group_rules_test.dart::a blank name is missing`.
@@ -55,7 +55,7 @@ N/A — no visible change.
 
 Result: Passed
 Evidence: three runs and the regression check, listed below.
-- No regression: no test deleted or weakened and no gate or rule removed. The live Notion journey moved from `test/live/` to `integration_test/` and no longer skips on `E2E_LIVE`; it still runs on request with the command in the README. It needs real keys, so it was not run here (not checked). `flutter test`: 269 passed, none skipped (175 passed and 2 skipped before).
+- No regression: no test deleted or weakened and no gate or rule removed. The live Notion journey moved from `test/live/` to `tool/` and no longer skips on `E2E_LIVE`; it still runs on request with the command in the README. With the keys unset, `flutter test tool/capture_e2e_test.dart` loads the file and fails on `Set TYPESAFE_API_KEY to run the live test.`, as the base did. With real keys it was not run here (not checked). `flutter test`: 269 passed, none skipped (175 passed and 2 skipped before).
 - New tests: native events, Notion page shapes and dates, label texts, group rules, groups notifier and seeding, capture analysis, delete and reminder in the flow notifier, recording upload, Notion workspace connect, entry editor reminder and day picker, speech model download.
 - Run 1, the branch with its own `.hooks`, `python3 .hooks/hard-eng.py check` at the real stage: exit 0, all 21 gate results PASS (lockfile, performance, actionlint, format-lint ios and macos, vulnerabilities, secrets-history, zizmor, format, secrets-files, freshness, security for ios, macos and the app, types-lint, tests for macos, ios and the app, duplicates for macos and ios, dead-code-duplicates). It passed on the eighth attempt. The seven earlier attempts failed only on the 50 ms performance budget test and the tests gate holding it (measured 53 to 147 ms) while other agents kept the load average at 100 to 220, plus a 240 s time limit, a clash with another run and a concurrent xcodebuild bundle. The `hard-eng` job on the PR passed too.
 - Run 2, a scratch copy of the branch with Hard Eng develop `.hooks` and `.agents` (80756642), minus `.agents/starters`, which a project install does not hold, `python3 .hooks/hard-eng.py check` at the real stage: exit 0, the same 21 gate results PASS, plus the newer plan checks (Real service and Sources fields). The gate itself installs dart-decimate 0.0.75 through mise, so run 3 checks 0.0.76.
