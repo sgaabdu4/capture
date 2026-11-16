@@ -1,6 +1,3 @@
-/// The `capture_native` method channel (Swift side: `macos/Runner/Native`
-/// and `ios/Runner/Native`)
-/// and its argument and result keys.
 abstract final class NativeChannelKeys {
   static const channel = 'capture_native';
   static const keyCode = 'keyCode';

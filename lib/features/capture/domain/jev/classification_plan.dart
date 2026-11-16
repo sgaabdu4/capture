@@ -6,9 +6,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'classification_plan.freezed.dart';
 
-/// Everything needed to ask and later decode the classification pass. The
-/// option → group-id mapping is local; Jev never sees ids and cannot invent
-/// groups.
 @freezed
 sealed class ClassificationPlan with _$ClassificationPlan {
   const factory ClassificationPlan({

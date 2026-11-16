@@ -1,5 +1,3 @@
-/// Why the last step of a capture failed. The UI renders fixed copy for
-/// each; the step can be retried.
 enum CaptureFailure {
   transcription,
 

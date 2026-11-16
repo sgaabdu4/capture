@@ -4,8 +4,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'group.freezed.dart';
 
-/// A user-configured group. [id] is the Notion page id of the Groups entry
-/// (stable across renames); library relations always use it.
 @freezed
 sealed class Group with _$Group {
   const Group._();

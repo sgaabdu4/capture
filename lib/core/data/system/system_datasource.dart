@@ -6,8 +6,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'system_datasource.g.dart';
 
-/// Clock, time zone, id source and device kind; replaced by fixed values in
-/// tests.
 abstract interface class ISystemDatasource {
   DateTime nowUtc();
 

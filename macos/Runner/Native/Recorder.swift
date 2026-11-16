@@ -15,9 +15,6 @@ enum RecorderError: LocalizedError {
   }
 }
 
-/// Microphone capture to raw PCM16, 16 kHz, mono, little-endian. Every
-/// converted buffer is appended to the file as it arrives and the file is
-/// flushed to disk about once a second, so audio survives a crash or quit.
 final class Recorder {
   static let sampleRate = 16000.0
   static let format = AVAudioFormat(

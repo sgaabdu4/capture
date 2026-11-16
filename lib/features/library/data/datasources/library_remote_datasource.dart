@@ -10,8 +10,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'library_remote_datasource.g.dart';
 
-/// The body the app wrote on an item page: the text of its leading
-/// paragraph blocks and their ids.
 typedef ItemBody = ({String text, List<String> blockIds});
 
 /// One paragraph block: its id and plain text.
@@ -28,8 +26,6 @@ abstract interface class ILibraryRemoteDatasource {
   /// The leading paragraphs of the page; quotes and later blocks are not body.
   Future<NotionResult<ItemBody>> body(String pageId);
 
-  /// Replaces [old] with [text] at the top of the page, leaving every other
-  /// block in place.
   Future<NotionResult<void>> replaceBody(String pageId, ItemBody old, String text);
 
   /// Moves the page to Notion's trash, where it can be restored.

@@ -6,8 +6,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'library_entry.freezed.dart';
 
-/// A saved Library entry as mirrored locally for the To-do and Upcoming
-/// views (refreshed from Notion; Notion is the source of truth).
 @freezed
 sealed class LibraryEntry with _$LibraryEntry {
   const LibraryEntry._();

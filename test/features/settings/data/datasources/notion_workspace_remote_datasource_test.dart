@@ -8,8 +8,6 @@ import 'package:mocktail/mocktail.dart';
 
 class _MockHttp extends Mock implements INotionHttpService {}
 
-/// A Notion workspace in memory with one shared page, `parent`, keeping
-/// every page and database created in [created].
 final class _Workspace {
   final created = <String>[];
   final _blocks = <String, List<Json>>{'parent': []};

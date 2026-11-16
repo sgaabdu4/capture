@@ -9,9 +9,6 @@ export 'package:capture/features/capture/domain/dates/date_kinds.dart';
 export 'package:capture/features/capture/domain/dates/found_candidates.dart';
 export 'package:capture/features/capture/domain/values/date_candidate.dart';
 
-/// Supported language: English. Candidates are found by code; Jev only
-/// selects which one (if any) applies. Unsupported phrases are still found
-/// so the review can ask for a date instead of guessing.
 const _months = {
   'january': 1, 'jan': 1, 'february': 2, 'feb': 2, 'march': 3, 'mar': 3, //
   'april': 4, 'apr': 4, 'may': 5, 'june': 6, 'jun': 6, 'july': 7, 'jul': 7,
@@ -61,9 +58,6 @@ const _nextQualifier = 'next';
 
 RegExp _re(String pattern) => .new(pattern, caseSensitive: false);
 
-/// A candidate pattern and how one of its matches becomes a candidate.
-/// [read] returns null only when a group the pattern always captures is
-/// missing.
 class _Pattern<C extends DateCandidate> {
   _Pattern(this.regExp, this.read);
 
@@ -130,9 +124,6 @@ final _timePatterns = <_Pattern<TimeCandidate>>[
   ),
 ];
 
-/// Finds date/time phrases inside `transcript[span]`. Offsets are absolute
-/// transcript offsets. IDs are `<prefix>D1…` for days and `<prefix>H1…` for
-/// times, in source order.
 FoundCandidates findDateCandidates(String transcript, SourceSpan span, {String? prefix}) {
   final scanner = _Scanner(transcript, span, prefix);
   final times = scanner.scan(_timePatterns, 'H');
@@ -140,8 +131,6 @@ FoundCandidates findDateCandidates(String transcript, SourceSpan span, {String? 
   return .new(days, [for (final t in times) _withPeriodAfter(t, transcript)]);
 }
 
-/// Scans one passage. Matches of later patterns never overlap earlier ones,
-/// times included (they are scanned first).
 class _Scanner {
   _Scanner(this.transcript, this.span, this.prefix)
     : text = transcript.substring(span.start, span.end);

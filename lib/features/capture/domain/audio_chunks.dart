@@ -5,8 +5,6 @@ const sampleRate = 16000;
 /// Bytes per little-endian PCM16 sample.
 const _bytesPerSample = 2;
 
-/// Magnitude of the most negative PCM16 sample; dividing by it maps samples
-/// into [-1, 1].
 const _pcm16FullScale = 32768.0;
 
 /// Cut-search windows are 100 ms long.
@@ -15,8 +13,6 @@ const _windowsPerSecond = 10;
 /// A half-open `[start, end)` range of sample indexes.
 typedef SampleRange = ({int start, int end});
 
-/// Converts little-endian PCM16 bytes to Float32 samples in [-1, 1]. A
-/// trailing odd byte (a crash mid-write) is ignored.
 Float32List pcm16ToFloat(Uint8List bytes) {
   final count = bytes.length ~/ _bytesPerSample;
   final data = ByteData.sublistView(bytes);
@@ -27,10 +23,6 @@ Float32List pcm16ToFloat(Uint8List bytes) {
   return out;
 }
 
-/// Splits long audio into chunks of at most [maxSeconds], cutting at the
-/// quietest 100 ms window within the last [searchSeconds] of each chunk so
-/// words are not cut in half. Returns half-open sample ranges covering all
-/// samples exactly once.
 List<SampleRange> chunkRanges(Float32List samples, {int maxSeconds = 45, int searchSeconds = 8}) {
   final max = maxSeconds * sampleRate;
   final search = searchSeconds * sampleRate;
@@ -48,9 +40,6 @@ List<SampleRange> chunkRanges(Float32List samples, {int maxSeconds = 45, int sea
 /// A candidate cut and the energy of the window around it.
 typedef _Window = ({int cut, double energy});
 
-/// Middle of the quietest window within [search] samples before [hardEnd],
-/// or [hardEnd] when no window fits. The earliest of equally quiet windows
-/// wins.
 int _quietestCut(Float32List samples, int hardEnd, int search) {
   const window = sampleRate ~/ _windowsPerSecond;
   const step = window ~/ 2;

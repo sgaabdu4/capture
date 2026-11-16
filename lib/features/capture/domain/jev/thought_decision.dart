@@ -5,8 +5,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'thought_decision.freezed.dart';
 
-/// Decoded decisions for one thought. Code combines them; no answer assumes
-/// another's result.
 @freezed
 sealed class ThoughtDecision with _$ThoughtDecision {
   const factory ThoughtDecision({

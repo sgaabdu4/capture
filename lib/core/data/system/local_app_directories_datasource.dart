@@ -10,10 +10,6 @@ typedef AppDirectories = ({String captures, String model, String database});
 
 const _homeVariable = 'HOME';
 
-/// Application Support inside the sandbox container, matching
-/// `NSApplicationSupportDirectory`. On the Mac `$HOME` is the container's
-/// Data folder; iPhone apps have no `$HOME`, and their temporary folder is
-/// `tmp` inside the container.
 @Riverpod(keepAlive: true)
 AppDirectories appDirectories(Ref ref) {
   const bundleId = 'com.afenso.capture';

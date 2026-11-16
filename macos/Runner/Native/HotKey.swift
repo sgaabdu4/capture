@@ -1,11 +1,6 @@
 import Carbon.HIToolbox
 import Cocoa
 
-/// One global shortcut: a key with modifiers via Carbon
-/// `RegisterEventHotKey`, or modifiers alone via `flagsChanged` monitors.
-/// Neither needs Accessibility or Input Monitoring permission. Carbon does
-/// not auto-repeat hot keys, and presses closer than 300 ms are ignored so a
-/// bouncing key cannot toggle twice.
 final class HotKey {
   var onPress: (() -> Void)?
 
@@ -32,8 +27,6 @@ final class HotKey {
     chord.onPress = { [weak self] in self?.pressed() }
   }
 
-  /// `modifiers` uses Carbon flags (cmdKey, shiftKey, optionKey, controlKey);
-  /// a nil `keyCode` means the modifiers alone.
   func register(keyCode: UInt32?, modifiers: UInt32) -> Bool {
     unregister()
     current = (keyCode, modifiers)
@@ -79,9 +72,6 @@ final class HotKey {
   }
 }
 
-/// Fires when exactly `target` is held and then all modifiers are released
-/// within `window`, so holding them for a key combination (⌃⌥←) does not
-/// fire. The global monitor sees other apps, the local one Capture itself.
 private final class ModifierChord {
   var onPress: (() -> Void)?
 

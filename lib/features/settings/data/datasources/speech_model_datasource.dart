@@ -18,8 +18,6 @@ part 'speech_model_datasource.g.dart';
 /// One pinned model file: name, size in bytes and SHA-256.
 typedef ModelFile = ({String name, int bytes, String sha256});
 
-/// Parakeet-TDT-0.6B-v3 int8 (sherpa-onnx export), pinned to one Hugging
-/// Face revision and verified by SHA-256. Licence: CC-BY-4.0 (NVIDIA).
 const parakeetRevisionDigest = '2bda32ec70b097a55adaa07d9a7173915b43cc78';
 const parakeetBaseUrl =
     'https://huggingface.co/csukuangfj/sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8/resolve/$parakeetRevisionDigest';
@@ -49,9 +47,6 @@ const List<ModelFile> parakeetFiles = [
 const modelAttribution =
     'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); ONNX int8 conversion by the k2-fsa sherpa-onnx project. Runs entirely on this Mac.';
 
-/// Parakeet-TDT-0.6B-v3 for iPhone: FluidInference's Core ML conversion
-/// (int8 encoder), run by FluidAudio, pinned to one Hugging Face revision
-/// and verified by SHA-256. Licence: CC-BY-4.0 (NVIDIA).
 const parakeetCoreMlRevisionDigest = '7dd20fe6b1797d35f5e3307e8b1732d9a178edfe';
 const parakeetCoreMlBaseUrl =
     'https://huggingface.co/FluidInference/parakeet-tdt-0.6b-v3-coreml/resolve/$parakeetCoreMlRevisionDigest';
@@ -172,15 +167,9 @@ abstract interface class ISpeechModelDatasource {
   /// Download size of every file.
   int get totalBytes;
 
-  /// Runs in a background isolate. Ends with a ready or failed event for
-  /// expected failures (HTTP status, checksum); network and disk exceptions
-  /// arrive as the stream's error.
   Stream<SpeechModelEvent> download();
 }
 
-/// Downloads the model into [dir] with resume (`.part` files and HTTP
-/// Range), checks size and SHA-256 of every file, and only then writes a
-/// `verified.json` marker. [isReady] checks the marker and sizes only.
 class SpeechModelDatasource implements ISpeechModelDatasource {
   const SpeechModelDatasource(
     this.dir, {
@@ -211,8 +200,6 @@ class SpeechModelDatasource implements ISpeechModelDatasource {
   Stream<SpeechModelEvent> download() async* {
     final port = ReceivePort();
     final job = compute(_runDownload, _ModelDownload(send: port.sendPort, model: this));
-    // The worker's messages are queued before its result, so this marks the
-    // end of them. The result itself, or its error, is read from [job].
     final self = port.sendPort;
     unawaited(
       job.then<void>((_) => self.send(_Msg.done), onError: (Object _) => self.send(_Msg.done)),
@@ -328,8 +315,6 @@ final class _ModelDownload {
     return 0;
   }
 
-  /// Downloads [f] into its `.part` file, continuing after [have] bytes
-  /// when the server honours Range.
   Future<Result<void, SpeechModelFailure>> _stream(
     http.Client client,
     ModelFile f,

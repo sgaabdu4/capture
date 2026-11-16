@@ -11,10 +11,6 @@ import 'package:capture/features/capture/domain/values/item_id.dart';
 /// The two items a split produces, in source order.
 typedef SplitItems = ({ProposalItem left, ProposalItem right});
 
-/// Splits [item] at transcript offset [at] (which must fall strictly inside
-/// one of its source spans, on whitespace/word start). Both pieces keep
-/// their source links, reset body/title to their own source text and are
-/// flagged for group/type review. Returns null for an invalid split point.
 SplitItems? splitItem(ProposalItem item, String transcript, int at, ItemId newId) {
   final sources = item.sources;
   final index = sources.indexWhere((s) => at > s.start && at < s.end);
@@ -49,9 +45,6 @@ ProposalItem _piece(ProposalItem item, ItemId id, List<SourceSpan> sources) {
   );
 }
 
-/// Merges [second] into [first]. The first item's choices (and any user
-/// edits) are kept; differing group/type is flagged instead of silently
-/// picking one.
 ProposalItem mergeItems(ProposalItem first, ProposalItem second) {
   final ProposalItem(
     :copyWith,

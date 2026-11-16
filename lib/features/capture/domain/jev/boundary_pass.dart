@@ -15,8 +15,6 @@ String boundaryKey(TranscriptUnit unit) => 'boundary_${unit.id.value}';
 
 String lateCorrectionKey(TranscriptUnit unit) => 'late_${unit.id.value}';
 
-/// One focused Noul per candidate boundary (every unit after the first).
-/// The unit id is in the instructions because keys are not seen by Jev.
 Map<String, JevQuestion> boundaryQuestions(List<TranscriptUnit> units) => {
   for (int i = 1; i < units.length; i++)
     boundaryKey(units[i]): NoulQuestion(
@@ -26,9 +24,6 @@ Map<String, JevQuestion> boundaryQuestions(List<TranscriptUnit> units) => {
     ),
 };
 
-/// One Noul per unit from the third onwards: does it correct something said
-/// before the immediately preceding unit? Such late corrections are kept out
-/// of unrelated items and flagged instead of being attached silently.
 Map<String, JevQuestion> lateCorrectionQuestions(List<TranscriptUnit> units) => {
   for (int i = 2; i < units.length; i++)
     lateCorrectionKey(units[i]): NoulQuestion(

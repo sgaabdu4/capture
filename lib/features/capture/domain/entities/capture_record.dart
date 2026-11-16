@@ -9,9 +9,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'capture_record.freezed.dart';
 
-/// One voice capture and everything derived from it. Stored locally as a
-/// draft until saved; audio and transcript never leave the Mac except in the
-/// approved Notion save (and transcript text to Jev for analysis).
 @freezed
 sealed class CaptureRecord with _$CaptureRecord {
   const CaptureRecord._();

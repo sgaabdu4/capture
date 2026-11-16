@@ -72,8 +72,6 @@ CaptureMoment _moment() => .new(
   offsetAt: (utc) => tz.getLocation('Europe/London').timeZone(utc.millisecondsSinceEpoch).offset,
 );
 
-/// Proposal for [transcript] where Jev splits before every unit index in
-/// [splits] and answers classification with [classification].
 _Proposal _propose(String transcript, Set<int> splits, Map<String, Object?> classification) {
   final units = splitCandidates(transcript);
   final thoughts = assembleThoughts(transcript, units, {

@@ -2,10 +2,6 @@ import FluidAudio
 import Foundation
 import os
 
-/// Parakeet TDT 0.6B v3 through FluidAudio and Core ML, from the verified
-/// local model folder only (no download, no network). The model is loaded
-/// for each capture and released afterwards, so an idle app holds none of
-/// its memory.
 enum Transcriber {
   private static let log = Logger(subsystem: "com.afenso.capture", category: "transcribe")
 

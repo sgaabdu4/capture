@@ -24,8 +24,6 @@ sealed class CaptureFlowState with _$CaptureFlowState {
     String? editId,
     @Default(0) int destinationSerial,
 
-    /// The latest capture saved without the review card, for its
-    /// notification.
     String? autoSavedId,
   }) = _CaptureFlowState;
 

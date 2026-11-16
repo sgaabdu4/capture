@@ -1,6 +1,3 @@
-/// Wire names of the TypeSafe `POST /v1/systemone` contract (Jev) and the
-/// question keys this app sends. Keys are part of each request body, so any
-/// change here changes what Jev is asked.
 library;
 
 /// Request fields.
@@ -36,8 +33,6 @@ const jevProbabilitiesField = 'probabilities';
 /// Model name reported when a response omits it.
 const jevUnknownModel = 'unknown';
 
-/// Classification question keys for thought [id]. Jev never sees keys, so
-/// each question's instructions name the thought too.
 String groupQuestionKey(String id) => '${id}_group';
 String taskQuestionKey(String id) => '${id}_task';
 String alertQuestionKey(String id) => '${id}_alert';

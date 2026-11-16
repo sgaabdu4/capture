@@ -11,8 +11,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'proposal_item.freezed.dart';
 
-/// One proposed note or task. Built by code from Jev decisions and source
-/// text; the user's edits always take precedence over suggestions.
 @freezed
 sealed class ProposalItem with _$ProposalItem {
   const ProposalItem._();
@@ -76,8 +74,6 @@ sealed class ProposalItem with _$ProposalItem {
     }),
   );
 
-  /// Sets or clears the due date. [checks] are the resolver's flags for the
-  /// new value (e.g. time passed / clock change).
   ProposalItem withDue(DueDate? value, {Set<ReviewFlag> checks = const {}}) => copyWith(
     due: value,
     edited: {...edited, .due},

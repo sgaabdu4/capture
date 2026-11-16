@@ -4,8 +4,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'shortcut.freezed.dart';
 
-/// A global shortcut: a letter or digit (upper case) plus modifiers, or
-/// modifiers alone (pressed together and released) when [key] is null.
 @freezed
 sealed class Shortcut with _$Shortcut {
   const Shortcut._();
@@ -38,8 +36,6 @@ sealed class Shortcut with _$Shortcut {
     ?key,
   ].join();
 
-  /// At least two modifiers, one of them ⌃ or ⌘, so ordinary typing and
-  /// common app shortcuts (⌘R, ⌥R) are never captured.
   ShortcutProblem? get problem {
     if (key != null && keyCode == null) return .unsupportedKey;
     final anchored = modifiers.contains(Modifier.control) || modifiers.contains(Modifier.command);

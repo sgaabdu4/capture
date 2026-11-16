@@ -1,7 +1,3 @@
-/// PROVISIONAL decision thresholds, kept together so they can be evaluated
-/// on representative recordings (see test/eval). They only shape the
-/// proposal and its review flags; nothing bypasses user approval.
-///
 /// Noul values are P(yes); see [Band].
 library;
 
