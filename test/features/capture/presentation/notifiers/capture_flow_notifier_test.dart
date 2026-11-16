@@ -2,23 +2,17 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:capture/core/data/reminders/reminder_datasource.dart';
-import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/features/capture/data/datasources/transcription_datasource.dart';
 import 'package:capture/features/capture/domain/capture_limits.dart';
 import 'package:capture/features/capture/domain/entities/capture_failure.dart';
-import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_notice.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_phase.dart';
 import 'package:capture/features/capture/repositories/capture_repository.dart';
-import 'package:capture/features/capture/repositories/capture_save_repository.dart';
-import 'package:capture/features/library/repositories/library_repository.dart';
-import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
-import 'package:capture/features/settings/presentation/notifiers/settings_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -28,85 +22,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 
 import '../../../../helpers/app_harness.dart';
+import '../../../../helpers/capture_flow_harness.dart';
 import '../../../../helpers/test_fakes.dart';
-
-final _workspace = NotionWorkspace(
-  parentPageId: .new('parent'),
-  areaPageId: .new('area'),
-  groups: .new('groups'),
-  captures: .new('captures'),
-  library: .new('library'),
-  maxUpload: .fromBytes(1),
-);
-
-SettingsState _connected(Ref ref, SettingsNotifier notifier) =>
-    notifier.build().copyWith(workspace: _workspace, hasNotionToken: true);
-
-/// Connected, with auto-save turned on.
-SettingsState _autoSave(Ref ref, SettingsNotifier notifier) =>
-    _connected(ref, notifier).copyWith(autoSave: true);
-
-/// Key, Notion and speech model all in place, so a capture can start.
-SettingsState _ready(Ref ref, SettingsNotifier notifier) => notifier.build().copyWith(
-  workspace: _workspace,
-  hasNotionToken: true,
-  hasTypesafeKey: true,
-  modelReady: true,
-);
-
-/// Keep reminders waiting on [prompt] to reproduce an unanswered macOS notification prompt.
-class _Saver implements ICaptureSaveRepository {
-  _Saver({this.failure});
-
-  /// Notion refuses every save with this, when set.
-  final CaptureFailure? failure;
-
-  final prompt = Completer<bool>();
-
-  /// Ids of captures whose reminders were scheduled.
-  final reminded = <String>[];
-
-  @override
-  Future<CaptureOutcome> save(CaptureRecord record, NotionWorkspace ws) async => switch (failure) {
-    final CaptureFailure f => .err(f),
-    null => .ok(record),
-  };
-
-  @override
-  Future<ReminderOutcome> scheduleReminders(CaptureRecord record) async {
-    reminded.add(record.id.value);
-    return (record: record, notificationsOff: !await prompt.future);
-  }
-}
-
-class _MockLibrary extends Mock implements ILibraryRepository {}
-
-ProviderContainer _container(
-  _Saver? saver, {
-  INativePlatformService? native,
-  IReminderDatasource? reminders,
-  SettingsState Function(Ref ref, SettingsNotifier notifier)? settings,
-  ITranscriptionDatasource? transcription,
-}) {
-  final support = Directory.systemTemp.createTempSync('capture_flow_test');
-  addTearDown(() => support.deleteSync(recursive: true));
-  final library = _MockLibrary();
-  when(library.cached).thenReturn([]);
-  when(() => library.refresh(any())).thenAnswer((_) async => const .ok([]));
-  return .test(
-    overrides: [
-      ...appOverrides(
-        support: support,
-        native: native ?? stubNative(),
-        fakes: (secrets: null, reminders: reminders, system: null),
-      ),
-      settingsProvider.overrideWithBuild(settings ?? (native == null ? _connected : _ready)),
-      if (saver != null) captureSaveRepositoryProvider.overrideWithValue(saver),
-      libraryRepositoryProvider.overrideWithValue(library),
-      if (transcription != null) transcriptionDatasourceProvider.overrideWithValue(transcription),
-    ],
-  );
-}
 
 /// Disk draft creation outlives event-queue draining, so wait for the actual phase.
 Future<void> _reach(ProviderContainer container, CapturePhase phase) async {
@@ -124,14 +41,6 @@ Future<void> _reach(ProviderContainer container, CapturePhase phase) async {
   }
 }
 
-CaptureRecord _record(String id, CaptureStage stage) => .new(
-  id: .new(id),
-  capturedAtUtc: FakeSystem.now,
-  timeZone: .new(FakeSystem.zone),
-  audioPath: .new('$id.m4a'),
-  stage: stage,
-);
-
 /// Answers with [result] whenever the test completes it.
 class _Transcription implements ITranscriptionDatasource {
   const _Transcription(this.result);
@@ -141,33 +50,17 @@ class _Transcription implements ITranscriptionDatasource {
   Future<String> transcribe(String pcmPath) => result;
 }
 
-/// A proposal with one note, ready to save unless [groupId] or [failure] say otherwise.
-CaptureRecord _proposal(String id, {String? groupId = 'g', CaptureFailure? failure}) =>
-    _record(id, .proposed).copyWith(
-      failure: failure,
-      items: [
-        .new(
-          id: .new('$id-note'),
-          sources: const [],
-          kind: .note,
-          groupId: groupId == null ? null : .new(groupId),
-          title: 'Idea',
-          body: '',
-        ),
-      ],
-    );
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() {
-    registerFallbackValue(_workspace);
+    registerFallbackValue(flowWorkspace);
     registerFallbackValue(Duration.zero);
   });
 
   test('a save ends as Saved while the reminder permission prompt is unanswered', () async {
-    final saver = _Saver();
-    final container = _container(saver);
-    container.read(captureRepositoryProvider).put(_record('c1', .approved));
+    final saver = FlowSaver();
+    final container = flowContainer(saver);
+    container.read(captureRepositoryProvider).put(flowRecord('c1', .approved));
 
     final approval = container.read(captureFlowProvider.notifier).approve('c1');
     await pumpEventQueue();
@@ -184,9 +77,9 @@ void main() {
 
   group('with auto-save on', () {
     test('a proposal with nothing to decide is saved without the review card', () async {
-      final saver = _Saver()..prompt.complete(true);
-      final container = _container(saver, settings: _autoSave);
-      container.read(captureRepositoryProvider).put(_proposal('c1'));
+      final saver = FlowSaver()..prompt.complete(true);
+      final container = flowContainer(saver, settings: autoSaveSettings);
+      container.read(captureRepositoryProvider).put(flowProposal('c1'));
 
       await container.read(captureFlowProvider.notifier).process('c1');
 
@@ -200,13 +93,13 @@ void main() {
     });
 
     final needsLook = {
-      'an item has no group': _proposal('c1', groupId: null),
-      'Jev failed and it became one note': _proposal('c1', failure: .jevUnavailable),
-      'nothing was heard': _record('c1', .proposed),
+      'an item has no group': flowProposal('c1', groupId: null),
+      'Jev failed and it became one note': flowProposal('c1', failure: .jevUnavailable),
+      'nothing was heard': flowRecord('c1', .proposed),
     };
     for (final MapEntry(key: reason, value: record) in needsLook.entries) {
       test('the review card still opens when $reason', () async {
-        final container = _container(.new(), settings: _autoSave);
+        final container = flowContainer(.new(), settings: autoSaveSettings);
         container.read(captureRepositoryProvider).put(record);
 
         await container.read(captureFlowProvider.notifier).process('c1');
@@ -222,8 +115,11 @@ void main() {
     }
 
     test('a failed save reopens the review card to retry', () async {
-      final container = _container(.new(failure: .notionUnavailable), settings: _autoSave);
-      container.read(captureRepositoryProvider).put(_proposal('c1'));
+      final container = flowContainer(
+        .new(failure: .notionUnavailable),
+        settings: autoSaveSettings,
+      );
+      container.read(captureRepositoryProvider).put(flowProposal('c1'));
 
       await container.read(captureFlowProvider.notifier).process('c1');
 
@@ -235,8 +131,8 @@ void main() {
   });
 
   test('with auto-save off, a proposal with nothing to decide waits on the review card', () async {
-    final container = _container(.new());
-    container.read(captureRepositoryProvider).put(_proposal('c1'));
+    final container = flowContainer(.new());
+    container.read(captureRepositoryProvider).put(flowProposal('c1'));
 
     await container.read(captureFlowProvider.notifier).process('c1');
 
@@ -248,11 +144,11 @@ void main() {
   });
 
   test('a reminder a saved capture still owes is scheduled on the next launch', () async {
-    final saver = _Saver()..prompt.complete(true);
-    final container = _container(saver);
+    final saver = FlowSaver()..prompt.complete(true);
+    final container = flowContainer(saver);
     container.read(captureRepositoryProvider)
-      ..put(_record('saved', .saved))
-      ..put(_record('proposed', .proposed));
+      ..put(flowRecord('saved', .saved))
+      ..put(flowRecord('proposed', .proposed));
 
     await container.read(captureFlowProvider.notifier).resumeReminders();
 
@@ -288,7 +184,7 @@ void main() {
       }
       return null;
     });
-    final container = _container(
+    final container = flowContainer(
       null,
       reminders: LocalNotificationsReminderDatasource(FlutterLocalNotificationsPlugin()),
     );
@@ -301,7 +197,7 @@ void main() {
       body: '',
       reminder: const .new(2100, 1, 1, hour: 9, minute: 0),
     );
-    final failedRecord = _record('failed', .saved).copyWith(
+    final failedRecord = flowRecord('failed', .saved).copyWith(
       capturedAtUtc: FakeSystem.now.add(const .new(minutes: 1)),
       progress: .new(remindersScheduled: {.new('confirmed')}),
       items: [
@@ -356,15 +252,15 @@ void main() {
   });
 
   test('a recording crashed mid-way keeps its length from the audio on disk; a tap is dropped', () {
-    final container = _container(.new());
+    final container = flowContainer(.new());
     final audio = Directory.systemTemp.createTempSync('capture_flow_audio');
     addTearDown(() => audio.deleteSync(recursive: true));
     // PCM16 mono at 16 kHz: 32000 bytes a second.
     final twoSeconds = File('${audio.path}/c1.pcm')..writeAsBytesSync(.filled(64000, 0));
     final accidental = File('${audio.path}/c2.pcm')..writeAsBytesSync(.filled(3200, 0));
     final captures = container.read(captureRepositoryProvider)
-      ..put(_record('c1', .recorded).copyWith(audioPath: .new(twoSeconds.path)))
-      ..put(_record('c2', .recorded).copyWith(audioPath: .new(accidental.path)));
+      ..put(flowRecord('c1', .recorded).copyWith(audioPath: .new(twoSeconds.path)))
+      ..put(flowRecord('c2', .recorded).copyWith(audioPath: .new(accidental.path)));
 
     container.read(captureFlowProvider.notifier).recoverInterrupted();
 
@@ -380,7 +276,7 @@ void main() {
     when(native.micPermission).thenAnswer((_) async => MicPermission.granted);
     when(() => native.startRecording(any(), limit: any(named: 'limit'))).thenAnswer((_) async {});
     when(native.stopRecording).thenAnswer((_) async => null);
-    final container = _container(.new(), native: native);
+    final container = flowContainer(.new(), native: native);
     final flow = container.read(captureFlowProvider.notifier);
 
     await flow.start();
@@ -409,7 +305,7 @@ void main() {
     });
 
     test('a request while idle starts recording', () async {
-      final container = _container(.new(), native: native);
+      final container = flowContainer(.new(), native: native);
       container.read(captureFlowProvider);
 
       events.add(const RecordRequested());
@@ -419,7 +315,7 @@ void main() {
     });
 
     test('a second request, or one arriving mid-start, keeps a single recording', () async {
-      final container = _container(.new(), native: native);
+      final container = flowContainer(.new(), native: native);
       container.read(captureFlowProvider);
 
       // The second arrives while the first is still asking for the microphone.
@@ -436,7 +332,7 @@ void main() {
     });
 
     test('a request that launched the app starts recording once it is taken', () async {
-      final container = _container(.new(), native: native);
+      final container = flowContainer(.new(), native: native);
 
       await container.read(captureFlowProvider.notifier).takePendingRequest();
 
@@ -445,7 +341,7 @@ void main() {
 
     test('a normal launch, with no request waiting, stays idle', () async {
       when(native.takeRecordRequest).thenAnswer((_) async => false);
-      final container = _container(.new(), native: native);
+      final container = flowContainer(.new(), native: native);
 
       await container.read(captureFlowProvider.notifier).takePendingRequest();
 
@@ -454,8 +350,8 @@ void main() {
     });
 
     test('a request while the review card is open leaves it open', () async {
-      final container = _container(.new(), native: native);
-      container.read(captureRepositoryProvider).put(_proposal('c1'));
+      final container = flowContainer(.new(), native: native);
+      container.read(captureRepositoryProvider).put(flowProposal('c1'));
       await container.read(captureFlowProvider.notifier).process('c1');
 
       events.add(const RecordRequested());
@@ -478,7 +374,7 @@ void main() {
     final stops = [firstStop.future];
     when(native.stopRecording).thenAnswer((_) => stops.isEmpty ? .value() : stops.removeLast());
     final transcript = Completer<String>();
-    final container = _container(
+    final container = flowContainer(
       .new(),
       native: native,
       transcription: _Transcription(transcript.future),
@@ -507,7 +403,7 @@ void main() {
     when(native.stopRecording)
         .thenAnswer((_) async => (path: 'c.pcm', duration: const Duration(seconds: 3)));
     final transcript = Completer<String>();
-    final container = _container(
+    final container = flowContainer(
       .new(),
       native: native,
       transcription: _Transcription(transcript.future),
@@ -528,7 +424,7 @@ void main() {
     final native = stubNative();
     when(native.micPermission).thenAnswer((_) async => MicPermission.denied);
     when(native.showMainWindow).thenAnswer((_) async {});
-    final container = _container(.new(), native: native);
+    final container = flowContainer(.new(), native: native);
 
     await container.read(captureFlowProvider.notifier).start();
 
@@ -539,12 +435,12 @@ void main() {
 
   test('Retry transcribes a capture recorded before setup once setup is done', () async {
     final transcript = Completer<String>();
-    final container = _container(
+    final container = flowContainer(
       .new(),
       native: stubNative(),
       transcription: _Transcription(transcript.future),
     );
-    container.read(captureRepositoryProvider).put(_record('c1', .recorded));
+    container.read(captureRepositoryProvider).put(flowRecord('c1', .recorded));
     final flow = container.read(captureFlowProvider.notifier);
 
     final retrying = flow.process('c1');
@@ -561,7 +457,7 @@ void main() {
     when(() => native.startRecording(any(), limit: any(named: 'limit'))).thenAnswer((_) async {});
     when(native.stopRecording)
         .thenAnswer((_) async => (path: 'c.pcm', duration: const Duration(seconds: 3)));
-    final container = _container(.new(), native: native, settings: _connected);
+    final container = flowContainer(.new(), native: native, settings: connectedSettings);
     final flow = container.read(captureFlowProvider.notifier);
 
     await flow.start();
