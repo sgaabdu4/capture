@@ -6,8 +6,6 @@ import 'package:sqlite3/sqlite3.dart';
 
 part 'local_data_datasource.g.dart';
 
-/// The local database, the recordings folder and scheduled reminders; not
-/// the speech model.
 abstract interface class ILocalDataDatasource {
   /// Empties every table, deletes every recording and cancels every reminder.
   Future<void> erase();

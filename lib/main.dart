@@ -7,8 +7,6 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 Future<void> main() => runCapture();
 
-/// Boots the app behind the crash boundary. [overrides] replace providers
-/// for E2E and entrypoint tests; the production app passes none.
 Future<void> runCapture({List<Override> overrides = const []}) async {
   WidgetsFlutterBinding.ensureInitialized();
   tzdata.initializeTimeZones();

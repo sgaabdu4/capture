@@ -7,8 +7,6 @@ import 'package:capture/features/capture/domain/entities/review_flag.dart';
 export 'package:capture/features/capture/domain/dates/capture_moment.dart';
 export 'package:capture/features/capture/domain/dates/resolved_date.dart';
 
-/// Numeric dates are read day-first (en-GB display locale) unless one part
-/// is > 12. Changing locale is outside this alpha.
 const dayFirstNumericDates = true;
 
 /// A time of day on a 24-hour clock.
@@ -20,8 +18,6 @@ typedef _MonthDay = ({int month, int day});
 /// A proposed date and the review flags it raises.
 typedef _Dated = ({DueDate date, Set<ReviewFlag> flags});
 
-/// Resolves relative expressions against the capture timestamp (never the
-/// processing time) in the capture's time zone.
 ResolvedDate resolveDate(CaptureMoment moment, {DayCandidate? day, TimeCandidate? time}) {
   if (day == null && time == null) return const .new();
   final CaptureMoment(wallClock: captured, :offsetAt, :capturedAtUtc) = moment;
@@ -60,8 +56,6 @@ ResolvedDate _inMinutes(CaptureMoment moment, int minutes, {required bool hasDay
   );
 }
 
-/// Midnight UTC of [wallClock]'s calendar day; date arithmetic on it never
-/// crosses a clock change.
 DateTime _dayOf(DateTime wallClock) {
   final DateTime(:year, :month, :day) = wallClock;
   return .utc(year, month, day);
@@ -74,8 +68,6 @@ DueDate _dueDateOf(DateTime date) {
 
 ResolvedDate _on(DateTime date) => .new(date: _dueDateOf(date));
 
-/// Candidates always carry the fields of their kind; one that does not is
-/// treated as an unsupported phrase.
 ResolvedDate _resolveDay(DateTime today, DayCandidate day) => switch (day) {
   DayCandidate(kind: .today) => _on(today),
   DayCandidate(kind: .tomorrow) => _on(today.add(const .new(days: 1))),
@@ -93,9 +85,6 @@ ResolvedDate _resolveDay(DateTime today, DayCandidate day) => switch (day) {
   _ => const .new(),
 };
 
-/// "Friday" said on a Friday (today or next week?) and "next Friday"
-/// (ambiguous in English) propose the next occurrence and ask the user to
-/// confirm.
 ResolvedDate _weekday(DateTime today, int weekday, {required bool next}) {
   final delta = (weekday - today.weekday) % DateTime.daysPerWeek;
   return .new(
@@ -104,8 +93,6 @@ ResolvedDate _weekday(DateTime today, int weekday, {required bool next}) {
   );
 }
 
-/// A date without a year that has passed this year is proposed for next
-/// year and flagged; an explicit past date is flagged as passed.
 ResolvedDate _calendar(DateTime today, int? year, _MonthDay monthDay) {
   final candidate = _validDate(year ?? today.year, monthDay);
   if (candidate == null) return const .new();
@@ -134,8 +121,6 @@ DateTime? _validDate(int year, _MonthDay monthDay) {
   return date.month == month && date.day == day ? date : null;
 }
 
-/// Exact times are used as said; an ambiguous hour needs a morning/evening
-/// hint from the time or its day, otherwise AM/PM must be chosen.
 _Clock? _clock(TimeCandidate time, DayCandidate? day) {
   final TimeCandidate(:hour, :minute, :kind, :period) = time;
   if (hour == null) return null;
@@ -154,8 +139,6 @@ DayPeriod _dayPeriod(DayCandidate? day) => switch (day) {
   null => .none,
 };
 
-/// A time with no day proposes today when still ahead, else tomorrow
-/// (flagged).
 _Dated _nextOccurrence(DateTime captured, _Clock clock) {
   final DateTime(:hour, :minute) = captured;
   final laterToday = clock.hour > hour || (clock.hour == hour && clock.minute > minute);
@@ -164,8 +147,6 @@ _Dated _nextOccurrence(DateTime captured, _Clock clock) {
   return (date: _dueDateOf(today.add(const .new(days: 1))), flags: const {ReviewFlag.checkDate});
 }
 
-/// Converts a local wall time to an instant and reports clock-change gaps or
-/// overlaps and times already in the past relative to [referenceUtc].
 Set<ReviewFlag> checkInstant(DueDate local, UtcOffsetAt offsetAt, DateTime referenceUtc) {
   if (!local.hasTime) return const {};
   final instants = wallTimeInstants(local, offsetAt);
@@ -176,8 +157,6 @@ Set<ReviewFlag> checkInstant(DueDate local, UtcOffsetAt offsetAt, DateTime refer
   };
 }
 
-/// All UTC instants whose wall time in the zone equals [local]: one
-/// normally, none inside a DST gap, two inside a DST overlap.
 List<DateTime> wallTimeInstants(DueDate local, UtcOffsetAt offsetAt) {
   final naive = _naive(local);
   final offsets = <Duration>{
@@ -190,8 +169,6 @@ List<DateTime> wallTimeInstants(DueDate local, UtcOffsetAt offsetAt) {
   }.toList()..sort();
 }
 
-/// [local]'s wall time as a UTC-flagged [DateTime]; a missing hour or minute
-/// is 0.
 DateTime _naive(DueDate local) => switch (local) {
   DueDate(:final year, :final month, :final day, hour: final int hour, minute: final int minute) =>
     .utc(year, month, day, hour, minute),
@@ -214,8 +191,6 @@ DateTime _naive(DueDate local) => switch (local) {
 bool _sameWallTime(DateTime a, DateTime b) =>
     a.hour == b.hour && a.minute == b.minute && a.day == b.day;
 
-/// The instant to schedule for a reminder, or null when it cannot be
-/// resolved unambiguously (gap/overlap) or has no time.
 DateTime? reminderInstant(DueDate local, UtcOffsetAt offsetAt) {
   if (!local.hasTime) return null;
   return switch (wallTimeInstants(local, offsetAt)) {

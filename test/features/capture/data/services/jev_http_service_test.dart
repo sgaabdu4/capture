@@ -12,8 +12,6 @@ const _path = '/v1/systemone';
 
 typedef _Run = ({JevOutcome<JevHttpReply> outcome, int calls, List<Duration> sleeps});
 
-/// Posts once through a service whose responses come from [respond], called
-/// with the 1-based attempt number.
 Future<_Run> _post(Future<http.Response> Function(int attempt) respond) async {
   int calls = 0;
   final sleeps = <Duration>[];

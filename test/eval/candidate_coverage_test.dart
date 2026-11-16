@@ -3,8 +3,6 @@ import 'package:test/test.dart';
 
 import 'eval_cases.dart';
 
-/// Measures candidate-boundary coverage separately from Jev selection: a
-/// gold boundary missing from the candidates can never be recovered by Jev.
 void main() {
   test('every gold thought boundary is a candidate boundary', () {
     int gold = 0;

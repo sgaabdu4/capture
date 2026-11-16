@@ -6,9 +6,6 @@ import 'package:capture/features/capture/domain/values/passage_id.dart';
 
 export 'package:capture/features/capture/domain/text/thought.dart';
 
-/// Assembles thoughts from candidate units and Jev boundary decisions keyed
-/// by unit index (index ≥ 1). A missing decision keeps units together.
-/// Every unit lands in exactly one thought.
 List<Thought> assembleThoughts(
   String transcript,
   List<TranscriptUnit> units,
@@ -36,8 +33,6 @@ bool _startsThought(BoundaryDecision? decision) =>
 
 bool _isLateCorrection(BoundaryDecision? decision) => decision != null && decision.lateCorrection;
 
-/// A thought is flagged when its own start was uncertain or when an
-/// uncertain "no split" was absorbed inside it.
 bool _uncertainAround(int from, int to, Map<int, BoundaryDecision> decisions) =>
     [for (int i = from; i < to; i++) decisions[i]].any((d) => d != null && d.uncertain);
 

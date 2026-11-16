@@ -1,5 +1,3 @@
-/// Template review reasons. The app never generates clarification prose;
-/// the UI renders each flag with fixed localized copy.
 enum ReviewFlag {
   checkSplit,
   checkGroup,

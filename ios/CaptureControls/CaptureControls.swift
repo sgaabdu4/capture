@@ -9,8 +9,6 @@ struct CaptureControlsBundle: WidgetBundle {
   }
 }
 
-/// The Control Centre and Lock Screen control, also offered for the Action
-/// Button. Pressing it runs "Record with Capture" in the app.
 struct RecordControl: ControlWidget {
   var body: some ControlWidgetConfiguration {
     StaticControlConfiguration(kind: "com.afenso.capture.record") {

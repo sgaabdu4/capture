@@ -1,15 +1,3 @@
-// Evaluation harness for the Jev splitting/classification pipeline. The
-// default test run replays recorded responses and fails on any unrecorded
-// request or lost source text; the other modes are opt-in:
-//
-//   flutter test test/eval/jev_eval_test.dart                          # replay
-//   EVAL_LIVE=1 TYPESAFE_API_KEY=… flutter test test/eval/jev_eval_test.dart
-//   EVAL_PRUNE=1 flutter test test/eval/jev_eval_test.dart             # drop unused
-//   EVAL_MERGE=<file> flutter test test/eval/jev_eval_test.dart        # add results
-//
-// In replay mode every Jev request is looked up in `recorded/jev.json`
-// (keyed by a hash of the exact request body). Missing requests are written
-// to `recorded/pending.b64` (gzip+base64) so they can be run elsewhere (e.g.
 // the TypeSafe playground) and merged with EVAL_MERGE. Synthetic fixtures
 // only; nothing personal is recorded.
 import 'dart:convert';
@@ -127,8 +115,6 @@ void _merge(File results) {
 
 String _requestHash(String body) => sha1.convert(utf8.encode(body)).toString();
 
-/// Serves recorded responses; an unrecorded request is kept as pending and
-/// answered 404, which fails its case without a retry.
 class _ReplayClient extends http.BaseClient {
   _ReplayClient(this.recorded, this.pending);
   final Map<String, Object?> recorded;

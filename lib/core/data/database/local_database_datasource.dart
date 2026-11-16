@@ -7,9 +7,6 @@ import 'package:sqlite3/sqlite3.dart';
 
 part 'local_database_datasource.g.dart';
 
-/// Local SQLite for drafts, pending saves and the Notion cache. Records are
-/// JSON documents keyed by id; every write is a single statement, so a
-/// crash leaves either the old or the new version.
 const localSchema = '''
   PRAGMA journal_mode = WAL;
   CREATE TABLE IF NOT EXISTS captures (

@@ -15,8 +15,6 @@ Duration _londonOffset(DateTime instantUtc) =>
 
 FoundCandidates _find(String text) => findDateCandidates(text, spanOf(text, 0, text.length));
 
-/// Resolves the [day]th day and [time]th time candidate of [text]; a
-/// negative index leaves that candidate out.
 ResolvedDate _resolve(String text, {int day = 0, int time = 0}) {
   final FoundCandidates(:days, :times) = _find(text);
   return resolveDate(

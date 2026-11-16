@@ -6,16 +6,12 @@ import 'package:capture/features/capture/domain/values/passage_id.dart';
 export 'package:capture/features/capture/domain/text/boundary_kind.dart';
 export 'package:capture/features/capture/domain/text/transcript_unit.dart';
 
-/// Tokens that end with a full stop without ending a sentence. Single letters
-/// ("p.m.", "e.g.") are handled separately.
 const _abbreviations = {
   'mr', 'mrs', 'ms', 'dr', 'st', 'vs', 'etc', 'jr', 'sr', 'prof', 'approx', //
 };
 
 const _conjunctions = {'and', 'but', 'so', 'plus'};
 
-/// Discourse markers / action openers that may begin a new thought even
-/// without punctuation. Lowercase word sequences.
 const _markers = [
   ['by', 'the', 'way'],
   ['oh', 'and'],
@@ -39,13 +35,8 @@ final _word = RegExp(r"[\p{L}\p{N}][\p{L}\p{N}'’\-]*", unicode: true);
 final _sentenceEnd = RegExp(r'''[.!?…]+["'”’)\]]*(?=\s)''', unicode: true);
 final _nonSpace = RegExp(r'\S');
 
-/// Minimum words in a unit created by a clause-level candidate. Keeps
-/// "Buy milk and bread" together while allowing "and book a haircut".
 const minClauseWords = 2;
 
-/// Proposes candidate thought boundaries. Over-generation is acceptable (each
-/// candidate costs one Jev question); a missing candidate cannot be recovered
-/// by classification, so the review editor also allows manual splits.
 List<TranscriptUnit> splitCandidates(String text) {
   final splitter = _Splitter(text, _word.allMatches(text).toList(growable: false));
   if (splitter.words.isEmpty) return const [];
@@ -87,8 +78,6 @@ class _Splitter {
     }
   }
 
-  /// A single full stop right after an abbreviation or a lone letter. A
-  /// full stop with no word before it ends a sentence.
   bool _isAbbreviation(RegExpMatch end) {
     if (end[0] != '.') return false;
     final before = words.reversed.where((w) => w.end <= end.start).firstOrNull;
@@ -131,8 +120,6 @@ class _Splitter {
     return count;
   }
 
-  /// Words from [index] to the end of its sentence. Later clause cuts are not
-  /// known yet, so this is an upper bound.
   int _wordsToSentenceEnd(int index) {
     final end = _sentenceEnd.allMatches(text, words[index].start).firstOrNull;
     final limit = end?.end ?? text.length;

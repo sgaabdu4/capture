@@ -3,8 +3,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'item_id.freezed.dart';
 
-/// Id of one proposed note or task, made by code; saved to Notion as the
-/// Library page's Item ID.
 @Freezed(map: .none, when: .none, copyWith: false)
 sealed class ItemId with _$ItemId {
   const ItemId._();

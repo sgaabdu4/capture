@@ -4,9 +4,6 @@ import 'package:capture/features/capture/domain/entities/review_flag.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/domain/group_rules.dart';
 
-/// Labelled, synthetic evaluation set (no real diary content). Each expected
-/// item is identified by the start of its source text; the item boundaries
-/// are therefore gold thought boundaries.
 class Expected {
   /// A note; [included] false means it is proposed but left out.
   const Expected.note(this.startsWith, this.groups, {this.included = true, this.flags = const {}})
@@ -132,8 +129,6 @@ final evalCases = <EvalCase>[
     'pronoun-continuations',
     'I met Tom at the conference. He works on compilers at Google. He suggested I try Zig for systems work.',
     [
-      // Relabelled after the first live run: meeting someone is also a
-      // defensible Personal note.
       .note('I met Tom', {'Tech', 'Work', 'Personal'}),
     ],
   ),
@@ -148,9 +143,6 @@ final evalCases = <EvalCase>[
     'late-ambiguous-correction',
     'Remind me to call mum at 5pm. Buy stamps. Oh, and make the call at 6pm instead.',
     [
-      // The later "6pm instead" makes the time genuinely uncertain: the item
-      // must not silently keep a reminder; it asks for a time instead. The
-      // correction stays a separate, flagged item.
       .task('Remind me to call mum', _personal, flags: {.chooseTime}),
       .task('Buy stamps', _personal),
       .task('Oh, and make the call', _personal, flags: {.correctionElsewhere}),
@@ -183,8 +175,6 @@ final evalCases = <EvalCase>[
       .task(
         'Remind me tomorrow',
         _personal,
-        // Proposed as said but flagged; approvalProblems blocks it until the
-        // user picks which 01:30 they mean.
         reminder: .new(2026, 10, 25, hour: 1, minute: 30),
         flags: {.clockChange},
       ),

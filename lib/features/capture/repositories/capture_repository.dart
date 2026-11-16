@@ -17,8 +17,6 @@ typedef CaptureOutcome = Result<CaptureRecord, CaptureFailure>;
 /// Capture drafts and their audio files on this Mac.
 typedef CaptureStorage = ({ICaptureLocalDatasource records, IAudioFilesLocalDatasource audio});
 
-/// Capture drafts and their audio on this Mac. Every milestone is written
-/// before the next step starts.
 abstract interface class ICaptureRepository {
   /// Newest first.
   List<CaptureRecord> all();
@@ -34,9 +32,6 @@ abstract interface class ICaptureRepository {
   /// Local transcript plus the compressed M4A for Notion.
   Future<CaptureOutcome> transcribe(CaptureRecord record);
 
-  /// After a crash mid-recording the PCM file is intact but its duration was
-  /// never stored; recover it from the file size, or drop clips shorter than
-  /// [minimum].
   void recoverInterrupted({required Duration minimum});
 }
 

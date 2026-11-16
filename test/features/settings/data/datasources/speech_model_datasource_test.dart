@@ -13,12 +13,8 @@ const _resumeAt = 1000;
 /// Synthetic model bytes.
 final _bytes = Uint8List.fromList([for (int i = 0; i < _size; i++) i % 251]);
 
-/// A local model host and, once it is closed, the Range header of each
-/// request it answered.
 typedef _Host = ({HttpServer server, Future<List<String?>> ranges});
 
-/// Serves [body]; with [honourRange] a Range request gets only the tail, as
-/// 206.
 Future<_Host> _serve(Uint8List body, {bool honourRange = true}) async {
   final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
   addTearDown(server.close);

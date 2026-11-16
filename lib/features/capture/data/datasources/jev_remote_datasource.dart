@@ -15,8 +15,6 @@ part 'jev_remote_datasource.g.dart';
 /// One answered Jev request and its metadata.
 typedef JevReply = ({JevResult result, JevCallMetrics metrics});
 
-/// TypeSafe Jev (`POST /v1/systemone`). Only transcript text and group
-/// descriptions are sent; never audio.
 abstract interface class IJevRemoteDatasource {
   /// Harmless key check: lists models (no tokens, no diary content).
   Future<JevOutcome<void>> validateKey(String apiKey);

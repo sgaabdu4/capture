@@ -18,8 +18,6 @@ Json _paragraph(String blockId, String text) => {
   },
 };
 
-/// An item page as Capture writes it: body paragraphs, then the quoted
-/// words it came from, then a paragraph the owner added in Notion.
 final _children = <Json>[
   _paragraph('p1', 'Buy oat milk'),
   _paragraph('p2', 'and bread'),

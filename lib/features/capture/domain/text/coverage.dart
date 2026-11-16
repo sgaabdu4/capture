@@ -4,9 +4,6 @@ import 'package:capture/features/capture/domain/entities/source_span.dart';
 SourceSpan spanOf(String text, int start, int end) =>
     .new(start, end, .new(text.substring(start, end)));
 
-/// Returns the non-whitespace text of [text] that is not covered by [spans],
-/// or that is covered more than once. Empty result means every source
-/// passage is accounted for exactly once.
 List<String> coverageProblems(String text, Iterable<SourceSpan> spans) {
   final counts = List<int>.filled(text.length, 0);
   final problems = <String>[];
@@ -34,8 +31,6 @@ final _whitespace = RegExp(r'\s');
 /// How often a source character is covered; names are the report labels.
 enum _Coverage { once, missing, duplicated }
 
-/// Groups uncovered (non-whitespace) and duplicated characters into runs;
-/// uncovered whitespace neither starts nor ends a run.
 List<String> _coverageRuns(String text, List<int> counts) {
   final runs = <String>[];
   int runStart = -1;

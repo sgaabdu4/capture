@@ -15,9 +15,6 @@ typedef _Dates = ({DueDate? due, DueDate? reminder, Set<ReviewFlag> flags});
 
 const _Dates _noDates = (due: null, reminder: null, flags: {});
 
-/// Builds the application-owned proposal from Jev decisions (one per
-/// thought, in order). Titles and bodies are copied from source text; dates
-/// are computed by code.
 List<ProposalItem> buildProposal({
   required List<ThoughtDecision> decisions,
   required ClassificationPlan plan,
@@ -59,8 +56,6 @@ ProposalItem _item(ThoughtDecision d, ClassificationPlan plan, CaptureMoment mom
   );
 }
 
-/// Date/time phrases of [thought], relative to its excerpt, left out of a
-/// task's title.
 List<ExcerptRange> _datePhrases(ClassificationPlan plan, Thought thought) {
   final found = plan.candidates[thought.id.value];
   if (found == null) return const [];
@@ -94,8 +89,6 @@ _Dates _dates(ThoughtDecision d, CaptureMoment moment, {required bool wantsAlert
   );
 }
 
-/// Fallback proposal when classification is unavailable (service failure or
-/// invalid key): one editable Unsorted note holding the whole transcript.
 ProposalItem manualProposal(Thought whole, List<Group> groups, String id) => .new(
   id: .new(id),
   sources: [whole.span],

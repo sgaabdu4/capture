@@ -2,8 +2,6 @@ import 'package:capture/features/capture/domain/text/candidate_splitter.dart';
 import 'package:capture/features/capture/domain/text/coverage.dart';
 import 'package:test/test.dart';
 
-/// Five-minute alpha limit ≈ 150 wpm × 5 = 750 words; use ~1,200 words of
-/// mixed diary speech as the upper bound workload.
 String _longTranscript() {
   const sentences = [
     'I learned about Jev today and it could help organise my notes.',
@@ -39,9 +37,6 @@ void main() {
     }
     watch.stop();
     final perRunMs = watch.elapsedMicroseconds / runs / 1000;
-    // Local text work must be a negligible part of stop-to-preview latency,
-    // since Jev round trips dominate. This provisional budget was measured on
-    // M-series hardware.
     const budgetMs = 50;
     printOnFailure('split+coverage per run: ${perRunMs.toStringAsFixed(2)} ms');
     expect(perRunMs, lessThan(budgetMs));

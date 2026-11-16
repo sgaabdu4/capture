@@ -17,10 +17,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'capture_analysis_repository.g.dart';
 
-/// Runs the two-pass pipeline for a completed transcript:
-/// code candidates → Jev boundary pass → code assembly → Jev classification
-/// pass → code proposal. Only the transcript text and group descriptions are
-/// sent; never audio.
 abstract interface class ICaptureAnalysisRepository {
   Future<JevOutcome<Analysis>> analyze({
     required String transcript,

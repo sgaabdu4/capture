@@ -13,9 +13,6 @@ import 'package:timezone/data/latest.dart' as tzdata;
 
 import '../../../helpers/test_fakes.dart';
 
-/// Deterministic stand-in for Jev: splits at every boundary, picks the first
-/// offered option, and answers "task"/"alert" yes when the state mentions
-/// "Remind".
 class _FakeJevHttp implements IJevHttpService {
   @override
   Future<JevOutcome<JevHttpReply>> get(String path, {required String apiKey}) async =>

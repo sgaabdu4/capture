@@ -1,9 +1,3 @@
-/// TypeSafe `POST /v1/systemone` request/response contract (Jev).
-///
-/// Verified against docs.typesafe.ai (2026-09): body `{state, model,
-/// questions}`; Noul answers `{type:"noul", noul: P(yes)}`; Choice answers
-/// `{type:"choice", choice, confidence, probabilities}`; response `{model,
-/// answers, usage:{input_tokens, output_tokens}}`. Question keys are not seen
 /// by the model, so every instruction names its target unit/thought.
 library;
 
@@ -22,8 +16,6 @@ export 'package:capture/features/capture/domain/jev/jev_usage.dart';
 export 'package:capture/features/capture/domain/values/jev_answer.dart';
 export 'package:capture/features/capture/domain/values/jev_question.dart';
 
-/// The single place the Jev model is configured. Pinned to a documented
-/// version (not the moving `jev-latest` alias) so thresholds stay comparable.
 const jevModel = 'jev-1.13.0';
 
 Map<String, Object?> buildRequest(
@@ -51,8 +43,6 @@ Map<String, Object?> _questionFields(JevQuestion question) => switch (question) 
   },
 };
 
-/// Validates a real response against the questions that were asked: every
-/// key present, matching type, numbers in [0, 1], choice among the options.
 Result<JevResult, JevProtocolFailure> decodeResponse(Object? json, Map<String, JevQuestion> asked) {
   if (json case {jevAnswersField: final Map<String, Object?> answers}) {
     final decoded = <String, JevAnswer>{};
@@ -151,18 +141,11 @@ double? _probability(Object? value) => switch (value) {
   _ => null,
 };
 
-/// Conservative token estimate (≈3 characters per token for English text
-/// plus JSON overhead).
 int estimateTokens(String text) => (text.length / 3).ceil() + 8;
 
-/// Documented limits: 64k tokens for state + all questions; state + longest
-/// question ≤ 32k. Batches stay well inside with a safety margin.
 const maxRequestTokens = 48000;
 const maxStatePlusQuestionTokens = 24000;
 
-/// Splits questions into requests that respect the limits without dropping
-/// any question. Each batch repeats the full state (boundary context is never
-/// cut). Fails when the state itself is too large to send with a question.
 Result<List<Map<String, JevQuestion>>, JevProtocolFailure> batchQuestions(
   String state,
   Map<String, JevQuestion> questions,

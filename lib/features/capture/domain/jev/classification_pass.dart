@@ -99,8 +99,6 @@ Map<String, JevQuestion> _thoughtQuestions(
     ),
 };
 
-/// Decodes one decision per thought, in order. Fails when an asked
-/// question has no answer of its type.
 Result<List<ThoughtDecision>, JevProtocolFailure> decodeClassification(
   ClassificationPlan plan,
   List<Thought> thoughts,
