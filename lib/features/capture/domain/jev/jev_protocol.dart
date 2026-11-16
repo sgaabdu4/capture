@@ -1,6 +1,3 @@
-/// by the model, so every instruction names its target unit/thought.
-library;
-
 import 'package:capture/core/domain/values/result.dart';
 import 'package:capture/features/capture/domain/jev/jev_keys.dart';
 import 'package:capture/features/capture/domain/jev/jev_protocol_failure.dart';

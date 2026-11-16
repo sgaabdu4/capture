@@ -1,10 +1,8 @@
-/// Noul values are P(yes); see [Band].
-library;
-
 import 'package:capture/features/capture/domain/jev/band.dart';
 
 export 'package:capture/features/capture/domain/jev/band.dart';
 
+/// Provisional until evaluated on representative recordings (test/eval).
 const boundaryBand = Band(0.5, 0.3, 0.7);
 const taskBand = Band(0.5, 0.35, 0.65);
 const alertBand = Band(0.5, 0.35, 0.65);
