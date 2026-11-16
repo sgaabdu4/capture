@@ -163,6 +163,10 @@ public class CaptureNativePlugin: NSObject, FlutterPlugin, FlutterSceneLifeCycle
       result(FlutterError(code: "args", message: "input and output are required", details: nil))
       return
     }
+    guard FileManager.default.fileExists(atPath: input) else {
+      result(FlutterError(code: "encode", message: "The recording is missing.", details: nil))
+      return
+    }
     let bitRate = UInt32(args["bitRate"] as? Int ?? 32000)
     DispatchQueue.global(qos: .userInitiated).async {
       do {

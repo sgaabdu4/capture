@@ -116,7 +116,7 @@ final class CaptureNativePluginTests: XCTestCase {
   }
 
   func testEncodeReportsAMissingInput() {
-    let error = asyncReply("encodeM4a", ["input": "/no/such.pcm", "output": "/tmp/out.m4a"])
+    let error = reply("encodeM4a", ["input": "/no/such.pcm", "output": "/tmp/out.m4a"])
     XCTAssertEqual((error as? FlutterError)?.code, "encode")
   }
 
