@@ -329,4 +329,33 @@ void main() {
     expect(mirror.rows.keys, equals(['item-1']));
     expect(reminders.calls, isEmpty);
   });
+
+  test('deleting an entry takes it out of the library and trashes its Notion page', () async {
+    final fixture = _Fixture();
+    final container = ProviderContainer.test(
+      overrides: [libraryRepositoryProvider.overrideWithValue(fixture.repo)],
+    );
+    final notifier = container.read(libraryProvider.notifier);
+    expect(container.read(libraryProvider).entries, equals([_task]));
+
+    await notifier.delete(_task);
+
+    expect(container.read(libraryProvider).entries, isEmpty);
+    expect(fixture.notion.trashed, equals(['page-1']));
+  });
+
+  test('a failed delete keeps the entry and shows the failure once', () async {
+    final fixture = _Fixture(failure: .network);
+    final container = ProviderContainer.test(
+      overrides: [libraryRepositoryProvider.overrideWithValue(fixture.repo)],
+    );
+    final notifier = container.read(libraryProvider.notifier);
+
+    await notifier.delete(_task);
+
+    final state = container.read(libraryProvider);
+    expect(state.entries, equals([_task]));
+    expect(state.failure, equals(NotionFailure.network));
+    expect(state.failureSerial, equals(1));
+  });
 }
