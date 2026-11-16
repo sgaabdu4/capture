@@ -19,12 +19,18 @@ Authority: Autonomous. The owner asked for the strict-rules repair across all pr
 
 ## Acceptance + steps
 
-- [x] Every flagged comment block is removed, Swift files included.
-- [x] The live Notion journey is no longer skipped by an environment flag: it lives in `integration_test/`, which `flutter test` does not run.
-- [x] `.dart-decimaterc.json` holds `health.max_crap` 30 and every function is at or under it, by real tests or refactors.
-- [x] No unused class member.
-- [x] `flutter_skill_lints` is `^0.14.0`.
-- [x] Freshness and every other gate pass.
+- [x] Every flagged comment block is removed, Swift files included → N/A — a deleted comment has no behaviour; the HE-COMMENT-LINES pass of the check is the proof.
+- [x] The live Notion journey is not skipped by an environment flag; it lives in `integration_test/`, which `flutter test` does not run → N/A — the journey needs real keys; the HE-NO-SWITCH-OFF pass and a `flutter test` run with no skipped test are the proof.
+- [x] A transcript is analysed into the items Jev proposed → `test/features/capture/presentation/notifiers/capture_flow_editing_test.dart::a transcript becomes the items Jev proposed`.
+- [x] A reminder follows the due date and time in the review flow → `test/features/capture/presentation/notifiers/capture_flow_editing_test.dart::turning it on sets the reminder at the due date and time`.
+- [x] A group needs a name → `test/features/groups/domain/group_rules_test.dart::a blank name is missing`.
+- [x] A saved capture uploads its recording once → `test/features/capture/data/datasources/notion_capture_remote_datasource_test.dart::uploads the audio, attaches the upload by id and returns it`.
+- [x] Connecting again keeps the known Notion workspace → `test/features/settings/data/datasources/notion_workspace_remote_datasource_test.dart::keeps it without creating or searching anything`.
+- [x] A finished speech model download makes the model ready → `test/features/settings/presentation/notifiers/settings_notifier_test.dart::a finished download makes the model ready and clears the progress`.
+- [x] A picked day keeps the time of day → `test/features/library/presentation/screens/entry_dialog_screen_test.dart::a picked day replaces the date and keeps the time`.
+- [x] Every function is at or under CRAP 30, no class member is unused, and `health.max_crap` is 30 → N/A — dart-decimate 0.0.76 with that setting is the proof: 0 findings.
+- [x] `flutter_skill_lints` is `^0.14.0` → N/A — `dart analyze --fatal-infos .` reports no issues with it.
+- [x] Freshness and every other gate pass → N/A — the gates are the proof, recorded in Verification.
 
 ## Baseline + execution
 
