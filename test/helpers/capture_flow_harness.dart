@@ -42,7 +42,7 @@ SettingsState autoSaveSettings(Ref ref, SettingsNotifier notifier) =>
     connectedSettings(ref, notifier).copyWith(autoSave: true);
 
 /// Key, Notion and speech model all in place, so a capture can start.
-SettingsState readySettings(Ref ref, SettingsNotifier notifier) => notifier.build().copyWith(
+SettingsState flowReadySettings(Ref ref, SettingsNotifier notifier) => notifier.build().copyWith(
   workspace: flowWorkspace,
   hasNotionToken: true,
   hasTypesafeKey: true,
@@ -97,7 +97,7 @@ ProviderContainer flowContainer(
         fakes: (secrets: null, reminders: reminders, system: null),
       ),
       settingsProvider.overrideWithBuild(
-        settings ?? (native == null ? connectedSettings : readySettings),
+        settings ?? (native == null ? connectedSettings : flowReadySettings),
       ),
       if (saver != null) captureSaveRepositoryProvider.overrideWithValue(saver),
       libraryRepositoryProvider.overrideWithValue(library),
