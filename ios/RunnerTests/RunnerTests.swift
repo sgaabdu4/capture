@@ -141,6 +141,12 @@ final class CaptureNativePluginTests: XCTestCase {
     XCTAssertEqual((error as? FlutterError)?.code, "encode")
   }
 
+  func testEncodeReportsAnOutputItCannotCreate() throws {
+    let output = temporaryURL("missing-folder").appendingPathComponent("out.m4a")
+    let error = asyncReply("encodeM4a", ["input": try writePCM().path, "output": output.path])
+    XCTAssertEqual((error as? FlutterError)?.code, "encode")
+  }
+
   func testTranscribeNeedsBothPaths() {
     XCTAssertEqual((reply("transcribe", ["path": "a"]) as? FlutterError)?.code, "args")
   }

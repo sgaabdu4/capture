@@ -120,6 +120,14 @@ final class CaptureNativePluginTests: XCTestCase {
     XCTAssertEqual((error as? FlutterError)?.code, "encode")
   }
 
+  func testEncodeReportsAnOutputItCannotCreate() throws {
+    let folder = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "\(UUID().uuidString)-missing-folder")
+    let output = folder.appendingPathComponent("out.m4a")
+    let error = asyncReply("encodeM4a", ["input": try writePCM().path, "output": output.path])
+    XCTAssertEqual((error as? FlutterError)?.code, "encode")
+  }
+
   func testOverlayAndMenuCallsAnswerWithNothing() {
     XCTAssertNil(reply("installMenu"))
     XCTAssertNil(reply("showWorking", ["status": "Sorting"]))
