@@ -1,3 +1,4 @@
+import 'package:capture/core/data/notion/notion_http_service.dart';
 import 'package:capture/core/data/reminders/reminder_datasource.dart';
 import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/domain/values/result.dart';
@@ -5,8 +6,10 @@ import 'package:capture/features/capture/data/datasources/audio_files_local_data
 import 'package:capture/features/capture/data/datasources/capture_local_datasource.dart';
 import 'package:capture/features/capture/data/datasources/notion_capture_remote_datasource.dart';
 import 'package:capture/features/capture/data/models/capture_record_model.dart';
+import 'package:capture/features/capture/domain/entities/capture_failure.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
+import 'package:capture/features/capture/repositories/capture_repository.dart';
 import 'package:capture/features/capture/repositories/capture_save_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -125,6 +128,41 @@ _MockRemote _notion({required String failingItem, required List<String> created}
   return remote;
 }
 
+const _upload = 'upload-1';
+
+final _withAudio = _approved.copyWith(m4aPath: 'c1.m4a');
+
+Future<(CaptureOutcome, _MockRemote)> _saveWith({
+  int size = 1,
+  NotionResult<bool> attached = const .ok(false),
+  NotionResult<String> attach = const .ok(_upload),
+  CaptureRecord? record,
+  int maxUpload = 10,
+}) async {
+  final remote = _notion(failingItem: 'none', created: []);
+  when(() => remote.hasRecording(any())).thenAnswer((_) async => attached);
+  when(() => remote.attachRecording(any(), any(), name: any(named: 'name')))
+      .thenAnswer((_) async => attach);
+  final audio = _MockAudio();
+  when(() => audio.sizeOf(any())).thenReturn(size);
+  when(() => audio.read(any())).thenAnswer((_) async => [1, 2, 3]);
+  final local = _MockLocal();
+  when(() => local.put(any())).thenReturn(null);
+  final repository = CaptureSaveRepository(
+    remote: remote,
+    storage: (records: local, audio: audio),
+    reminders: _AllowedReminders(),
+    system: FakeSystem(),
+  );
+  final ws = _workspace.copyWith(maxUpload: .fromBytes(maxUpload));
+  return (await repository.save(record ?? _withAudio, ws), remote);
+}
+
+CaptureFailure? _failureOf(CaptureOutcome outcome) => switch (outcome) {
+  Err(:final failure) => failure,
+  Ok() => null,
+};
+
 void main() {
   setUpAll(() {
     tzdata.initializeTimeZones();
@@ -182,5 +220,59 @@ void main() {
 
   test('a capture deleted while the reminder prompt was open is not written back', () async {
     expect(await _schedule(stored: false), isEmpty);
+  });
+
+  group('the recording of a capture', () {
+    const upload = _upload;
+
+    test('is uploaded and attached once, and the capture is marked saved', () async {
+      final (outcome, remote) = await _saveWith();
+
+      expect(outcome, isA<Ok<CaptureRecord, CaptureFailure>>());
+      expect(switch (outcome) {
+        Ok(:final value) => (value.progress.audioUploadId?.value, value.progress.audioAttached),
+        Err() => null,
+      }, equals((upload, true)));
+      verify(() => remote.attachRecording('capture-page', [1, 2, 3], name: 'capture-c1.m4a'))
+          .called(1);
+    });
+
+    test('already attached in Notion is not uploaded again', () async {
+      final (outcome, remote) = await _saveWith(attached: const .ok(true));
+
+      expect(_failureOf(outcome), isNull);
+      verifyNever(() => remote.attachRecording(any(), any(), name: any(named: 'name')));
+    });
+
+    test('a capture with no audio file skips the upload', () async {
+      final (outcome, remote) = await _saveWith(record: _approved);
+
+      expect(_failureOf(outcome), isNull);
+      verifyNever(() => remote.hasRecording(any()));
+    });
+
+    test('an empty audio file stops the save as missing', () async {
+      final (outcome, _) = await _saveWith(size: 0);
+
+      expect(_failureOf(outcome), equals(CaptureFailure.audioMissing));
+    });
+
+    test('audio over the Notion upload limit stops the save as too large', () async {
+      final (outcome, _) = await _saveWith(size: 11);
+
+      expect(_failureOf(outcome), equals(CaptureFailure.audioTooLarge));
+    });
+
+    test('a failed check for the recording is reported as a Notion failure', () async {
+      final (outcome, _) = await _saveWith(attached: const .err(.rateLimited));
+
+      expect(_failureOf(outcome), equals(CaptureFailure.notionUnavailable));
+    });
+
+    test('a failed upload is reported as a Notion failure', () async {
+      final (outcome, _) = await _saveWith(attach: const .err(.invalidToken));
+
+      expect(_failureOf(outcome), equals(CaptureFailure.notionAuth));
+    });
   });
 }
