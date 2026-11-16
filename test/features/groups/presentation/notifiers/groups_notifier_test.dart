@@ -12,7 +12,7 @@ import '../../../../helpers/sample_workspace.dart';
 
 class _Repository extends SampleGroups {
   _Repository({this.failure});
-  final NotionFailure? failure;
+  NotionFailure? failure;
   final calls = <String>[];
 
   @override
@@ -160,13 +160,20 @@ void main() {
     });
 
     test('a Notion failure is shown once and keeps the old group', () async {
-      final container = _container(_Repository(failure: .unavailable));
+      final repository = _Repository();
+      final container = _container(repository);
+      final notifier = container.read(groupsProvider.notifier);
+      await notifier.refresh();
+      final before = container.read(groupsProvider).groups;
+      expect(before, isNotEmpty);
+      repository.failure = .unavailable;
 
-      await container.read(groupsProvider.notifier).update(_ideas);
+      await notifier.update(_ideas);
 
       final state = container.read(groupsProvider);
       expect(state.failure, equals(NotionFailure.unavailable));
       expect(state.failureSerial, equals(1));
+      expect(state.groups, equals(before));
     });
   });
 }

@@ -142,8 +142,18 @@ void main() {
 
     test('an unknown capture is ignored', () async {
       final container = flowContainer(.new());
+      final captures = container.read(captureRepositoryProvider)
+        ..put(flowRecord('c1', .transcribed))
+        ..put(flowRecord('c2', .proposed));
+      final flow = container.read(captureFlowProvider.notifier);
+      final before = captures.all();
 
-      await expectLater(container.read(captureFlowProvider.notifier).delete('missing'), completes);
+      await flow.delete('missing');
+
+      expect(captures.all(), unorderedEquals(before));
+      final state = container.read(captureFlowProvider);
+      expect(state.failure, isNull);
+      expect(state.notice, isNull);
     });
   });
 

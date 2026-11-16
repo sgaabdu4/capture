@@ -36,7 +36,7 @@ Authority: Autonomous. The owner asked for the strict-rules repair across all pr
 ## Baseline + execution
 
 Result: Passed
-Evidence: Before the work, a sealed scan of main (8c4c8fd) reported 2 HE-NO-SWITCH-OFF hits (the two live-test `skip:` lines), 139 HE-COMMENT-LINES blocks, 22 functions over CRAP 30 (dart-decimate 0.0.76), 1 unused class member (`AppWidgetKeys.notionDisconnectButton`) and a failing freshness gate (flutter_local_notifications 23.0.1 to 23.0.2). The Flutter SDK is the Mac's 3.50.0; CI floats on stable, so no pinned SDK applies.
+Evidence: Before the work, a sealed scan of main (8c4c8fd) reported 2 HE-NO-SWITCH-OFF hits (the two live-test `skip:` lines), 139 HE-COMMENT-LINES blocks, 22 functions over CRAP 30 (dart-decimate 0.0.76), 1 unused class member (`AppWidgetKeys.notionDisconnectButton`) and a failing freshness gate (flutter_local_notifications 23.0.1 to 23.0.2). The Flutter SDK is the Mac's 3.50.0; Codemagic pins Flutter 3.50.0 (`codemagic.yaml`); only the GitHub release workflow uses `flutter@latest`.
 Execution: One builder on `fix/hard-eng-strict-rules`, one commit for each rule or package, a draft PR from the first commit.
 
 ## Sources + coverage
