@@ -28,7 +28,6 @@ abstract final class AppWidgetKeys {
   static const notionConnectButton = 'setup.notion.connect';
   static const notionGuideButton = 'setup.notion.guide';
   static String notionGuideStep(int step) => 'setup.notion.guide.step.$step';
-  static const notionDisconnectButton = 'setup.notion.disconnect';
   static const shortcutChangeButton = 'settings.shortcut.change';
   static const shortcutSaveButton = 'settings.shortcut.save';
   static const micAllowButton = 'settings.mic.allow';
