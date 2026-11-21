@@ -12,6 +12,7 @@ analyzer:
   - '**/*.gr.dart'
   - '**/*.arb'
   - ios/**
+  - lib/l10n/app_localizations.g.dart
   language:
     strict-inference: true
   errors:
