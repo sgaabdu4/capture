@@ -42,6 +42,7 @@ Authority: Standing rule — merge each task PR once its checks pass (user, 2026
 - [x] T9 Each recording shows its status, details and actions in one column; the one main action is a filled `InkButton` and Delete is aligned text → `test/features/capture/presentation/widgets/capture_card_test.dart`.
 - [x] T10 Remove the Recordings helper subtitle and the sidebar motto, move the speech model credit to Privacy at 18 words, and shorten the key and link hints → `test/features/settings/presentation/widgets/speech_credit_test.dart` and `test/features/settings/presentation/screens/hints_fit_test.dart::every key and link hint shows whole on a phone`.
 - [x] T11 Draw the shortcut modifier symbols through an explicit symbol font fallback (`Fonts.symbolFamily`, mirrored in `DESIGN.md`) → `test/features/settings/presentation/widgets/shortcut_keys_test.dart::the shortcut keys fall back to a font that holds the modifier symbols`.
+- [x] T12 The key field turns Replace off until a key is typed, the linked Notion page field says `Keep current page`, the auto-save explanation is 20 words, dialogs are capped at `Sizes.dialogWidth` (`PaperDialog.width`), the dialog backdrop is the `Palette.scrim` token, and the expand arrow sits beside the recording details with status and time on one line → `test/features/settings/presentation/screens/typesafe_step_screen_test.dart`, `test/features/settings/presentation/screens/hints_fit_test.dart`, `test/features/settings/presentation/widgets/autosave_text_test.dart`, `test/core/widgets/paper_dialog_test.dart` and `test/features/capture/presentation/widgets/capture_card_test.dart`.
 
 ## Baseline + execution
 
@@ -58,12 +59,12 @@ Execution: One builder. Extract 7 shared widgets into `lib/core/widgets/`, updat
 ## ux_reference
 
 Result: Passed
-Evidence: Widget-test renders of the real app (`CaptureApp`) at 390, 768 and 1240 px on Settings, Recordings, the Delete recording dialog, To-Do and the Edit task dialog, taken at the merge base `origin/main` (`4cbb8bd`, scratch worktree) and at this branch, with the bundled Caveat, Patrick Hand and Material Icons fonts and the macOS symbols font loaded. 12 of 15 pairs changed on purpose (for example Delete dialog on phone `8db4823f` to `41658f55`); the To-Do phone and tablet pairs stay byte-identical.
+Evidence: Widget-test renders of the real app (`CaptureApp`) at 390, 768 and 1280 px on Settings, Recordings, the Delete recording dialog, To-Do and the Edit task dialog, taken at the merge base `origin/main` (`4cbb8bd`, scratch worktree) and at this branch, with the bundled Caveat, Patrick Hand and Material Icons fonts and the macOS symbols font loaded. 13 of 15 pairs changed on purpose (for example Delete dialog on phone `8db4823f` to `c22a81af`); the To-Do phone and tablet pairs stay byte-identical.
 Surface: Existing — `/recordings`, rendered by `lib/features/capture/presentation/screens/recordings_screen.dart`
 Before: ![Before, delete dialog on phone on main](../../build/ux/ui-single-source/before-delete-dialog-phone.png)
 Proposed: ![After, delete dialog on phone on fix/ui-single-source](../../build/ux/ui-single-source/after-delete-dialog-phone.png)
 Controls: `PaperSwitch` — reuses `lib/core/widgets/atoms/paper_switch.dart`; `PaperField` — reuses `lib/core/widgets/atoms/paper_field.dart`; `PaperDropdown` — reuses `lib/core/widgets/atoms/paper_dropdown.dart`; `LinkButton` — reuses `lib/core/widgets/atoms/link_button.dart`; `InkButton` — reuses `lib/core/widgets/atoms/ink_button.dart`; `IconAction` — reuses `lib/core/widgets/atoms/icon_action.dart`; `PaperDialog` — reuses `lib/core/widgets/paper_dialog.dart`
-Capture: Rendered `CaptureApp` through a widget test with a repaint boundary at 390 × 844, 768 × 1024 and 1240 × 860 (Settings at 2000 high), with the same scratch test run once at the merge base and once at this branch, so fonts and icons match on both sides.
+Capture: Rendered `CaptureApp` through a widget test with a repaint boundary at 390 × 844, 768 × 1024 and 1280 × 860 (Settings at 2000 high), with the same scratch test run once at the merge base and once at this branch, so fonts and icons match on both sides.
 Review: Inspected every After image. The Edit task dialog now shows the label above each field, the off switch with a light track, the clear button beside the chips and the switch at the left edge. Recordings shows one column per card with a filled Review button and aligned Delete text. Settings shows whole hints, the shortcut symbols and the credit under Privacy.
 Rules:
 
@@ -81,7 +82,7 @@ Rules:
 - Time: Pass — ages and times keep their local, relative form (`20 minutes ago`, `8:00 PM`).
 - Audit: N/A — a local note capture app with no staff or admin roles.
 - Accessibility: Pass — link buttons, the sidebar chip and the fields are at least 48 pt, and the guideline tests cover contrast, labels and tap targets.
-- Widths: Pass — captured at 390, 768 and 1240 px, and `test/app/responsive_layout_test.dart` covers 320 to 3840 pt with no overflow.
+- Widths: Pass — captured at 390, 768 and 1280 px, and `test/app/responsive_layout_test.dart` covers 320 to 3840 pt with no overflow.
 - Performance: Pass — no data read or rebuild path changed, and `test/performance/text_pipeline_perf_test.dart` passes in the full run.
 
 ## Verification
