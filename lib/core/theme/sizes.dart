@@ -19,6 +19,9 @@ abstract final class Sizes {
 
   /// Smallest height and width of anything a person taps.
   static const double tapTarget = 48;
+
+  /// Width of the switch track; the switch has no side padding, so the track starts at the field edge.
+  static const double switchTrack = 52;
   static const double statusDot = 10;
   static const double progressBar = 6;
   static const double spinner = 18;

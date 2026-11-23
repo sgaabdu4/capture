@@ -1,5 +1,6 @@
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/app_theme.dart';
+import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/capture/presentation/widgets/when_row.dart';
@@ -11,8 +12,6 @@ import '../../../../helpers/app_harness.dart';
 import '../../../../helpers/test_fakes.dart';
 
 void _noop() {}
-
-const _trackWidth = 52.0;
 
 void main() {
   setUpAll(loadAppFonts);
@@ -57,7 +56,7 @@ void main() {
     final switchWidth = tester.getSize(find.byType(Switch)).width;
 
     expect(switchLeft, iconLeft);
-    expect(switchWidth, lessThanOrEqualTo(_trackWidth));
+    expect(switchWidth, lessThanOrEqualTo(Sizes.switchTrack));
     expect(clearLeft - timeRight, lessThanOrEqualTo(Spacing.md));
   });
 }
