@@ -47,6 +47,7 @@ void main() {
       ),
     );
 
-    expect(tester.getSize(find.byType(AlertDialog)).height, lessThan(300));
+    final panel = find.descendant(of: find.byType(AlertDialog), matching: find.byType(Material));
+    expect(tester.getSize(panel.first).height, lessThan(300));
   });
 }
