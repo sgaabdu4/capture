@@ -529,7 +529,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notionPageHint => 'Notion page link';
 
   @override
-  String get notionPageHintKeep => 'Current page';
+  String get notionPageHintKeep => 'Paste a new page link';
 
   @override
   String get notionShowMe => 'Show me how';
