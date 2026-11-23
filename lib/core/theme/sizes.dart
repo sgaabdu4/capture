@@ -16,6 +16,9 @@ abstract final class Sizes {
   /// Room either side of the mic for its pencil rays.
   static const double micRaysExtent = 150;
   static const double badge = 44;
+
+  /// Smallest height and width of anything a person taps.
+  static const double tapTarget = 44;
   static const double statusDot = 10;
   static const double progressBar = 6;
   static const double spinner = 18;

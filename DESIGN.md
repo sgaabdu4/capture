@@ -111,6 +111,7 @@ sizes:
   shadowBlur: 18px
   micShadowBlur: 24px
   badge: 44px
+  tapTarget: 44px
   micRaysExtent: 150px
   groupMenuWidth: 170px
   micDiameter: 200px
