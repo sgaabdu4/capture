@@ -42,6 +42,8 @@ abstract final class AppWidgetKeys {
   static const whenTimeButton = 'editor.when.time';
   static const whenDateButton = 'when.date';
   static const whenReminderSwitch = 'when.reminder';
+  static const whenClearButton = 'when.clear';
+  static const whenIcon = 'when.icon';
 
   // Groups
   static const addGroupButton = 'groups.add';
