@@ -255,7 +255,12 @@ void main() {
             onEdit: _noop,
             onLater: _noop,
           ),
-          DeleteCaptureDialog(saved: true, onCancel: _noop, onDelete: _noop),
+          DeleteCaptureDialog(
+            saved: true,
+            detail: '20 minutes ago · 0:14',
+            onCancel: _noop,
+            onDelete: _noop,
+          ),
         ],
       ),
       checkAndroidTargets: false,

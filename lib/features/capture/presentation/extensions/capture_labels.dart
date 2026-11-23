@@ -1,6 +1,8 @@
+import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
 import 'package:capture/features/capture/domain/entities/approval_problem.dart';
 import 'package:capture/features/capture/domain/entities/capture_failure.dart';
+import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/item_kind.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/domain/entities/review_flag.dart';
@@ -110,4 +112,12 @@ extension ProposalSummary on Iterable<ProposalItem> {
       if (reminders > 0) l10n.countReminders(reminders),
     ].join(l10n.detailSeparator);
   }
+}
+
+extension CaptureMeta on CaptureRecord {
+  /// "20 minutes ago · 0:14"; the length is left out for a capture with no audio.
+  String meta(AppLocalizations l10n, DateTime nowUtc) => [
+    capturedAtUtc.agoLabel(l10n, nowUtc),
+    if (duration > Duration.zero) duration.clockLabel,
+  ].join(l10n.detailSeparator);
 }

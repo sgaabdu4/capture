@@ -54,10 +54,7 @@ class CaptureCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final BuildContext(:l10n, :textTheme, :colors) = context;
     final CaptureRecord(:capturedAtUtc, :duration, :failure, :transcript, :stage) = record;
-    final meta = [
-      capturedAtUtc.agoLabel(l10n, nowUtc),
-      if (duration > Duration.zero) duration.clockLabel,
-    ].join(l10n.detailSeparator);
+    final meta = record.meta(l10n, nowUtc);
     final note = switch (record) {
       CaptureRecord(failure: final CaptureFailure f) => f.label(l10n),
       CaptureRecord(stage: .saved, :final includedItems) => includedItems.summary(l10n),
