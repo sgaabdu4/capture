@@ -5,7 +5,7 @@ import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Delete on the left (a second press confirms), Cancel and Save on the right; null [onSave] disables Save.
+/// Delete, Cancel and Save in one group from the text edge (a second press confirms Delete); null [onSave] disables Save.
 class EntryDialogActions extends StatelessWidget {
   const EntryDialogActions({
     required this.confirmingDelete,
@@ -28,8 +28,8 @@ class EntryDialogActions extends StatelessWidget {
     return SizedBox(
       width: .infinity,
       child: Wrap(
-        alignment: .spaceBetween,
         crossAxisAlignment: .center,
+        spacing: Spacing.xs,
         runSpacing: Spacing.xs,
         children: [
           if (confirmingDelete)
@@ -42,6 +42,7 @@ class EntryDialogActions extends StatelessWidget {
             LinkButton(
               l10n.delete,
               key: const ValueKey(AppWidgetKeys.entryDeleteButton),
+              flush: true,
               onPressed: onAskDelete,
             ),
           Row(
