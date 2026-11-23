@@ -44,11 +44,18 @@ class GroupCard extends StatelessWidget {
     final l10n = context.l10n;
     final TextTheme(:titleMedium, :labelMedium, :bodySmall, :bodyMedium) = context.textTheme;
     return ExpandableCard(
-      title: Text(
-        group.name.value,
-        style: titleMedium?.copyWith(
-          color: group.archived ? context.colors.onSurfaceVariant : context.colors.onSurface,
-        ),
+      title: Wrap(
+        crossAxisAlignment: .center,
+        spacing: Spacing.xs,
+        children: [
+          Text(
+            group.name.value,
+            style: titleMedium?.copyWith(
+              color: group.archived ? context.colors.onSurfaceVariant : context.colors.onSurface,
+            ),
+          ),
+          Text(l10n.groupSavedCount(items.length), style: bodySmall),
+        ],
       ),
       subtitle: Column(
         crossAxisAlignment: .start,
@@ -58,8 +65,12 @@ class GroupCard extends StatelessWidget {
             spacing: Spacing.xs,
             runSpacing: Spacing.xs,
             children: [
-              Text(l10n.groupSavedCount(items.length), style: bodySmall),
-              IconAction(Icons.edit_outlined, tooltip: l10n.edit, onPressed: busy ? null : onEdit),
+              IconAction(
+                Icons.edit_outlined,
+                tooltip: l10n.edit,
+                flush: true,
+                onPressed: busy ? null : onEdit,
+              ),
               if (onArchive case final VoidCallback archive)
                 IconAction(
                   Icons.archive_outlined,
