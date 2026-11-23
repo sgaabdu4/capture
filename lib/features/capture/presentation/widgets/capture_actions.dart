@@ -57,7 +57,7 @@ class CaptureActions extends StatelessWidget {
       children: [
         ?primary,
         if (stage != .approved)
-          LinkButton(l10n.delete, flush: primary == null, onPressed: onDelete),
+          LinkButton(l10n.delete, flush: primary == null, destructive: true, onPressed: onDelete),
       ],
     );
   }

@@ -5,7 +5,14 @@ import 'package:material_ui/material_ui.dart';
 
 /// Quiet text button (e.g. "View all ›").
 class LinkButton extends StatelessWidget {
-  const LinkButton(this.label, {required this.onPressed, super.key, this.icon, this.flush = false});
+  const LinkButton(
+    this.label, {
+    required this.onPressed,
+    super.key,
+    this.icon,
+    this.flush = false,
+    this.destructive = false,
+  });
 
   final String label;
   final VoidCallback? onPressed;
@@ -13,6 +20,9 @@ class LinkButton extends StatelessWidget {
 
   /// Drops the side padding so the text lines up with the content above it.
   final bool flush;
+
+  /// Colours the label with the error role, so a delete reads differently from a cancel beside it.
+  final bool destructive;
 
   @override
   Widget build(BuildContext context) => TextButton(
@@ -29,7 +39,9 @@ class LinkButton extends StatelessWidget {
       children: [
         Text(
           label,
-          style: context.textTheme.labelMedium?.copyWith(color: context.colors.onSurface),
+          style: context.textTheme.labelMedium?.copyWith(
+            color: destructive ? context.colors.error : context.colors.onSurface,
+          ),
         ),
         if (icon case final IconData i) ...[
           const SizedBox(width: Spacing.xxs),

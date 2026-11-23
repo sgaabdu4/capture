@@ -43,6 +43,7 @@ class EntryDialogActions extends StatelessWidget {
               l10n.delete,
               key: const ValueKey(AppWidgetKeys.entryDeleteButton),
               flush: true,
+              destructive: true,
               onPressed: onAskDelete,
             ),
           Row(
