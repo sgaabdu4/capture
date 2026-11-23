@@ -82,6 +82,9 @@ typography:
   bodySmall:
     fontFamily: "Patrick Hand"
     fontSize: 14px
+  modifierSymbols:
+    fontFamily: "Apple Symbols"
+    fontSize: 25px
   overlayCardTitle:
     fontFamily: "Caveat"
     fontSize: 34px
@@ -169,7 +172,7 @@ Warm paper palette: light cream background (`paper`, `sidebar`, `card`), dark in
 
 ## Typography
 
-Handwritten notebook typography bundled under `assets/fonts/`: `Caveat` for display and page headings (`Fonts.titleFamily`, used by `displayLarge`, `displayMedium`, `headlineLarge`, `headlineSmall`, and `overlayCardTitle`) and `Patrick Hand` for card/dialog titles, body text, controls and labels (`Fonts.handFamily`, used by `titleLarge` through `bodySmall`).
+Handwritten notebook typography bundled under `assets/fonts/`: `Caveat` for display and page headings (`Fonts.titleFamily`, used by `displayLarge`, `displayMedium`, `headlineLarge`, `headlineSmall`, and `overlayCardTitle`) and `Patrick Hand` for card/dialog titles, body text, controls and labels (`Fonts.handFamily`, used by `titleLarge` through `bodySmall`). `Apple Symbols` (`Fonts.symbolFamily`) is the fallback that draws the modifier symbols ⌃ ⌥ ⇧ ⌘, which the handwriting fonts do not hold.
 
 ## Layout
 

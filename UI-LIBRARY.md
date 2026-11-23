@@ -5,18 +5,18 @@ One section for each library entry of `ui_library`; one row for each part. Writt
 ## `lib/core/widgets/**`
 
 - `EmptyNote` — Truthful empty-state message inside cards and lists.
-- `ExpandableCard` — Expandable paper card row shared by capture and group lists.
+- `ExpandableCard` — Expandable paper card row shared by capture and group lists; the expand arrow shows unless a trailing widget replaces it.
 - `IconAction` — Tooltipped icon button for inline, dialog, and toolbar actions.
 - `IconBadge` — Circular icon badge used as a list-row leading visual.
 - `InkButton` — Primary filled ink button with an optional busy spinner.
 - `LineButton` — Secondary outlined button for neutral actions and pickers.
-- `LinkButton` — Quiet text button with an optional trailing icon.
+- `LinkButton` — Quiet text button with an optional trailing icon, a 48 point tap target, and a flush mode that lines its text up with the content above.
 - `PageFrame` — Scrollable page scaffold with an underlined title, subtitle, and actions.
 - `PaperCard` — Paper-styled rounded container with border and soft shadow.
 - `PaperCheckbox` — Theme-styled two-state checkbox for tasks, proposals, and settings.
 - `PaperDialog` — Paper-styled modal dialog with a handwritten title, body, and actions.
 - `PaperDropdown` — Theme-styled single-select dropdown field.
-- `PaperField` — Theme-styled text input; obscured fields disable suggestions and autocorrect.
+- `PaperField` — Theme-styled text input with an optional label above it; obscured fields disable suggestions and autocorrect.
 - `PaperSegmented` — Theme-styled single-choice segmented button control.
 - `PaperSwitch` — Theme-styled toggle switch.
 - `StatusDot` — Circular status indicator dot for connection and capture states.
