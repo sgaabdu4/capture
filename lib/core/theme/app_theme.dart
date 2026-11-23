@@ -81,6 +81,7 @@ ThemeData buildAppTheme() => .new(
       textStyle: _textTheme.labelMedium,
       visualDensity: .standard,
       tapTargetSize: .padded,
+      padding: const .symmetric(horizontal: Spacing.sm, vertical: _segmentVerticalPadding),
     ),
   ),
   chipTheme: .new(
@@ -157,6 +158,9 @@ SwitchThemeData _switchTheme() => .new(
     (s) => s.contains(WidgetState.selected) ? Palette.transparent : Palette.fieldEdge,
   ),
 );
+
+// Material draws a segment 40 points tall at its default padding; this draws it as tall as a tap target.
+const double _segmentVerticalPadding = 15;
 
 CheckboxThemeData _checkboxTheme() => .new(
   side: const .new(color: Palette.ink, width: Sizes.checkboxBorder),
