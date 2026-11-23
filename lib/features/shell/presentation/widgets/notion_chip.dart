@@ -18,12 +18,12 @@ class NotionChip extends StatelessWidget {
     final l10n = context.l10n;
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: Radii.rounded22,
+        borderRadius: Radii.rounded16,
         border: .fromBorderSide(.new(color: context.paper.line)),
       ),
       child: TapSurface(
         color: context.paper.card,
-        borderRadius: Radii.rounded22,
+        borderRadius: Radii.rounded16,
         onTap: onTap,
         child: ConstrainedBox(
           constraints: const .new(minHeight: Sizes.tapTarget),
