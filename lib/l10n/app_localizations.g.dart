@@ -1311,12 +1311,6 @@ abstract class AppLocalizations {
   /// **'Reminder'**
   String get reminderLabel;
 
-  /// No description provided for @groupsSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Jev files each thought by these descriptions.'**
-  String get groupsSubtitle;
-
   /// No description provided for @groupsNeedNotion.
   ///
   /// In en, this message translates to:

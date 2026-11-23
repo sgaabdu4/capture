@@ -720,9 +720,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderLabel => 'Reminder';
 
   @override
-  String get groupsSubtitle => 'Jev files each thought by these descriptions.';
-
-  @override
   String get groupsNeedNotion => 'Connect Notion in Settings to manage groups.';
 
   @override

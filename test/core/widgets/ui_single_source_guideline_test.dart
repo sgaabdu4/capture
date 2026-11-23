@@ -363,7 +363,7 @@ void main() {
         color: Palette.paper,
         child: PageFrame(
           title: 'Groups',
-          subtitle: l10n.groupsSubtitle,
+          subtitle: l10n.syncRefreshing,
           actions: const [LinkButton('Refresh', onPressed: _noop)],
           children: [
             Text(sampleSavedCapture.identity(l10n, FakeSystem.now)),
