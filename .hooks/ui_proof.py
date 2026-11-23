@@ -148,16 +148,16 @@ def reference_problem(
     return None
 
 
-def browser_records(root: Path) -> list[dict[str, object]]:
+def browser_record_files(root: Path) -> list[tuple[Path, dict[str, object]]]:
     folder = root / ".hard-eng/browser"
-    found: list[dict[str, object]] = []
+    found: list[tuple[Path, dict[str, object]]] = []
     for path in sorted(folder.glob("*.json")) if folder.is_dir() else []:
         try:
             record = json.loads(path.read_text())
-        except ValueError:
+        except (OSError, ValueError):
             continue
         if isinstance(record, dict) and "sha256" in record and "image" in record:
-            found.append(record)
+            found.append((path, record))
     return found
 
 
@@ -193,19 +193,82 @@ def guideline_problem(root: Path, visible: list[str]) -> str | None:
     return None
 
 
-def merge_base(root: Path, base_ref: str) -> str:
+def merge_base(
+    root: Path, base_ref: str, head: str = "HEAD", base_sha: str | None = None
+) -> str:
+    target = head or "HEAD"
     remote_ref = f"origin/{base_ref}"
-    done = subprocess.run(
-        ["git", "merge-base", "HEAD", remote_ref],
-        cwd=root,
-        capture_output=True,
-        text=True,
-        check=False,
+    for ref in (base_sha, remote_ref) if base_sha else (remote_ref,):
+        done = subprocess.run(
+            ["git", "merge-base", target, ref],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if done.returncode == 0:
+            return done.stdout.strip()
+    return ""
+
+
+def _finding_rules(record: Mapping[str, object]) -> str:
+    return ", ".join(
+        sorted(
+            {
+                str(item.get("rule"))
+                for item in cast(list[dict[str, object]], record["findings"])
+            }
+        )
     )
-    return done.stdout.strip() if done.returncode == 0 else ""
 
 
-def unchanged_problem(root: Path, reference: str, head: str, base: str) -> str | None:
+def _unchanged_width_problem(
+    by_image: Mapping[str, tuple[Path, dict[str, object]]],
+    stems: list[str],
+    width: int,
+    head: str,
+    base: str,
+    *,
+    route: str,
+    allow_dirty_after: bool,
+    min_mtime_ns: int,
+) -> str | None:
+    before_entry = by_image.get(f"{stems[0]}-{width}.png")
+    after_entry = by_image.get(f"{stems[1]}-{width}.png")
+    if before_entry is None or after_entry is None:
+        return f"the unchanged pair has no measured record at {width} px; capture it at every width"
+    _, before = before_entry
+    after_path, after = after_entry
+    for side, record in (("Before", before), ("After", after)):
+        if route and not on_route(str(record.get("route", "")), route):
+            return (
+                f"the unchanged {side} capture {record['image']} is of the page "
+                f"{record.get('route') or 'unknown'}, but the plan names {route}; capture the changed screen"
+            )
+    if before["sha256"] != after["sha256"]:
+        return f"the unchanged pair differs at {width} px; the screen changed, so write a real ux_reference"
+    if before["commit"] != base or after["commit"] != head:
+        return f"the unchanged pair must be a Before taken at the base ({base[:12]}) and an After taken at the head ({head[:12]}) at {width} px"
+    if before.get("dirty") or (not allow_dirty_after and after.get("dirty")):
+        return f"the unchanged pair was taken with uncommitted changes at {width} px; commit and capture again"
+    if min_mtime_ns and after_path.stat().st_mtime_ns < min_mtime_ns:
+        return f"the unchanged pair predates the latest UI edit at {width} px; capture again"
+    for side, record in (("Before", before), ("After", after)):
+        if record.get("findings"):
+            return f"the unchanged {side} capture {record['image']} has findings ({_finding_rules(record)}); fix the screen and capture again"
+    return None
+
+
+def unchanged_problem(
+    root: Path,
+    reference: str,
+    head: str,
+    base: str,
+    *,
+    route: str = "",
+    allow_dirty_after: bool = False,
+    min_mtime_ns: int = 0,
+) -> str | None:
     """The plan's `N/A — unchanged:` pair: equal captures at every width, the Before at the base, the After at the head, each from a clean checkout."""
     from browser import WIDTHS
 
@@ -220,18 +283,22 @@ def unchanged_problem(root: Path, reference: str, head: str, base: str) -> str |
         if path.parent != folder or name is None:
             return f"the unchanged pair must name captures in .hard-eng/browser, not {link}"
         stems.append(name[1])
-    records = {str(item["image"]): item for item in browser_records(root)}
+    by_image = {
+        str(record["image"]): (path, record)
+        for path, record in browser_record_files(root)
+    }
     for width in WIDTHS:
-        pair = [records.get(f"{stem}-{width}.png") for stem in stems]
-        if None in pair:
-            return f"the unchanged pair has no measured record at {width} px; capture it at every width"
-        before, after = cast(list[dict[str, object]], pair)
-        if before["sha256"] != after["sha256"]:
-            return f"the unchanged pair differs at {width} px; the screen changed, so write a real ux_reference"
-        if before["commit"] != base or after["commit"] != head:
-            return f"the unchanged pair must be a Before taken at the base ({base[:12]}) and an After taken at the head ({head[:12]}) at {width} px"
-        if before.get("dirty") or after.get("dirty"):
-            return f"the unchanged pair was taken with uncommitted changes at {width} px; commit and capture again"
+        if problem := _unchanged_width_problem(
+            by_image,
+            stems,
+            width,
+            head,
+            base,
+            route=route,
+            allow_dirty_after=allow_dirty_after,
+            min_mtime_ns=min_mtime_ns,
+        ):
+            return problem
     return None
 
 
@@ -250,36 +317,58 @@ def _stem(record: dict[str, object]) -> str:
     return name[1] if name else str(record["image"])
 
 
-def _set_problem(
-    records: list[dict[str, object]], stem: str, head: str, route: str
-) -> str | None:
-    """Why one capture set is not a clean measured set of the head, or None."""
+def capture_set_problem(
+    by_image: Mapping[str, tuple[Path, dict[str, object]]],
+    stem: str,
+    head: str,
+    route: str,
+    *,
+    allow_dirty: bool = False,
+    min_mtime_ns: int = 0,
+) -> tuple[str | None, set[str]]:
+    """Why one capture set is not a clean measured set of the head, plus its image hashes when clean."""
     from browser import WIDTHS
 
+    hashes: set[str] = set()
     for width in WIDTHS:
-        peer = next((r for r in records if r["image"] == f"{stem}-{width}.png"), None)
-        if peer is None:
-            return f"the After capture {stem} has no measured record at {width} px; capture it at every width"
-        if route and not on_route(str(peer.get("route", "")), route):
-            return f"the After capture {peer['image']} is of the page {peer.get('route') or 'unknown'}, but the plan's Surface names {route}; capture the changed screen"
-        if peer.get("commit") != head or peer.get("dirty"):
-            return f"the After capture {peer['image']} was not taken at the head ({head[:12]}) from a clean tree; commit, then capture again"
-        if peer.get("findings"):
-            rules = sorted(
-                {
-                    str(item.get("rule"))
-                    for item in cast(list[dict[str, object]], peer["findings"])
-                }
+        entry = by_image.get(f"{stem}-{width}.png")
+        if entry is None:
+            return (
+                f"the After capture {stem} has no measured record at {width} px; capture it at every width",
+                set(),
             )
-            return f"the measured capture {peer['image']} has findings ({', '.join(rules)}); fix the screen and capture it again"
-    return None
+        path, peer = entry
+        if route and not on_route(str(peer.get("route", "")), route):
+            return (
+                f"the After capture {peer['image']} is of the page {peer.get('route') or 'unknown'}, but the plan's Surface names {route}; capture the changed screen",
+                set(),
+            )
+        if peer.get("commit") != head or (not allow_dirty and peer.get("dirty")):
+            return (
+                f"the After capture {peer['image']} was not taken at the head ({head[:12]}) from a clean tree; commit, then capture again",
+                set(),
+            )
+        if allow_dirty and min_mtime_ns and path.stat().st_mtime_ns < min_mtime_ns:
+            return (
+                f"the measured capture {peer['image']} predates the latest UI edit; run `browser capture` again",
+                set(),
+            )
+        if peer.get("findings"):
+            return (
+                f"the measured capture {peer['image']} has findings ({_finding_rules(peer)}); fix the screen and capture it again",
+                set(),
+            )
+        hashes.add(str(peer["sha256"]))
+    return None, hashes
 
 
 def measured_problem(
     root: Path, head: str, after: list[bytes], route: str = ""
 ) -> str | None:
     """Each After image is a measured capture of the head from a clean tree with no finding, and its name has a record at every width; of several sets with the same image, those taken at the head all count."""
-    records = browser_records(root)
+    items = browser_record_files(root)
+    records = [record for _, record in items]
+    by_image = {str(record["image"]): (path, record) for path, record in items}
     for data in after:
         digest = sha256(data)
         stems = list(
@@ -300,30 +389,98 @@ def measured_problem(
             )
         ]
         for stem in current or stems:
-            if problem := _set_problem(records, stem, head, route):
+            problem, _ = capture_set_problem(by_image, stem, head, route)
+            if problem:
                 return problem
     return None
 
 
-def look_record_problem(
-    record: dict[str, object], head: str, body: str, after: list[bytes]
-) -> str | None:
-    """Why one look record does not back the PR: not clean, lacking an After image or a rule line, or not the block in the body."""
-    import look
-    from plans import split_rule_line, usability_rules
+def _committed_plan_digest(root: Path, head: str, plan: Path | None) -> tuple[str, str]:
+    from look import committed_plan_blob
 
+    if plan is None or not plan.is_file():
+        return "", ""
+    try:
+        rel = plan.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return "", ""
+    committed = committed_plan_blob(root, head, rel)
+    return (rel, sha256(committed)) if committed is not None else (rel, "")
+
+
+def _plan_mismatch(
+    record: dict[str, object], plan_rel: str, plan_digest: str
+) -> str | None:
+    recorded_plan = record.get("plan")
+    if recorded_plan is None:
+        return None
+    valid = (
+        isinstance(recorded_plan, str)
+        and bool(recorded_plan)
+        and bool(plan_digest)
+        and recorded_plan == plan_rel
+        and record.get("plan_sha256") == plan_digest
+    )
+    if valid:
+        return None
+    return (
+        "Look review: the record used a different or uncommitted plan "
+        f"({recorded_plan}); run `look` with this PR's committed plan"
+    )
+
+
+def _look_rules_problem(
+    record: dict[str, object], wanted: list[str], *, require_design: bool = False
+) -> str | None:
+    from plans import split_rule_line
+
+    lines = cast(list[str], record.get("rules", []))
+    parsed = [split_rule_line(line) for line in lines]
+    if [item[0] for item in parsed] != wanted or any(
+        item[1] == "Fail" for item in parsed
+    ):
+        return "Look review: the record lacks a line for each Usability rule or holds a Fail; run `look` again"
+    if require_design and any(
+        item[0] == "Design system" and item[1] == "N/A" for item in parsed
+    ):
+        return "Look review: Design system cannot be N/A when DESIGN.md is present; run `look` again"
+    return None
+
+
+def look_base_problem(
+    record: dict[str, object], head: str, expected_design: str, wanted: list[str]
+) -> str | None:
     if record.get("outcome") != "clean":
         return f"Look review: the record for {head[:12]} is {record.get('outcome')}; fix the screen and run `look` again"
+    if expected_design and record.get("design_doc") != expected_design:
+        return "Look review: the record did not judge against the current DESIGN.md; run `look` again"
+    return _look_rules_problem(record, wanted, require_design=bool(expected_design))
+
+
+def look_record_problem(
+    record: dict[str, object],
+    head: str,
+    body: str,
+    after: list[bytes],
+    root: Path | None = None,
+    plan_rel: str = "",
+    plan_digest: str = "",
+) -> str | None:
+    """Why one look record does not back the PR: not clean, stale design doc, mismatched plan, lacking an After image or a rule line, or not the block in the body."""
+    import look
+    from plans import usability_rules
+
+    if problem := _plan_mismatch(record, plan_rel, plan_digest):
+        return problem
+    expected = look.design_hash(root) if root is not None else ""
+    if problem := look_base_problem(
+        record, head, expected, [name for name, _ in usability_rules()]
+    ):
+        return problem
     images = cast(list[dict[str, object]], record.get("images", []))
     hashes = {item["sha256"] for item in images}
     if missing := [d for d in map(sha256, after) if d not in hashes]:
         return f"Look review: the record does not cover the After image {missing[0][:12]}; run `look` on the After images"
-    wanted = [name for name, _ in usability_rules()]
-    lines = cast(list[str], record.get("rules", []))
-    if [split_rule_line(line)[0] for line in lines] != wanted or any(
-        split_rule_line(line)[1] == "Fail" for line in lines
-    ):
-        return "Look review: the record lacks a line for each Usability rule or holds a Fail; run `look` again"
     if problem := look.block_problem(body, len(after)):
         return f"Look review: {problem}"
     if look.block_text(record) not in body.replace("\r\n", "\n"):
@@ -331,14 +488,24 @@ def look_record_problem(
     return None
 
 
-def look_problem(root: Path, head: str, body: str, after: list[bytes]) -> str | None:
+def look_problem(
+    root: Path,
+    head: str,
+    body: str,
+    after: list[bytes],
+    plan_rel: str = "",
+    plan_digest: str = "",
+) -> str | None:
     """A clean look record for this head that covers each After image, and a PR block that matches it."""
     import look
 
     records = look.records_for(root, head)
     if not records:
         return f"Look review: no record for {head[:12]}; run `python3 .hooks/hard-eng.py look <After images>` and paste its block into the PR body"
-    problems = [look_record_problem(r, head, body, after) for r in records]
+    problems = [
+        look_record_problem(r, head, body, after, root, plan_rel, plan_digest)
+        for r in records
+    ]
     return None if None in problems else problems[0]
 
 
@@ -359,12 +526,14 @@ def evidence_problem(
     after: list[bytes],
     visible: list[str],
     route: str = "",
+    plan_rel: str = "",
+    plan_digest: str = "",
 ) -> str | None:
     if not is_native(visible) and (
         problem := measured_problem(root, head, after, route)
     ):
         return problem
-    return look_problem(root, head, body, after)
+    return look_problem(root, head, body, after, plan_rel, plan_digest)
 
 
 def ship_problem(
@@ -377,6 +546,9 @@ def ship_problem(
     after_urls: list[str],
     base_ref: str,
     videos: int = 0,
+    base_sha: str | None = None,
+    plan_rel: str = "",
+    plan_digest: str = "",
 ) -> str | None:
     """What the PR lacks of screen evidence for its visible changes; None when the checks pass."""
     from gate_config import generated_sources
@@ -398,7 +570,10 @@ def ship_problem(
         return problem
     if visible and UNCHANGED_LINE.match(reference_section(plan_text)):
         return unchanged_problem(
-            root, reference_section(plan_text), head, merge_base(root, base_ref)
+            root,
+            reference_section(plan_text),
+            head,
+            merge_base(root, base_ref, head=head, base_sha=base_sha),
         )
     if problem := guideline_problem(
         root, [name for name in visible if (root / name).is_file()]
@@ -409,7 +584,18 @@ def ship_problem(
     after = [download(root, url) for url in after_urls]
     if not after:
         return None
-    return evidence_problem(root, head, body, after, visible, surface_route(plan_text))
+    pr_files = {str(item["filename"]) for item in files}
+    verified_digest = plan_digest if plan_rel and plan_rel in pr_files else ""
+    return evidence_problem(
+        root,
+        head,
+        body,
+        after,
+        visible,
+        surface_route(plan_text),
+        plan_rel,
+        verified_digest,
+    )
 
 
 def changed_files(
@@ -531,6 +717,7 @@ def ui_evidence(
     after = [url for url in final if kinds[url].startswith("image/")]
     videos = sum(kinds[url].startswith("video/") for url in final)
     plan_text = plan.read_text() if plan is not None and plan.is_file() else ""
+    plan_rel, plan_digest = _committed_plan_digest(root, pull.head_sha, plan)
     problem = ship_problem(
         root,
         pull.head_sha,
@@ -541,6 +728,9 @@ def ui_evidence(
         after,
         pull.base_ref,
         videos,
+        base_sha=getattr(pull, "base_sha", None),
+        plan_rel=plan_rel,
+        plan_digest=plan_digest,
     )
     if problem:
         raise ValueError(f"UI evidence: {problem}")
