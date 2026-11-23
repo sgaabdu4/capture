@@ -8,6 +8,7 @@ abstract final class Palette {
   static const selected = Color(0xFFEDEAE4);
   static const card = Color(0xFFFDFBF7);
   static const line = Color(0xFFE9E4DA);
+  static const fieldEdge = Color(0xFF8A857C);
   static const ink = Color(0xFF1A1916);
   static const muted = Color(0xFF6E6A63);
   static const faint = Color(0xFFA59F96);

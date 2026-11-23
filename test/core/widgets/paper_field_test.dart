@@ -1,4 +1,5 @@
 import 'package:capture/core/theme/app_theme.dart';
+import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -40,5 +41,14 @@ void main() {
     );
 
     expect(tester.widget<TextField>(find.byType(TextField)).decoration, isNotNull);
+  });
+
+  test('the field border has at least 3 to 1 contrast against the field fill', () {
+    final border = buildAppTheme().inputDecorationTheme.enabledBorder;
+    final edge = border is OutlineInputBorder ? border.borderSide.color : Palette.transparent;
+    final (:light, :dark) = (light: edge.computeLuminance(), dark: Palette.card.computeLuminance());
+    final ratio = (dark + 0.05) / (light + 0.05);
+
+    expect(ratio, greaterThanOrEqualTo(3));
   });
 }

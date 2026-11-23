@@ -5,6 +5,7 @@ colors:
   selected: "#edeae4"
   card: "#fdfbf7"
   line: "#e9e4da"
+  fieldEdge: "#8a857c"
   ink: "#1a1916"
   muted: "#6e6a63"
   faint: "#a59f96"
@@ -116,6 +117,7 @@ sizes:
   micShadowBlur: 24px
   badge: 44px
   tapTarget: 48px
+  fieldsWidth: 560px
   micRaysExtent: 150px
   groupMenuWidth: 170px
   micDiameter: 200px
@@ -169,7 +171,7 @@ Principles: notebook-like and personal, calm, truthful states, no decorative fea
 
 ## Colors
 
-Warm paper palette: light cream background (`paper`, `sidebar`, `card`), dark ink text (`ink`, `muted`, `faint`), thin warm separators (`line`), restrained shadows (`shadow`, `micShadow`), and muted semantic accents (`ok`, `warn`, `error`, `flag`). The recording pill and review card use dark charcoal surfaces (`charcoal`, `charcoalRow`, `charcoalButton`) with cream text and controls (`cream`, `creamMuted`). No coloured category dots, bright gradients or new brand colours.
+Warm paper palette: light cream background (`paper`, `sidebar`, `card`), dark ink text (`ink`, `muted`, `faint`), thin warm separators (`line`), the input outline (`fieldEdge`, 3 to 1 against the field fill), restrained shadows (`shadow`, `micShadow`), and muted semantic accents (`ok`, `warn`, `error`, `flag`). The recording pill and review card use dark charcoal surfaces (`charcoal`, `charcoalRow`, `charcoalButton`) with cream text and controls (`cream`, `creamMuted`). No coloured category dots, bright gradients or new brand colours.
 
 ## Typography
 
