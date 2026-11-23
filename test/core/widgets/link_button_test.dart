@@ -5,6 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+Color? _labelColor(WidgetTester tester, String label) =>
+    tester.widget<Text>(find.text(label)).style?.color;
+
 void main() {
   testWidgets('a link button on the Mac has a 48 point tap target', (tester) async {
     debugDefaultTargetPlatformOverride = .macOS;
@@ -38,9 +41,8 @@ void main() {
       ),
     );
 
-    Color? colorOf(String label) => tester.widget<Text>(find.text(label)).style?.color;
-    expect(colorOf('Delete'), Palette.error);
-    expect(colorOf('Cancel'), isNot(Palette.error));
+    expect(_labelColor(tester, 'Delete'), Palette.error);
+    expect(_labelColor(tester, 'Cancel'), isNot(Palette.error));
   });
 
   testWidgets('a flush link button starts its text at the left edge of its slot', (tester) async {
