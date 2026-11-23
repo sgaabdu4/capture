@@ -17,6 +17,7 @@ abstract final class Palette {
   static const warn = Color(0xFFC98A2B);
   static const error = Color(0xFFB4533C);
   static const cream = Color(0xFFFBF5ED);
+  static const scrim = Color(0x8A000000);
 
   // The recording pill and review card (`Overlay.swift`).
   static const charcoal = Color(0xFF403B36);

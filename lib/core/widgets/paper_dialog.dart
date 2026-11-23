@@ -1,4 +1,5 @@
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/theme/sizes.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Paper-styled modal dialog with a handwritten title.
@@ -10,6 +11,7 @@ class PaperDialog extends StatelessWidget {
     this.actions = const [],
     this.scrollable = false,
     this.insetPadding,
+    this.width = Sizes.dialogWidth,
   });
 
   final String title;
@@ -18,12 +20,18 @@ class PaperDialog extends StatelessWidget {
   final bool scrollable;
   final EdgeInsets? insetPadding;
 
+  /// The widest the content may be.
+  final double width;
+
   @override
   Widget build(BuildContext context) => AlertDialog(
     scrollable: scrollable,
     insetPadding: insetPadding,
     title: Text(title, style: context.textTheme.titleMedium),
-    content: content,
+    content: ConstrainedBox(
+      constraints: .new(maxWidth: width),
+      child: content,
+    ),
     actions: actions.isEmpty ? null : actions,
   );
 }

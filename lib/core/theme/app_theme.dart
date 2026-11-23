@@ -104,6 +104,7 @@ ThemeData buildAppTheme() => .new(
   ),
   dialogTheme: const .new(
     backgroundColor: Palette.paper,
+    barrierColor: Palette.scrim,
     shape: RoundedRectangleBorder(borderRadius: Radii.rounded16),
   ),
   snackBarTheme: .new(
