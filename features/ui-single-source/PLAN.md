@@ -90,7 +90,7 @@ Rules:
 ## Verification
 
 Result: Passed
-Evidence: 2026-11-23. `dart analyze --fatal-infos .` (`flutter_skill_lints: ^0.16.0`) → 0 issues; `dart format --output=none --set-exit-if-changed .` → 0 changes; `b5` `ui_whole.ui_findings_whole` with Hard Eng develop (`["lib/core/widgets/**"]`) → `B5_UI_HITS: 0`; `flutter test --no-pub` → 342/342 passed. The two `check` runs, `look` and `challenge` results are in the PR body.
+Evidence: 2026-11-23. `dart analyze --fatal-infos .` (`flutter_skill_lints: ^0.16.0`) → 0 issues; `dart format --output=none --set-exit-if-changed .` → 0 changes; `b5` `ui_whole.ui_findings_whole` with Hard Eng develop (`["lib/core/widgets/**"]`) → `B5_UI_HITS: 0`; `flutter test --no-pub` → 343/343 passed. The two `check` runs, `look` and `challenge` results are in the PR body.
 E2E: Passed — full Flutter widget journeys (`test/app/capture_app_test.dart`, `test/app/settings_flow_test.dart`, `test/app/responsive_layout_test.dart`) and the guideline tests pass.
 Real service: N/A — pure UI single-source refactor; no Notion, Jev, or external API code changed.
 Retro: The new guideline tests caught a 31 pt field and a 37 pt sidebar chip, and a full `flutter test` run caught that merged semantics on the reminder switch row failed `test/app/responsive_layout_test.dart`; the switch now carries its own label and the duplicate text is hidden from screen readers. Running `challenge` caught missing `Complete` plan fields, an untested Clear search `IconAction` state, `Review declined:` single-line syntax, and `Controls:` wording; next time check plan validation via `--quick` before the first commit, keep `DESIGN.md` strictly factual, and format every declined finding as `Review declined: finding :: reason`.
