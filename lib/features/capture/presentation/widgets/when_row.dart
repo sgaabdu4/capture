@@ -93,10 +93,11 @@ class WhenRow extends StatelessWidget {
         if (due case final DueDate d)
           Row(
             mainAxisSize: .min,
+            spacing: Spacing.xs,
             children: [
               PaperSwitch(
                 key: const ValueKey(AppWidgetKeys.whenReminderSwitch),
-                padding: const EdgeInsetsDirectional.only(end: Spacing.xs),
+                padding: .zero,
                 semanticLabel: reminderLabel,
                 value: hasReminder,
                 onChanged: enabled && d.hasTime ? onReminder : null,

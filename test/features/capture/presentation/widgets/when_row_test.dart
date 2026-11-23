@@ -12,6 +12,8 @@ import '../../../../helpers/test_fakes.dart';
 
 void _noop() {}
 
+const _trackWidth = 52.0;
+
 void main() {
   setUpAll(loadAppFonts);
 
@@ -52,7 +54,10 @@ void main() {
         .getTopLeft(find.byKey(const ValueKey(AppWidgetKeys.whenClearButton)))
         .dx;
 
+    final switchWidth = tester.getSize(find.byType(Switch)).width;
+
     expect(switchLeft, iconLeft);
+    expect(switchWidth, lessThanOrEqualTo(_trackWidth));
     expect(clearLeft - timeRight, lessThanOrEqualTo(Spacing.md));
   });
 }
