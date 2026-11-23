@@ -26,4 +26,27 @@ void main() {
 
     expect(find.text('20 minutes ago · 0:14'), findsOneWidget);
   });
+
+  testWidgets('the dialog is only as tall as its text and buttons', (tester) async {
+    tester.view.physicalSize = const Size(1280, 860);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Center(
+          child: DeleteCaptureDialog(
+            saved: true,
+            detail: '20 minutes ago · 0:14',
+            onCancel: _noop,
+            onDelete: _noop,
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(AlertDialog)).height, lessThan(300));
+  });
 }
