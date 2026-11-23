@@ -24,6 +24,9 @@ class GroupCard extends StatelessWidget {
   /// How many filed entries the expanded card lists.
   static const _maxItems = 20;
 
+  /// The description shows this many lines; tapping it opens the full text in the edit dialog.
+  static const _descriptionLines = 2;
+
   final Group group;
 
   /// Library entries filed in [group].
@@ -72,7 +75,16 @@ class GroupCard extends StatelessWidget {
             ],
           ),
           if (group.description case final String description)
-            Text(description, style: labelMedium),
+            GestureDetector(
+              excludeFromSemantics: true,
+              onTap: busy ? null : onEdit,
+              child: Text(
+                description,
+                style: labelMedium,
+                maxLines: _descriptionLines,
+                overflow: .ellipsis,
+              ),
+            ),
         ],
       ),
       children: [

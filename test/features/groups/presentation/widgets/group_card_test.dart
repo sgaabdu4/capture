@@ -45,13 +45,14 @@ void main() {
     expect(edit.right, lessThan(description.left + 400));
   });
 
-  testWidgets('large text keeps every action on screen above a long description shown whole', (
+  testWidgets('large text keeps every action on screen above a long description cut to two lines', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(320, 844);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final longDescription = List.filled(40, 'Anything about the long work week.').join(' ');
+    int edits = 0;
     await tester.pumpWidget(
       MaterialApp(
         builder: (context, child) => MediaQuery(
@@ -67,7 +68,7 @@ void main() {
               group: sampleGroups.first.copyWith(description: longDescription),
               items: sampleEntries,
               busy: false,
-              onEdit: () {},
+              onEdit: () => edits++,
               onOpenEntry: (_) {},
               onArchive: () {},
             ),
@@ -82,6 +83,10 @@ void main() {
     expect(archive.bottom, lessThan(tester.view.physicalSize.height));
     final description = tester.getRect(find.text(longDescription));
     expect(description.top, greaterThanOrEqualTo(archive.bottom));
-    expect(find.text(longDescription), findsOneWidget);
+    final shown = tester.widget<Text>(find.text(longDescription));
+    expect(shown.maxLines, 2);
+    expect(shown.overflow, TextOverflow.ellipsis);
+    await tester.tap(find.text(longDescription));
+    expect(edits, 1);
   });
 }
