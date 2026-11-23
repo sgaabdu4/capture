@@ -74,6 +74,7 @@ class _TypesafeStepScreenState extends ConsumerState<TypesafeStepScreen> {
                     controller: _key,
                     obscureText: true,
                     decoration: .new(
+                      hintMaxLines: 2,
                       hintText: has ? l10n.typesafeHintReplace : l10n.typesafeHintNew,
                       errorText: _missing ? l10n.typesafeKeyMissing : widget.error,
                     ),
