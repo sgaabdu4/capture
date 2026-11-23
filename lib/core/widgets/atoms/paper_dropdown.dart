@@ -1,4 +1,5 @@
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/theme/palette.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Single-select dropdown field styled by the app theme.
@@ -29,6 +30,8 @@ class PaperDropdown<T extends Object> extends StatelessWidget {
       initialValue: value,
       hint: Text(hint, style: textTheme.labelMedium),
       isExpanded: true,
+      iconEnabledColor: Palette.muted,
+      iconDisabledColor: Palette.faint,
       style: textTheme.bodyMedium,
       items: [
         for (final (:value, :label) in items)
