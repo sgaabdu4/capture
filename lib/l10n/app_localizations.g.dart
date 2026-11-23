@@ -810,7 +810,7 @@ abstract class AppLocalizations {
   /// No description provided for @modelReady.
   ///
   /// In en, this message translates to:
-  /// **'Parakeet is on this Mac. Recordings are transcribed locally.'**
+  /// **'Parakeet transcribes on this Mac.'**
   String get modelReady;
 
   /// No description provided for @modelNeeded.
@@ -930,7 +930,7 @@ abstract class AppLocalizations {
   /// No description provided for @notionConnectedTo.
   ///
   /// In en, this message translates to:
-  /// **'Connected to {workspace}. Captures, Library and Groups live in the \"Capture\" page inside the page you chose.'**
+  /// **'Connected to {workspace}. Captures, Library and Groups live in its Capture page.'**
   String notionConnectedTo(String workspace);
 
   /// No description provided for @notionYourWorkspace.
@@ -1620,7 +1620,7 @@ abstract class AppLocalizations {
   /// No description provided for @phoneModelReady.
   ///
   /// In en, this message translates to:
-  /// **'Parakeet is on this iPhone. Recordings are transcribed locally.'**
+  /// **'Parakeet transcribes on this iPhone.'**
   String get phoneModelReady;
 
   /// No description provided for @phoneModelNeeded.

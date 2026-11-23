@@ -438,7 +438,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modelTitle => 'Speech model';
 
   @override
-  String get modelReady => 'Parakeet is on this Mac. Recordings are transcribed locally.';
+  String get modelReady => 'Parakeet transcribes on this Mac.';
 
   @override
   String modelNeeded(int megabytes) {
@@ -509,7 +509,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String notionConnectedTo(String workspace) {
-    return 'Connected to $workspace. Captures, Library and Groups live in the \"Capture\" page inside the page you chose.';
+    return 'Connected to $workspace. Captures, Library and Groups live in its Capture page.';
   }
 
   @override
@@ -885,7 +885,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneSetupSubtitle => 'Three things, once. Keys stay in your iPhone’s Keychain.';
 
   @override
-  String get phoneModelReady => 'Parakeet is on this iPhone. Recordings are transcribed locally.';
+  String get phoneModelReady => 'Parakeet transcribes on this iPhone.';
 
   @override
   String phoneModelNeeded(int megabytes) {

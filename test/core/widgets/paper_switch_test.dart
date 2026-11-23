@@ -1,4 +1,5 @@
 import 'package:capture/core/theme/app_theme.dart';
+import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/widgets/atoms/paper_switch.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -24,5 +25,14 @@ void main() {
     final (:track, :thumb) = (track: off.trackColor, thumb: off.thumbColor);
     expect(track?.resolve({}), isNot(track?.resolve(on)));
     expect(thumb?.resolve({}), isNot(thumb?.resolve(on)));
+  });
+
+  testWidgets('the outline of an off switch has 3 to 1 contrast against the card', (tester) async {
+    await _pump(tester, value: false);
+    final off = Theme.of(tester.element(find.byType(Switch))).switchTheme;
+
+    final edge = off.trackOutlineColor?.resolve({}) ?? Palette.transparent;
+    final ratio = (Palette.card.computeLuminance() + 0.05) / (edge.computeLuminance() + 0.05);
+    expect(ratio, greaterThanOrEqualTo(3));
   });
 }
