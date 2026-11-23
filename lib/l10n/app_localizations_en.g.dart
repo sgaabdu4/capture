@@ -584,9 +584,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shortcutTitle => 'Shortcut';
 
   @override
-  String shortcutActive(String shortcut) {
-    return 'Press $shortcut anywhere to start or stop.';
-  }
+  String get shortcutActive => 'Starts and stops a capture in any app.';
 
   @override
   String shortcutInactive(String shortcut) {

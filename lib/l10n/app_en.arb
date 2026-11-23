@@ -306,14 +306,7 @@
   "reconnect": "Reconnect",
   "disconnect": "Disconnect",
   "shortcutTitle": "Shortcut",
-  "shortcutActive": "Press {shortcut} anywhere to start or stop.",
-  "@shortcutActive": {
-    "placeholders": {
-      "shortcut": {
-        "type": "String"
-      }
-    }
-  },
+  "shortcutActive": "Starts and stops a capture in any app.",
   "shortcutInactive": "{shortcut} is taken by another app. Choose another.",
   "@shortcutInactive": {
     "placeholders": {

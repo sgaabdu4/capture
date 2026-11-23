@@ -53,7 +53,7 @@ void main() {
 
   for (final (:name, :detail) in [
     (name: 'microphone', detail: l10n.micGranted),
-    (name: 'shortcut', detail: l10n.shortcutActive('^⌥')),
+    (name: 'shortcut', detail: l10n.shortcutActive),
     (name: 'Notion', detail: l10n.notionConnectedTo('Workspace')),
   ]) {
     testWidgets('the $name line fits one line on a phone window', (tester) async {
