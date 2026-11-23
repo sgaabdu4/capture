@@ -120,4 +120,8 @@ extension CaptureMeta on CaptureRecord {
     capturedAtUtc.agoLabel(l10n, nowUtc),
     if (duration > Duration.zero) duration.clockLabel,
   ].join(l10n.detailSeparator);
+
+  /// "Saved to Notion · 20 minutes ago · 0:14"; names one capture among several.
+  String identity(AppLocalizations l10n, DateTime nowUtc) =>
+      [status.label(l10n), meta(l10n, nowUtc)].join(l10n.detailSeparator);
 }
