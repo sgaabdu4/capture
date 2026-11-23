@@ -18,7 +18,7 @@ abstract final class Sizes {
   static const double badge = 44;
 
   /// Smallest height and width of anything a person taps.
-  static const double tapTarget = 44;
+  static const double tapTarget = 48;
   static const double statusDot = 10;
   static const double progressBar = 6;
   static const double spinner = 18;

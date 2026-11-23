@@ -35,7 +35,7 @@ class PaperField extends StatelessWidget {
   Widget build(BuildContext context) {
     final field = TextField(
       controller: controller,
-      decoration: decoration,
+      decoration: decoration ?? const .new(),
       style: style,
       onChanged: onChanged,
       onSubmitted: onSubmitted,

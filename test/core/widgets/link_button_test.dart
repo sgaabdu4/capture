@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('a link button on the Mac has a 44 point tap target', (tester) async {
+  testWidgets('a link button on the Mac has a 48 point tap target', (tester) async {
     debugDefaultTargetPlatformOverride = .macOS;
     addTearDown(() => debugDefaultTargetPlatformOverride = null);
     await tester.pumpWidget(
@@ -18,8 +18,8 @@ void main() {
     );
 
     final size = tester.getSize(find.byType(TextButton));
-    expect(size.height, greaterThanOrEqualTo(44));
-    expect(size.width, greaterThanOrEqualTo(44));
+    expect(size.height, greaterThanOrEqualTo(48));
+    expect(size.width, greaterThanOrEqualTo(48));
   });
 
   testWidgets('a flush link button starts its text at the left edge of its slot', (tester) async {
