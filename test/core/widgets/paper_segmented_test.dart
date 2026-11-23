@@ -63,6 +63,7 @@ void main() {
   testWidgets('the segmented control corners use the 12 point radius token, not a full pill', (
     tester,
   ) async {
+    final semantics = tester.ensureSemantics();
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(),
@@ -80,6 +81,11 @@ void main() {
         .style;
 
     expect(style?.shape?.resolve({}), const RoundedRectangleBorder(borderRadius: Radii.rounded12));
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
+    await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+    await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+    await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+    semantics.dispose();
   });
 
   testWidgets('the selected segment is drawn as tall as a tap target', (tester) async {
