@@ -457,7 +457,7 @@ void main() {
       tester,
       const SizedBox(
         height: 800,
-        child: AppSidebar(destinations: [], notionConnected: true, onHome: _noop, onNotion: _noop),
+        child: AppSidebar(destinations: [], notionConnected: true, onNotion: _noop),
       ),
     );
     await _pumpAndCheckGuidelines(

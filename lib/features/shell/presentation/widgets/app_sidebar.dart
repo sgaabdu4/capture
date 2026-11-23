@@ -2,7 +2,6 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
-import 'package:capture/core/widgets/atoms/tap_surface.dart';
 import 'package:capture/core/widgets/atoms/underlined.dart';
 import 'package:capture/features/shell/presentation/widgets/notion_chip.dart';
 import 'package:material_ui/material_ui.dart';
@@ -12,14 +11,12 @@ class AppSidebar extends StatelessWidget {
   const AppSidebar({
     required this.destinations,
     required this.notionConnected,
-    required this.onHome,
     required this.onNotion,
     super.key,
   });
 
   final List<Widget> destinations;
   final bool notionConnected;
-  final VoidCallback onHome;
   final VoidCallback onNotion;
 
   @override
@@ -32,13 +29,9 @@ class AppSidebar extends StatelessWidget {
       child: Column(
         crossAxisAlignment: .start,
         children: [
-          TapSurface(
-            key: const ValueKey(AppWidgetKeys.navHome),
-            onTap: onHome,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),
-              child: Underlined(l10n.appTitle, style: context.textTheme.headlineLarge),
-            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),
+            child: Underlined(l10n.appTitle, style: context.textTheme.headlineLarge),
           ),
           Padding(
             padding: const EdgeInsets.only(top: Spacing.xl),
