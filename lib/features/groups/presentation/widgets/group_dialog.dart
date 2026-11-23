@@ -36,7 +36,6 @@ class GroupDialog extends StatefulWidget {
 
 class _GroupDialogState extends State<GroupDialog> {
   static const _descriptionMinLines = 3;
-  static const _descriptionMaxLines = 5;
   static const _errorMaxLines = 2;
 
   final _name = TextEditingController();
@@ -102,7 +101,7 @@ class _GroupDialogState extends State<GroupDialog> {
               controller: _description,
               onChanged: _changed,
               minLines: _descriptionMinLines,
-              maxLines: _descriptionMaxLines,
+              maxLines: groupDescriptionLines,
               decoration: .new(
                 labelText: l10n.groupDescription,
                 errorText: problem?.label(l10n),
