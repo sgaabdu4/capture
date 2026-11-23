@@ -30,6 +30,9 @@ abstract final class Sizes {
   static const double guideWidth = 520;
   static const double guideHeight = 560;
   static const double setupMaxWidth = 760;
+
+  /// A field and its button, kept close so the button reads as part of the field.
+  static const double fieldsWidth = 560;
   static const double cardsMaxWidth = 1080;
   static const double hairline = 1;
   static const double outline = 1.4;

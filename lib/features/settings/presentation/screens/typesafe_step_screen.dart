@@ -1,5 +1,6 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
+import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/paper_field.dart';
@@ -62,31 +63,34 @@ class _TypesafeStepScreenState extends ConsumerState<TypesafeStepScreen> {
         ),
         Padding(
           padding: StepHeader.bodyInset,
-          child: Row(
-            spacing: Spacing.sm,
-            children: [
-              Expanded(
-                child: PaperField(
-                  key: const ValueKey(AppWidgetKeys.typesafeKeyField),
-                  controller: _key,
-                  obscureText: true,
-                  decoration: .new(
-                    hintText: has ? l10n.typesafeHintReplace : l10n.typesafeHintNew,
-                    errorText: _missing ? l10n.typesafeKeyMissing : widget.error,
+          child: ConstrainedBox(
+            constraints: const .new(maxWidth: Sizes.fieldsWidth),
+            child: Row(
+              spacing: Spacing.sm,
+              children: [
+                Expanded(
+                  child: PaperField(
+                    key: const ValueKey(AppWidgetKeys.typesafeKeyField),
+                    controller: _key,
+                    obscureText: true,
+                    decoration: .new(
+                      hintText: has ? l10n.typesafeHintReplace : l10n.typesafeHintNew,
+                      errorText: _missing ? l10n.typesafeKeyMissing : widget.error,
+                    ),
+                    onSubmitted: (_) => _onSave(),
                   ),
-                  onSubmitted: (_) => _onSave(),
                 ),
-              ),
-              ListenableBuilder(
-                listenable: _key,
-                builder: (context, _) => InkButton(
-                  has ? l10n.replace : l10n.save,
-                  key: const ValueKey(AppWidgetKeys.typesafeSaveButton),
-                  onPressed: _key.text.trim().isEmpty ? null : _onSave,
-                  busy: widget.saving,
+                ListenableBuilder(
+                  listenable: _key,
+                  builder: (context, _) => InkButton(
+                    has ? l10n.replace : l10n.save,
+                    key: const ValueKey(AppWidgetKeys.typesafeSaveButton),
+                    onPressed: _key.text.trim().isEmpty ? null : _onSave,
+                    busy: widget.saving,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
