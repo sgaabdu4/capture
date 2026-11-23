@@ -109,4 +109,40 @@ void main() {
     final meta = tester.getTopLeft(find.text('20 minutes ago · 0:14'));
     expect(meta.dy, closeTo(status.dy, 6));
   });
+
+  testWidgets('a dismissed capture keeps both actions inside the card at 250 percent text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(375, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: const .linear(2.5)),
+          child: child ?? const SizedBox.shrink(),
+        ),
+        home: Scaffold(
+          body: CaptureCard(
+            record: sampleSavedCapture.copyWith(stage: .dismissed),
+            nowUtc: FakeSystem.now,
+            busy: false,
+            idle: true,
+            onRetry: _noop,
+            onReview: _noop,
+            onRetrySave: _noop,
+            onReviewAgain: _noop,
+            onDelete: _noop,
+          ),
+        ),
+      ),
+    );
+
+    final card = tester.getRect(find.byType(CaptureCard));
+    final delete = tester.getRect(find.text('Delete'));
+    expect(delete.right, lessThanOrEqualTo(card.right));
+  });
 }

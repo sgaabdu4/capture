@@ -50,9 +50,10 @@ class CaptureActions extends StatelessWidget {
       .dismissed => InkButton(l10n.reviewAgain, onPressed: onReviewAgain),
       .saved => null,
     };
-    return Row(
-      mainAxisSize: .min,
+    return Wrap(
+      crossAxisAlignment: .center,
       spacing: Spacing.xs,
+      runSpacing: Spacing.xs,
       children: [
         ?primary,
         if (stage != .approved)
