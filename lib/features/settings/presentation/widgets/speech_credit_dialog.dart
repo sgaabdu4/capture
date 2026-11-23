@@ -13,7 +13,7 @@ class SpeechCreditDialog extends StatelessWidget {
     return PaperDialog(
       title: l10n.speechCreditLink,
       content: Text(l10n.modelAttribution, style: context.textTheme.bodyMedium),
-      actions: [LinkButton(l10n.close, onPressed: () => Navigator.of(context).pop())],
+      actions: [LinkButton(l10n.close, flush: true, onPressed: () => Navigator.of(context).pop())],
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:capture/core/theme/app_theme.dart';
 import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/theme/sizes.dart';
+import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/paper_dialog.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -28,6 +29,23 @@ void main() {
 
     final panel = find.descendant(of: find.byType(Dialog), matching: find.byType(Material));
     expect(tester.getSize(panel).width, lessThanOrEqualTo(Sizes.dialogWidth));
+  });
+
+  testWidgets('on a phone the dialog keeps the same side gap as the other dialogs', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: const Center(
+          child: PaperDialog(title: 'Title', content: Text(_body)),
+        ),
+      ),
+    );
+
+    final panel = find.descendant(of: find.byType(Dialog), matching: find.byType(Material));
+    expect(tester.getTopLeft(panel).dx, Spacing.md);
   });
 
   test('the dialog backdrop is a palette colour', () {

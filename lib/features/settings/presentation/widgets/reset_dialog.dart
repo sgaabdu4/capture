@@ -19,7 +19,7 @@ class ResetDialog extends StatelessWidget {
       title: l10n.resetConfirmTitle,
       content: Text(l10n.resetConfirmBody, style: context.textTheme.bodyMedium),
       actions: [
-        LinkButton(l10n.cancel, onPressed: onCancel),
+        LinkButton(l10n.cancel, flush: true, onPressed: onCancel),
         InkButton(
           l10n.reset,
           key: const ValueKey(AppWidgetKeys.resetConfirmButton),
