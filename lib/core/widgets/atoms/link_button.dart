@@ -22,6 +22,7 @@ class LinkButton extends StatelessWidget {
       tapTargetSize: .padded,
       visualDensity: .standard,
       padding: flush ? const .symmetric(vertical: Spacing.xxs) : null,
+      alignment: flush ? AlignmentDirectional.centerStart : null,
     ),
     child: Row(
       mainAxisSize: .min,

@@ -28,4 +28,17 @@ void main() {
     expect(tester.getSemantics(find.byType(TextField)).label, contains('Title'));
     semantics.dispose();
   });
+
+  testWidgets('a field without a decoration still draws the themed border', (tester) async {
+    final controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Material(child: PaperField(controller: controller)),
+      ),
+    );
+
+    expect(tester.widget<TextField>(find.byType(TextField)).decoration, isNotNull);
+  });
 }
