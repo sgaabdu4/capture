@@ -14,6 +14,7 @@ colors:
   warn: "#c98a2b"
   error: "#b4533c"
   cream: "#fbf5ed"
+  scrim: "#0000008a"
   charcoal: "#403b36"
   charcoalRow: "#4a443e"
   charcoalButton: "#524c45"
