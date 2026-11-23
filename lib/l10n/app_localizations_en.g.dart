@@ -18,9 +18,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tagline => 'Say anything. We’ll sort it.';
 
   @override
-  String get sidebarMotto => 'A calmer mind\ngets more done.';
-
-  @override
   String get navGroups => 'Groups';
 
   @override

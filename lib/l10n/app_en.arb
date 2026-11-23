@@ -7,10 +7,6 @@
   "@tagline": {
     "description": "Hero tagline under the wordmark on Home"
   },
-  "sidebarMotto": "A calmer mind\ngets more done.",
-  "@sidebarMotto": {
-    "description": "Handwritten note at the bottom of the sidebar"
-  },
   "navGroups": "Groups",
   "navRecordings": "Recordings",
   "navTodo": "To-Do",

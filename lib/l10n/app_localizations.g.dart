@@ -105,12 +105,6 @@ abstract class AppLocalizations {
   /// **'Say anything. We’ll sort it.'**
   String get tagline;
 
-  /// Handwritten note at the bottom of the sidebar
-  ///
-  /// In en, this message translates to:
-  /// **'A calmer mind\ngets more done.'**
-  String get sidebarMotto;
-
   /// No description provided for @navGroups.
   ///
   /// In en, this message translates to:
