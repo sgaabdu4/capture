@@ -150,7 +150,7 @@ SwitchThemeData _switchTheme() => .new(
     (s) => s.contains(WidgetState.selected) ? Palette.ink : Palette.selected,
   ),
   trackOutlineColor: .resolveWith(
-    (s) => s.contains(WidgetState.selected) ? Palette.transparent : Palette.faint,
+    (s) => s.contains(WidgetState.selected) ? Palette.transparent : Palette.fieldEdge,
   ),
 );
 

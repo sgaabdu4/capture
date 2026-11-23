@@ -227,7 +227,7 @@
   "setupTitle": "Before your first capture",
   "setupSubtitle": "Three things, once. Keys stay in your Mac’s Keychain.",
   "modelTitle": "Speech model",
-  "modelReady": "Parakeet is on this Mac. Recordings are transcribed locally.",
+  "modelReady": "Parakeet transcribes on this Mac.",
   "modelNeeded": "Download Parakeet ({megabytes} MB) to transcribe on this Mac.",
   "@modelNeeded": {
     "placeholders": {
@@ -271,7 +271,7 @@
   "save": "Save",
   "replace": "Replace",
   "notionTitle": "Notion",
-  "notionConnectedTo": "Connected to {workspace}. Captures, Library and Groups live in the \"Capture\" page inside the page you chose.",
+  "notionConnectedTo": "Connected to {workspace}. Captures, Library and Groups live in its Capture page.",
   "@notionConnectedTo": {
     "placeholders": {
       "workspace": {
@@ -436,7 +436,7 @@
   "phoneNoticeMicDenied": "Capture needs microphone access. Allow it in Settings → Privacy & Security → Microphone.",
   "phoneFailureAudioMissing": "The compressed recording is missing on this iPhone.",
   "phoneSetupSubtitle": "Three things, once. Keys stay in your iPhone’s Keychain.",
-  "phoneModelReady": "Parakeet is on this iPhone. Recordings are transcribed locally.",
+  "phoneModelReady": "Parakeet transcribes on this iPhone.",
   "phoneModelNeeded": "Download Parakeet ({megabytes} MB) to transcribe on this iPhone.",
   "@phoneModelNeeded": {
     "placeholders": {
