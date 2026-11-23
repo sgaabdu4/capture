@@ -14,6 +14,11 @@ class LinkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => TextButton(
     onPressed: onPressed,
+    style: TextButton.styleFrom(
+      minimumSize: const .square(Sizes.tapTarget),
+      tapTargetSize: .padded,
+      visualDensity: .standard,
+    ),
     child: Row(
       mainAxisSize: .min,
       children: [
