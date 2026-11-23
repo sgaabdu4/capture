@@ -79,6 +79,8 @@ ThemeData buildAppTheme() => .new(
       foregroundColor: Palette.ink,
       side: const .new(color: Palette.line),
       textStyle: _textTheme.labelMedium,
+      visualDensity: .standard,
+      tapTargetSize: .padded,
     ),
   ),
   chipTheme: .new(
