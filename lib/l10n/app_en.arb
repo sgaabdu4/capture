@@ -360,7 +360,7 @@
   "refresh": "Refresh",
   "syncRefreshing": "Refreshing from Notion…",
   "libraryRefreshFailed": "Could not refresh the library. Your previous entries are still available; try again.",
-  "syncNever": "From your last sync with Notion.",
+  "syncNever": "Not refreshed yet.",
   "syncedAgo": "Synced with Notion: {ago}.",
   "@syncedAgo": {
     "placeholders": {

@@ -1302,7 +1302,7 @@ abstract class AppLocalizations {
   /// No description provided for @syncNever.
   ///
   /// In en, this message translates to:
-  /// **'From your last sync with Notion.'**
+  /// **'Not refreshed yet.'**
   String get syncNever;
 
   /// No description provided for @syncedAgo.
