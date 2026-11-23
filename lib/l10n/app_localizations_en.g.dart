@@ -486,7 +486,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get typesafeTitle => 'TypeSafe API key';
 
   @override
-  String get typesafeSaved => 'Saved in Keychain. Only transcript text is sent to Jev to sort it.';
+  String get typesafeSaved => 'Saved in Keychain.';
 
   @override
   String get typesafeNeeded =>

@@ -13,7 +13,7 @@ const _body =
 void main() {
   setUpAll(loadAppFonts);
 
-  testWidgets('dialog text is no wider than the dialog token', (tester) async {
+  testWidgets('the dialog panel is no wider than the dialog token', (tester) async {
     tester.view.physicalSize = const Size(1240, 860);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -26,7 +26,8 @@ void main() {
       ),
     );
 
-    expect(tester.getSize(find.text(_body)).width, lessThanOrEqualTo(Sizes.dialogWidth));
+    final panel = find.descendant(of: find.byType(Dialog), matching: find.byType(Material));
+    expect(tester.getSize(panel).width, lessThanOrEqualTo(Sizes.dialogWidth));
   });
 
   test('the dialog backdrop is a palette colour', () {

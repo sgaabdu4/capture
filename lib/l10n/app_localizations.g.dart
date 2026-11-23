@@ -888,7 +888,7 @@ abstract class AppLocalizations {
   /// No description provided for @typesafeSaved.
   ///
   /// In en, this message translates to:
-  /// **'Saved in Keychain. Only transcript text is sent to Jev to sort it.'**
+  /// **'Saved in Keychain.'**
   String get typesafeSaved;
 
   /// No description provided for @typesafeNeeded.

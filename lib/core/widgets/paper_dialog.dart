@@ -20,7 +20,7 @@ class PaperDialog extends StatelessWidget {
   final bool scrollable;
   final EdgeInsets? insetPadding;
 
-  /// The widest the content may be.
+  /// The widest the whole panel may be.
   final double width;
 
   @override
@@ -28,10 +28,8 @@ class PaperDialog extends StatelessWidget {
     scrollable: scrollable,
     insetPadding: insetPadding,
     title: Text(title, style: context.textTheme.titleMedium),
-    content: ConstrainedBox(
-      constraints: .new(maxWidth: width),
-      child: content,
-    ),
+    constraints: .new(maxWidth: width),
+    content: content,
     actions: actions.isEmpty ? null : actions,
   );
 }

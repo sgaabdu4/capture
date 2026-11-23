@@ -29,7 +29,6 @@ class PageFrame extends StatelessWidget {
       final spare = (constraints.maxWidth - base.horizontal - Breakpoints.content) / 2;
       final header = [
         Wrap(
-          alignment: .spaceBetween,
           crossAxisAlignment: .end,
           spacing: Spacing.md,
           runSpacing: Spacing.sm,
