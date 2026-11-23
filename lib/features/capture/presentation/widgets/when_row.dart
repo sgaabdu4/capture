@@ -97,7 +97,6 @@ class WhenRow extends StatelessWidget {
             children: [
               PaperSwitch(
                 key: const ValueKey(AppWidgetKeys.whenReminderSwitch),
-                padding: .zero,
                 semanticLabel: reminderLabel,
                 value: hasReminder,
                 onChanged: enabled && d.hasTime ? onReminder : null,

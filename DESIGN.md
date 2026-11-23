@@ -117,6 +117,7 @@ sizes:
   micShadowBlur: 24px
   badge: 44px
   tapTarget: 48px
+  switchTrack: 52px
   fieldsWidth: 560px
   micRaysExtent: 150px
   groupMenuWidth: 170px
