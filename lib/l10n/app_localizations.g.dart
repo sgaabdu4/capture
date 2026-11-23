@@ -1248,13 +1248,13 @@ abstract class AppLocalizations {
   /// No description provided for @deleteSavedBody.
   ///
   /// In en, this message translates to:
-  /// **'The audio and transcript are removed from this Mac. The copy in Notion stays.'**
+  /// **'Only this Mac loses the audio and transcript. The copy in Notion stays.'**
   String get deleteSavedBody;
 
   /// No description provided for @deleteUnsavedBody.
   ///
   /// In en, this message translates to:
-  /// **'The audio and transcript are removed from this Mac. This can’t be undone.'**
+  /// **'This Mac loses the audio and transcript for good. This can’t be undone.'**
   String get deleteUnsavedBody;
 
   /// No description provided for @cancel.
@@ -1656,13 +1656,13 @@ abstract class AppLocalizations {
   /// No description provided for @phoneDeleteSavedBody.
   ///
   /// In en, this message translates to:
-  /// **'The audio and transcript are removed from this iPhone. The copy in Notion stays.'**
+  /// **'Only this iPhone loses the audio and transcript. The copy in Notion stays.'**
   String get phoneDeleteSavedBody;
 
   /// No description provided for @phoneDeleteUnsavedBody.
   ///
   /// In en, this message translates to:
-  /// **'The audio and transcript are removed from this iPhone. This can’t be undone.'**
+  /// **'This iPhone loses the audio and transcript for good. This can’t be undone.'**
   String get phoneDeleteUnsavedBody;
 
   /// No description provided for @reviewCardSubtitle.

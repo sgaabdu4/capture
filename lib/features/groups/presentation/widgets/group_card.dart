@@ -5,7 +5,6 @@ import 'package:capture/core/widgets/atoms/empty_note.dart';
 import 'package:capture/core/widgets/atoms/icon_action.dart';
 import 'package:capture/core/widgets/expandable_card.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
-import 'package:capture/features/groups/domain/group_rules.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -51,13 +50,6 @@ class GroupCard extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: .start,
         children: [
-          if (group.description case final String description)
-            Text(
-              description,
-              style: labelMedium,
-              maxLines: groupDescriptionLines,
-              overflow: .ellipsis,
-            ),
           Wrap(
             crossAxisAlignment: .center,
             spacing: Spacing.xs,
@@ -79,6 +71,8 @@ class GroupCard extends StatelessWidget {
                 ),
             ],
           ),
+          if (group.description case final String description)
+            Text(description, style: labelMedium),
         ],
       ),
       children: [

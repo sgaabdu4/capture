@@ -683,11 +683,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteSavedBody =>
-      'The audio and transcript are removed from this Mac. The copy in Notion stays.';
+      'Only this Mac loses the audio and transcript. The copy in Notion stays.';
 
   @override
   String get deleteUnsavedBody =>
-      'The audio and transcript are removed from this Mac. This can’t be undone.';
+      'This Mac loses the audio and transcript for good. This can’t be undone.';
 
   @override
   String get cancel => 'Cancel';
@@ -905,11 +905,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneDeleteSavedBody =>
-      'The audio and transcript are removed from this iPhone. The copy in Notion stays.';
+      'Only this iPhone loses the audio and transcript. The copy in Notion stays.';
 
   @override
   String get phoneDeleteUnsavedBody =>
-      'The audio and transcript are removed from this iPhone. This can’t be undone.';
+      'This iPhone loses the audio and transcript for good. This can’t be undone.';
 
   @override
   String get reviewCardSubtitle => 'Here’s what I understood';
