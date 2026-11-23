@@ -36,6 +36,7 @@ class EntryDialogActions extends StatelessWidget {
             InkButton(
               l10n.entryDeleteConfirm,
               key: const ValueKey(AppWidgetKeys.entryDeleteConfirmButton),
+              destructive: true,
               onPressed: onDelete,
             ),
           if (!confirmingDelete)
