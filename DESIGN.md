@@ -172,7 +172,7 @@ Principles: notebook-like and personal, calm, truthful states, no decorative fea
 
 ## Colors
 
-Warm paper palette: light cream background (`paper`, `sidebar`, `card`), dark ink text (`ink`, `muted`, `faint`), thin warm separators (`line`), the input outline (`fieldEdge`, 3 to 1 against the field fill), restrained shadows (`shadow`, `micShadow`), and muted semantic accents (`ok`, `warn`, `error`, `flag`). The recording pill and review card use dark charcoal surfaces (`charcoal`, `charcoalRow`, `charcoalButton`) with cream text and controls (`cream`, `creamMuted`). No coloured category dots, bright gradients or new brand colours.
+Warm paper palette: light cream background (`paper`, `sidebar`, `card`), dark ink text (`ink`, `muted`, `faint`), thin warm separators (`line`), the input and segmented control outline (`fieldEdge`, 3 to 1 against the field fill), restrained shadows (`shadow`, `micShadow`), and muted semantic accents (`ok`, `warn`, `error`, `flag`). The recording pill and review card use dark charcoal surfaces (`charcoal`, `charcoalRow`, `charcoalButton`) with cream text and controls (`cream`, `creamMuted`). No coloured category dots, bright gradients or new brand colours.
 
 ## Typography
 
