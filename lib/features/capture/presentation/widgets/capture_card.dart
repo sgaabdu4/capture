@@ -72,6 +72,7 @@ class CaptureCard extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: .start,
+              spacing: Spacing.sm,
               children: [
                 Wrap(
                   spacing: Spacing.sm,

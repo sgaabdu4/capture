@@ -1,5 +1,6 @@
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/app_theme.dart';
+import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/presentation/widgets/capture_card.dart';
@@ -144,5 +145,15 @@ void main() {
     final card = tester.getRect(find.byType(CaptureCard));
     final delete = tester.getRect(find.text('Delete'));
     expect(delete.right, lessThanOrEqualTo(card.right));
+  });
+
+  testWidgets('the actions keep a gap below the status line on a wide screen', (tester) async {
+    await _pump(tester);
+    tester.view.physicalSize = const Size(1240, 860);
+    await tester.pump();
+
+    final status = tester.getBottomLeft(find.byKey(const ValueKey(AppWidgetKeys.captureStatus)));
+    final review = tester.getTopLeft(find.byKey(const ValueKey(AppWidgetKeys.captureReviewButton)));
+    expect(review.dy - status.dy, greaterThanOrEqualTo(Spacing.sm));
   });
 }
