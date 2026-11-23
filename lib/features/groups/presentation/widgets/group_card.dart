@@ -1,8 +1,8 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/radii.dart';
-import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
+import 'package:capture/core/widgets/atoms/icon_action.dart';
 import 'package:capture/core/widgets/expandable_card.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
@@ -56,21 +56,17 @@ class GroupCard extends StatelessWidget {
         spacing: Spacing.xs,
         children: [
           Text(l10n.groupSavedCount(items.length), style: bodySmall),
-          IconButton(
-            tooltip: l10n.edit,
-            icon: const Icon(Icons.edit_outlined, size: IconSizes.s20),
-            onPressed: busy ? null : onEdit,
-          ),
+          IconAction(Icons.edit_outlined, tooltip: l10n.edit, onPressed: busy ? null : onEdit),
           if (onArchive case final VoidCallback archive)
-            IconButton(
+            IconAction(
+              Icons.archive_outlined,
               tooltip: l10n.archive,
-              icon: const Icon(Icons.archive_outlined, size: IconSizes.s20),
               onPressed: busy ? null : archive,
             ),
           if (onRestore case final VoidCallback restore)
-            IconButton(
+            IconAction(
+              Icons.unarchive_outlined,
               tooltip: l10n.restore,
-              icon: const Icon(Icons.unarchive_outlined, size: IconSizes.s20),
               onPressed: busy ? null : restore,
             ),
         ],

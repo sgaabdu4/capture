@@ -1,4 +1,4 @@
 abstract final class Fonts {
-  static const title = 'Caveat';
-  static const hand = 'Patrick Hand';
+  static const String titleFamily = 'Caveat';
+  static const String handFamily = 'Patrick Hand';
 }

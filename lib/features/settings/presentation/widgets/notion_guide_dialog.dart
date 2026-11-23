@@ -4,6 +4,7 @@ import 'package:capture/core/theme/radii.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
+import 'package:capture/core/widgets/paper_dialog.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Keep names and tokens masked in the setup screenshots.
@@ -26,8 +27,8 @@ class NotionGuideDialog extends StatelessWidget {
       l10n.notionGuideStep5,
       l10n.notionGuideStep6,
     ];
-    return AlertDialog(
-      title: Text(l10n.notionGuideTitle, style: textTheme.titleMedium),
+    return PaperDialog(
+      title: l10n.notionGuideTitle,
       content: SizedBox(
         width: Sizes.guideWidth,
         height: Sizes.guideHeight,

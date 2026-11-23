@@ -5,6 +5,8 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
+import 'package:capture/core/widgets/atoms/paper_field.dart';
+import 'package:capture/core/widgets/paper_dialog.dart';
 import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/capture/presentation/extensions/when_pickers.dart';
 import 'package:capture/features/capture/presentation/widgets/group_menu.dart';
@@ -110,13 +112,10 @@ class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final LibraryEntry(:kind, :groupId, :due, :reminder) = _entry;
-    return AlertDialog(
+    return PaperDialog(
       scrollable: true,
       insetPadding: context.compact ? const .all(Spacing.md) : null,
-      title: Text(
-        kind == .task ? l10n.editTask : l10n.editNote,
-        style: context.textTheme.titleMedium,
-      ),
+      title: kind == .task ? l10n.editTask : l10n.editNote,
       content: SizedBox(
         width: Sizes.dialogWidth,
         child: Column(
@@ -124,13 +123,13 @@ class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
           crossAxisAlignment: .start,
           spacing: Spacing.sm,
           children: [
-            TextField(
+            PaperField(
               key: const ValueKey(AppWidgetKeys.entryTitleField),
               controller: _title,
               onChanged: (title) => setState(() => _titleEmpty = title.trim().isEmpty),
               decoration: .new(labelText: l10n.titleHint),
             ),
-            TextField(
+            PaperField(
               key: const ValueKey(AppWidgetKeys.entryBodyField),
               controller: _body,
               enabled: widget.body != null,

@@ -1,5 +1,6 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/sizes.dart';
+import 'package:capture/core/widgets/atoms/icon_action.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:material_ui/material_ui.dart';
@@ -47,11 +48,7 @@ class CaptureActions extends StatelessWidget {
           .saved => const SizedBox.shrink(),
         },
         if (stage != .approved)
-          IconButton(
-            tooltip: l10n.deleteFromMac,
-            icon: const Icon(Icons.delete_outline, size: IconSizes.s20),
-            onPressed: onDelete,
-          ),
+          IconAction(Icons.delete_outline, tooltip: l10n.deleteFromMac, onPressed: onDelete),
       ],
     );
   }

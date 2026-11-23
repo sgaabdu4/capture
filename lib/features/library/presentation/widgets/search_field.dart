@@ -1,6 +1,8 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
+import 'package:capture/core/widgets/atoms/icon_action.dart';
+import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Search box over saved titles; starts from [query] and reports each edit.
@@ -37,7 +39,7 @@ class _SearchFieldState extends State<SearchField> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return TextField(
+    return PaperField(
       key: const ValueKey(AppWidgetKeys.searchField),
       controller: _controller,
       onChanged: widget.onChanged,
@@ -49,9 +51,10 @@ class _SearchFieldState extends State<SearchField> {
           listenable: _controller,
           builder: (context, _) => _controller.text.isEmpty
               ? const SizedBox.shrink()
-              : IconButton(
+              : IconAction(
+                  Icons.close,
                   tooltip: l10n.clearSearch,
-                  icon: const Icon(Icons.close, size: IconSizes.s18),
+                  size: IconSizes.s18,
                   onPressed: _clear,
                 ),
         ),

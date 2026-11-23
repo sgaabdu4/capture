@@ -9,6 +9,7 @@ import 'package:capture/core/domain/entities/notion_workspace.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
+import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/features/capture/data/datasources/jev_remote_datasource.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
@@ -145,7 +146,7 @@ void main() {
     await _open(tester, AppWidgetKeys.typesafeSaveButton);
 
     final rejected = (
-      input: tester.widget<TextField>(field).controller?.text,
+      input: tester.widget<PaperField>(field).controller.text,
       busy: tester.widget<InkButton>(button).busy,
       serial: app.read(settingsProvider).keySavedSerial,
     );
@@ -162,7 +163,7 @@ void main() {
     await _open(tester, AppWidgetKeys.typesafeSaveButton);
 
     final interrupted = (
-      input: tester.widget<TextField>(field).controller?.text,
+      input: tester.widget<PaperField>(field).controller.text,
       busy: tester.widget<InkButton>(button).busy,
       serial: app.read(settingsProvider).keySavedSerial,
     );
@@ -174,7 +175,7 @@ void main() {
     await _open(tester, AppWidgetKeys.typesafeSaveButton);
 
     final saved = (
-      input: tester.widget<TextField>(field).controller?.text,
+      input: tester.widget<PaperField>(field).controller.text,
       busy: tester.widget<InkButton>(button).busy,
       serial: app.read(settingsProvider).keySavedSerial,
     );
@@ -216,7 +217,7 @@ void main() {
     await _open(tester, AppWidgetKeys.notionConnectButton);
 
     final rejected = (
-      input: tester.widget<TextField>(field).controller?.text,
+      input: tester.widget<PaperField>(field).controller.text,
       busy: tester.widget<InkButton>(button).busy,
       serial: app.read(settingsProvider).notionConnectedSerial,
     );
@@ -240,7 +241,7 @@ void main() {
     await _open(tester, AppWidgetKeys.notionConnectButton);
 
     final interrupted = (
-      input: tester.widget<TextField>(field).controller?.text,
+      input: tester.widget<PaperField>(field).controller.text,
       busy: tester.widget<InkButton>(button).busy,
       serial: app.read(settingsProvider).notionConnectedSerial,
     );
@@ -257,7 +258,7 @@ void main() {
     await _open(tester, AppWidgetKeys.notionConnectButton);
 
     final connected = (
-      input: tester.widget<TextField>(field).controller?.text,
+      input: tester.widget<PaperField>(field).controller.text,
       busy: tester.widget<InkButton>(button).busy,
       serial: app.read(settingsProvider).notionConnectedSerial,
     );

@@ -2,6 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/radii.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/paper_card.dart';
+import 'package:capture/core/widgets/atoms/paper_checkbox.dart';
 import 'package:capture/core/widgets/atoms/tap_surface.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:material_ui/material_ui.dart';
@@ -22,10 +23,6 @@ class EntryRow extends StatelessWidget {
   final ValueChanged<bool> onChanged;
   final VoidCallback onOpen;
 
-  void _toggled(bool? value) {
-    if (value case final bool done) onChanged(done);
-  }
-
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: Spacing.xs),
@@ -40,7 +37,11 @@ class EntryRow extends StatelessWidget {
             spacing: Spacing.sm,
             children: [
               switch (entry.kind) {
-                .task => Checkbox(value: entry.done, onChanged: _toggled),
+                .task => PaperCheckbox(
+                  value: entry.done,
+                  semanticLabel: entry.title ?? detail,
+                  onChanged: onChanged,
+                ),
                 .note => const Padding(
                   padding: EdgeInsets.all(Spacing.sm),
                   child: Icon(Icons.description_outlined),

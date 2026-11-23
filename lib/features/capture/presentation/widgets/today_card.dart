@@ -1,5 +1,6 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
+import 'package:capture/core/widgets/atoms/paper_checkbox.dart';
 import 'package:capture/features/capture/presentation/widgets/home_card.dart';
 import 'package:capture/features/capture/presentation/widgets/home_card_row.dart';
 import 'package:material_ui/material_ui.dart';
@@ -23,10 +24,6 @@ class TodayCard extends StatelessWidget {
   final TodayDoneChanged onDoneChanged;
   final VoidCallback onViewAll;
 
-  void _changed(int index, bool? value) {
-    if (value case final bool done) onDoneChanged(index, done: done);
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -37,7 +34,11 @@ class TodayCard extends StatelessWidget {
         if (items.isEmpty) EmptyNote(l10n.emptyToday),
         for (final (index, (:title, :due, :done)) in items.indexed)
           HomeCardRow(
-            leading: Checkbox(value: done, onChanged: (value) => _changed(index, value)),
+            leading: PaperCheckbox(
+              value: done,
+              semanticLabel: title ?? due,
+              onChanged: (value) => onDoneChanged(index, done: value),
+            ),
             title: title,
             subtitle: due,
           ),

@@ -17,6 +17,11 @@ enum Theme {
   static let charcoalButton = Color(hex: 0x524C45)
   static let cream = Color(hex: 0xFBF5ED)
   static let creamMuted = Color(hex: 0xBDB4AA)
+  static let pillShadow = Color(hex: 0x000000, alpha: 0.25)
+  static let cardShadow = Color(hex: 0x000000, alpha: 0.28)
+  static let cardEdge = Color(hex: 0xFFFFFF, alpha: 0.06)
+  static let cardRule = Color(hex: 0x000000, alpha: 0.18)
+  static let micWell = Color(hex: 0xFFFFFF, alpha: 0.08)
 
   static func title(_ size: CGFloat) -> Font { .custom("Caveat", size: size).weight(.bold) }
   static func hand(_ size: CGFloat) -> Font { .custom("Patrick Hand", size: size) }

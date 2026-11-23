@@ -1,5 +1,7 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/spacing.dart';
+import 'package:capture/core/widgets/atoms/paper_checkbox.dart';
+import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/presentation/widgets/group_menu.dart';
 import 'package:capture/features/capture/presentation/widgets/kind_toggle.dart';
@@ -33,16 +35,13 @@ class ProposalItemHeader extends StatelessWidget {
     final title = Row(
       spacing: Spacing.xs,
       children: [
-        Checkbox(
+        PaperCheckbox(
           value: included,
-          onChanged: editable
-              ? (value) {
-                  if (value case final bool on) onChanged(item.withIncluded(value: on));
-                }
-              : null,
+          semanticLabel: item.title ?? l10n.titleHint,
+          onChanged: editable ? (on) => onChanged(item.withIncluded(value: on)) : null,
         ),
         Expanded(
-          child: TextField(
+          child: PaperField(
             controller: titleController,
             enabled: editable,
             style: context.textTheme.titleMedium,

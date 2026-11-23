@@ -2,7 +2,9 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
+import 'package:capture/core/widgets/atoms/icon_action.dart';
 import 'package:capture/core/widgets/atoms/line_button.dart';
+import 'package:capture/core/widgets/atoms/paper_switch.dart';
 import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -66,34 +68,37 @@ class WhenRow extends StatelessWidget {
                   key: const ValueKey(AppWidgetKeys.whenTimeButton),
                   onPressed: enabled ? onPickTime : null,
                 ),
-                Row(
-                  mainAxisSize: .min,
-                  children: [
-                    Switch(
-                      key: const ValueKey(AppWidgetKeys.whenReminderSwitch),
-                      padding: const EdgeInsetsDirectional.only(
-                        start: Spacing.sm,
-                        end: Spacing.xxs,
+                MergeSemantics(
+                  child: Row(
+                    mainAxisSize: .min,
+                    children: [
+                      PaperSwitch(
+                        key: const ValueKey(AppWidgetKeys.whenReminderSwitch),
+                        padding: const EdgeInsetsDirectional.only(
+                          start: Spacing.sm,
+                          end: Spacing.xxs,
+                        ),
+                        value: hasReminder,
+                        onChanged: enabled && d.hasTime ? onReminder : null,
                       ),
-                      value: hasReminder,
-                      onChanged: enabled && d.hasTime ? onReminder : null,
-                    ),
-                    Flexible(
-                      child: Text(
-                        d.hasTime ? l10n.remindMe : l10n.addTimeForReminder,
-                        style: context.textTheme.labelMedium,
+                      Flexible(
+                        child: Text(
+                          d.hasTime ? l10n.remindMe : l10n.addTimeForReminder,
+                          style: context.textTheme.labelMedium,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ],
           ),
         ),
         if (due != null && enabled)
-          IconButton(
+          IconAction(
+            Icons.close,
             tooltip: l10n.removeDate,
-            icon: const Icon(Icons.close, size: IconSizes.s18),
+            size: IconSizes.s18,
             onPressed: onClear,
           ),
       ],
