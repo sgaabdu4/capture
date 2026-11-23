@@ -30,7 +30,7 @@ class RecordingsScreen extends ConsumerWidget {
       routeSettings: const .new(name: _deleteDialogRoute),
       builder: (dialogContext) => DeleteCaptureDialog(
         saved: saved,
-        detail: record.meta(context.l10n, nowUtc),
+        detail: record.meta(dialogContext.l10n, nowUtc),
         onCancel: () => Navigator.of(dialogContext).pop(false),
         onDelete: () => Navigator.of(dialogContext).pop(true),
       ),
