@@ -1,3 +1,5 @@
+import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/theme/spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Text input styled by the app theme; obscured fields disable suggestions and autocorrect.
@@ -5,6 +7,7 @@ class PaperField extends StatelessWidget {
   const PaperField({
     required this.controller,
     super.key,
+    this.label,
     this.decoration,
     this.style,
     this.onChanged,
@@ -16,6 +19,9 @@ class PaperField extends StatelessWidget {
   });
 
   final TextEditingController controller;
+
+  /// Names the field in small type above it, so it never shrinks below the smallest type token.
+  final String? label;
   final InputDecoration? decoration;
   final TextStyle? style;
   final ValueChanged<String>? onChanged;
@@ -26,17 +32,30 @@ class PaperField extends StatelessWidget {
   final int? maxLines;
 
   @override
-  Widget build(BuildContext context) => TextField(
-    controller: controller,
-    decoration: decoration,
-    style: style,
-    onChanged: onChanged,
-    onSubmitted: onSubmitted,
-    enabled: enabled,
-    obscureText: obscureText,
-    autocorrect: !obscureText,
-    enableSuggestions: !obscureText,
-    minLines: minLines,
-    maxLines: maxLines,
-  );
+  Widget build(BuildContext context) {
+    final field = TextField(
+      controller: controller,
+      decoration: decoration,
+      style: style,
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
+      enabled: enabled,
+      obscureText: obscureText,
+      autocorrect: !obscureText,
+      enableSuggestions: !obscureText,
+      minLines: minLines,
+      maxLines: maxLines,
+    );
+    return switch (label) {
+      final String text => Column(
+        crossAxisAlignment: .start,
+        spacing: Spacing.xxs,
+        children: [
+          ExcludeSemantics(child: Text(text, style: context.textTheme.bodySmall)),
+          Semantics(label: text, child: field),
+        ],
+      ),
+      null => field,
+    };
+  }
 }

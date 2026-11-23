@@ -21,7 +21,8 @@ void main() {
     final off = Theme.of(tester.element(find.byType(Switch))).switchTheme;
     const on = {WidgetState.selected};
 
-    expect(off.trackColor!.resolve({}), isNot(off.trackColor!.resolve(on)));
-    expect(off.thumbColor!.resolve({}), isNot(off.thumbColor!.resolve(on)));
+    final (:track, :thumb) = (track: off.trackColor, thumb: off.thumbColor);
+    expect(track?.resolve({}), isNot(track?.resolve(on)));
+    expect(thumb?.resolve({}), isNot(thumb?.resolve(on)));
   });
 }
