@@ -44,6 +44,7 @@ class ExpandableCard extends StatelessWidget {
           title: title,
           subtitle: subtitle,
           trailing: trailing,
+          controlAffinity: trailing == null ? .leading : null,
           expandedCrossAxisAlignment: expandedCrossAxisAlignment,
           childrenPadding: _bodyPadding.add(childrenPadding ?? EdgeInsets.zero),
           children: children,

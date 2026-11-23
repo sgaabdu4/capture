@@ -76,12 +76,18 @@ class CaptureCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: .start,
               children: [
-                Text(
-                  record.status.label(l10n),
-                  key: const ValueKey(AppWidgetKeys.captureStatus),
-                  style: textTheme.bodyMedium,
+                Wrap(
+                  spacing: Spacing.sm,
+                  crossAxisAlignment: .center,
+                  children: [
+                    Text(
+                      record.status.label(l10n),
+                      key: const ValueKey(AppWidgetKeys.captureStatus),
+                      style: textTheme.bodyMedium,
+                    ),
+                    Text(meta, style: textTheme.labelMedium),
+                  ],
                 ),
-                Text(meta, style: textTheme.labelMedium),
                 if (note case final String text)
                   Text(
                     text,

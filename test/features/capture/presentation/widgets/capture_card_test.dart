@@ -71,4 +71,42 @@ void main() {
     final delete = tester.getTopLeft(find.text('Delete'));
     expect(delete.dx, status.dx);
   });
+
+  testWidgets('the expand arrow sits in the leading slot, before the status', (tester) async {
+    await _pump(tester);
+
+    final tile = tester.widget<ListTile>(find.byType(ListTile));
+    expect(tile.leading, isNotNull);
+    expect(tile.trailing, isNull);
+  });
+
+  testWidgets('the status and its time share a line when the card is wide', (tester) async {
+    tester.view.physicalSize = const Size(1240, 860);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: CaptureCard(
+            record: sampleSavedCapture,
+            nowUtc: FakeSystem.now,
+            busy: false,
+            idle: true,
+            onRetry: _noop,
+            onReview: _noop,
+            onRetrySave: _noop,
+            onReviewAgain: _noop,
+            onDelete: _noop,
+          ),
+        ),
+      ),
+    );
+
+    final status = tester.getTopLeft(find.byKey(const ValueKey(AppWidgetKeys.captureStatus)));
+    final meta = tester.getTopLeft(find.text('20 minutes ago · 0:14'));
+    expect(meta.dy, closeTo(status.dy, 6));
+  });
 }
