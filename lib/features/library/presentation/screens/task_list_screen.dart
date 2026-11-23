@@ -87,7 +87,7 @@ class TaskListScreen extends ConsumerWidget {
               entry: entry,
               onOpen: () =>
                   unawaited(ref.read(libraryProvider.notifier).body(entry, origin: origin)),
-              detail: entry.detail(l10n, today, groupById(entry.groupId)),
+              detail: entry.detail(l10n, today, groupById(entry.groupId), underDay: _byDay),
               onChanged: (done) =>
                   unawaited(ref.read(libraryProvider.notifier).setDone(entry, done: done)),
             ),

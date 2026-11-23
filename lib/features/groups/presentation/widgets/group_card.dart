@@ -47,28 +47,30 @@ class GroupCard extends StatelessWidget {
           color: group.archived ? context.colors.onSurfaceVariant : context.colors.onSurface,
         ),
       ),
-      subtitle: switch (group.description) {
-        final String description => Text(description, style: labelMedium),
-        null => null,
-      },
-      trailing: Row(
-        mainAxisSize: .min,
-        spacing: Spacing.xs,
+      subtitle: Column(
+        crossAxisAlignment: .start,
         children: [
-          Text(l10n.groupSavedCount(items.length), style: bodySmall),
-          IconAction(Icons.edit_outlined, tooltip: l10n.edit, onPressed: busy ? null : onEdit),
-          if (onArchive case final VoidCallback archive)
-            IconAction(
-              Icons.archive_outlined,
-              tooltip: l10n.archive,
-              onPressed: busy ? null : archive,
-            ),
-          if (onRestore case final VoidCallback restore)
-            IconAction(
-              Icons.unarchive_outlined,
-              tooltip: l10n.restore,
-              onPressed: busy ? null : restore,
-            ),
+          if (group.description case final String description)
+            Text(description, style: labelMedium),
+          Row(
+            spacing: Spacing.xs,
+            children: [
+              Text(l10n.groupSavedCount(items.length), style: bodySmall),
+              IconAction(Icons.edit_outlined, tooltip: l10n.edit, onPressed: busy ? null : onEdit),
+              if (onArchive case final VoidCallback archive)
+                IconAction(
+                  Icons.archive_outlined,
+                  tooltip: l10n.archive,
+                  onPressed: busy ? null : archive,
+                ),
+              if (onRestore case final VoidCallback restore)
+                IconAction(
+                  Icons.unarchive_outlined,
+                  tooltip: l10n.restore,
+                  onPressed: busy ? null : restore,
+                ),
+            ],
+          ),
         ],
       ),
       children: [

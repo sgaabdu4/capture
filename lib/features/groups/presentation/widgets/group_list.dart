@@ -1,6 +1,5 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
-import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
@@ -38,36 +37,30 @@ class GroupList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Align(
-      alignment: .topLeft,
-      child: ConstrainedBox(
-        constraints: const .new(maxWidth: Sizes.groupCardWidth),
-        child: Column(
-          crossAxisAlignment: .stretch,
-          children: [
-            for (final (Group(:id, :isUnsorted, archived: isArchived) && group) in [
-              ...activeGroups,
-              ...archivedGroups,
-            ]) ...[
-              if (group == archivedGroups.firstOrNull) ...[
-                const SizedBox(height: Spacing.lg),
-                Text(l10n.archivedHeader, style: context.textTheme.labelMedium),
-                const SizedBox(height: Spacing.xs),
-              ],
-              GroupCard(
-                key: ValueKey(AppWidgetKeys.groupCard(id.value)),
-                group: group,
-                items: entries.filedIn(id),
-                busy: busy,
-                onEdit: () => onEdit(group),
-                onOpenEntry: onOpenEntry,
-                onArchive: isArchived || isUnsorted ? null : () => onArchive(group),
-                onRestore: isArchived && !isUnsorted ? () => onRestore(group) : null,
-              ),
-            ],
+    return Column(
+      crossAxisAlignment: .stretch,
+      children: [
+        for (final (Group(:id, :isUnsorted, archived: isArchived) && group) in [
+          ...activeGroups,
+          ...archivedGroups,
+        ]) ...[
+          if (group == archivedGroups.firstOrNull) ...[
+            const SizedBox(height: Spacing.lg),
+            Text(l10n.archivedHeader, style: context.textTheme.labelMedium),
+            const SizedBox(height: Spacing.xs),
           ],
-        ),
-      ),
+          GroupCard(
+            key: ValueKey(AppWidgetKeys.groupCard(id.value)),
+            group: group,
+            items: entries.filedIn(id),
+            busy: busy,
+            onEdit: () => onEdit(group),
+            onOpenEntry: onOpenEntry,
+            onArchive: isArchived || isUnsorted ? null : () => onArchive(group),
+            onRestore: isArchived && !isUnsorted ? () => onRestore(group) : null,
+          ),
+        ],
+      ],
     );
   }
 }
