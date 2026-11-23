@@ -14,7 +14,7 @@ abstract final class Palette {
   static const faint = Color(0xFFA59F96);
   static const ray = Color(0xFFD0CAC3);
   static const mic = Color(0xFF161714);
-  static const ok = Color(0xFF5FBA4B);
+  static const ok = Color(0xFF4A9D38);
   static const warn = Color(0xFFC98A2B);
   static const error = Color(0xFFB4533C);
   static const cream = Color(0xFFFBF5ED);

@@ -11,7 +11,7 @@ colors:
   faint: "#a59f96"
   ray: "#d0cac3"
   mic: "#161714"
-  ok: "#5fba4b"
+  ok: "#4a9d38"
   warn: "#c98a2b"
   error: "#b4533c"
   cream: "#fbf5ed"
