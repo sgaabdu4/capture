@@ -6,6 +6,7 @@ import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/theme/app_theme.dart';
 import 'package:capture/core/theme/fonts.dart';
 import 'package:capture/core/theme/overlay_tokens.dart';
+import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/widgets/atoms/icon_action.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
@@ -16,7 +17,9 @@ import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/core/widgets/atoms/paper_segmented.dart';
 import 'package:capture/core/widgets/atoms/paper_switch.dart';
 import 'package:capture/core/widgets/expandable_card.dart';
+import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/core/widgets/paper_dialog.dart';
+import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
 import 'package:capture/features/capture/presentation/screens/recordings_screen.dart';
 import 'package:capture/features/capture/presentation/widgets/capture_actions.dart';
 import 'package:capture/features/capture/presentation/widgets/capture_card.dart';
@@ -31,20 +34,28 @@ import 'package:capture/features/capture/presentation/widgets/when_row.dart';
 import 'package:capture/features/capture/repositories/capture_repository.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
 import 'package:capture/features/groups/presentation/widgets/group_dialog.dart';
+import 'package:capture/features/groups/presentation/widgets/group_list.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
+import 'package:capture/features/library/presentation/extensions/library_labels.dart';
 import 'package:capture/features/library/presentation/screens/entry_dialog_screen.dart';
+import 'package:capture/features/library/presentation/widgets/entry_dialog_actions.dart';
 import 'package:capture/features/library/presentation/widgets/entry_row.dart';
 import 'package:capture/features/library/presentation/widgets/search_field.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/screens/notion_step_screen.dart';
+import 'package:capture/features/settings/presentation/screens/shortcut_section_screen.dart';
 import 'package:capture/features/settings/presentation/screens/typesafe_step_screen.dart';
 import 'package:capture/features/settings/presentation/widgets/auto_save_section.dart';
+import 'package:capture/features/settings/presentation/widgets/field_row.dart';
 import 'package:capture/features/settings/presentation/widgets/model_step.dart';
 import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
 import 'package:capture/features/settings/presentation/widgets/privacy_section.dart';
 import 'package:capture/features/settings/presentation/widgets/reset_dialog.dart';
+import 'package:capture/features/settings/presentation/widgets/speech_credit_dialog.dart';
 import 'package:capture/features/shell/presentation/screens/app_shell_screen.dart';
 import 'package:capture/features/shell/presentation/widgets/app_sidebar.dart';
+import 'package:capture/features/shell/presentation/widgets/bottom_nav_bar.dart';
+import 'package:capture/features/shell/presentation/widgets/bottom_nav_item.dart';
 import 'package:capture/features/shell/presentation/widgets/notion_chip.dart';
 import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,6 +70,8 @@ const _frame = Duration(milliseconds: 16);
 const _settleLimit = Duration(seconds: 5);
 
 void _noop() {}
+
+void _ignore(Object? _) {}
 
 ProviderContainer _makeContainer() => .test(
   overrides: [
@@ -287,6 +300,19 @@ void main() {
       ),
     );
     expect(find.byType(IconAction), findsWidgets);
+    await _pumpAndCheckGuidelines(
+      tester,
+      GroupList(
+        activeGroups: sampleGroups,
+        archivedGroups: const [],
+        entries: sampleEntries,
+        busy: false,
+        onEdit: (_) {},
+        onOpenEntry: (_) {},
+        onArchive: (_) {},
+        onRestore: (_) {},
+      ),
+    );
   });
 
   testWidgets('changed settings and entry dialog screens meet accessibility guidelines', (
@@ -324,6 +350,84 @@ void main() {
       AppShellScreen(
         location: '/',
         child: Center(child: Text(NotionId('home').value)),
+      ),
+      viewport: const Size(390, 844),
+    );
+  });
+
+  testWidgets('page frames and saved labels meet accessibility guidelines', (tester) async {
+    final l10n = lookupAppLocalizations(const Locale('en'));
+    await _pumpAndCheckGuidelines(
+      tester,
+      ColoredBox(
+        color: Palette.paper,
+        child: PageFrame(
+          title: 'Groups',
+          subtitle: l10n.groupsSubtitle,
+          actions: const [LinkButton('Refresh', onPressed: _noop)],
+          children: [
+            Text(sampleSavedCapture.identity(l10n, FakeSystem.now)),
+            Text(sampleEntries.first.detail(l10n, FakeSystem.now, null) ?? ''),
+          ],
+        ),
+      ),
+      viewport: const Size(390, 844),
+    );
+  });
+
+  testWidgets('field rows, entry actions, shortcut and credit meet accessibility guidelines', (
+    tester,
+  ) async {
+    final controller = TextEditingController();
+    addTearDown(controller.dispose);
+    await _pumpAndCheckGuidelines(
+      tester,
+      Column(
+        children: [
+          FieldRow(
+            field: PaperField(
+              controller: controller,
+              label: 'Key',
+              decoration: const InputDecoration(),
+            ),
+            action: const InkButton('Save', onPressed: _noop),
+          ),
+          const EntryDialogActions(
+            confirmingDelete: false,
+            onAskDelete: _noop,
+            onDelete: _noop,
+            onCancel: _noop,
+            onSave: _noop,
+          ),
+          ShortcutSectionScreen(
+            label: '⌃⌥',
+            registered: true,
+            problem: null,
+            onShortcut: (_) {},
+            onRecording: (_) {},
+          ),
+        ],
+      ),
+      viewport: const Size(390, 844),
+    );
+    await _pumpAndCheckGuidelines(tester, const SpeechCreditDialog());
+  });
+
+  testWidgets('Settings marks no bottom destination as the page on screen', (tester) async {
+    await _pumpAndCheckGuidelines(
+      tester,
+      const AppShellScreen(location: '/settings', child: SizedBox.shrink()),
+      viewport: const Size(390, 844),
+    );
+    final marked = tester
+        .widgetList<BottomNavItem>(find.byType(BottomNavItem))
+        .where((item) => item.selected);
+    expect(marked, isEmpty);
+    await _pumpAndCheckGuidelines(
+      tester,
+      const SizedBox(
+        height: 80,
+        child: BottomNavBar(destinations: [], selected: null, onSelected: _ignore),
       ),
       viewport: const Size(390, 844),
     );

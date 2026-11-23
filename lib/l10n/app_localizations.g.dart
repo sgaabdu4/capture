@@ -1314,7 +1314,7 @@ abstract class AppLocalizations {
   /// No description provided for @groupsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Jev files each thought into one group using these descriptions. Describe what belongs, and what does not.'**
+  /// **'Jev files each thought by these descriptions.'**
   String get groupsSubtitle;
 
   /// No description provided for @groupsNeedNotion.

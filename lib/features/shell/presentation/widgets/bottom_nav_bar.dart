@@ -15,8 +15,8 @@ class BottomNavBar extends StatelessWidget {
 
   final List<NavDestination> destinations;
 
-  /// Index of the destination on screen.
-  final int selected;
+  /// Index of the destination on screen; null on a page that is not one of them, such as Settings.
+  final int? selected;
   final ValueChanged<NavDestination> onSelected;
 
   @override
