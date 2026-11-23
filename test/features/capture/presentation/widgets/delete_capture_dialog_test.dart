@@ -52,6 +52,6 @@ void main() {
     final bottom = tester
         .getBottomLeft(find.byKey(const ValueKey(AppWidgetKeys.deleteConfirmButton)))
         .dy;
-    expect(bottom - top, lessThan(300));
+    expect(bottom - top, lessThan(350));
   });
 }

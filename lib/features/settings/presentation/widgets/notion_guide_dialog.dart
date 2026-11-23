@@ -29,7 +29,7 @@ class NotionGuideDialog extends StatelessWidget {
     ];
     return PaperDialog(
       title: l10n.notionGuideTitle,
-      width: Sizes.guideWidth,
+      width: Sizes.guideWidth + Spacing.lg * 2,
       content: SizedBox(
         width: Sizes.guideWidth,
         height: Sizes.guideHeight,

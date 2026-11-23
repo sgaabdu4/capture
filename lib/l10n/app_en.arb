@@ -264,7 +264,7 @@
   "modelFailedUnknown": "The speech model download stopped. Retry the download.",
   "modelAttribution": "Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); ONNX int8 conversion by the k2-fsa sherpa-onnx project.",
   "typesafeTitle": "TypeSafe API key",
-  "typesafeSaved": "Saved in Keychain. Only transcript text is sent to Jev to sort it.",
+  "typesafeSaved": "Saved in Keychain.",
   "typesafeNeeded": "Jev sorts the transcript into notes and tasks. Get a key at console.typesafe.ai.",
   "typesafeHintNew": "Paste your key",
   "typesafeHintReplace": "Paste a new key",
