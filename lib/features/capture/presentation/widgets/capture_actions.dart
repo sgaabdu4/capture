@@ -1,7 +1,9 @@
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
+import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/icon_action.dart';
-import 'package:capture/core/widgets/atoms/link_button.dart';
+import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -39,12 +41,17 @@ class CaptureActions extends StatelessWidget {
     final l10n = context.l10n;
     return Row(
       mainAxisSize: .min,
+      spacing: Spacing.xs,
       children: [
         switch (stage) {
-          .recorded || .transcribed => LinkButton(l10n.retry, onPressed: idle ? onRetry : null),
-          .proposed => LinkButton(l10n.review, onPressed: onReview),
-          .approved => LinkButton(l10n.retrySave, onPressed: idle ? onRetrySave : null),
-          .dismissed => LinkButton(l10n.reviewAgain, onPressed: onReviewAgain),
+          .recorded || .transcribed => InkButton(l10n.retry, onPressed: idle ? onRetry : null),
+          .proposed => InkButton(
+            l10n.review,
+            key: const ValueKey(AppWidgetKeys.captureReviewButton),
+            onPressed: onReview,
+          ),
+          .approved => InkButton(l10n.retrySave, onPressed: idle ? onRetrySave : null),
+          .dismissed => InkButton(l10n.reviewAgain, onPressed: onReviewAgain),
           .saved => const SizedBox.shrink(),
         },
         if (stage != .approved)

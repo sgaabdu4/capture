@@ -7,17 +7,17 @@ import 'package:material_ui/material_ui.dart';
 class ExpandableCard extends StatelessWidget {
   const ExpandableCard({
     required this.title,
-    required this.trailing,
     required this.children,
     super.key,
     this.subtitle,
+    this.trailing,
     this.expandedCrossAxisAlignment,
     this.childrenPadding,
   });
 
   final Widget title;
   final Widget? subtitle;
-  final Widget trailing;
+  final Widget? trailing;
   final List<Widget> children;
   final CrossAxisAlignment? expandedCrossAxisAlignment;
   final EdgeInsetsGeometry? childrenPadding;

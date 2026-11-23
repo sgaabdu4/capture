@@ -37,6 +37,9 @@ abstract final class AppWidgetKeys {
 
   // Recordings and Editor
   static const deleteConfirmButton = 'recordings.delete.confirm';
+  static const captureStatus = 'recordings.card.status';
+  static const captureActions = 'recordings.card.actions';
+  static const captureReviewButton = 'recordings.card.review';
   static const editorSaveButton = 'editor.save';
   static const editorDontSaveButton = 'editor.dontSave';
   static const whenTimeButton = 'editor.when.time';
