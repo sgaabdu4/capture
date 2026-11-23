@@ -11,7 +11,7 @@ void main() {
   setUpAll(loadAppFonts);
   final l10n = lookupAppLocalizations(const Locale('en'));
 
-  testWidgets('the count and actions sit between the name and the description at the text edge', (
+  testWidgets('the count sits beside the name and the actions sit above the description', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1280, 860);
@@ -36,13 +36,15 @@ void main() {
       ),
     );
 
+    final name = tester.getRect(find.text(group.name.value));
     final description = tester.getRect(find.text(group.description ?? ''));
     final count = tester.getRect(find.text(l10n.groupSavedCount(2)));
     final edit = tester.getRect(find.byTooltip(l10n.edit));
-    expect(count.left, description.left);
-    expect(count.bottom, lessThanOrEqualTo(description.top));
-    expect(edit.left - count.right, lessThan(description.width));
-    expect(edit.right, lessThan(description.left + 400));
+    expect(count.left, greaterThan(name.right));
+    expect(count.center.dy, closeTo(name.center.dy, name.height));
+    expect(edit.top, greaterThanOrEqualTo(name.bottom));
+    expect(edit.bottom, lessThanOrEqualTo(description.top));
+    expect(edit.left, description.left);
   });
 
   testWidgets('large text keeps every action on screen above a long description cut to two lines', (
