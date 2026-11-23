@@ -1,6 +1,7 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
+import 'package:capture/core/widgets/atoms/paper_checkbox.dart';
 import 'package:capture/core/widgets/atoms/underlined.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -10,10 +11,6 @@ class AutoSaveSection extends StatelessWidget {
 
   final bool on;
   final ValueChanged<bool> onChanged;
-
-  void _checked(bool? value) {
-    if (value case final bool checked) onChanged(checked);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +26,10 @@ class AutoSaveSection extends StatelessWidget {
             crossAxisAlignment: .start,
             spacing: Spacing.xs,
             children: [
-              Checkbox(
+              PaperCheckbox(
                 key: const ValueKey(AppWidgetKeys.autoSaveCheckbox),
                 value: on,
-                onChanged: _checked,
+                onChanged: onChanged,
               ),
               Expanded(
                 child: GestureDetector(

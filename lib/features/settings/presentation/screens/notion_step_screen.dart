@@ -3,6 +3,7 @@ import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
+import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,12 +88,10 @@ class _NotionStepScreenState extends ConsumerState<NotionStepScreen> {
                 icon: Icons.help_outline,
                 onPressed: widget.onShowGuide,
               ),
-              TextField(
+              PaperField(
                 key: const ValueKey(AppWidgetKeys.notionTokenField),
                 controller: _token,
                 obscureText: true,
-                autocorrect: false,
-                enableSuggestions: false,
                 decoration: .new(
                   hintText: widget.hasToken ? l10n.notionTokenHintReplace : l10n.notionTokenHintNew,
                 ),
@@ -101,7 +100,7 @@ class _NotionStepScreenState extends ConsumerState<NotionStepScreen> {
                 spacing: Spacing.sm,
                 children: [
                   Expanded(
-                    child: TextField(
+                    child: PaperField(
                       key: const ValueKey(AppWidgetKeys.notionPageField),
                       controller: _page,
                       decoration: .new(

@@ -4,6 +4,7 @@ import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/core/widgets/atoms/paper_card.dart';
+import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/features/capture/domain/entities/proposal_item.dart';
 import 'package:capture/features/capture/presentation/widgets/flag_chips.dart';
 import 'package:capture/features/capture/presentation/widgets/proposal_item_header.dart';
@@ -124,7 +125,7 @@ class _ProposalItemEditorState extends State<ProposalItemEditor> {
                 editable: editable,
                 onChanged: onChanged,
               ),
-              TextField(
+              PaperField(
                 controller: _body,
                 enabled: editable,
                 minLines: 1,

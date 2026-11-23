@@ -1,4 +1,5 @@
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/widgets/atoms/paper_segmented.dart';
 import 'package:capture/features/capture/domain/entities/item_kind.dart';
 import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
 import 'package:material_ui/material_ui.dart';
@@ -13,19 +14,10 @@ class KindToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final onChanged = this.onChanged;
-    return SegmentedButton<ItemKind>(
-      segments: [
-        for (final k in ItemKind.values) ButtonSegment(value: k, label: Text(k.label(l10n))),
-      ],
-      selected: {kind},
-      showSelectedIcon: false,
-      onSelectionChanged: switch (onChanged) {
-        final ValueChanged<ItemKind> changed => (selection) {
-          if (selection.firstOrNull case final ItemKind picked) changed(picked);
-        },
-        null => null,
-      },
+    return PaperSegmented<ItemKind>(
+      options: [for (final k in ItemKind.values) (value: k, label: k.label(l10n))],
+      selected: kind,
+      onChanged: onChanged,
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/overlay_tokens.dart';
 import 'package:capture/core/theme/palette.dart';
+import 'package:capture/core/widgets/atoms/icon_action.dart';
 import 'package:capture/features/capture/presentation/widgets/review_card_actions.dart';
 import 'package:capture/features/capture/presentation/widgets/review_row_tile.dart';
 import 'package:material_ui/material_ui.dart';
@@ -60,15 +61,13 @@ class ReviewCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(
+                IconAction(
+                  Icons.close,
                   key: const ValueKey(AppWidgetKeys.reviewCloseButton),
                   tooltip: l10n.reviewLater,
+                  size: OverlayTokens.cardCloseIcon,
+                  color: Palette.creamMuted,
                   onPressed: onLater,
-                  icon: const Icon(
-                    Icons.close,
-                    size: OverlayTokens.cardCloseIcon,
-                    color: Palette.creamMuted,
-                  ),
                 ),
               ],
             ),

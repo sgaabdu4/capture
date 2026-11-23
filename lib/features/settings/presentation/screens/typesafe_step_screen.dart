@@ -2,6 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
+import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,12 +66,10 @@ class _TypesafeStepScreenState extends ConsumerState<TypesafeStepScreen> {
             spacing: Spacing.sm,
             children: [
               Expanded(
-                child: TextField(
+                child: PaperField(
                   key: const ValueKey(AppWidgetKeys.typesafeKeyField),
                   controller: _key,
                   obscureText: true,
-                  autocorrect: false,
-                  enableSuggestions: false,
                   decoration: .new(
                     hintText: has ? l10n.typesafeHintReplace : l10n.typesafeHintNew,
                     errorText: _missing ? l10n.typesafeKeyMissing : widget.error,

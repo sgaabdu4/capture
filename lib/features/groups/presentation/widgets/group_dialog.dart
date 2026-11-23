@@ -4,6 +4,8 @@ import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
+import 'package:capture/core/widgets/atoms/paper_field.dart';
+import 'package:capture/core/widgets/paper_dialog.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/domain/entities/group_problem.dart';
 import 'package:capture/features/groups/domain/group_rules.dart';
@@ -81,24 +83,21 @@ class _GroupDialogState extends State<GroupDialog> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final problem = _showProblem ? _problem : null;
-    return AlertDialog(
-      title: Text(
-        widget.editing == null ? l10n.newGroup : l10n.editGroup,
-        style: context.textTheme.titleMedium,
-      ),
+    return PaperDialog(
+      title: widget.editing == null ? l10n.newGroup : l10n.editGroup,
       content: SizedBox(
         width: Sizes.dialogWidth,
         child: Column(
           mainAxisSize: .min,
           spacing: Spacing.sm,
           children: [
-            TextField(
+            PaperField(
               key: const ValueKey(AppWidgetKeys.groupNameField),
               controller: _name,
               onChanged: _changed,
               decoration: .new(labelText: l10n.groupName),
             ),
-            TextField(
+            PaperField(
               key: const ValueKey(AppWidgetKeys.groupDescriptionField),
               controller: _description,
               onChanged: _changed,

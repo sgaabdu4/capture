@@ -66,35 +66,47 @@ abstract final class OverlayTokens {
     color: Palette.cream,
     fontFeatures: [.tabularFigures()],
   );
-  static const status = TextStyle(fontFamily: Fonts.hand, fontSize: 17, color: Palette.cream);
+  static const status = TextStyle(fontFamily: Fonts.handFamily, fontSize: 17, color: Palette.cream);
   static const notSaved = TextStyle(
-    fontFamily: Fonts.hand,
+    fontFamily: Fonts.handFamily,
     fontSize: 15,
     color: Palette.creamMuted,
   );
   static const cardTitle = TextStyle(
-    fontFamily: Fonts.title,
+    fontFamily: Fonts.titleFamily,
     fontSize: 34,
     fontWeight: .bold,
     color: Palette.cream,
   );
   static const cardSubtitle = TextStyle(
-    fontFamily: Fonts.hand,
+    fontFamily: Fonts.handFamily,
     fontSize: 17,
     color: Palette.creamMuted,
   );
   static const cardCount = TextStyle(
-    fontFamily: Fonts.hand,
+    fontFamily: Fonts.handFamily,
     fontSize: 14,
     color: Palette.creamMuted,
   );
-  static const cardReason = TextStyle(fontFamily: Fonts.hand, fontSize: 14, color: Palette.cream);
-  static const rowTitle = TextStyle(fontFamily: Fonts.hand, fontSize: 18, color: Palette.cream);
+  static const cardReason = TextStyle(
+    fontFamily: Fonts.handFamily,
+    fontSize: 14,
+    color: Palette.cream,
+  );
+  static const rowTitle = TextStyle(
+    fontFamily: Fonts.handFamily,
+    fontSize: 18,
+    color: Palette.cream,
+  );
   static const rowDetail = TextStyle(
-    fontFamily: Fonts.hand,
+    fontFamily: Fonts.handFamily,
     fontSize: 15,
     color: Palette.creamMuted,
   );
-  static const button = TextStyle(fontFamily: Fonts.hand, fontSize: 18, color: Palette.cream);
-  static const buttonOnCream = TextStyle(fontFamily: Fonts.hand, fontSize: 18, color: Palette.ink);
+  static const button = TextStyle(fontFamily: Fonts.handFamily, fontSize: 18, color: Palette.cream);
+  static const buttonOnCream = TextStyle(
+    fontFamily: Fonts.handFamily,
+    fontSize: 18,
+    color: Palette.ink,
+  );
 }

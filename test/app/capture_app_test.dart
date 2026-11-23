@@ -10,6 +10,7 @@ import 'package:capture/core/services/models/review_card_payload.dart';
 import 'package:capture/core/services/native_event.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
+import 'package:capture/core/widgets/atoms/paper_checkbox.dart';
 import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
 import 'package:capture/features/capture/domain/entities/capture_stage.dart';
@@ -361,10 +362,10 @@ void main() {
       ),
     );
     await _settle(tester);
-    expect(tester.widget<Checkbox>(autoSave).value, isFalse);
+    expect(tester.widget<PaperCheckbox>(autoSave).value, isFalse);
 
     await _open(tester, AppWidgetKeys.autoSaveCheckbox);
-    expect(tester.widget<Checkbox>(autoSave).value, isTrue);
+    expect(tester.widget<PaperCheckbox>(autoSave).value, isTrue);
     final relaunch = ProviderContainer.test(
       overrides: appOverrides(support: support, native: native),
     );

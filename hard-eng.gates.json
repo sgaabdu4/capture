@@ -388,6 +388,8 @@
     "base": "main",
     "checks": ["hard-eng"],
     "ui_paths": [
+      "lib/app/*",
+      "lib/core/router/*",
       "lib/features/*/presentation/*",
       "lib/core/theme/*",
       "lib/core/widgets/*",

@@ -22,8 +22,8 @@ const referenceWindow = Size(1240, 860);
 
 /// Load bundled fonts because the wider test font changes actual app text layout.
 const _fonts = {
-  Fonts.title: 'assets/fonts/Caveat.ttf',
-  Fonts.hand: 'assets/fonts/PatrickHand-Regular.ttf',
+  Fonts.titleFamily: 'assets/fonts/Caveat.ttf',
+  Fonts.handFamily: 'assets/fonts/PatrickHand-Regular.ttf',
 };
 
 /// A native side with no microphone permission yet and no events.

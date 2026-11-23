@@ -7,6 +7,7 @@ import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
+import 'package:capture/core/widgets/atoms/icon_action.dart';
 import 'package:capture/features/capture/presentation/screens/phone_overlay.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/shell/presentation/models/nav_destination.dart';
@@ -80,10 +81,11 @@ class AppShellScreen extends ConsumerWidget {
         PositionedDirectional(
           top: compact ? Spacing.xs : Spacing.md,
           end: compact ? Spacing.xs : Spacing.lg,
-          child: IconButton(
+          child: IconAction(
+            Icons.settings_outlined,
             key: const ValueKey(AppWidgetKeys.settingsButton),
             tooltip: l10n.navSettings,
-            icon: const Icon(Icons.settings_outlined, size: IconSizes.s28),
+            size: IconSizes.s28,
             onPressed: () => const SettingsRoute().go(context),
           ),
         ),

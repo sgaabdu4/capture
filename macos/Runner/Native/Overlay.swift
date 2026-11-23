@@ -117,7 +117,7 @@ private struct PillBackground: ViewModifier {
   func body(content: Content) -> some View {
     content
       .background(Capsule().fill(Theme.charcoal.opacity(0.96)))
-      .shadow(color: .black.opacity(0.25), radius: 10, y: 4)
+      .shadow(color: Theme.pillShadow, radius: 10, y: 4)
   }
 }
 
@@ -131,7 +131,7 @@ struct RecordingPill: View {
           .font(.system(size: 15, weight: .medium))
           .foregroundColor(Theme.cream)
           .frame(width: 34, height: 34)
-          .background(Circle().fill(Color.white.opacity(0.08)))
+          .background(Circle().fill(Theme.micWell))
         Waveform(levels: model.levels)
           .frame(width: 118, height: 26)
         Text(Self.format(model.elapsed))
@@ -259,7 +259,7 @@ struct ReviewCard: View {
       if let reason = review.blockedReason {
         Text(reason).font(Theme.hand(14)).foregroundColor(Theme.cream).padding(.top, 10)
       }
-      Rectangle().fill(Color.black.opacity(0.18)).frame(height: 1).padding(.vertical, 14)
+      Rectangle().fill(Theme.cardRule).frame(height: 1).padding(.vertical, 14)
       HStack(spacing: 14) {
         Button {
           onAction("no")
@@ -291,8 +291,8 @@ struct ReviewCard: View {
     .padding(22)
     .frame(width: 400)
     .background(RoundedRectangle(cornerRadius: 16).fill(Theme.charcoal.opacity(0.97)))
-    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white.opacity(0.06)))
-    .shadow(color: .black.opacity(0.28), radius: 18, y: 8)
+    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.cardEdge))
+    .shadow(color: Theme.cardShadow, radius: 18, y: 8)
   }
 }
 

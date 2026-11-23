@@ -2,6 +2,7 @@ import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
+import 'package:capture/core/widgets/paper_dialog.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Confirms deleting a capture from this Mac.
@@ -21,12 +22,11 @@ class DeleteCaptureDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final textTheme = context.textTheme;
-    return AlertDialog(
-      title: Text(l10n.deleteTitle, style: textTheme.titleMedium),
+    return PaperDialog(
+      title: l10n.deleteTitle,
       content: Text(
         saved ? l10n.deleteSavedBody : l10n.deleteUnsavedBody,
-        style: textTheme.bodyMedium,
+        style: context.textTheme.bodyMedium,
       ),
       actions: [
         LinkButton(l10n.cancel, onPressed: onCancel),
