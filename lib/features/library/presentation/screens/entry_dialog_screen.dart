@@ -127,7 +127,7 @@ class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
               key: const ValueKey(AppWidgetKeys.entryTitleField),
               controller: _title,
               onChanged: (title) => setState(() => _titleEmpty = title.trim().isEmpty),
-              decoration: .new(labelText: l10n.titleHint),
+              label: l10n.titleHint,
             ),
             PaperField(
               key: const ValueKey(AppWidgetKeys.entryBodyField),
@@ -135,10 +135,8 @@ class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
               enabled: widget.body != null,
               minLines: _bodyMinLines,
               maxLines: _bodyMaxLines,
-              decoration: .new(
-                labelText: l10n.detailsHint,
-                helperText: widget.body == null ? l10n.entryBodyUnavailable : null,
-              ),
+              label: l10n.detailsHint,
+              decoration: .new(helperText: widget.body == null ? l10n.entryBodyUnavailable : null),
             ),
             GroupMenu(
               groups: ref.watch(groupsProvider.select((s) => s.active)),
