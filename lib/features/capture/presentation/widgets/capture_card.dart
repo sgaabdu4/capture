@@ -1,4 +1,5 @@
 import 'package:capture/core/extensions/extensions.dart';
+import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/capture_colors.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/status_dot.dart';
@@ -63,33 +64,46 @@ class CaptureCard extends StatelessWidget {
       CaptureRecord() => null,
     };
     return ExpandableCard(
-      title: Wrap(
+      title: Row(
+        crossAxisAlignment: .start,
         spacing: Spacing.sm,
-        crossAxisAlignment: .center,
         children: [
-          StatusDot(_dotColor(context)),
-          Text(record.status.label(l10n), style: textTheme.bodyMedium),
-          Text(meta, style: textTheme.labelMedium),
-        ],
-      ),
-      subtitle: switch (note) {
-        final String text => Text(
-          text,
-          style: textTheme.labelMedium?.copyWith(
-            color: failure == null ? colors.onSurfaceVariant : colors.error,
+          Padding(
+            padding: const EdgeInsets.only(top: Spacing.xs),
+            child: StatusDot(_dotColor(context)),
           ),
-        ),
-        null => null,
-      },
-      trailing: CaptureActions(
-        stage: stage,
-        busy: busy,
-        idle: idle,
-        onRetry: onRetry,
-        onReview: onReview,
-        onRetrySave: onRetrySave,
-        onReviewAgain: onReviewAgain,
-        onDelete: onDelete,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: .start,
+              children: [
+                Text(
+                  record.status.label(l10n),
+                  key: const ValueKey(AppWidgetKeys.captureStatus),
+                  style: textTheme.bodyMedium,
+                ),
+                Text(meta, style: textTheme.labelMedium),
+                if (note case final String text)
+                  Text(
+                    text,
+                    style: textTheme.labelMedium?.copyWith(
+                      color: failure == null ? colors.onSurfaceVariant : colors.error,
+                    ),
+                  ),
+                CaptureActions(
+                  key: const ValueKey(AppWidgetKeys.captureActions),
+                  stage: stage,
+                  busy: busy,
+                  idle: idle,
+                  onRetry: onRetry,
+                  onReview: onReview,
+                  onRetrySave: onRetrySave,
+                  onReviewAgain: onReviewAgain,
+                  onDelete: onDelete,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       expandedCrossAxisAlignment: .start,
       childrenPadding: const EdgeInsets.only(bottom: Spacing.xs),
