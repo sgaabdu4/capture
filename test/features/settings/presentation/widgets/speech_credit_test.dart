@@ -39,4 +39,38 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text(l10n.modelAttribution), findsNothing);
   });
+
+  testWidgets('the credit text scrolls on a short screen with large text', (tester) async {
+    tester.view.physicalSize = const Size(568, 280);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: const .linear(2)),
+          child: child ?? const SizedBox.shrink(),
+        ),
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Scaffold(body: SingleChildScrollView(child: PrivacySection())),
+      ),
+    );
+
+    final link = find.byKey(const ValueKey(AppWidgetKeys.speechCreditButton));
+    await tester.ensureVisible(link);
+    await tester.tap(link);
+    await tester.pump(const Duration(seconds: 1));
+
+    final inDialog = find.descendant(
+      of: find.byType(AlertDialog),
+      matching: find.byType(Scrollable),
+    );
+    expect(inDialog, findsOneWidget);
+    expect(
+      find.descendant(of: inDialog, matching: find.text(l10n.modelAttribution)),
+      findsOneWidget,
+    );
+    expect(find.text(l10n.close), findsOneWidget);
+  });
 }
