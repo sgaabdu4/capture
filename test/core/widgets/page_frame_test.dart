@@ -35,7 +35,6 @@ void main() {
     addTearDown(tester.view.reset);
     final l10n = lookupAppLocalizations(const Locale('en'));
     for (final subtitle in [
-      l10n.groupsSubtitle,
       l10n.syncRefreshing,
       l10n.syncedAgo('5 minutes ago'),
       l10n.entryBodyLoading,

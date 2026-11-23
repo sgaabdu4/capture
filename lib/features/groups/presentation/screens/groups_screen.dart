@@ -66,7 +66,7 @@ class GroupsScreen extends ConsumerWidget {
     final entries = ref.watch(libraryProvider.select((s) => s.entries));
     return PageFrame(
       title: l10n.navGroups,
-      subtitle: preparing ? l10n.entryBodyLoading : l10n.groupsSubtitle,
+      subtitle: preparing ? l10n.entryBodyLoading : null,
       actions: [
         LinkButton(
           l10n.refresh,

@@ -362,7 +362,6 @@
     }
   },
   "reminderLabel": "Reminder",
-  "groupsSubtitle": "Jev files each thought by these descriptions.",
   "groupsNeedNotion": "Connect Notion in Settings to manage groups.",
   "addGroup": "Add group",
   "archivedHeader": "Archived",
