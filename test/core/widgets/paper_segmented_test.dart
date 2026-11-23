@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/app_theme.dart';
 import 'package:capture/core/theme/palette.dart';
+import 'package:capture/core/theme/radii.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/widgets/atoms/paper_segmented.dart';
 import 'package:flutter/rendering.dart';
@@ -57,6 +58,28 @@ void main() {
     final edge = style?.side?.resolve({})?.color ?? Palette.transparent;
     final ratio = (Palette.paper.computeLuminance() + 0.05) / (edge.computeLuminance() + 0.05);
     expect(ratio, greaterThanOrEqualTo(3));
+  });
+
+  testWidgets('the segmented control corners use the 12 point radius token, not a full pill', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Material(
+          child: PaperSegmented<String>(
+            options: const [(value: 'open', label: 'Open'), (value: 'done', label: 'Done')],
+            selected: 'open',
+            onChanged: (_) {},
+          ),
+        ),
+      ),
+    );
+    final style = Theme.of(tester.element(find.byType(SegmentedButton<String>)))
+        .segmentedButtonTheme
+        .style;
+
+    expect(style?.shape?.resolve({}), const RoundedRectangleBorder(borderRadius: Radii.rounded12));
   });
 
   testWidgets('the selected segment is drawn as tall as a tap target', (tester) async {
