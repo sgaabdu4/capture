@@ -50,9 +50,7 @@ void main() {
     expect(archive.left - edit.right, Spacing.xs);
   });
 
-  testWidgets('large text keeps every action on screen under a long description cut to two lines', (
-    tester,
-  ) async {
+  testWidgets('HE-NO-TEXT-WALLS: a description is cut to two lines at large text', (tester) async {
     tester.view.physicalSize = const Size(320, 844);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
