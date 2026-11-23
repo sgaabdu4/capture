@@ -335,7 +335,7 @@
   "micAllow": "Allow microphone",
   "autoSaveTitle": "Saving",
   "autoSaveLabel": "Save to Notion automatically",
-  "autoSaveDetail": "Saves what Capture sorted without asking and sends a notification. The review card still opens when something needs a look.",
+  "autoSaveDetail": "Saves sorted captures without asking.",
   "privacyTitle": "Privacy",
   "privacyBody": "Audio is recorded and transcribed on this Mac. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it, or auto-save does when you turn it on. Keys live in the macOS Keychain. No analytics, no logs of your words.",
   "resetTitle": "Reset Capture",

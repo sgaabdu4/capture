@@ -1152,7 +1152,7 @@ abstract class AppLocalizations {
   /// No description provided for @autoSaveDetail.
   ///
   /// In en, this message translates to:
-  /// **'Saves what Capture sorted without asking and sends a notification. The review card still opens when something needs a look.'**
+  /// **'Saves sorted captures without asking.'**
   String get autoSaveDetail;
 
   /// No description provided for @privacyTitle.
