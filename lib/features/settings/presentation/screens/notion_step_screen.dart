@@ -1,5 +1,6 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
+import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
@@ -78,49 +79,54 @@ class _NotionStepScreenState extends ConsumerState<NotionStepScreen> {
         ),
         Padding(
           padding: StepHeader.bodyInset,
-          child: Column(
-            crossAxisAlignment: .start,
-            spacing: Spacing.xs,
-            children: [
-              LinkButton(
-                l10n.notionShowMe,
-                key: const ValueKey(AppWidgetKeys.notionGuideButton),
-                icon: Icons.help_outline,
-                flush: true,
-                onPressed: widget.onShowGuide,
-              ),
-              PaperField(
-                key: const ValueKey(AppWidgetKeys.notionTokenField),
-                controller: _token,
-                obscureText: true,
-                decoration: .new(
-                  hintText: widget.hasToken ? l10n.notionTokenHintReplace : l10n.notionTokenHintNew,
+          child: ConstrainedBox(
+            constraints: const .new(maxWidth: Sizes.fieldsWidth),
+            child: Column(
+              crossAxisAlignment: .start,
+              spacing: Spacing.xs,
+              children: [
+                LinkButton(
+                  l10n.notionShowMe,
+                  key: const ValueKey(AppWidgetKeys.notionGuideButton),
+                  icon: Icons.help_outline,
+                  flush: true,
+                  onPressed: widget.onShowGuide,
                 ),
-              ),
-              Row(
-                spacing: Spacing.sm,
-                children: [
-                  Expanded(
-                    child: PaperField(
-                      key: const ValueKey(AppWidgetKeys.notionPageField),
-                      controller: _page,
-                      decoration: .new(
-                        hintText: connected ? l10n.notionPageHintKeep : l10n.notionPageHint,
-                        errorText: _tokenMissing ? l10n.notionTokenMissing : widget.error,
-                        errorMaxLines: _errorLines,
+                PaperField(
+                  key: const ValueKey(AppWidgetKeys.notionTokenField),
+                  controller: _token,
+                  obscureText: true,
+                  decoration: .new(
+                    hintText: widget.hasToken
+                        ? l10n.notionTokenHintReplace
+                        : l10n.notionTokenHintNew,
+                  ),
+                ),
+                Row(
+                  spacing: Spacing.sm,
+                  children: [
+                    Expanded(
+                      child: PaperField(
+                        key: const ValueKey(AppWidgetKeys.notionPageField),
+                        controller: _page,
+                        decoration: .new(
+                          hintText: connected ? l10n.notionPageHintKeep : l10n.notionPageHint,
+                          errorText: _tokenMissing ? l10n.notionTokenMissing : widget.error,
+                          errorMaxLines: _errorLines,
+                        ),
+                        onSubmitted: (_) => _onConnect(),
                       ),
-                      onSubmitted: (_) => _onConnect(),
                     ),
-                  ),
-                  InkButton(
-                    connected ? l10n.reconnect : l10n.connect,
-                    key: const ValueKey(AppWidgetKeys.notionConnectButton),
-                    onPressed: _onConnect,
-                    busy: widget.connecting,
-                  ),
-                ],
-              ),
-            ],
+                    InkButton(
+                      connected ? l10n.reconnect : l10n.connect,
+                      key: const ValueKey(AppWidgetKeys.notionConnectButton),
+                      onPressed: _onConnect,
+                      busy: widget.connecting,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ],
