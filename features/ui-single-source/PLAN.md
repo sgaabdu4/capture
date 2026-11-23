@@ -4,7 +4,7 @@ Status: Complete
 
 ## Outcome + scope
 
-Move all raw Flutter base controls outside `lib/core/widgets/` into shared library controls, remove raw colour literals from `macos/Runner/Native/Overlay.swift`, mirror token colours, integer lengths, and font families in `DESIGN.md` YAML front matter (and note fractional stroke/bar widths in prose), generate and complete `UI-LIBRARY.md`, upgrade `flutter_skill_lints` to `^0.16.0`, and include `lib/app/*` and `lib/core/router/*` in `shipping.ui_paths`. Visual appearance stays unchanged across all screens and overlays, including the existing sidebar layout and quiet motto ("A calmer mind gets more done."), the To-Do page header with right-aligned Refresh action, search field, and task rows.
+Move all raw Flutter base controls outside `lib/core/widgets/` into shared library controls, remove raw colour literals from `macos/Runner/Native/Overlay.swift`, mirror token colours, integer lengths, and font families in `DESIGN.md` YAML front matter (and note fractional stroke/bar widths in prose), generate and complete `UI-LIBRARY.md`, upgrade `flutter_skill_lints` to `^0.16.0`, and include `lib/app/*` and `lib/core/router/*` in `shipping.ui_paths`. Visual appearance stays unchanged across all screens and overlays.
 
 Out of scope: adding `ui_library` to `hard-eng.gates.json` (deferred until the `b5` release), redesigning screens or tokens, and changing non-UI features.
 
@@ -50,27 +50,27 @@ Execution: One builder. Extract 7 shared widgets into `lib/core/widgets/`, updat
 ## ux_reference
 
 Result: Passed
-Evidence: Widget-test renders of the real app (`CaptureApp` at 1240 × 860 Mac window) on To-Do, Home, and Settings taken at `origin/main` and `fix/ui-single-source` are SHA-256 byte-identical; inspected `/todo` render with `look`.
-Surface: Existing — `/todo`, rendered by `lib/features/library/presentation/screens/task_list_screen.dart`
-Before: ![Before, To-Do screen on main](../../build/ux/ui-single-source/before-todo.png)
-Proposed: ![After, To-Do screen on fix/ui-single-source](../../build/ux/ui-single-source/after-todo.png)
-Controls: IconAction — reuses `lib/core/widgets/atoms/icon_action.dart`; PaperCheckbox — reuses `lib/core/widgets/atoms/paper_checkbox.dart`; PaperSwitch — reuses `lib/core/widgets/atoms/paper_switch.dart`; PaperField — reuses `lib/core/widgets/atoms/paper_field.dart`; PaperDropdown — reuses `lib/core/widgets/atoms/paper_dropdown.dart`; PaperSegmented — reuses `lib/core/widgets/atoms/paper_segmented.dart`; PaperDialog — reuses `lib/core/widgets/paper_dialog.dart`
-Capture: Rendered `CaptureApp` via widget test at 1240 × 860 with bundled Caveat, Patrick Hand, and MaterialIcons fonts loaded, comparing `origin/main` and `fix/ui-single-source` PNG bytes (all three pairs byte-identical: To-Do `74d5fa99`, Home `033ec5fe`, Settings `dc31fb86`).
-Review: Inspected `/todo`, `/`, and `/settings` before and after; visual appearance is completely unchanged across all cards, fields, checkboxes, and buttons.
+Evidence: Widget-test renders of the real app (`CaptureApp`) on Recordings (`26e8dad3`), Edit task dialog (`0cb2ebec`), To-Do (`be0ff97f`, `74d5fa99`), Home (`033ec5fe`), and Settings (`dc31fb86`), taken at `origin/main` and `fix/ui-single-source`, are all SHA-256 byte-identical; inspected `after-recordings-phone.png` with `look`.
+Surface: Existing — `/recordings`, rendered by `lib/features/capture/presentation/screens/recordings_screen.dart`
+Before: ![Before, Recordings screen on phone on main](../../build/ux/ui-single-source/before-recordings-phone.png)
+Proposed: ![After, Recordings screen on phone on fix/ui-single-source](../../build/ux/ui-single-source/after-recordings-phone.png)
+Controls: None — visual appearance is unchanged; existing Material base controls were wrapped verbatim in shared library widgets under `lib/core/widgets/` with no new visual control design.
+Capture: Rendered `CaptureApp` via widget test at 390 × 844 and 1240 × 860 with bundled Caveat, Patrick Hand, and MaterialIcons fonts loaded, comparing `origin/main` and `fix/ui-single-source` PNG bytes (all six pairs byte-identical).
+Review: Inspected `/recordings`, the Edit task dialog, `/todo`, `/`, and `/settings` before and after; visual appearance is completely unchanged across all screens, dialogs, cards, fields, checkboxes, and buttons.
 Rules:
 
-- Mistake-proof: Pass — no destructive action runs without explicit confirmation (`DeleteCaptureDialog`, `ResetDialog`, and `EntryDialogActions` keep two-step confirmation).
-- Least effort: Pass — 1 clicks to toggle a task checkbox, open an entry, or refresh on the To-Do screen.
-- Observe: Pass — To-Do shows sync provenance ("From your last sync with Notion."), task status checkboxes, due times, reminders, and group labels clearly.
-- Undo: Pass — task completion toggles are immediately reversible with one click, and entry edits keep Cancel beside Save.
-- No clutter: Pass — 14 kept, 0 removed on the To-Do screen; every visible sidebar item, search box, refresh link, and task row serves the task list.
-- Hierarchy: Pass — the handwritten underlined To-Do heading leads the page, followed by search and paper task cards; Refresh and Settings sit quietly at top right.
-- Alignment: Pass — sidebar items, search input, and task cards share consistent left/right margins and internal row alignment.
-- Spacing: Pass — consistent `Spacing` and `Radii` tokens separate cards, rows, and sidebar navigation items.
-- Design system: Pass — paper palette (`#fbf9f3`, `#f6f4ee`, `#fdfbf7`, `#1a1916`), `Caveat` headings, `Patrick Hand` labels, rounded paper cards, and shared `lib/core/widgets/` controls match `DESIGN.md` and `UI-LIBRARY.md`.
-- Messages: Pass — search hint, sync subtitle, and task metadata use clear, plain copy.
-- States: Pass — populated task list, empty states (`test/app/responsive_layout_test.dart`), and active sidebar selection render truthfully.
-- Time: Pass — due times render in the local time zone via `DueDate` formatting (`test/core/data/notion/notion_shapes_test.dart`).
+- Mistake-proof: Pass — deleting a recording opens `DeleteCaptureDialog` for confirmation; Review opens the proposal editor without auto-saving.
+- Least effort: Pass — 1 clicks to open Review, trigger delete confirmation, expand a recording card, or switch navigation tabs.
+- Observe: Pass — each recording card clearly shows its status dot, status label ("Saved to Notion" or "Waiting for your review"), age, duration, and saved item counts.
+- Undo: Pass — Delete asks for confirmation in `DeleteCaptureDialog` before removing a recording, and Review can be dismissed without saving.
+- No clutter: Pass — 10 kept, 0 removed on the phone Recordings screen (settings icon, two recording cards with status/actions, and five bottom navigation tabs).
+- Hierarchy: Pass — the handwritten underlined Recordings heading leads the page, followed by paper capture cards with quiet action icons and bottom navigation.
+- Alignment: Pass — heading, subtitle, capture cards, status dots, trailing actions, and bottom navigation align cleanly within the 390 px viewport.
+- Spacing: Pass — consistent `Spacing` and `Radii` tokens separate the header, capture cards, internal metadata lines, and bottom navigation.
+- Design system: Pass — paper palette (`#fbf9f3`, `#fdfbf7`, `#edeae4`, `#1a1916`, `#6e6a63`, `#5fba4b`, `#c98a2b`), `Caveat` page heading, `Patrick Hand` labels, rounded paper cards, and shared `lib/core/widgets/` controls match `DESIGN.md` and `UI-LIBRARY.md`.
+- Messages: Pass — subtitle ("Kept on this Mac. Saved captures are also in Notion."), status labels, and item counts use clear, plain copy.
+- States: Pass — saved and waiting-for-review states render truthfully with distinct status dots and actions; empty states are verified by `test/app/responsive_layout_test.dart`.
+- Time: Pass — relative capture times ("20 minutes ago") and durations ("0:14") render from local time formatting (`test/core/data/notion/notion_shapes_test.dart`).
 - Audit: N/A — local desktop/iPhone note capture app with no multi-user staff/admin audit log.
 - Accessibility: Pass — `test/core/widgets/ui_single_source_guideline_test.dart` and `test/app/responsive_layout_test.dart` verify contrast, semantic labels, and tap target guidelines across changed controls.
 - Widths: Pass — `test/app/responsive_layout_test.dart` verifies every page and dialog from 320 pt to 3840 pt with zero overflow.
@@ -79,13 +79,12 @@ Rules:
 ## Verification
 
 Result: Passed
-Evidence: 2026-11-23. `dart analyze --fatal-infos .` (`flutter_skill_lints: ^0.16.0`) → 0 issues; `dart format --output=none --set-exit-if-changed` → 0 changes; `swift format lint --strict` → 0 issues; `b5` `ui_whole.ui_findings_whole` (`["lib/core/widgets/**"]`) → `B5_UI_HITS: 0`; before/after PNG renders of To-Do (`74d5fa99`), Home (`033ec5fe`), and Settings (`dc31fb86`) at 1240 × 860 are SHA-256 byte-identical; `flutter test --no-pub` → 275/275 passed including `test/core/widgets/ui_single_source_guideline_test.dart`; `python3 .hooks/hard-eng.py check --base origin/main --plan-stage Complete` and `challenge --host agy` run on final commit.
+Evidence: 2026-11-23. `dart analyze --fatal-infos .` (`flutter_skill_lints: ^0.16.0`) → 0 issues; `dart format --output=none --set-exit-if-changed` → 0 changes; `swift format lint --strict` → 0 issues; `b5` `ui_whole.ui_findings_whole` (`["lib/core/widgets/**"]`) → `B5_UI_HITS: 0`; before/after PNG renders of phone To-Do (`be0ff97f`), desktop To-Do (`74d5fa99`), Home (`033ec5fe`), and Settings (`dc31fb86`) are SHA-256 byte-identical; `flutter test --no-pub` → 275/275 passed including `test/core/widgets/ui_single_source_guideline_test.dart`; `python3 .hooks/hard-eng.py check --base origin/main --plan-stage Complete` and `challenge --host agy` run on final commit.
 E2E: Passed — full Flutter widget journeys (`test/app/capture_app_test.dart`, `test/app/settings_flow_test.dart`, `test/app/responsive_layout_test.dart`) and `test/core/widgets/ui_single_source_guideline_test.dart` pass.
 Real service: N/A — pure UI single-source refactor; no Notion, Jev, or external API code changed.
-Retro: Running `challenge` caught missing `Complete` plan fields (`Sources + coverage`, `Controls:`, `Real service:`, `Retro:`) and an untested Clear search `IconAction` state; next time check plan validation via `plans.py` before the first commit and ensure conditional controls (like clear buttons) are active in guideline tests.
-Review declined:
-- `ReviewCardButton` 46 pt height (`lib/features/capture/presentation/widgets/review_card_button.dart:35`): pre-existing unchanged iPhone-only overlay control mirroring `Overlay.swift` (`height: 46`), which meets `iOSTapTargetGuideline` (44 pt); resizing it would violate the unchanged visual appearance requirement. `ui_single_source_guideline_test.dart` now tests `ReviewCard` in its own viewport against contrast, semantic label, and iOS tap-target guidelines.
-- `DESIGN.md` YAML front matter omitting fractional lengths `1.4px`, `1.6px`, `3.5px`: `b5/.hooks/ui_tokens.py` `DART_LENGTH` only extracts integer/`.0` Dart static constants, so adding fractional values to YAML front matter causes `token_findings` failures (`missing from the token files`). Those three dimensions are now documented explicitly in `DESIGN.md` prose while YAML front matter mirrors all 48 parser-extracted lengths with `B5_UI_HITS: 0`.
+Retro: Running `challenge` caught missing `Complete` plan fields, an untested Clear search `IconAction` state, `Review declined:` single-line syntax, and `Controls:` wording; next time check plan validation via `--quick` before the first commit, keep `DESIGN.md` strictly factual, and format every declined finding as `Review declined: finding :: reason`.
+Review declined: ReviewCardButton 46 pt height fails Android 48 pt tap-target guideline :: pre-existing unchanged iPhone-only overlay control mirroring macOS Overlay.swift (height 46), which meets iOSTapTargetGuideline (44 pt); resizing it would violate the unchanged visual appearance requirement, and ui_single_source_guideline_test.dart tests ReviewCard in its own viewport against contrast, semantic label, and iOS tap-target guidelines.
+Review declined: DESIGN.md YAML front matter omits 1.4px, 1.6px, and 3.5px lengths :: b5 ui_tokens.py DART_LENGTH only extracts integer or .0 Dart static constants, so adding fractional lengths to YAML front matter causes token_findings failures; those three dimensions are documented in DESIGN.md prose while YAML front matter mirrors all 48 parser-extracted lengths with B5_UI_HITS 0.
 
 Delivery target: PR
 Delivery: Pending — open PR from `fix/ui-single-source` against `main` (do not merge).

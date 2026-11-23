@@ -168,11 +168,11 @@ Warm paper palette: light cream background (`paper`, `sidebar`, `card`), dark in
 
 ## Typography
 
-Handwritten notebook typography bundled under `assets/fonts/`: `Caveat` for titles and display headings (`Fonts.titleFamily`) and `Patrick Hand` for body text, controls and labels (`Fonts.handFamily`).
+Handwritten notebook typography bundled under `assets/fonts/`: `Caveat` for display and page headings (`Fonts.titleFamily`, used by `displayLarge`, `displayMedium`, `headlineLarge`, `headlineSmall`, and `overlayCardTitle`) and `Patrick Hand` for card/dialog titles, body text, controls and labels (`Fonts.handFamily`, used by `titleLarge` through `bodySmall`).
 
 ## Layout
 
-Consistent spacing (`Spacing`), soft rounded paper cards (`Radii`), and responsive breakpoints (`Breakpoints.stacked`, `Breakpoints.sidebar`, `Breakpoints.content`). Fine stroke and waveform tokens defined in `lib/core/theme/sizes.dart` and `lib/core/theme/overlay_tokens.dart` are `Sizes.outline` (`1.4` px), `Sizes.checkboxBorder` (`1.6` px), and `OverlayTokens.barWidth` (`3.5` px). The home screen centres a prominent black circular microphone button (`Sizes.micDiameter`). The overlay pill sits bottom-centre on the active display, clear of the Dock, with the compact review card directly above it. The sidebar includes the owner-approved quiet motto ("A calmer mind gets more done.") at the bottom of the navigation column.
+Consistent spacing (`Spacing`), soft rounded paper cards (`Radii`), and responsive breakpoints (`Breakpoints.stacked`, `Breakpoints.sidebar`, `Breakpoints.content`). Fine stroke and waveform tokens defined in `lib/core/theme/sizes.dart` and `lib/core/theme/overlay_tokens.dart` are `Sizes.outline` (`1.4` px), `Sizes.checkboxBorder` (`1.6` px), and `OverlayTokens.barWidth` (`3.5` px). The home screen centres a prominent black circular microphone button (`Sizes.micDiameter`). The overlay pill sits bottom-centre on the active display, clear of the Dock, with the compact review card directly above it.
 
 ## Components
 
