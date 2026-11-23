@@ -105,7 +105,7 @@ class _NotionStepScreenState extends ConsumerState<NotionStepScreen> {
                       key: const ValueKey(AppWidgetKeys.notionPageField),
                       controller: _page,
                       decoration: .new(
-                        hintText: l10n.notionPageHint,
+                        hintText: connected ? l10n.notionPageHintKeep : l10n.notionPageHint,
                         errorText: _tokenMissing ? l10n.notionTokenMissing : widget.error,
                         errorMaxLines: _errorLines,
                       ),

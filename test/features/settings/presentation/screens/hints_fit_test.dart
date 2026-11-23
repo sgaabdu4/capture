@@ -52,7 +52,7 @@ void main() {
     for (final hint in [
       l10n.typesafeHintReplace,
       l10n.notionTokenHintReplace,
-      l10n.notionPageHint,
+      l10n.notionPageHintKeep,
     ]) {
       final paragraph = tester.renderObject<RenderParagraph>(find.text(hint));
       expect(paragraph.didExceedMaxLines, isFalse, reason: hint);
