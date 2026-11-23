@@ -7,12 +7,12 @@ import 'package:capture/features/library/presentation/notifiers/library_state.da
 import 'package:capture/l10n/app_localizations.g.dart';
 
 extension LibrarySyncLabel on LibraryState {
-  /// The sync line: refreshing, "Synced with Notion: 5 minutes ago." or the never-synced note.
-  String syncLabel(AppLocalizations l10n, DateTime nowUtc) {
+  /// The sync line: refreshing or "Synced with Notion: 5 minutes ago."; null before the first refresh.
+  String? syncLabel(AppLocalizations l10n, DateTime nowUtc) {
     if (refreshing) return l10n.syncRefreshing;
     return switch (refreshedAtUtc) {
       final DateTime at => l10n.syncedAgo(at.agoLabel(l10n, nowUtc)),
-      null => l10n.syncNever,
+      null => null,
     };
   }
 
