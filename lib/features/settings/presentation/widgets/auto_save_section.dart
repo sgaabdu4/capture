@@ -29,6 +29,7 @@ class AutoSaveSection extends StatelessWidget {
               PaperCheckbox(
                 key: const ValueKey(AppWidgetKeys.autoSaveCheckbox),
                 value: on,
+                flush: true,
                 onChanged: onChanged,
               ),
               Expanded(

@@ -116,11 +116,17 @@ class _NotionStepScreenState extends ConsumerState<NotionStepScreen> {
                     ),
                     onSubmitted: (_) => _onConnect(),
                   ),
-                  action: InkButton(
-                    connected ? l10n.reconnect : l10n.connect,
-                    key: const ValueKey(AppWidgetKeys.notionConnectButton),
-                    onPressed: _onConnect,
-                    busy: widget.connecting,
+                  action: ListenableBuilder(
+                    listenable: Listenable.merge([_token, _page]),
+                    builder: (context, _) => InkButton(
+                      connected ? l10n.reconnect : l10n.connect,
+                      key: const ValueKey(AppWidgetKeys.notionConnectButton),
+                      onPressed:
+                          connected && _token.text.trim().isEmpty && _page.text.trim().isEmpty
+                          ? null
+                          : _onConnect,
+                      busy: widget.connecting,
+                    ),
                   ),
                 ),
               ],

@@ -966,7 +966,7 @@ abstract class AppLocalizations {
   /// No description provided for @notionPageHintKeep.
   ///
   /// In en, this message translates to:
-  /// **'Current page'**
+  /// **'Paste a new page link'**
   String get notionPageHintKeep;
 
   /// No description provided for @notionShowMe.
