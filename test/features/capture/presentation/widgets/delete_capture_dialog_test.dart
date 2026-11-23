@@ -28,6 +28,33 @@ void main() {
     expect(find.text('20 minutes ago · 0:14'), findsOneWidget);
   });
 
+  for (final (saved, wording) in [
+    (true, 'Only this Mac loses the audio and transcript. The copy in Notion stays.'),
+    (false, 'This Mac loses the audio and transcript for good. This can’t be undone.'),
+  ]) {
+    testWidgets('the dialog says which device loses the files when saved is $saved', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildAppTheme(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Center(
+            child: DeleteCaptureDialog(
+              saved: saved,
+              detail: '20 minutes ago · 0:14',
+              onCancel: _noop,
+              onDelete: _noop,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text(wording), findsOneWidget);
+    });
+  }
+
   testWidgets('the dialog is only as tall as its text and buttons', (tester) async {
     tester.view.physicalSize = const Size(1280, 860);
     tester.view.devicePixelRatio = 1;
