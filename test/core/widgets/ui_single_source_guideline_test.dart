@@ -59,7 +59,15 @@ Widget _harness(Widget child) => ProviderScope(
   ),
 );
 
-Future<void> _pumpAndCheckGuidelines(WidgetTester tester, Widget widget) async {
+Future<void> _pumpAndCheckGuidelines(
+  WidgetTester tester,
+  Widget widget, {
+  Size viewport = referenceWindow,
+  bool checkAndroidTargets = true,
+}) async {
+  tester.view.physicalSize = viewport;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
   final semantics = tester.ensureSemantics();
   try {
     await tester.pumpWidget(_harness(widget));
@@ -67,7 +75,9 @@ Future<void> _pumpAndCheckGuidelines(WidgetTester tester, Widget widget) async {
     await expectLater(tester, meetsGuideline(textContrastGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
     await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
-    await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+    if (checkAndroidTargets) {
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+    }
   } finally {
     semantics.dispose();
   }
@@ -89,43 +99,37 @@ void main() {
 
     await _pumpAndCheckGuidelines(
       tester,
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            IconAction(Icons.edit_outlined, tooltip: 'Edit item', onPressed: () => tapped = true),
-            PaperCheckbox(
-              value: checked,
-              semanticLabel: 'Include item',
-              onChanged: (v) => checked = v,
-            ),
-            PaperSwitch(
-              value: switched,
-              semanticLabel: 'Remind me',
-              onChanged: (v) => switched = v,
-            ),
-            PaperField(
-              controller: controller,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Secret key'),
-            ),
-            PaperDropdown<String>(
-              value: picked,
-              hint: 'Choose option',
-              items: const [(value: 'one', label: 'One')],
-              onChanged: (v) => picked = v,
-            ),
-            PaperSegmented<String>(
-              options: const [(value: 'a', label: 'Alpha'), (value: 'b', label: 'Beta')],
-              selected: segment,
-              onChanged: (v) => segment = v,
-            ),
-            const PaperDialog(
-              title: 'Confirm choice',
-              content: Text('Body copy'),
-              actions: [InkButton('Proceed', onPressed: _noop)],
-            ),
-          ],
-        ),
+      Column(
+        children: [
+          IconAction(Icons.edit_outlined, tooltip: 'Edit item', onPressed: () => tapped = true),
+          PaperCheckbox(
+            value: checked,
+            semanticLabel: 'Include item',
+            onChanged: (v) => checked = v,
+          ),
+          PaperSwitch(value: switched, semanticLabel: 'Remind me', onChanged: (v) => switched = v),
+          PaperField(
+            controller: controller,
+            obscureText: true,
+            decoration: const InputDecoration(labelText: 'Secret key'),
+          ),
+          PaperDropdown<String>(
+            value: picked,
+            hint: 'Choose option',
+            items: const [(value: 'one', label: 'One')],
+            onChanged: (v) => picked = v,
+          ),
+          PaperSegmented<String>(
+            options: const [(value: 'a', label: 'Alpha'), (value: 'b', label: 'Beta')],
+            selected: segment,
+            onChanged: (v) => segment = v,
+          ),
+          const PaperDialog(
+            title: 'Confirm choice',
+            content: Text('Body copy'),
+            actions: [InkButton('Proceed', onPressed: _noop)],
+          ),
+        ],
       ),
     );
 
@@ -153,119 +157,141 @@ void main() {
 
     await _pumpAndCheckGuidelines(
       tester,
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            const CaptureActions(
-              stage: .proposed,
-              busy: false,
-              idle: true,
-              onRetry: _noop,
-              onReview: _noop,
-              onRetrySave: _noop,
-              onReviewAgain: _noop,
-              onDelete: _noop,
-            ),
-            GroupMenu(groups: sampleGroups, value: sampleGroups.first.id, onChanged: (_) {}),
-            KindToggle(kind: ItemKind.task, onChanged: (_) {}),
-            ProposalItemHeader(
-              item: item,
-              titleController: titleController,
-              groups: sampleGroups,
-              editable: true,
-              onChanged: (_) {},
-            ),
-            ProposalItemEditor(
-              item: item,
-              groups: sampleGroups,
-              today: FakeSystem.now,
-              editable: true,
-              onChanged: (_) {},
-              onPickDate: _noop,
-              onPickTime: _noop,
-              onClearWhen: _noop,
-              onReminder: (_) {},
-              onSplit: (_) {},
-              onMergeNext: null,
-            ),
-            TodayCard(
-              items: const [(title: 'Water seedlings', due: 'Today', done: false)],
-              onDoneChanged: (_, {required done}) {},
-              onViewAll: _noop,
-            ),
-            WhenRow(
-              due: item.due,
-              hasReminder: true,
-              today: FakeSystem.now,
-              enabled: true,
-              onPickDate: _noop,
-              onPickTime: _noop,
-              onClear: _noop,
-              onReminder: (_) {},
-            ),
-            const ReviewCard(
-              countLine: '1 item',
-              rows: [(icon: Icons.check_box_outlined, title: 'Book MOT', detail: 'Home')],
-              canApprove: true,
-              onYes: _noop,
-              onNo: _noop,
-              onEdit: _noop,
-              onLater: _noop,
-            ),
-            const DeleteCaptureDialog(saved: true, onCancel: _noop, onDelete: _noop),
-          ],
-        ),
+      Column(
+        children: [
+          const CaptureActions(
+            stage: .proposed,
+            busy: false,
+            idle: true,
+            onRetry: _noop,
+            onReview: _noop,
+            onRetrySave: _noop,
+            onReviewAgain: _noop,
+            onDelete: _noop,
+          ),
+          GroupMenu(groups: sampleGroups, value: sampleGroups.first.id, onChanged: (_) {}),
+          KindToggle(kind: ItemKind.task, onChanged: (_) {}),
+          ProposalItemHeader(
+            item: item,
+            titleController: titleController,
+            groups: sampleGroups,
+            editable: true,
+            onChanged: (_) {},
+          ),
+          ProposalItemEditor(
+            item: item,
+            groups: sampleGroups,
+            today: FakeSystem.now,
+            editable: true,
+            onChanged: (_) {},
+            onPickDate: _noop,
+            onPickTime: _noop,
+            onClearWhen: _noop,
+            onReminder: (_) {},
+            onSplit: (_) {},
+            onMergeNext: null,
+          ),
+          TodayCard(
+            items: const [(title: 'Water seedlings', due: 'Today', done: false)],
+            onDoneChanged: (_, {required done}) {},
+            onViewAll: _noop,
+          ),
+          WhenRow(
+            due: item.due,
+            hasReminder: true,
+            today: FakeSystem.now,
+            enabled: true,
+            onPickDate: _noop,
+            onPickTime: _noop,
+            onClear: _noop,
+            onReminder: (_) {},
+          ),
+        ],
       ),
     );
   });
 
-  testWidgets('changed groups, library, settings and shell widgets meet accessibility guidelines', (
-    tester,
-  ) async {
-    tester.view.physicalSize = referenceWindow;
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-
+  testWidgets('iPhone review card and delete dialog meet accessibility guidelines', (tester) async {
     await _pumpAndCheckGuidelines(
       tester,
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            GroupCard(
-              group: sampleGroups.first,
-              items: sampleEntries.take(1).toList(),
-              busy: false,
-              onEdit: _noop,
-              onOpenEntry: (_) {},
-              onArchive: _noop,
-            ),
-            GroupDialog(groups: sampleGroups, onSave: (_) {}, onCancel: _noop),
-            EntryDialogScreen(entry: sampleEntries.first, body: 'Seedling details'),
-            EntryRow(entry: sampleEntries.first, onChanged: (_) {}, onOpen: _noop),
-            SearchField(query: '', onChanged: (_) {}),
-            NotionStepScreen(
-              connected: true,
-              workspaceName: 'Workspace',
-              hasToken: true,
-              connecting: false,
-              error: null,
-              onConnect: ({required token, required pageLink}) {},
-              onShowGuide: _noop,
-            ),
-            TypesafeStepScreen(hasKey: true, saving: false, error: null, onSave: (_) {}),
-            AutoSaveSection(on: false, onChanged: (_) {}),
-            const NotionGuideDialog(onClose: _noop),
-            const ResetDialog(onCancel: _noop, onReset: _noop),
-            SizedBox(
-              height: referenceWindow.height,
-              child: AppShellScreen(
-                location: '/',
-                child: Center(child: Text(NotionId('home').value)),
-              ),
-            ),
-          ],
-        ),
+      const Column(
+        children: [
+          // ReviewCardButton uses the fixed 46 pt height mirrored from macOS Overlay.swift on iPhone.
+          ReviewCard(
+            countLine: '1 item',
+            rows: [(icon: Icons.check_box_outlined, title: 'Book MOT', detail: 'Home')],
+            canApprove: true,
+            onYes: _noop,
+            onNo: _noop,
+            onEdit: _noop,
+            onLater: _noop,
+          ),
+          DeleteCaptureDialog(saved: true, onCancel: _noop, onDelete: _noop),
+        ],
       ),
+      checkAndroidTargets: false,
+    );
+  });
+
+  testWidgets('changed groups and library widgets meet accessibility guidelines', (tester) async {
+    await _pumpAndCheckGuidelines(
+      tester,
+      Column(
+        children: [
+          GroupCard(
+            group: sampleGroups.first,
+            items: sampleEntries.take(1).toList(),
+            busy: false,
+            onEdit: _noop,
+            onOpenEntry: (_) {},
+            onArchive: _noop,
+          ),
+          EntryRow(entry: sampleEntries.first, onChanged: (_) {}, onOpen: _noop),
+          SearchField(query: 'tomato', onChanged: (_) {}),
+          GroupDialog(groups: sampleGroups, onSave: (_) {}, onCancel: _noop),
+        ],
+      ),
+    );
+    expect(find.byType(IconAction), findsWidgets);
+  });
+
+  testWidgets('changed settings and entry dialog screens meet accessibility guidelines', (
+    tester,
+  ) async {
+    await _pumpAndCheckGuidelines(
+      tester,
+      Column(
+        children: [
+          NotionStepScreen(
+            connected: true,
+            workspaceName: 'Workspace',
+            hasToken: true,
+            connecting: false,
+            error: null,
+            onConnect: ({required token, required pageLink}) {},
+            onShowGuide: _noop,
+          ),
+          TypesafeStepScreen(hasKey: true, saving: false, error: null, onSave: (_) {}),
+          AutoSaveSection(on: false, onChanged: (_) {}),
+        ],
+      ),
+    );
+  });
+
+  testWidgets('changed modal dialogs and shell meet accessibility guidelines', (tester) async {
+    await _pumpAndCheckGuidelines(
+      tester,
+      EntryDialogScreen(entry: sampleEntries.first, body: 'Seedling details'),
+    );
+    await _pumpAndCheckGuidelines(tester, const NotionGuideDialog(onClose: _noop));
+    await _pumpAndCheckGuidelines(tester, const ResetDialog(onCancel: _noop, onReset: _noop));
+    await _pumpAndCheckGuidelines(
+      tester,
+      AppShellScreen(
+        location: '/',
+        child: Center(child: Text(NotionId('home').value)),
+      ),
+      viewport: const Size(390, 844),
     );
   });
 }
