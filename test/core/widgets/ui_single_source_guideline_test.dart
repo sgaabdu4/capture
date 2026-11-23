@@ -11,7 +11,6 @@ import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/core/widgets/atoms/paper_segmented.dart';
 import 'package:capture/core/widgets/atoms/paper_switch.dart';
 import 'package:capture/core/widgets/paper_dialog.dart';
-import 'package:capture/features/capture/domain/entities/item_kind.dart';
 import 'package:capture/features/capture/presentation/widgets/capture_actions.dart';
 import 'package:capture/features/capture/presentation/widgets/delete_capture_dialog.dart';
 import 'package:capture/features/capture/presentation/widgets/group_menu.dart';
@@ -43,14 +42,21 @@ import '../../helpers/app_harness.dart';
 import '../../helpers/sample_workspace.dart';
 import '../../helpers/test_fakes.dart';
 
+const _frame = Duration(milliseconds: 16);
+const _settleLimit = Duration(seconds: 5);
+
 void _noop() {}
 
-Widget _harness(Widget child) => ProviderScope(
+ProviderContainer _makeContainer() => .test(
   overrides: [
     nativePlatformServiceProvider.overrideWithValue(stubNative()),
     settingsProvider.overrideWithBuild(readySettings),
     groupsRepositoryProvider.overrideWithValue(SampleGroups()),
   ],
+);
+
+Widget _harness(ProviderContainer container, Widget child) => UncontrolledProviderScope(
+  container: container,
   child: MaterialApp(
     theme: buildAppTheme(),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -65,13 +71,15 @@ Future<void> _pumpAndCheckGuidelines(
   Size viewport = referenceWindow,
   bool checkAndroidTargets = true,
 }) async {
+  final container = _makeContainer();
+  addTearDown(container.dispose);
   tester.view.physicalSize = viewport;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final semantics = tester.ensureSemantics();
   try {
-    await tester.pumpWidget(_harness(widget));
-    await tester.pumpAndSettle();
+    await tester.pumpWidget(_harness(container, widget));
+    await tester.pumpAndSettle(_frame, .sendSemanticsUpdate, _settleLimit);
     await expectLater(tester, meetsGuideline(textContrastGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
     await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
@@ -89,11 +97,11 @@ void main() {
   testWidgets('shared library controls meet accessibility guidelines and forward actions', (
     tester,
   ) async {
-    var tapped = false;
-    var checked = false;
-    var switched = false;
+    bool tapped = false;
+    bool checked = false;
+    bool switched = false;
     String? picked;
-    var segment = 'a';
+    String segment = 'a';
     final controller = TextEditingController();
     addTearDown(controller.dispose);
 
@@ -136,7 +144,9 @@ void main() {
     await tester.tap(find.byType(IconAction));
     await tester.tap(find.byType(PaperCheckbox));
     await tester.tap(find.byType(PaperSwitch));
-    await tester.tap(find.text('Beta'));
+    await tester.tap(
+      find.descendant(of: find.byType(PaperSegmented<String>), matching: find.byType(Text)).last,
+    );
     final field = tester.widget<TextField>(find.byType(TextField));
     expect(tapped, isTrue);
     expect(checked, isTrue);
@@ -170,7 +180,7 @@ void main() {
             onDelete: _noop,
           ),
           GroupMenu(groups: sampleGroups, value: sampleGroups.first.id, onChanged: (_) {}),
-          KindToggle(kind: ItemKind.task, onChanged: (_) {}),
+          KindToggle(kind: .task, onChanged: (_) {}),
           ProposalItemHeader(
             item: item,
             titleController: titleController,
