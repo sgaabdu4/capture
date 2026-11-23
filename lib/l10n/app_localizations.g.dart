@@ -906,7 +906,7 @@ abstract class AppLocalizations {
   /// No description provided for @typesafeHintReplace.
   ///
   /// In en, this message translates to:
-  /// **'Paste a new key to replace it'**
+  /// **'Paste a new key'**
   String get typesafeHintReplace;
 
   /// No description provided for @save.
@@ -954,13 +954,13 @@ abstract class AppLocalizations {
   /// No description provided for @notionTokenHintReplace.
   ///
   /// In en, this message translates to:
-  /// **'Paste a new token to replace it'**
+  /// **'Paste a new token'**
   String get notionTokenHintReplace;
 
   /// No description provided for @notionPageHint.
   ///
   /// In en, this message translates to:
-  /// **'Link to the Notion page Capture may use'**
+  /// **'Notion page link'**
   String get notionPageHint;
 
   /// No description provided for @notionShowMe.
