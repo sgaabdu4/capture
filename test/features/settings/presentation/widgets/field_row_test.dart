@@ -6,11 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../helpers/app_harness.dart';
 
-const _field = ValueKey('field');
-const _action = ValueKey('action');
-
 Future<void> _pump(WidgetTester tester, {required double scale, double width = 800}) async {
-  tester.view.physicalSize = Size(width, 600);
+  tester.view.physicalSize = .new(width, 600);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
@@ -23,8 +20,8 @@ Future<void> _pump(WidgetTester tester, {required double scale, double width = 8
         body: Align(
           alignment: .topLeft,
           child: FieldRow(
-            field: SizedBox(key: _field, height: 48, width: double.infinity),
-            action: SizedBox(key: _action, height: 48, width: 96),
+            field: SizedBox(height: 48, child: Placeholder()),
+            action: FlutterLogo(size: 48),
           ),
         ),
       ),
@@ -37,16 +34,16 @@ void main() {
 
   testWidgets('at normal text the action sits beside the field', (tester) async {
     await _pump(tester, scale: 1);
-    final field = tester.getRect(find.byKey(_field));
-    final action = tester.getRect(find.byKey(_action));
+    final field = tester.getRect(find.byType(Placeholder));
+    final action = tester.getRect(find.byType(FlutterLogo));
     expect(action.left, field.right + Spacing.sm);
     expect(action.top, field.top);
   });
 
   testWidgets('at large text the action drops below the field', (tester) async {
     await _pump(tester, scale: 2);
-    final field = tester.getRect(find.byKey(_field));
-    final action = tester.getRect(find.byKey(_action));
+    final field = tester.getRect(find.byType(Placeholder));
+    final action = tester.getRect(find.byType(FlutterLogo));
     expect(action.top, field.bottom + Spacing.sm);
     expect(action.left, field.left);
   });
