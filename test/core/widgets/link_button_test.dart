@@ -1,4 +1,5 @@
 import 'package:capture/core/theme/app_theme.dart';
+import 'package:capture/core/theme/palette.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,6 +21,26 @@ void main() {
     final size = tester.getSize(find.byType(TextButton));
     expect(size.height, greaterThanOrEqualTo(48));
     expect(size.width, greaterThanOrEqualTo(48));
+  });
+
+  testWidgets('a destructive link button names its danger with the error colour', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Material(
+          child: Column(
+            children: [
+              LinkButton('Cancel', onPressed: () {}),
+              LinkButton('Delete', destructive: true, onPressed: () {}),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    Color? colorOf(String label) => tester.widget<Text>(find.text(label)).style?.color;
+    expect(colorOf('Delete'), Palette.error);
+    expect(colorOf('Cancel'), isNot(Palette.error));
   });
 
   testWidgets('a flush link button starts its text at the left edge of its slot', (tester) async {
