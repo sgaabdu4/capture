@@ -46,6 +46,7 @@ class DeleteCaptureDialog extends StatelessWidget {
         InkButton(
           l10n.delete,
           key: const ValueKey(AppWidgetKeys.deleteConfirmButton),
+          destructive: true,
           onPressed: onDelete,
         ),
       ],
