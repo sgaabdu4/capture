@@ -1,17 +1,25 @@
+import 'dart:io';
+
+import 'package:capture/app/phone_localizations.dart';
 import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/core/services/native_platform_service.dart';
 import 'package:capture/core/theme/app_theme.dart';
 import 'package:capture/core/theme/fonts.dart';
 import 'package:capture/core/theme/overlay_tokens.dart';
+import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/widgets/atoms/icon_action.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
+import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/core/widgets/atoms/paper_checkbox.dart';
 import 'package:capture/core/widgets/atoms/paper_dropdown.dart';
 import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/core/widgets/atoms/paper_segmented.dart';
 import 'package:capture/core/widgets/atoms/paper_switch.dart';
+import 'package:capture/core/widgets/expandable_card.dart';
 import 'package:capture/core/widgets/paper_dialog.dart';
+import 'package:capture/features/capture/presentation/screens/recordings_screen.dart';
 import 'package:capture/features/capture/presentation/widgets/capture_actions.dart';
+import 'package:capture/features/capture/presentation/widgets/capture_card.dart';
 import 'package:capture/features/capture/presentation/widgets/delete_capture_dialog.dart';
 import 'package:capture/features/capture/presentation/widgets/group_menu.dart';
 import 'package:capture/features/capture/presentation/widgets/kind_toggle.dart';
@@ -20,6 +28,7 @@ import 'package:capture/features/capture/presentation/widgets/proposal_item_head
 import 'package:capture/features/capture/presentation/widgets/review_card.dart';
 import 'package:capture/features/capture/presentation/widgets/today_card.dart';
 import 'package:capture/features/capture/presentation/widgets/when_row.dart';
+import 'package:capture/features/capture/repositories/capture_repository.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
 import 'package:capture/features/groups/presentation/widgets/group_dialog.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
@@ -30,9 +39,13 @@ import 'package:capture/features/settings/presentation/notifiers/settings_notifi
 import 'package:capture/features/settings/presentation/screens/notion_step_screen.dart';
 import 'package:capture/features/settings/presentation/screens/typesafe_step_screen.dart';
 import 'package:capture/features/settings/presentation/widgets/auto_save_section.dart';
+import 'package:capture/features/settings/presentation/widgets/model_step.dart';
 import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
+import 'package:capture/features/settings/presentation/widgets/privacy_section.dart';
 import 'package:capture/features/settings/presentation/widgets/reset_dialog.dart';
 import 'package:capture/features/shell/presentation/screens/app_shell_screen.dart';
+import 'package:capture/features/shell/presentation/widgets/app_sidebar.dart';
+import 'package:capture/features/shell/presentation/widgets/notion_chip.dart';
 import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -55,11 +68,15 @@ ProviderContainer _makeContainer() => .test(
   ],
 );
 
-Widget _harness(ProviderContainer container, Widget child) => UncontrolledProviderScope(
+Widget _harness(
+  ProviderContainer container,
+  Widget child, {
+  List<LocalizationsDelegate<Object?>>? delegates,
+}) => UncontrolledProviderScope(
   container: container,
   child: MaterialApp(
     theme: buildAppTheme(),
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    localizationsDelegates: delegates ?? AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(body: child),
   ),
@@ -70,15 +87,17 @@ Future<void> _pumpAndCheckGuidelines(
   Widget widget, {
   Size viewport = referenceWindow,
   bool checkAndroidTargets = true,
+  ProviderContainer? provided,
+  List<LocalizationsDelegate<Object?>>? delegates,
 }) async {
-  final container = _makeContainer();
+  final container = provided ?? _makeContainer();
   addTearDown(container.dispose);
   tester.view.physicalSize = viewport;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final semantics = tester.ensureSemantics();
   try {
-    await tester.pumpWidget(_harness(container, widget));
+    await tester.pumpWidget(_harness(container, widget, delegates: delegates));
     await tester.pumpAndSettle(_frame, .sendSemanticsUpdate, _settleLimit);
     await expectLater(tester, meetsGuideline(textContrastGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
@@ -302,6 +321,83 @@ void main() {
         child: Center(child: Text(NotionId('home').value)),
       ),
       viewport: const Size(390, 844),
+    );
+  });
+
+  testWidgets('recordings cards, link buttons and the sidebar meet accessibility guidelines', (
+    tester,
+  ) async {
+    await _pumpAndCheckGuidelines(
+      tester,
+      Column(
+        children: [
+          for (final record in [sampleSavedCapture, sampleProposedCapture])
+            CaptureCard(
+              record: record,
+              nowUtc: FakeSystem.now,
+              busy: false,
+              idle: true,
+              onRetry: _noop,
+              onReview: _noop,
+              onRetrySave: _noop,
+              onReviewAgain: _noop,
+              onDelete: _noop,
+            ),
+          const ExpandableCard(title: Text('Plain card'), children: []),
+          const LinkButton('Link', onPressed: _noop),
+        ],
+      ),
+      viewport: const Size(390, 844),
+    );
+    final link = find.ancestor(of: find.text('Link'), matching: find.byType(LinkButton));
+    expect(tester.getSize(link).height, greaterThanOrEqualTo(Sizes.tapTarget));
+
+    await _pumpAndCheckGuidelines(
+      tester,
+      const SizedBox(
+        height: 800,
+        child: AppSidebar(destinations: [], notionConnected: true, onHome: _noop, onNotion: _noop),
+      ),
+    );
+    await _pumpAndCheckGuidelines(
+      tester,
+      const Center(child: NotionChip(connected: false, onTap: _noop)),
+      viewport: const Size(390, 844),
+    );
+  });
+
+  testWidgets('the Recordings page meets accessibility guidelines', (tester) async {
+    final support = Directory.systemTemp.createTempSync('capture_guideline');
+    addTearDown(() => support.deleteSync(recursive: true));
+    final container = ProviderContainer.test(
+      overrides: [
+        ...appOverrides(support: support, native: stubNative()),
+        settingsProvider.overrideWithBuild(readySettings),
+      ],
+    );
+    container.read(captureRepositoryProvider)
+      ..put(sampleSavedCapture)
+      ..put(sampleProposedCapture);
+
+    await _pumpAndCheckGuidelines(
+      tester,
+      const RecordingsScreen(),
+      provided: container,
+      viewport: const Size(390, 844),
+    );
+  });
+
+  testWidgets('iPhone wording for the speech credit and privacy meets guidelines', (tester) async {
+    await _pumpAndCheckGuidelines(
+      tester,
+      const Column(
+        children: [
+          ModelStep(ready: true, download: null, totalBytes: 1, onDownload: _noop),
+          PrivacySection(),
+        ],
+      ),
+      viewport: const Size(390, 844),
+      delegates: PhoneLocalizationsDelegate.delegates,
     );
   });
 }

@@ -25,19 +25,22 @@ class NotionChip extends StatelessWidget {
         color: context.paper.card,
         borderRadius: Radii.rounded22,
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Spacing.md, vertical: Spacing.xs),
-          child: Row(
-            mainAxisSize: .min,
-            spacing: Spacing.xs,
-            children: [
-              StatusDot(connected ? context.paper.ok : context.paper.warn),
-              Text(
-                connected ? l10n.notionConnected : l10n.notionNotConnected,
-                style: context.textTheme.labelMedium?.copyWith(color: context.colors.onSurface),
-              ),
-              Icon(Icons.chevron_right, size: IconSizes.s18, color: context.colors.onSurface),
-            ],
+        child: ConstrainedBox(
+          constraints: const .new(minHeight: Sizes.tapTarget),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Spacing.md),
+            child: Row(
+              mainAxisSize: .min,
+              spacing: Spacing.xs,
+              children: [
+                StatusDot(connected ? context.paper.ok : context.paper.warn),
+                Text(
+                  connected ? l10n.notionConnected : l10n.notionNotConnected,
+                  style: context.textTheme.labelMedium?.copyWith(color: context.colors.onSurface),
+                ),
+                Icon(Icons.chevron_right, size: IconSizes.s18, color: context.colors.onSurface),
+              ],
+            ),
           ),
         ),
       ),
