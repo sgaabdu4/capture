@@ -1,5 +1,6 @@
 import 'package:capture/core/theme/app_theme.dart';
 import 'package:capture/core/theme/palette.dart';
+import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -50,5 +51,11 @@ void main() {
     final ratio = (dark + 0.05) / (light + 0.05);
 
     expect(ratio, greaterThanOrEqualTo(3));
+  });
+
+  test('the field border is drawn at the outline width token', () {
+    final border = buildAppTheme().inputDecorationTheme.enabledBorder;
+
+    expect(border?.borderSide.width, Sizes.outline);
   });
 }

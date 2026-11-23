@@ -128,7 +128,7 @@ const _scheme = ColorScheme.light(
 
 const _fieldBorder = OutlineInputBorder(
   borderRadius: Radii.rounded10,
-  borderSide: .new(color: Palette.fieldEdge),
+  borderSide: .new(color: Palette.fieldEdge, width: Sizes.outline),
 );
 
 InputDecorationThemeData _inputTheme() => .new(
@@ -141,7 +141,9 @@ InputDecorationThemeData _inputTheme() => .new(
   border: _fieldBorder,
   enabledBorder: _fieldBorder,
   disabledBorder: _fieldBorder,
-  focusedBorder: _fieldBorder.copyWith(borderSide: const .new(color: Palette.ink)),
+  focusedBorder: _fieldBorder.copyWith(
+    borderSide: const .new(color: Palette.ink, width: Sizes.outline),
+  ),
 );
 
 SwitchThemeData _switchTheme() => .new(
