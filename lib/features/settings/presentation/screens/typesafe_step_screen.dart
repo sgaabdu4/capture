@@ -1,10 +1,9 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
-import 'package:capture/core/theme/sizes.dart';
-import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
+import 'package:capture/features/settings/presentation/widgets/field_row.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -63,34 +62,26 @@ class _TypesafeStepScreenState extends ConsumerState<TypesafeStepScreen> {
         ),
         Padding(
           padding: StepHeader.bodyInset,
-          child: ConstrainedBox(
-            constraints: const .new(maxWidth: Sizes.fieldsWidth),
-            child: Row(
-              spacing: Spacing.sm,
-              children: [
-                Expanded(
-                  child: PaperField(
-                    key: const ValueKey(AppWidgetKeys.typesafeKeyField),
-                    controller: _key,
-                    obscureText: true,
-                    decoration: .new(
-                      hintMaxLines: 2,
-                      hintText: has ? l10n.typesafeHintReplace : l10n.typesafeHintNew,
-                      errorText: _missing ? l10n.typesafeKeyMissing : widget.error,
-                    ),
-                    onSubmitted: (_) => _onSave(),
-                  ),
-                ),
-                ListenableBuilder(
-                  listenable: _key,
-                  builder: (context, _) => InkButton(
-                    has ? l10n.replace : l10n.save,
-                    key: const ValueKey(AppWidgetKeys.typesafeSaveButton),
-                    onPressed: _key.text.trim().isEmpty ? null : _onSave,
-                    busy: widget.saving,
-                  ),
-                ),
-              ],
+          child: FieldRow(
+            field: PaperField(
+              key: const ValueKey(AppWidgetKeys.typesafeKeyField),
+              controller: _key,
+              obscureText: true,
+              decoration: .new(
+                hintMaxLines: 2,
+                hintText: has ? l10n.typesafeHintReplace : l10n.typesafeHintNew,
+                errorText: _missing ? l10n.typesafeKeyMissing : widget.error,
+              ),
+              onSubmitted: (_) => _onSave(),
+            ),
+            action: ListenableBuilder(
+              listenable: _key,
+              builder: (context, _) => InkButton(
+                has ? l10n.replace : l10n.save,
+                key: const ValueKey(AppWidgetKeys.typesafeSaveButton),
+                onPressed: _key.text.trim().isEmpty ? null : _onSave,
+                busy: widget.saving,
+              ),
             ),
           ),
         ),

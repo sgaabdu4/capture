@@ -6,6 +6,7 @@ import 'package:capture/core/widgets/atoms/ink_button.dart';
 import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/core/widgets/atoms/paper_field.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
+import 'package:capture/features/settings/presentation/widgets/field_row.dart';
 import 'package:capture/features/settings/presentation/widgets/step_header.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -103,29 +104,24 @@ class _NotionStepScreenState extends ConsumerState<NotionStepScreen> {
                         : l10n.notionTokenHintNew,
                   ),
                 ),
-                Row(
-                  spacing: Spacing.sm,
-                  children: [
-                    Expanded(
-                      child: PaperField(
-                        key: const ValueKey(AppWidgetKeys.notionPageField),
-                        controller: _page,
-                        decoration: .new(
-                          hintMaxLines: 2,
-                          hintText: connected ? l10n.notionPageHintKeep : l10n.notionPageHint,
-                          errorText: _tokenMissing ? l10n.notionTokenMissing : widget.error,
-                          errorMaxLines: _errorLines,
-                        ),
-                        onSubmitted: (_) => _onConnect(),
-                      ),
+                FieldRow(
+                  field: PaperField(
+                    key: const ValueKey(AppWidgetKeys.notionPageField),
+                    controller: _page,
+                    decoration: .new(
+                      hintMaxLines: 2,
+                      hintText: connected ? l10n.notionPageHintKeep : l10n.notionPageHint,
+                      errorText: _tokenMissing ? l10n.notionTokenMissing : widget.error,
+                      errorMaxLines: _errorLines,
                     ),
-                    InkButton(
-                      connected ? l10n.reconnect : l10n.connect,
-                      key: const ValueKey(AppWidgetKeys.notionConnectButton),
-                      onPressed: _onConnect,
-                      busy: widget.connecting,
-                    ),
-                  ],
+                    onSubmitted: (_) => _onConnect(),
+                  ),
+                  action: InkButton(
+                    connected ? l10n.reconnect : l10n.connect,
+                    key: const ValueKey(AppWidgetKeys.notionConnectButton),
+                    onPressed: _onConnect,
+                    busy: widget.connecting,
+                  ),
                 ),
               ],
             ),
