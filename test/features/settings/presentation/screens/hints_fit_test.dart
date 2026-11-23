@@ -16,50 +16,56 @@ void main() {
   setUpAll(loadAppFonts);
   final l10n = lookupAppLocalizations(const Locale('en'));
 
-  testWidgets('every key and link hint shows whole on a phone, inside the page and card padding', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    final container = ProviderContainer.test();
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: MaterialApp(
-          theme: buildAppTheme(),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: SingleChildScrollView(
-              padding: const .symmetric(horizontal: Spacing.md + Spacing.xl),
-              child: Column(
-                children: [
-                  TypesafeStepScreen(hasKey: true, saving: false, error: null, onSave: (_) {}),
-                  NotionStepScreen(
-                    connected: true,
-                    workspaceName: 'Workspace',
-                    hasToken: true,
-                    connecting: false,
-                    error: null,
-                    onConnect: ({required token, required pageLink}) {},
-                    onShowGuide: _noop,
-                  ),
-                ],
+  for (final scale in [1.0, 1.5]) {
+    testWidgets('every key and link hint shows whole on a phone at $scale times text', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final container = ProviderContainer.test();
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaler: .linear(scale)),
+              child: child ?? const SizedBox.shrink(),
+            ),
+            theme: buildAppTheme(),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: SingleChildScrollView(
+                padding: const .symmetric(horizontal: Spacing.md + Spacing.xl),
+                child: Column(
+                  children: [
+                    TypesafeStepScreen(hasKey: true, saving: false, error: null, onSave: (_) {}),
+                    NotionStepScreen(
+                      connected: true,
+                      workspaceName: 'Workspace',
+                      hasToken: true,
+                      connecting: false,
+                      error: null,
+                      onConnect: ({required token, required pageLink}) {},
+                      onShowGuide: _noop,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    for (final hint in [
-      l10n.typesafeHintReplace,
-      l10n.notionTokenHintReplace,
-      l10n.notionPageHintKeep,
-    ]) {
-      final paragraph = tester.renderObject<RenderParagraph>(find.text(hint));
-      expect(paragraph.didExceedMaxLines, isFalse, reason: hint);
-    }
-  });
+      for (final hint in [
+        l10n.typesafeHintReplace,
+        l10n.notionTokenHintReplace,
+        l10n.notionPageHintKeep,
+      ]) {
+        final paragraph = tester.renderObject<RenderParagraph>(find.text(hint));
+        expect(paragraph.didExceedMaxLines, isFalse, reason: hint);
+      }
+    });
+  }
 }
