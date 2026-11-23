@@ -47,13 +47,15 @@ class PaperField extends StatelessWidget {
       maxLines: maxLines,
     );
     return switch (label) {
-      final String text => Column(
-        crossAxisAlignment: .start,
-        spacing: Spacing.xxs,
-        children: [
-          ExcludeSemantics(child: Text(text, style: context.textTheme.bodySmall)),
-          Semantics(label: text, child: field),
-        ],
+      final String text => MergeSemantics(
+        child: Column(
+          crossAxisAlignment: .start,
+          spacing: Spacing.xxs,
+          children: [
+            Text(text, style: context.textTheme.bodySmall),
+            field,
+          ],
+        ),
       ),
       null => field,
     };
