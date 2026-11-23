@@ -1,6 +1,7 @@
 import 'package:capture/core/theme/app_theme.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
 import 'package:capture/l10n/app_localizations.g.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -41,5 +42,42 @@ void main() {
     expect(count.top, greaterThanOrEqualTo(description.bottom));
     expect(edit.left - count.right, lessThan(description.width));
     expect(edit.right, lessThan(description.left + 400));
+  });
+
+  testWidgets('large text keeps every action on the card and a long description to three lines', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final longDescription = List.filled(40, 'Anything about the long work week.').join(' ');
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: const .linear(2)),
+          child: child ?? const SizedBox.shrink(),
+        ),
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: GroupCard(
+            group: sampleGroups.first.copyWith(description: longDescription),
+            items: sampleEntries,
+            busy: false,
+            onEdit: () {},
+            onOpenEntry: (_) {},
+            onArchive: () {},
+          ),
+        ),
+      ),
+    );
+
+    final card = tester.getRect(find.byType(GroupCard));
+    final archive = tester.getRect(find.byTooltip(l10n.archive));
+    expect(archive.right, lessThanOrEqualTo(card.right));
+    expect(archive.bottom, lessThan(tester.view.physicalSize.height));
+    final paragraph = tester.renderObject<RenderParagraph>(find.text(longDescription));
+    expect(paragraph.didExceedMaxLines, isTrue);
   });
 }

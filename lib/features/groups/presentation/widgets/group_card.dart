@@ -24,6 +24,9 @@ class GroupCard extends StatelessWidget {
   /// How many filed entries the expanded card lists.
   static const _maxItems = 20;
 
+  /// Longer descriptions are cut; the edit dialog shows all of it.
+  static const _descriptionLines = 3;
+
   final Group group;
 
   /// Library entries filed in [group].
@@ -51,9 +54,11 @@ class GroupCard extends StatelessWidget {
         crossAxisAlignment: .start,
         children: [
           if (group.description case final String description)
-            Text(description, style: labelMedium),
-          Row(
+            Text(description, style: labelMedium, maxLines: _descriptionLines, overflow: .ellipsis),
+          Wrap(
+            crossAxisAlignment: .center,
             spacing: Spacing.xs,
+            runSpacing: Spacing.xs,
             children: [
               Text(l10n.groupSavedCount(items.length), style: bodySmall),
               IconAction(Icons.edit_outlined, tooltip: l10n.edit, onPressed: busy ? null : onEdit),
