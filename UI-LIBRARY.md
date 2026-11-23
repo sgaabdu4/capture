@@ -9,7 +9,7 @@ One section for each library entry of `ui_library`; one row for each part. Writt
 - `IconAction` — Tooltipped icon button for inline, dialog, and toolbar actions, with a flush mode that draws the icon at the leading edge inside a full tap area.
 - `IconBadge` — Circular icon badge used as a list-row leading visual.
 - `InkButton` — Primary filled ink button with an optional busy spinner and a destructive mode that fills it with the error role for delete confirms.
-- `LineButton` — Secondary outlined button for neutral actions and pickers.
+- `LineButton` — Secondary outlined button for neutral actions and pickers, with a destructive mode that draws the label and outline in the error role for an action that wipes data.
 - `LinkButton` — Quiet text button with an optional trailing icon, a 48 point tap target, and a flush mode that lines its text up with the content above, and a destructive mode that colours the label with the error role.
 - `PageFrame` — Scrollable page scaffold with an underlined title, subtitle, and actions.
 - `PaperCard` — Paper-styled rounded container with border and soft shadow.

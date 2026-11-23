@@ -24,6 +24,7 @@ class ResetSection extends StatelessWidget {
         LineButton(
           l10n.resetButton,
           key: const ValueKey(AppWidgetKeys.resetButton),
+          destructive: true,
           onPressed: onReset,
         ),
       ],
