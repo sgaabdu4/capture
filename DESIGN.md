@@ -45,7 +45,6 @@ rounded:
   r12: 12px
   r16: 16px
   r18: 18px
-  r22: 22px
 typography:
   displayLarge:
     fontFamily: "Caveat"
