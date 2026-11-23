@@ -6,6 +6,7 @@ import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
+import 'package:capture/features/shell/presentation/widgets/nav_item.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -84,5 +85,17 @@ void main() {
 
     await _open(tester, AppWidgetKeys.navTodo);
     expect(find.byKey(gear), findsOneWidget);
+  });
+
+  testWidgets('the sidebar lists Capture as a destination that is selected on Home', (
+    tester,
+  ) async {
+    await _launch(tester, support);
+    const home = ValueKey(AppWidgetKeys.navHome);
+
+    expect(tester.widget<NavItem>(find.byKey(home)).selected, isTrue);
+
+    await _open(tester, AppWidgetKeys.navGroups);
+    expect(tester.widget<NavItem>(find.byKey(home)).selected, isFalse);
   });
 }

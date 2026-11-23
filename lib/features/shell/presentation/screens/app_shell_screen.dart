@@ -34,14 +34,13 @@ class AppShellScreen extends ConsumerWidget {
     final path => location == path || location.startsWith('$path/'),
   };
 
-  List<NavDestination> _destinations(AppLocalizations l10n, {required bool withHome}) => [
-    if (withHome)
-      .new(
-        key: AppWidgetKeys.navHome,
-        icon: Icons.mic_none_outlined,
-        label: l10n.appTitle,
-        route: const HomeRoute(),
-      ),
+  List<NavDestination> _destinations(AppLocalizations l10n) => [
+    .new(
+      key: AppWidgetKeys.navHome,
+      icon: Icons.mic_none_outlined,
+      label: l10n.appTitle,
+      route: const HomeRoute(),
+    ),
     .new(
       key: AppWidgetKeys.navGroups,
       icon: Icons.home_outlined,
@@ -108,7 +107,7 @@ class AppShellScreen extends ConsumerWidget {
       ],
     );
     if (compact) {
-      final destinations = _destinations(l10n, withHome: true);
+      final destinations = _destinations(l10n);
       final selected = destinations.indexWhere((d) => _at(d.route));
       return Scaffold(
         body: SafeArea(child: page),
@@ -124,13 +123,9 @@ class AppShellScreen extends ConsumerWidget {
         children: [
           AppSidebar(
             notionConnected: connected,
-            onHome: () => const HomeRoute().go(context),
             onNotion: () => const SettingsRoute().go(context),
             destinations: [
-              for (final NavDestination(:key, :icon, :label, :route) in _destinations(
-                l10n,
-                withHome: false,
-              ))
+              for (final NavDestination(:key, :icon, :label, :route) in _destinations(l10n))
                 NavItem(
                   key: ValueKey(key),
                   icon: icon,
