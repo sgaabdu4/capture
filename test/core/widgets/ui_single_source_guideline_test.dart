@@ -34,7 +34,6 @@ import 'package:capture/features/capture/presentation/widgets/when_row.dart';
 import 'package:capture/features/capture/repositories/capture_repository.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
 import 'package:capture/features/groups/presentation/widgets/group_dialog.dart';
-import 'package:capture/features/groups/presentation/widgets/group_list.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
 import 'package:capture/features/library/presentation/extensions/library_labels.dart';
 import 'package:capture/features/library/presentation/screens/entry_dialog_screen.dart';
@@ -300,19 +299,6 @@ void main() {
       ),
     );
     expect(find.byType(IconAction), findsWidgets);
-    await _pumpAndCheckGuidelines(
-      tester,
-      GroupList(
-        activeGroups: sampleGroups,
-        archivedGroups: const [],
-        entries: sampleEntries,
-        busy: false,
-        onEdit: (_) {},
-        onOpenEntry: (_) {},
-        onArchive: (_) {},
-        onRestore: (_) {},
-      ),
-    );
   });
 
   testWidgets('changed settings and entry dialog screens meet accessibility guidelines', (

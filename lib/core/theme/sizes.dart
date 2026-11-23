@@ -36,9 +36,6 @@ abstract final class Sizes {
 
   /// A field and its button, kept close so the button reads as part of the field.
   static const double fieldsWidth = 560;
-
-  /// A group card's text and its actions, kept close so each action reads as part of its card.
-  static const double groupCardWidth = 480;
   static const double cardsMaxWidth = 1080;
   static const double hairline = 1;
   static const double outline = 1.4;

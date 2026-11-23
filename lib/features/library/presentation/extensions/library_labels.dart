@@ -38,9 +38,11 @@ extension LibraryEntriesInGroup on Iterable<LibraryEntry> {
 
 extension LibraryEntryDetail on LibraryEntry {
   /// "Tomorrow 9:00 AM · Work · Reminder", or null when empty; [today] is the local wall-clock date.
-  String? detail(AppLocalizations l10n, DateTime today, Group? group) {
+  /// With [underDay] the day heading above already says the day, so only the time shows.
+  String? detail(AppLocalizations l10n, DateTime today, Group? group, {bool underDay = false}) {
     final parts = [
-      if (when case final DueDate day) day.label(l10n, today),
+      if (when case final DueDate day)
+        if (underDay) ?day.timeLabel(l10n) else day.label(l10n, today),
       ?group?.name,
       if (reminder != null) l10n.reminderLabel,
     ];
