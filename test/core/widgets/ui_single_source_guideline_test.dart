@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:capture/app/app_startup.dart';
+import 'package:capture/app/capture_app.dart';
 import 'package:capture/app/phone_localizations.dart';
 import 'package:capture/core/domain/values/notion_id.dart';
 import 'package:capture/core/services/native_platform_service.dart';
+import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/app_theme.dart';
 import 'package:capture/core/theme/fonts.dart';
 import 'package:capture/core/theme/overlay_tokens.dart';
@@ -32,14 +35,17 @@ import 'package:capture/features/capture/presentation/widgets/review_card.dart';
 import 'package:capture/features/capture/presentation/widgets/today_card.dart';
 import 'package:capture/features/capture/presentation/widgets/when_row.dart';
 import 'package:capture/features/capture/repositories/capture_repository.dart';
+import 'package:capture/features/groups/presentation/screens/groups_screen.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
 import 'package:capture/features/groups/presentation/widgets/group_dialog.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
 import 'package:capture/features/library/presentation/extensions/library_labels.dart';
 import 'package:capture/features/library/presentation/screens/entry_dialog_screen.dart';
+import 'package:capture/features/library/presentation/screens/task_list_screen.dart';
 import 'package:capture/features/library/presentation/widgets/entry_dialog_actions.dart';
 import 'package:capture/features/library/presentation/widgets/entry_row.dart';
 import 'package:capture/features/library/presentation/widgets/search_field.dart';
+import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/screens/notion_step_screen.dart';
 import 'package:capture/features/settings/presentation/screens/shortcut_section_screen.dart';
@@ -480,6 +486,46 @@ void main() {
       provided: container,
       viewport: const Size(390, 844),
     );
+  });
+
+  testWidgets('the Groups, To-Do and Upcoming pages meet accessibility guidelines', (tester) async {
+    final support = Directory.systemTemp.createTempSync('capture_guideline');
+    addTearDown(() => support.deleteSync(recursive: true));
+    final container = ProviderContainer.test(
+      overrides: [
+        ...appOverrides(support: support, native: stubNative()),
+        settingsProvider.overrideWithBuild(readySettings),
+        appStartupProvider.overrideWith((ref) async {}),
+        groupsRepositoryProvider.overrideWithValue(SampleGroups()),
+        libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
+      ],
+    );
+    addTearDown(container.dispose);
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final semantics = tester.ensureSemantics();
+    try {
+      await tester.pumpWidget(
+        UncontrolledProviderScope(container: container, child: const CaptureApp()),
+      );
+      await tester.pumpAndSettle(_frame, .sendSemanticsUpdate, _settleLimit);
+      for (final (key, page) in [
+        (AppWidgetKeys.navGroups, GroupsScreen),
+        (AppWidgetKeys.navTodo, TaskListScreen),
+        (AppWidgetKeys.navUpcoming, TaskListScreen),
+      ]) {
+        await tester.tap(find.byKey(ValueKey(key)));
+        await tester.pumpAndSettle(_frame, .sendSemanticsUpdate, _settleLimit);
+        expect(find.byType(page), findsOneWidget, reason: key);
+        await expectLater(tester, meetsGuideline(textContrastGuideline));
+        await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+        await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+        await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      }
+    } finally {
+      semantics.dispose();
+    }
   });
 
   testWidgets('iPhone wording for the speech credit and privacy meets guidelines', (tester) async {
