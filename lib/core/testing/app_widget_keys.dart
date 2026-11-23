@@ -58,6 +58,7 @@ abstract final class AppWidgetKeys {
 
   // Library
   static const refreshButton = 'library.refresh';
+  static const controlShot = 'test.control.shot';
   static const searchField = 'library.search';
   static const entryTitleField = 'library.entry.title';
   static const entryBodyField = 'library.entry.body';

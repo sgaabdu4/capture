@@ -47,7 +47,7 @@ class WhenRow extends StatelessWidget {
           spacing: Spacing.xs,
           children: [
             const Padding(
-              padding: EdgeInsets.only(top: Spacing.xs),
+              padding: EdgeInsets.only(top: (Sizes.tapTarget - IconSizes.s20) / 2),
               child: Icon(
                 Icons.calendar_today_outlined,
                 key: ValueKey(AppWidgetKeys.whenIcon),

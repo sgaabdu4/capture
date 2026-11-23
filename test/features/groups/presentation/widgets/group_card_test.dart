@@ -1,4 +1,5 @@
 import 'package:capture/core/theme/app_theme.dart';
+import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
 import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,7 +12,7 @@ void main() {
   setUpAll(loadAppFonts);
   final l10n = lookupAppLocalizations(const Locale('en'));
 
-  testWidgets('the count sits beside the name and the actions sit above the description', (
+  testWidgets('the count sits beside the name and the actions sit under the description', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1280, 860);
@@ -42,12 +43,14 @@ void main() {
     final edit = tester.getRect(find.byTooltip(l10n.edit));
     expect(count.left, greaterThan(name.right));
     expect(count.center.dy, closeTo(name.center.dy, name.height));
-    expect(edit.top, greaterThanOrEqualTo(name.bottom));
-    expect(edit.bottom, lessThanOrEqualTo(description.top));
+    final archive = tester.getRect(find.byTooltip(l10n.archive));
+    expect(description.top, greaterThanOrEqualTo(name.bottom));
+    expect(edit.top, greaterThanOrEqualTo(description.bottom));
     expect(edit.left, description.left);
+    expect(archive.left - edit.right, Spacing.xs);
   });
 
-  testWidgets('large text keeps every action on screen above a long description cut to two lines', (
+  testWidgets('large text keeps every action on screen under a long description cut to two lines', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(320, 844);
@@ -84,7 +87,7 @@ void main() {
     expect(archive.right, lessThanOrEqualTo(card.right));
     expect(archive.bottom, lessThan(tester.view.physicalSize.height));
     final description = tester.getRect(find.text(longDescription));
-    expect(description.top, greaterThanOrEqualTo(archive.bottom));
+    expect(archive.top, greaterThanOrEqualTo(description.bottom));
     final shown = tester.widget<Text>(find.text(longDescription));
     expect(shown.maxLines, 2);
     expect(shown.overflow, TextOverflow.ellipsis);

@@ -60,6 +60,17 @@ class GroupCard extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: .start,
         children: [
+          if (group.description case final String description)
+            GestureDetector(
+              excludeFromSemantics: true,
+              onTap: busy ? null : onEdit,
+              child: Text(
+                description,
+                style: labelMedium,
+                maxLines: _descriptionLines,
+                overflow: .ellipsis,
+              ),
+            ),
           Wrap(
             crossAxisAlignment: .center,
             spacing: Spacing.xs,
@@ -75,27 +86,18 @@ class GroupCard extends StatelessWidget {
                 IconAction(
                   Icons.archive_outlined,
                   tooltip: l10n.archive,
+                  flush: true,
                   onPressed: busy ? null : archive,
                 ),
               if (onRestore case final VoidCallback restore)
                 IconAction(
                   Icons.unarchive_outlined,
                   tooltip: l10n.restore,
+                  flush: true,
                   onPressed: busy ? null : restore,
                 ),
             ],
           ),
-          if (group.description case final String description)
-            GestureDetector(
-              excludeFromSemantics: true,
-              onTap: busy ? null : onEdit,
-              child: Text(
-                description,
-                style: labelMedium,
-                maxLines: _descriptionLines,
-                overflow: .ellipsis,
-              ),
-            ),
         ],
       ),
       children: [
