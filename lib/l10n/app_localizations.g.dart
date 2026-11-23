@@ -1299,12 +1299,6 @@ abstract class AppLocalizations {
   /// **'Could not refresh the library. Your previous entries are still available; try again.'**
   String get libraryRefreshFailed;
 
-  /// No description provided for @syncNever.
-  ///
-  /// In en, this message translates to:
-  /// **'Not refreshed yet.'**
-  String get syncNever;
-
   /// No description provided for @syncedAgo.
   ///
   /// In en, this message translates to:

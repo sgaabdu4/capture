@@ -712,9 +712,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not refresh the library. Your previous entries are still available; try again.';
 
   @override
-  String get syncNever => 'Not refreshed yet.';
-
-  @override
   String syncedAgo(String ago) {
     return 'Synced with Notion: $ago.';
   }
