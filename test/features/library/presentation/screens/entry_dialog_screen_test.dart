@@ -1,6 +1,7 @@
 import 'package:capture/core/data/system/system_datasource.dart';
 import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/app_theme.dart';
+import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/capture/domain/entities/due_date.dart';
 import 'package:capture/features/capture/presentation/widgets/when_row.dart';
 import 'package:capture/features/groups/repositories/groups_repository.dart';
@@ -74,6 +75,21 @@ Finder _pickerButtons() =>
     find.descendant(of: find.byType(DatePickerDialog), matching: find.byType(TextButton));
 
 void main() {
+  testWidgets('the buttons start at the title edge and stay together', (tester) async {
+    await _show(tester, _task());
+
+    final title = tester.getTopLeft(find.text('Edit task')).dx;
+    final delete = tester.getTopLeft(find.text('Delete')).dx;
+    final deleteRight = tester
+        .getTopRight(find.byKey(const ValueKey(AppWidgetKeys.entryDeleteButton)))
+        .dx;
+    final cancelLeft = tester
+        .getTopLeft(find.byKey(const ValueKey(AppWidgetKeys.entryCancelButton)))
+        .dx;
+    expect(delete, title);
+    expect(cancelLeft - deleteRight, lessThanOrEqualTo(Spacing.md));
+  });
+
   testWidgets('the reminder switch turns the reminder on at the due time', (tester) async {
     await _show(tester, _task());
     expect(_row(tester).hasReminder, isFalse);
