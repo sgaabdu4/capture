@@ -6,6 +6,7 @@ import 'package:capture/core/router/app_routes.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
 import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/features/capture/domain/entities/capture_record.dart';
+import 'package:capture/features/capture/presentation/extensions/capture_labels.dart';
 import 'package:capture/features/capture/presentation/notifiers/capture_flow_notifier.dart';
 import 'package:capture/features/capture/presentation/widgets/capture_card.dart';
 import 'package:capture/features/capture/presentation/widgets/delete_capture_dialog.dart';
@@ -17,13 +18,19 @@ class RecordingsScreen extends ConsumerWidget {
 
   static const _deleteDialogRoute = 'delete-capture-dialog';
 
-  Future<void> _confirmDelete(BuildContext context, WidgetRef ref, CaptureRecord record) async {
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    CaptureRecord record,
+    DateTime nowUtc,
+  ) async {
     final saved = record.stage == .saved;
     final confirmed = await showDialog<bool>(
       context: context,
       routeSettings: const .new(name: _deleteDialogRoute),
       builder: (dialogContext) => DeleteCaptureDialog(
         saved: saved,
+        detail: record.meta(context.l10n, nowUtc),
         onCancel: () => Navigator.of(dialogContext).pop(false),
         onDelete: () => Navigator.of(dialogContext).pop(true),
       ),
@@ -64,7 +71,7 @@ class RecordingsScreen extends ConsumerWidget {
             onRetrySave: () =>
                 unawaited(ref.read(captureFlowProvider.notifier).approve(record.id.value)),
             onReviewAgain: () => _reviewAgain(context, ref, record.id.value),
-            onDelete: () => unawaited(_confirmDelete(context, ref, record)),
+            onDelete: () => unawaited(_confirmDelete(context, ref, record, nowUtc)),
           ),
       ],
     );
