@@ -28,6 +28,27 @@ Future<void> _open(WidgetTester tester, String key) async {
   await _settle(tester);
 }
 
+Future<void> _launch(WidgetTester tester, Directory support) async {
+  tester.view
+    ..physicalSize = referenceWindow
+    ..devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  final container = ProviderContainer.test(
+    overrides: [
+      ...appOverrides(support: support, native: stubNative()),
+      appStartupProvider.overrideWith((ref) async {}),
+      settingsProvider.overrideWithBuild(readySettings),
+      groupsRepositoryProvider.overrideWithValue(SampleGroups()),
+      libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
+    ],
+  );
+  addTearDown(container.dispose);
+  await tester.pumpWidget(
+    UncontrolledProviderScope(container: container, child: const CaptureApp()),
+  );
+  await _settle(tester);
+}
+
 void main() {
   late Directory support;
 
@@ -39,24 +60,7 @@ void main() {
   tearDown(() => support.deleteSync(recursive: true));
 
   testWidgets('Refresh shows the same icon link on Groups and To-Do', (tester) async {
-    tester.view
-      ..physicalSize = referenceWindow
-      ..devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    final container = ProviderContainer.test(
-      overrides: [
-        ...appOverrides(support: support, native: stubNative()),
-        appStartupProvider.overrideWith((ref) async {}),
-        settingsProvider.overrideWithBuild(readySettings),
-        groupsRepositoryProvider.overrideWithValue(SampleGroups()),
-        libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
-      ],
-    );
-    addTearDown(container.dispose);
-    await tester.pumpWidget(
-      UncontrolledProviderScope(container: container, child: const CaptureApp()),
-    );
-    await _settle(tester);
+    await _launch(tester, support);
 
     for (final nav in [AppWidgetKeys.navGroups, AppWidgetKeys.navTodo]) {
       await _open(tester, nav);
@@ -66,5 +70,19 @@ void main() {
       );
       expect(tester.widget<Icon>(icon).icon, Icons.refresh, reason: nav);
     }
+  });
+
+  testWidgets('the settings gear is hidden on the Settings page and back on the others', (
+    tester,
+  ) async {
+    await _launch(tester, support);
+    const gear = ValueKey(AppWidgetKeys.settingsButton);
+
+    expect(find.byKey(gear), findsOneWidget);
+    await _open(tester, AppWidgetKeys.settingsButton);
+    expect(find.byKey(gear), findsNothing);
+
+    await _open(tester, AppWidgetKeys.navTodo);
+    expect(find.byKey(gear), findsOneWidget);
   });
 }

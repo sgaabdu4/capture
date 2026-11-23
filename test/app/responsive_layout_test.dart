@@ -12,6 +12,7 @@ import 'package:capture/features/groups/repositories/groups_repository.dart';
 import 'package:capture/features/library/repositories/library_repository.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:capture/features/settings/presentation/widgets/notion_guide_dialog.dart';
+import 'package:capture/features/shell/presentation/screens/app_shell_screen.dart';
 import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,8 +83,7 @@ Future<void> _resize(WidgetTester tester, double width) async {
 }
 
 /// A context inside the router, for typed navigation.
-BuildContext _shell(WidgetTester tester) =>
-    tester.element(find.byKey(const ValueKey(AppWidgetKeys.settingsButton)));
+BuildContext _shell(WidgetTester tester) => tester.element(find.byType(AppShellScreen));
 
 Future<void> _go(WidgetTester tester, void Function(BuildContext) open) async {
   open(_shell(tester));
