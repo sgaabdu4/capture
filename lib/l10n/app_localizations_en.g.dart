@@ -496,7 +496,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get typesafeHintNew => 'Paste your key';
 
   @override
-  String get typesafeHintReplace => 'Paste a new key to replace it';
+  String get typesafeHintReplace => 'Paste a new key';
 
   @override
   String get save => 'Save';
@@ -523,10 +523,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notionTokenHintNew => 'Internal connection token (ntn_…)';
 
   @override
-  String get notionTokenHintReplace => 'Paste a new token to replace it';
+  String get notionTokenHintReplace => 'Paste a new token';
 
   @override
-  String get notionPageHint => 'Link to the Notion page Capture may use';
+  String get notionPageHint => 'Notion page link';
 
   @override
   String get notionShowMe => 'Show me how';
