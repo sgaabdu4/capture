@@ -37,6 +37,7 @@ class WhenRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final reminderLabel = (due?.hasTime ?? false) ? l10n.remindMe : l10n.addTimeForReminder;
     return Row(
       crossAxisAlignment: .start,
       spacing: Spacing.xs,
@@ -68,27 +69,25 @@ class WhenRow extends StatelessWidget {
                   key: const ValueKey(AppWidgetKeys.whenTimeButton),
                   onPressed: enabled ? onPickTime : null,
                 ),
-                MergeSemantics(
-                  child: Row(
-                    mainAxisSize: .min,
-                    children: [
-                      PaperSwitch(
-                        key: const ValueKey(AppWidgetKeys.whenReminderSwitch),
-                        padding: const EdgeInsetsDirectional.only(
-                          start: Spacing.sm,
-                          end: Spacing.xxs,
-                        ),
-                        value: hasReminder,
-                        onChanged: enabled && d.hasTime ? onReminder : null,
+                Row(
+                  mainAxisSize: .min,
+                  children: [
+                    PaperSwitch(
+                      key: const ValueKey(AppWidgetKeys.whenReminderSwitch),
+                      padding: const EdgeInsetsDirectional.only(
+                        start: Spacing.sm,
+                        end: Spacing.xxs,
                       ),
-                      Flexible(
-                        child: Text(
-                          d.hasTime ? l10n.remindMe : l10n.addTimeForReminder,
-                          style: context.textTheme.labelMedium,
-                        ),
+                      semanticLabel: reminderLabel,
+                      value: hasReminder,
+                      onChanged: enabled && d.hasTime ? onReminder : null,
+                    ),
+                    Flexible(
+                      child: ExcludeSemantics(
+                        child: Text(reminderLabel, style: context.textTheme.labelMedium),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ],
