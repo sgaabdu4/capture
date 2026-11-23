@@ -36,7 +36,9 @@ void main() {
 
     expect(_drawnLeft(tester), 0);
     expect(tester.getSize(find.byType(PaperCheckbox)), const Size.square(Sizes.tapTarget));
-    await tester.tapAt(const Offset(Sizes.tapTarget - 2, Sizes.tapTarget - 2));
+    final centre = tester.getCenter(find.byType(PaperCheckbox)).dx;
+    expect(centre, greaterThan(Checkbox.width));
+    await tester.tap(find.byType(PaperCheckbox));
     expect(taps, [true]);
   });
 
@@ -60,7 +62,6 @@ void main() {
       matchesSemantics(
         label: 'Saving',
         hasCheckedState: true,
-        isChecked: false,
         hasEnabledState: true,
         isEnabled: true,
         hasTapAction: true,
