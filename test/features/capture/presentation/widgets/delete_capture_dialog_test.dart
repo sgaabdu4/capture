@@ -1,3 +1,4 @@
+import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/app_theme.dart';
 import 'package:capture/features/capture/presentation/widgets/delete_capture_dialog.dart';
 import 'package:capture/l10n/app_localizations.g.dart';
@@ -47,7 +48,10 @@ void main() {
       ),
     );
 
-    final panel = find.descendant(of: find.byType(AlertDialog), matching: find.byType(Material));
-    expect(tester.getSize(panel.first).height, lessThan(300));
+    final top = tester.getTopLeft(find.text('Delete this recording?')).dy;
+    final bottom = tester
+        .getBottomLeft(find.byKey(const ValueKey(AppWidgetKeys.deleteConfirmButton)))
+        .dy;
+    expect(bottom - top, lessThan(300));
   });
 }
