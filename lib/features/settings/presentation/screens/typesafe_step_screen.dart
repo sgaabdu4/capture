@@ -77,11 +77,14 @@ class _TypesafeStepScreenState extends ConsumerState<TypesafeStepScreen> {
                   onSubmitted: (_) => _onSave(),
                 ),
               ),
-              InkButton(
-                has ? l10n.replace : l10n.save,
-                key: const ValueKey(AppWidgetKeys.typesafeSaveButton),
-                onPressed: _onSave,
-                busy: widget.saving,
+              ListenableBuilder(
+                listenable: _key,
+                builder: (context, _) => InkButton(
+                  has ? l10n.replace : l10n.save,
+                  key: const ValueKey(AppWidgetKeys.typesafeSaveButton),
+                  onPressed: _key.text.trim().isEmpty ? null : _onSave,
+                  busy: widget.saving,
+                ),
               ),
             ],
           ),

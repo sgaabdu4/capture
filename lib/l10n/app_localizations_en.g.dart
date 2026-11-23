@@ -529,6 +529,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notionPageHint => 'Notion page link';
 
   @override
+  String get notionPageHintKeep => 'Keep current page';
+
+  @override
   String get notionShowMe => 'Show me how';
 
   @override
@@ -629,7 +632,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get autoSaveDetail =>
-      'After a recording, Capture saves what it sorted without asking and sends a notification. The review card still appears when something needs a look.';
+      'Saves what Capture sorted without asking and sends a notification. The review card still opens when something needs a look.';
 
   @override
   String get privacyTitle => 'Privacy';

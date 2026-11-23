@@ -963,6 +963,12 @@ abstract class AppLocalizations {
   /// **'Notion page link'**
   String get notionPageHint;
 
+  /// No description provided for @notionPageHintKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep current page'**
+  String get notionPageHintKeep;
+
   /// No description provided for @notionShowMe.
   ///
   /// In en, this message translates to:
@@ -1140,7 +1146,7 @@ abstract class AppLocalizations {
   /// No description provided for @autoSaveDetail.
   ///
   /// In en, this message translates to:
-  /// **'After a recording, Capture saves what it sorted without asking and sends a notification. The review card still appears when something needs a look.'**
+  /// **'Saves what Capture sorted without asking and sends a notification. The review card still opens when something needs a look.'**
   String get autoSaveDetail;
 
   /// No description provided for @privacyTitle.
