@@ -113,7 +113,7 @@ class _GroupDialogState extends State<GroupDialog> {
         ),
       ),
       actions: [
-        LinkButton(l10n.cancel, onPressed: widget.onCancel),
+        LinkButton(l10n.cancel, flush: true, onPressed: widget.onCancel),
         InkButton(
           l10n.save,
           key: const ValueKey(AppWidgetKeys.groupDialogSaveButton),

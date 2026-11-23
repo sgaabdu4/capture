@@ -114,7 +114,6 @@ class _EntryDialogScreenState extends ConsumerState<EntryDialogScreen> {
     final LibraryEntry(:kind, :groupId, :due, :reminder) = _entry;
     return PaperDialog(
       scrollable: true,
-      insetPadding: context.compact ? const .all(Spacing.md) : null,
       title: kind == .task ? l10n.editTask : l10n.editNote,
       content: SizedBox(
         width: Sizes.dialogWidth,

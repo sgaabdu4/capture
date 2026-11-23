@@ -54,4 +54,26 @@ void main() {
         .dy;
     expect(bottom - top, lessThan(350));
   });
+
+  testWidgets('the buttons start at the same left edge as the title', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const Center(
+          child: DeleteCaptureDialog(
+            saved: true,
+            detail: '20 minutes ago · 0:14',
+            onCancel: _noop,
+            onDelete: _noop,
+          ),
+        ),
+      ),
+    );
+
+    final title = tester.getTopLeft(find.text('Delete this recording?')).dx;
+    final cancel = tester.getTopLeft(find.text('Cancel')).dx;
+    expect(cancel, title);
+  });
 }

@@ -42,7 +42,7 @@ class DeleteCaptureDialog extends StatelessWidget {
         ],
       ),
       actions: [
-        LinkButton(l10n.cancel, onPressed: onCancel),
+        LinkButton(l10n.cancel, flush: true, onPressed: onCancel),
         InkButton(
           l10n.delete,
           key: const ValueKey(AppWidgetKeys.deleteConfirmButton),

@@ -1,5 +1,6 @@
 import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/sizes.dart';
+import 'package:capture/core/theme/spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Paper-styled modal dialog with a handwritten title.
@@ -26,10 +27,11 @@ class PaperDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AlertDialog(
     scrollable: scrollable,
-    insetPadding: insetPadding,
+    insetPadding: insetPadding ?? (context.compact ? const .all(Spacing.md) : null),
     title: Text(title, style: context.textTheme.titleMedium),
     constraints: .new(maxWidth: width),
     content: content,
+    actionsAlignment: .start,
     actions: actions.isEmpty ? null : actions,
   );
 }
