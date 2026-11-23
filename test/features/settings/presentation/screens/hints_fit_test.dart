@@ -1,4 +1,5 @@
 import 'package:capture/core/theme/app_theme.dart';
+import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/features/settings/presentation/screens/notion_step_screen.dart';
 import 'package:capture/features/settings/presentation/screens/typesafe_step_screen.dart';
 import 'package:capture/l10n/app_localizations.g.dart';
@@ -15,7 +16,9 @@ void main() {
   setUpAll(loadAppFonts);
   final l10n = lookupAppLocalizations(const Locale('en'));
 
-  testWidgets('every key and link hint shows whole on a phone', (tester) async {
+  testWidgets('every key and link hint shows whole on a phone, inside the page and card padding', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -29,6 +32,7 @@ void main() {
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: SingleChildScrollView(
+              padding: const .symmetric(horizontal: Spacing.md + Spacing.xl),
               child: Column(
                 children: [
                   TypesafeStepScreen(hasKey: true, saving: false, error: null, onSave: (_) {}),

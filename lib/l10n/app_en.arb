@@ -284,7 +284,7 @@
   "notionTokenHintNew": "Internal connection token (ntn_…)",
   "notionTokenHintReplace": "Paste a new token",
   "notionPageHint": "Notion page link",
-  "notionPageHintKeep": "Keep current page",
+  "notionPageHintKeep": "Current page",
   "notionShowMe": "Show me how",
   "notionGuideTitle": "Connect Notion",
   "notionGuideStep1": "In Notion, open Settings → Developer and choose Open developer tools.",
