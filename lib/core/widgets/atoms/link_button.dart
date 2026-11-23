@@ -5,11 +5,14 @@ import 'package:material_ui/material_ui.dart';
 
 /// Quiet text button (e.g. "View all ›").
 class LinkButton extends StatelessWidget {
-  const LinkButton(this.label, {required this.onPressed, super.key, this.icon});
+  const LinkButton(this.label, {required this.onPressed, super.key, this.icon, this.flush = false});
 
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
+
+  /// Drops the side padding so the text lines up with the content above it.
+  final bool flush;
 
   @override
   Widget build(BuildContext context) => TextButton(
@@ -18,6 +21,7 @@ class LinkButton extends StatelessWidget {
       minimumSize: const .square(Sizes.tapTarget),
       tapTargetSize: .padded,
       visualDensity: .standard,
+      padding: flush ? const .symmetric(vertical: Spacing.xxs) : null,
     ),
     child: Row(
       mainAxisSize: .min,

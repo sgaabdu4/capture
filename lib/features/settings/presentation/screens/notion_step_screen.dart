@@ -86,6 +86,7 @@ class _NotionStepScreenState extends ConsumerState<NotionStepScreen> {
                 l10n.notionShowMe,
                 key: const ValueKey(AppWidgetKeys.notionGuideButton),
                 icon: Icons.help_outline,
+                flush: true,
                 onPressed: widget.onShowGuide,
               ),
               PaperField(

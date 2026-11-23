@@ -266,7 +266,7 @@
   "modelFailedDisk": "Not enough disk space for the speech model.",
   "modelFailedChecksum": "A model file failed its checksum and was deleted. Retry the download.",
   "modelFailedUnknown": "The speech model download stopped. Retry the download.",
-  "modelAttribution": "Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); ONNX int8 conversion by the k2-fsa sherpa-onnx project. Runs entirely on this Mac.",
+  "modelAttribution": "Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); ONNX int8 conversion by the k2-fsa sherpa-onnx project.",
   "typesafeTitle": "TypeSafe API key",
   "typesafeSaved": "Saved in Keychain. Only transcript text is sent to Jev to sort it.",
   "typesafeNeeded": "Jev sorts the transcript into notes and tasks. Get a key at console.typesafe.ai.",
@@ -449,7 +449,7 @@
       }
     }
   },
-  "phoneModelAttribution": "Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); Core ML conversion by FluidInference, run with FluidAudio. Runs entirely on this iPhone.",
+  "phoneModelAttribution": "Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); Core ML conversion by FluidInference, run with FluidAudio.",
   "phoneMicUndetermined": "iPhone will ask the first time you record.",
   "phonePrivacyBody": "Audio is recorded and transcribed on this iPhone. Only the transcript text and your group descriptions go to TypeSafe (Jev) for sorting. Nothing reaches Notion until you approve it, or auto-save does when you turn it on. Keys live in the iPhone Keychain. No analytics, no logs of your words.",
   "phoneResetBody": "Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, auto-save, captures and recordings on this iPhone. Your Notion pages and the speech model stay.",
