@@ -1,8 +1,9 @@
+import 'package:capture/core/extensions/extensions.dart';
 import 'package:capture/core/theme/sizes.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// A field with its action: side by side, or stacked once large text leaves the field too narrow.
+/// A field with its action: side by side on a wide window, stacked on a phone or at large text.
 class FieldRow extends StatelessWidget {
   const FieldRow({required this.field, required this.action, super.key});
 
@@ -13,10 +14,10 @@ class FieldRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final large = MediaQuery.textScalerOf(context).scale(1) > stackAbove;
+    final stacked = context.compact || MediaQuery.textScalerOf(context).scale(1) > stackAbove;
     return ConstrainedBox(
       constraints: const .new(maxWidth: Sizes.fieldsWidth),
-      child: large
+      child: stacked
           ? Column(crossAxisAlignment: .start, spacing: Spacing.sm, children: [field, action])
           : Row(
               spacing: Spacing.sm,

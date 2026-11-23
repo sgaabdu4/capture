@@ -16,11 +16,11 @@ void main() {
   setUpAll(loadAppFonts);
   final l10n = lookupAppLocalizations(const Locale('en'));
 
-  for (final scale in [1.0, 1.5, 2.0]) {
-    testWidgets('every key and link hint shows whole on a phone at $scale times text', (
+  for (final (width, scale) in [(375.0, 1.0), (375.0, 1.5), (375.0, 2.0), (320.0, 1.24)]) {
+    testWidgets('every key and link hint shows whole on a $width wide phone at $scale times text', (
       tester,
     ) async {
-      tester.view.physicalSize = const Size(375, 844);
+      tester.view.physicalSize = Size(width, 844);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       final container = ProviderContainer.test();

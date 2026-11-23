@@ -48,6 +48,17 @@ void main() {
       );
     });
 
+    test('keeps the day when the entry has no title to carry it', () {
+      final untitled = LibraryEntry(
+        pageId: .new('p2'),
+        itemId: .new('i2'),
+        kind: .task,
+        due: const DueDate(2026, 11, 24),
+      );
+
+      expect(untitled.detail(l10n, today, null, underDay: true), contains('Tomorrow'));
+    });
+
     test('names the day on a list that has no day headings', () {
       expect(entry.detail(l10n, today, null), contains('Tomorrow'));
     });

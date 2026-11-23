@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../../helpers/app_harness.dart';
 
-Future<void> _pump(WidgetTester tester, {required double scale, double width = 800}) async {
+Future<void> _pump(WidgetTester tester, {required double scale, double width = 1280}) async {
   tester.view.physicalSize = .new(width, 600);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -42,6 +42,14 @@ void main() {
 
   testWidgets('at large text the action drops below the field', (tester) async {
     await _pump(tester, scale: 2);
+    final field = tester.getRect(find.byType(Placeholder));
+    final action = tester.getRect(find.byType(FlutterLogo));
+    expect(action.top, field.bottom + Spacing.sm);
+    expect(action.left, field.left);
+  });
+
+  testWidgets('on a phone the action drops below the field at normal text', (tester) async {
+    await _pump(tester, scale: 1, width: 320);
     final field = tester.getRect(find.byType(Placeholder));
     final action = tester.getRect(find.byType(FlutterLogo));
     expect(action.top, field.bottom + Spacing.sm);
