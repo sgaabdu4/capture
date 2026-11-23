@@ -49,7 +49,6 @@ class RecordingsScreen extends ConsumerWidget {
     final nowUtc = ref.watch(systemDatasourceProvider.select((s) => s.nowUtc()));
     return PageFrame(
       title: l10n.navRecordings,
-      subtitle: l10n.recordingsSubtitle,
       children: [
         if (captures.isEmpty) EmptyNote(l10n.emptyCaptures),
         for (final record in captures)

@@ -1191,12 +1191,6 @@ abstract class AppLocalizations {
   /// **'Reset'**
   String get reset;
 
-  /// No description provided for @recordingsSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Kept on this Mac. Saved captures are also in Notion.'**
-  String get recordingsSubtitle;
-
   /// No description provided for @noTranscript.
   ///
   /// In en, this message translates to:
@@ -1652,12 +1646,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, auto-save, captures and recordings on this iPhone. Your Notion pages and the speech model stay.'**
   String get phoneResetBody;
-
-  /// No description provided for @phoneRecordingsSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Kept on this iPhone. Saved captures are also in Notion.'**
-  String get phoneRecordingsSubtitle;
 
   /// No description provided for @phoneDeleteFromMac.
   ///
