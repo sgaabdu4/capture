@@ -509,7 +509,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String notionConnectedTo(String workspace) {
-    return 'Connected to $workspace. Captures, Library and Groups live in its Capture page.';
+    return 'Connected to $workspace.';
   }
 
   @override
@@ -564,6 +564,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
+  String get speechCreditLink => 'Speech model credit';
+
+  @override
   String numberedStep(int number, String step) {
     return '$number. $step';
   }
@@ -582,7 +585,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String shortcutActive(String shortcut) {
-    return 'Press $shortcut in any app to start and stop a capture.';
+    return 'Press $shortcut anywhere to start or stop.';
   }
 
   @override
@@ -612,7 +615,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get micTitle => 'Microphone';
 
   @override
-  String get micGranted => 'Allowed. The microphone is on only while the pill shows.';
+  String get micGranted => 'Allowed. On only while the pill shows.';
 
   @override
   String get micDenied =>

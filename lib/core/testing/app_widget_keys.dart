@@ -27,6 +27,7 @@ abstract final class AppWidgetKeys {
   static const notionPageField = 'setup.notion.page';
   static const notionConnectButton = 'setup.notion.connect';
   static const notionGuideButton = 'setup.notion.guide';
+  static const speechCreditButton = 'settings.privacy.credit';
   static String notionGuideStep(int step) => 'setup.notion.guide.step.$step';
   static const shortcutChangeButton = 'settings.shortcut.change';
   static const shortcutSaveButton = 'settings.shortcut.save';

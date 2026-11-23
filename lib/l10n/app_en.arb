@@ -271,7 +271,7 @@
   "save": "Save",
   "replace": "Replace",
   "notionTitle": "Notion",
-  "notionConnectedTo": "Connected to {workspace}. Captures, Library and Groups live in its Capture page.",
+  "notionConnectedTo": "Connected to {workspace}.",
   "@notionConnectedTo": {
     "placeholders": {
       "workspace": {
@@ -294,6 +294,7 @@
   "notionGuideStep5": "Open the page Capture may use, then choose ••• → Connections → Add connection → Capture.",
   "notionGuideStep6": "Choose Add to page. Copy the page link (••• → Copy link) and paste it into Capture.",
   "close": "Close",
+  "speechCreditLink": "Speech model credit",
   "numberedStep": "{number}. {step}",
   "@numberedStep": {
     "placeholders": {
@@ -305,7 +306,7 @@
   "reconnect": "Reconnect",
   "disconnect": "Disconnect",
   "shortcutTitle": "Shortcut",
-  "shortcutActive": "Press {shortcut} in any app to start and stop a capture.",
+  "shortcutActive": "Press {shortcut} anywhere to start or stop.",
   "@shortcutActive": {
     "placeholders": {
       "shortcut": {
@@ -328,7 +329,7 @@
   "shortcutTooFewModifiers": "Use at least two modifiers, including ⌃ or ⌘.",
   "shortcutTaken": "That shortcut is already used by another app.",
   "micTitle": "Microphone",
-  "micGranted": "Allowed. The microphone is on only while the pill shows.",
+  "micGranted": "Allowed. On only while the pill shows.",
   "micDenied": "Blocked. Allow Capture in System Settings → Privacy & Security → Microphone.",
   "micUndetermined": "macOS will ask the first time you record.",
   "micAllow": "Allow microphone",

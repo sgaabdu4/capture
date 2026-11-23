@@ -930,7 +930,7 @@ abstract class AppLocalizations {
   /// No description provided for @notionConnectedTo.
   ///
   /// In en, this message translates to:
-  /// **'Connected to {workspace}. Captures, Library and Groups live in its Capture page.'**
+  /// **'Connected to {workspace}.'**
   String notionConnectedTo(String workspace);
 
   /// No description provided for @notionYourWorkspace.
@@ -1023,6 +1023,12 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get close;
 
+  /// No description provided for @speechCreditLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech model credit'**
+  String get speechCreditLink;
+
   /// No description provided for @numberedStep.
   ///
   /// In en, this message translates to:
@@ -1056,7 +1062,7 @@ abstract class AppLocalizations {
   /// No description provided for @shortcutActive.
   ///
   /// In en, this message translates to:
-  /// **'Press {shortcut} in any app to start and stop a capture.'**
+  /// **'Press {shortcut} anywhere to start or stop.'**
   String shortcutActive(String shortcut);
 
   /// No description provided for @shortcutInactive.
@@ -1110,7 +1116,7 @@ abstract class AppLocalizations {
   /// No description provided for @micGranted.
   ///
   /// In en, this message translates to:
-  /// **'Allowed. The microphone is on only while the pill shows.'**
+  /// **'Allowed. On only while the pill shows.'**
   String get micGranted;
 
   /// No description provided for @micDenied.
