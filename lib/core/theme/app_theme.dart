@@ -78,6 +78,7 @@ ThemeData buildAppTheme() => .new(
       selectedForegroundColor: Palette.cream,
       foregroundColor: Palette.ink,
       side: const .new(color: Palette.fieldEdge),
+      shape: const RoundedRectangleBorder(borderRadius: Radii.rounded12),
       textStyle: _textTheme.labelMedium,
       visualDensity: .standard,
       tapTargetSize: .padded,
