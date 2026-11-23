@@ -634,8 +634,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoSaveLabel => 'Save to Notion automatically';
 
   @override
-  String get autoSaveDetail =>
-      'Saves what Capture sorted without asking and sends a notification. The review card still opens when something needs a look.';
+  String get autoSaveDetail => 'Saves sorted captures without asking.';
 
   @override
   String get privacyTitle => 'Privacy';
