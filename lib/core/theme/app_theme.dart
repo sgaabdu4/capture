@@ -61,10 +61,7 @@ ThemeData buildAppTheme() => .new(
   extensions: const [CaptureColors()],
   inputDecorationTheme: _inputTheme(),
   checkboxTheme: _checkboxTheme(),
-  switchTheme: const .new(
-    thumbColor: WidgetStatePropertyAll(Palette.cream),
-    trackColor: WidgetStatePropertyAll(Palette.ink),
-  ),
+  switchTheme: _switchTheme(),
   filledButtonTheme: _filledButtonTheme(),
   outlinedButtonTheme: _outlinedButtonTheme(),
   textButtonTheme: .new(
@@ -142,6 +139,16 @@ InputDecorationThemeData _inputTheme() => .new(
   border: _fieldBorder,
   enabledBorder: _fieldBorder,
   focusedBorder: _fieldBorder.copyWith(borderSide: const .new(color: Palette.ink)),
+);
+
+SwitchThemeData _switchTheme() => .new(
+  thumbColor: .resolveWith((s) => s.contains(WidgetState.selected) ? Palette.cream : Palette.muted),
+  trackColor: .resolveWith(
+    (s) => s.contains(WidgetState.selected) ? Palette.ink : Palette.selected,
+  ),
+  trackOutlineColor: .resolveWith(
+    (s) => s.contains(WidgetState.selected) ? Palette.transparent : Palette.faint,
+  ),
 );
 
 CheckboxThemeData _checkboxTheme() => .new(
