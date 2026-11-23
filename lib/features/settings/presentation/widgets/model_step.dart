@@ -73,7 +73,6 @@ class ModelStep extends StatelessWidget {
                 ),
               if (failure case final String message)
                 Text(message, style: textTheme.labelMedium?.copyWith(color: context.colors.error)),
-              Text(l10n.modelAttribution, style: textTheme.bodySmall),
             ],
           ),
         ),

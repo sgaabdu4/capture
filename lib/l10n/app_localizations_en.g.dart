@@ -483,7 +483,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelAttribution =>
-      'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); ONNX int8 conversion by the k2-fsa sherpa-onnx project. Runs entirely on this Mac.';
+      'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); ONNX int8 conversion by the k2-fsa sherpa-onnx project.';
 
   @override
   String get typesafeTitle => 'TypeSafe API key';
@@ -897,7 +897,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneModelAttribution =>
-      'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); Core ML conversion by FluidInference, run with FluidAudio. Runs entirely on this iPhone.';
+      'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); Core ML conversion by FluidInference, run with FluidAudio.';
 
   @override
   String get phoneMicUndetermined => 'iPhone will ask the first time you record.';

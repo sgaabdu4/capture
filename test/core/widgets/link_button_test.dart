@@ -21,4 +21,23 @@ void main() {
     expect(size.height, greaterThanOrEqualTo(44));
     expect(size.width, greaterThanOrEqualTo(44));
   });
+
+  testWidgets('a flush link button starts its text at the left edge of its slot', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Material(
+          child: Align(
+            alignment: .topLeft,
+            child: LinkButton('Show me how', flush: true, onPressed: () {}),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester.getTopLeft(find.text('Show me how')).dx,
+      tester.getTopLeft(find.byType(TextButton)).dx,
+    );
+  });
 }

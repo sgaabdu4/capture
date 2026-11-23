@@ -882,7 +882,7 @@ abstract class AppLocalizations {
   /// No description provided for @modelAttribution.
   ///
   /// In en, this message translates to:
-  /// **'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); ONNX int8 conversion by the k2-fsa sherpa-onnx project. Runs entirely on this Mac.'**
+  /// **'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); ONNX int8 conversion by the k2-fsa sherpa-onnx project.'**
   String get modelAttribution;
 
   /// No description provided for @typesafeTitle.
@@ -1638,7 +1638,7 @@ abstract class AppLocalizations {
   /// No description provided for @phoneModelAttribution.
   ///
   /// In en, this message translates to:
-  /// **'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); Core ML conversion by FluidInference, run with FluidAudio. Runs entirely on this iPhone.'**
+  /// **'Speech recognition: Parakeet-TDT-0.6B-v3 by NVIDIA, licensed CC BY 4.0 (huggingface.co/nvidia/parakeet-tdt-0.6b-v3); Core ML conversion by FluidInference, run with FluidAudio.'**
   String get phoneModelAttribution;
 
   /// No description provided for @phoneMicUndetermined.

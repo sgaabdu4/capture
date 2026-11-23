@@ -16,6 +16,7 @@ class PrivacySection extends StatelessWidget {
       children: [
         Underlined(l10n.privacyTitle),
         Text(l10n.privacyBody, style: context.textTheme.bodyMedium),
+        Text(l10n.modelAttribution, style: context.textTheme.bodySmall),
       ],
     );
   }
