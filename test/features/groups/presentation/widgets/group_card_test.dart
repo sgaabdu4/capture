@@ -1,4 +1,5 @@
 import 'package:capture/core/theme/app_theme.dart';
+import 'package:capture/features/groups/domain/group_rules.dart';
 import 'package:capture/features/groups/presentation/widgets/group_card.dart';
 import 'package:capture/l10n/app_localizations.g.dart';
 import 'package:flutter/rendering.dart';
@@ -79,5 +80,32 @@ void main() {
     expect(archive.bottom, lessThan(tester.view.physicalSize.height));
     final paragraph = tester.renderObject<RenderParagraph>(find.text(longDescription));
     expect(paragraph.didExceedMaxLines, isTrue);
+  });
+
+  testWidgets('every default group description shows whole on a phone', (tester) async {
+    tester.view.physicalSize = const Size(375, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    for (final draft in defaultGroups) {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildAppTheme(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: GroupCard(
+              group: sampleGroups.first.copyWith(description: draft.description),
+              items: const [],
+              busy: false,
+              onEdit: () {},
+              onOpenEntry: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      final paragraph = tester.renderObject<RenderParagraph>(find.text(draft.description));
+      expect(paragraph.didExceedMaxLines, isFalse, reason: draft.name);
+    }
   });
 }

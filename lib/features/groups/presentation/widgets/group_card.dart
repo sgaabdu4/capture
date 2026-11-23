@@ -5,6 +5,7 @@ import 'package:capture/core/widgets/atoms/empty_note.dart';
 import 'package:capture/core/widgets/atoms/icon_action.dart';
 import 'package:capture/core/widgets/expandable_card.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
+import 'package:capture/features/groups/domain/group_rules.dart';
 import 'package:capture/features/library/domain/entities/library_entry.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -23,9 +24,6 @@ class GroupCard extends StatelessWidget {
 
   /// How many filed entries the expanded card lists.
   static const _maxItems = 20;
-
-  /// Longer descriptions are cut; the edit dialog shows all of it.
-  static const _descriptionLines = 3;
 
   final Group group;
 
@@ -54,7 +52,12 @@ class GroupCard extends StatelessWidget {
         crossAxisAlignment: .start,
         children: [
           if (group.description case final String description)
-            Text(description, style: labelMedium, maxLines: _descriptionLines, overflow: .ellipsis),
+            Text(
+              description,
+              style: labelMedium,
+              maxLines: groupDescriptionLines,
+              overflow: .ellipsis,
+            ),
           Wrap(
             crossAxisAlignment: .center,
             spacing: Spacing.xs,

@@ -28,6 +28,9 @@ const List<GroupDraft> defaultGroups = [
   ),
 ];
 
+/// Lines a group description takes in its edit field and on its card; the edit field shows the rest.
+const groupDescriptionLines = 5;
+
 /// Longest group name Notion titles and the review card show comfortably.
 const maxGroupNameLength = 60;
 
