@@ -33,11 +33,12 @@ class AppSidebar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),
             child: Underlined(l10n.appTitle, style: context.textTheme.headlineLarge),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: Spacing.xl),
-            child: Column(children: destinations),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(top: Spacing.xl),
+              child: Column(children: destinations),
+            ),
           ),
-          const Spacer(),
           NotionChip(
             key: const ValueKey(AppWidgetKeys.notionChip),
             connected: notionConnected,

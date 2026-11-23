@@ -164,6 +164,16 @@ void main() {
     expect(errors, isEmpty);
   });
 
+  testWidgets('the sidebar fits the shortest window the Mac app allows', (tester) async {
+    await _launch(tester, support, ready: true, viewport: const Size(1280, 480));
+
+    expect(_layoutErrors(tester, 'sidebar', 1280), isEmpty);
+    expect(
+      tester.getBottomLeft(find.byKey(const ValueKey(AppWidgetKeys.notionChip))).dy,
+      lessThanOrEqualTo(480),
+    );
+  });
+
   testWidgets('the edit dialog and opened cards fit from a small phone to a 4K screen', (
     tester,
   ) async {
