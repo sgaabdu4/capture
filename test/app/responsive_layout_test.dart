@@ -206,11 +206,14 @@ void main() {
     await _go(tester, const EditorRoute(recordId: 'proposed').go);
     final words = find.descendant(of: find.byType(SourceWord), matching: find.byType(Text));
     final motto = find.text(_l10n.sidebarMotto);
+    final remind = find.text(_l10n.remindMe);
     final measured = [
       for (final word in words.evaluate())
         (what: 'transcript word', text: word, background: word.paper.card),
       for (final text in motto.evaluate())
         (what: 'sidebar motto', text: text, background: text.paper.sidebar),
+      for (final text in remind.evaluate())
+        (what: 'reminder label', text: text, background: text.paper.card),
     ];
     for (final (:what, :text, :background) in measured) {
       if (text.widget case Text(:final style)) {
@@ -222,6 +225,7 @@ void main() {
 
     expect(words, findsWidgets);
     expect(motto, findsOneWidget);
+    expect(remind, findsOneWidget);
     expect(failures, isEmpty);
   });
 

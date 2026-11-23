@@ -86,5 +86,8 @@ Retro: A full `flutter test` run caught that merged semantics on the reminder sw
 Review declined: ReviewCardButton 46 pt height fails Android 48 pt tap-target guideline :: pre-existing unchanged iPhone-only overlay control mirroring macOS Overlay.swift (height 46), which meets iOSTapTargetGuideline (44 pt); resizing it would violate the unchanged visual appearance requirement, and ui_single_source_guideline_test.dart tests ReviewCard in its own viewport against contrast, semantic label, and iOS tap-target guidelines.
 Review declined: DESIGN.md YAML front matter omits 1.4px, 1.6px, and 3.5px lengths :: b5 ui_tokens.py DART_LENGTH only extracts integer or .0 Dart static constants, so adding fractional lengths to YAML front matter causes token_findings failures; those three dimensions are documented in DESIGN.md prose while YAML front matter mirrors all 48 parser-extracted lengths with B5_UI_HITS 0.
 
+Review declined: the plan directs a merge beyond the recorded approval :: the task brief for this change states the merge authority, and the Authority line cites only the user's standing rule that task PRs merge once their checks pass.
+Review declined: `Controls: None` bypasses mockup review :: the seven shared controls forward the existing Material controls with the same properties, and every before and after render is byte-identical, so no control design exists to mock up.
+
 Delivery target: Merge
 Delivery: Pending — checks, challenge, PR, CI, and merge to `main`.
