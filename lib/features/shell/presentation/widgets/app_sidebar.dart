@@ -7,7 +7,7 @@ import 'package:capture/core/widgets/atoms/underlined.dart';
 import 'package:capture/features/shell/presentation/widgets/notion_chip.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Wordmark, destinations, Notion state and the motto.
+/// Wordmark, destinations and Notion state.
 class AppSidebar extends StatelessWidget {
   const AppSidebar({
     required this.destinations,
@@ -16,9 +16,6 @@ class AppSidebar extends StatelessWidget {
     required this.onNotion,
     super.key,
   });
-
-  /// Tilt of the handwritten motto, in radians.
-  static const _mottoTilt = -0.07;
 
   final List<Widget> destinations;
   final bool notionConnected;
@@ -52,13 +49,6 @@ class AppSidebar extends StatelessWidget {
             key: const ValueKey(AppWidgetKeys.notionChip),
             connected: notionConnected,
             onTap: onNotion,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: Spacing.sm, top: Spacing.xl),
-            child: Transform.rotate(
-              angle: _mottoTilt,
-              child: Underlined(l10n.sidebarMotto, style: context.textTheme.headlineSmall),
-            ),
           ),
         ],
       ),
