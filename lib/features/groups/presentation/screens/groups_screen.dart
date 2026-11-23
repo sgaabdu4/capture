@@ -6,7 +6,6 @@ import 'package:capture/core/testing/app_widget_keys.dart';
 import 'package:capture/core/theme/spacing.dart';
 import 'package:capture/core/widgets/atoms/empty_note.dart';
 import 'package:capture/core/widgets/atoms/ink_button.dart';
-import 'package:capture/core/widgets/atoms/link_button.dart';
 import 'package:capture/core/widgets/page_frame.dart';
 import 'package:capture/features/groups/domain/entities/group.dart';
 import 'package:capture/features/groups/domain/group_rules.dart';
@@ -15,6 +14,7 @@ import 'package:capture/features/groups/presentation/widgets/group_dialog.dart';
 import 'package:capture/features/groups/presentation/widgets/group_list.dart';
 import 'package:capture/features/library/presentation/extensions/entry_editing.dart';
 import 'package:capture/features/library/presentation/notifiers/library_notifier.dart';
+import 'package:capture/features/library/presentation/widgets/refresh_button.dart';
 import 'package:capture/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -68,8 +68,7 @@ class GroupsScreen extends ConsumerWidget {
       title: l10n.navGroups,
       subtitle: preparing ? l10n.entryBodyLoading : null,
       actions: [
-        LinkButton(
-          l10n.refresh,
+        RefreshButton(
           onPressed: busy ? null : () => unawaited(ref.read(groupsProvider.notifier).refresh()),
         ),
         const SizedBox(width: Spacing.xs),

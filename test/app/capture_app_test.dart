@@ -327,6 +327,28 @@ void main() {
     expect(find.byType(AlertDialog).evaluate().length, equals(dialogsAfterNavigation));
   });
 
+  testWidgets('Refresh shows the same icon link on Groups and To-Do', (tester) async {
+    await _pump(tester, [
+      ...appOverrides(support: support, native: native),
+      appStartupProvider.overrideWith((ref) async {}),
+      settingsProvider.overrideWithBuild(readySettings),
+      groupsRepositoryProvider.overrideWithValue(SampleGroups()),
+      libraryRepositoryProvider.overrideWithValue(SampleLibrary()),
+    ]);
+
+    for (final nav in [AppWidgetKeys.navGroups, AppWidgetKeys.navTodo]) {
+      await _open(tester, nav);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey(AppWidgetKeys.refreshButton)),
+          matching: find.byIcon(Icons.refresh),
+        ),
+        findsOneWidget,
+        reason: nav,
+      );
+    }
+  });
+
   testWidgets('a ticked auto-save is remembered and saves a clean capture with a notification', (
     tester,
   ) async {
