@@ -78,17 +78,18 @@ class AppShellScreen extends ConsumerWidget {
     final page = Stack(
       children: [
         Positioned.fill(child: child),
-        PositionedDirectional(
-          top: compact ? Spacing.xs : Spacing.md,
-          end: compact ? Spacing.xs : Spacing.lg,
-          child: IconAction(
-            Icons.settings_outlined,
-            key: const ValueKey(AppWidgetKeys.settingsButton),
-            tooltip: l10n.navSettings,
-            size: IconSizes.s28,
-            onPressed: () => const SettingsRoute().go(context),
+        if (!_at(const SettingsRoute()))
+          PositionedDirectional(
+            top: compact ? Spacing.xs : Spacing.md,
+            end: compact ? Spacing.xs : Spacing.lg,
+            child: IconAction(
+              Icons.settings_outlined,
+              key: const ValueKey(AppWidgetKeys.settingsButton),
+              tooltip: l10n.navSettings,
+              size: IconSizes.s28,
+              onPressed: () => const SettingsRoute().go(context),
+            ),
           ),
-        ),
         if (phone)
           const PositionedDirectional(
             start: 0,
