@@ -42,52 +42,41 @@ class WhenRow extends StatelessWidget {
       crossAxisAlignment: .start,
       spacing: Spacing.xs,
       children: [
-        Row(
-          crossAxisAlignment: .start,
+        Wrap(
           spacing: Spacing.xs,
+          runSpacing: Spacing.xs,
+          crossAxisAlignment: .center,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: (Sizes.tapTarget - IconSizes.s20) / 2),
-              child: Icon(
-                Icons.calendar_today_outlined,
-                key: ValueKey(AppWidgetKeys.whenIcon),
-                size: IconSizes.s20,
-              ),
+            const Icon(
+              Icons.calendar_today_outlined,
+              key: ValueKey(AppWidgetKeys.whenIcon),
+              size: IconSizes.s20,
             ),
-            Expanded(
-              child: Wrap(
-                spacing: Spacing.xs,
-                runSpacing: Spacing.xs,
-                crossAxisAlignment: .center,
-                children: [
-                  LineButton(
-                    switch (due) {
-                      final DueDate d => d.dateOnly.label(l10n, today),
-                      null => l10n.addDate,
-                    },
-                    key: const ValueKey(AppWidgetKeys.whenDateButton),
-                    onPressed: enabled ? onPickDate : null,
-                  ),
-                  if (due case final DueDate d)
-                    LineButton(
-                      switch (d.timeLabel(l10n)) {
-                        final String time => time,
-                        null => l10n.addTime,
-                      },
-                      key: const ValueKey(AppWidgetKeys.whenTimeButton),
-                      onPressed: enabled ? onPickTime : null,
-                    ),
-                  if (due != null && enabled)
-                    IconAction(
-                      Icons.close,
-                      key: const ValueKey(AppWidgetKeys.whenClearButton),
-                      tooltip: l10n.removeDate,
-                      size: IconSizes.s18,
-                      onPressed: onClear,
-                    ),
-                ],
-              ),
+            LineButton(
+              switch (due) {
+                final DueDate d => d.dateOnly.label(l10n, today),
+                null => l10n.addDate,
+              },
+              key: const ValueKey(AppWidgetKeys.whenDateButton),
+              onPressed: enabled ? onPickDate : null,
             ),
+            if (due case final DueDate d)
+              LineButton(
+                switch (d.timeLabel(l10n)) {
+                  final String time => time,
+                  null => l10n.addTime,
+                },
+                key: const ValueKey(AppWidgetKeys.whenTimeButton),
+                onPressed: enabled ? onPickTime : null,
+              ),
+            if (due != null && enabled)
+              IconAction(
+                Icons.close,
+                key: const ValueKey(AppWidgetKeys.whenClearButton),
+                tooltip: l10n.removeDate,
+                size: IconSizes.s18,
+                onPressed: onClear,
+              ),
           ],
         ),
         if (due case final DueDate d)
