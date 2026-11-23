@@ -77,7 +77,7 @@ ThemeData buildAppTheme() => .new(
       selectedBackgroundColor: Palette.ink,
       selectedForegroundColor: Palette.cream,
       foregroundColor: Palette.ink,
-      side: const .new(color: Palette.line),
+      side: const .new(color: Palette.fieldEdge),
       textStyle: _textTheme.labelMedium,
       visualDensity: .standard,
       tapTargetSize: .padded,

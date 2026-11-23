@@ -35,6 +35,30 @@ Future<int> _filledRows(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets('the outline of the segmented control has 3 to 1 contrast against the page', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Material(
+          child: PaperSegmented<String>(
+            options: const [(value: 'open', label: 'Open'), (value: 'done', label: 'Done')],
+            selected: 'open',
+            onChanged: (_) {},
+          ),
+        ),
+      ),
+    );
+    final style = Theme.of(tester.element(find.byType(SegmentedButton<String>)))
+        .segmentedButtonTheme
+        .style;
+
+    final edge = style?.side?.resolve({})?.color ?? Palette.transparent;
+    final ratio = (Palette.paper.computeLuminance() + 0.05) / (edge.computeLuminance() + 0.05);
+    expect(ratio, greaterThanOrEqualTo(3));
+  });
+
   testWidgets('the selected segment is drawn as tall as a tap target', (tester) async {
     tester.view
       ..physicalSize = const Size(400, 200)
