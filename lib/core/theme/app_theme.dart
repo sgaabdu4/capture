@@ -53,6 +53,7 @@ ThemeData buildAppTheme() => .new(
   colorScheme: _scheme,
   scaffoldBackgroundColor: Palette.paper,
   fontFamily: Fonts.handFamily,
+  fontFamilyFallback: const [Fonts.symbolFamily],
   splashFactory: NoSplash.splashFactory,
   pageTransitionsTheme: const .new(builders: {.macOS: FadeForwardsPageTransitionsBuilder()}),
   hoverColor: Palette.selected.withValues(alpha: Opacities.hover),
