@@ -119,6 +119,7 @@ sizes:
   tapTarget: 48px
   switchTrack: 52px
   fieldsWidth: 560px
+  groupCardWidth: 560px
   micRaysExtent: 150px
   groupMenuWidth: 170px
   micDiameter: 200px

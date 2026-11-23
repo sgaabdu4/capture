@@ -113,7 +113,7 @@ class AppShellScreen extends ConsumerWidget {
         body: SafeArea(child: page),
         bottomNavigationBar: BottomNavBar(
           destinations: destinations,
-          selected: selected < 0 ? 0 : selected,
+          selected: selected < 0 ? null : selected,
           onSelected: (destination) => destination.route.go(context),
         ),
       );
