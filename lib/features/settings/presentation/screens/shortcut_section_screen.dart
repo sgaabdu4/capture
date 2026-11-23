@@ -129,7 +129,7 @@ class _ShortcutSectionScreenState extends ConsumerState<ShortcutSectionScreen> {
           StepHeader(
             done: registered,
             title: l10n.shortcutTitle,
-            detail: registered ? l10n.shortcutActive(label) : l10n.shortcutInactive(label),
+            detail: registered ? l10n.shortcutActive : l10n.shortcutInactive(label),
           ),
           Padding(
             padding: StepHeader.bodyInset,

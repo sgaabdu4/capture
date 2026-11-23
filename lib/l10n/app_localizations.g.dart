@@ -1062,8 +1062,8 @@ abstract class AppLocalizations {
   /// No description provided for @shortcutActive.
   ///
   /// In en, this message translates to:
-  /// **'Press {shortcut} anywhere to start or stop.'**
-  String shortcutActive(String shortcut);
+  /// **'Starts and stops a capture in any app.'**
+  String get shortcutActive;
 
   /// No description provided for @shortcutInactive.
   ///
