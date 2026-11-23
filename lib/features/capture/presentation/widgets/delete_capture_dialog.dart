@@ -30,6 +30,7 @@ class DeleteCaptureDialog extends StatelessWidget {
     return PaperDialog(
       title: l10n.deleteTitle,
       content: Column(
+        mainAxisSize: .min,
         crossAxisAlignment: .start,
         spacing: Spacing.xs,
         children: [
