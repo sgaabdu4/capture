@@ -658,9 +658,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reset => 'Reset';
 
   @override
-  String get recordingsSubtitle => 'Kept on this Mac. Saved captures are also in Notion.';
-
-  @override
   String get noTranscript => 'No transcript yet.';
 
   @override
@@ -906,9 +903,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get phoneResetBody =>
       'Removes both keys from the Keychain, cancels scheduled reminders and forgets your Notion page, auto-save, captures and recordings on this iPhone. Your Notion pages and the speech model stay.';
-
-  @override
-  String get phoneRecordingsSubtitle => 'Kept on this iPhone. Saved captures are also in Notion.';
 
   @override
   String get phoneDeleteFromMac => 'Delete from this iPhone';

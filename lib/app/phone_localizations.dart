@@ -44,9 +44,6 @@ class PhoneLocalizations extends AppLocalizationsEn {
   String get resetBody => phoneResetBody;
 
   @override
-  String get recordingsSubtitle => phoneRecordingsSubtitle;
-
-  @override
   String get deleteFromMac => phoneDeleteFromMac;
 
   @override
